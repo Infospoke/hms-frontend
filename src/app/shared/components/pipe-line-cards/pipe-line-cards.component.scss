@@ -1,0 +1,74 @@
+.card-pipe-line {
+    width: 100%;
+}
+
+.card-container {
+    background: #ffffff; 
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 150px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.card-container span {
+    font-size: 16px;
+    color: #8a8f98;
+}
+
+.card-container h6 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 4px 0;
+    color: #333;
+}
+
+
+.card-container .count {
+    font-size: 25px;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+
+.card-container .bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+::ng-deep .mdc-linear-progress {
+    height: 8px !important;  
+}
+
+::ng-deep .mdc-linear-progress__buffer {
+    height: 8px !important
+}
+
+::ng-deep .mdc-linear-progress__bar {
+    height: 8px !important;   /* active bar */
+}
+::ng-deep .mdc-linear-progress__bar-inner {
+    border-top-width: 8px !important;
+}
+::ng-deep .mdc-linear-progress {
+     height: 8px !important;            
+    border-radius: 999px;      
+    overflow: hidden;
+}
+
+
+::ng-deep .mdc-linear-progress__buffer {
+    background-color: #e5e7eb !important;
+}
+
+
+::ng-deep .mdc-linear-progress__bar-inner {
+    border-color: #2563eb !important;
+    border-radius: 999px;
+}
+
+::ng-deep .mdc-linear-progress__bar {
+    transition: transform 0.4s ease;
+}

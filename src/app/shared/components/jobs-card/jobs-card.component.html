@@ -1,0 +1,39 @@
+<div class="card" *ngIf="job!=null && job!==undefined" [ngClass]="{ 'active-card': isActive }" (click)="handleSelectedCard(job?.jobId)" [style.width]="">
+  <div class="card-header-info">
+    <div>
+      <h6>{{job?.jobTitle}}</h6>
+      <p>JOB CODE - {{job?.jobCode}}</p>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="item">
+      <i class="fa-solid fa-award"></i>
+      <span>{{job?.experience}} Years Exp</span>
+    </div>
+    <div class="item">
+      <i class="fa-solid fa-location-dot"></i>
+      <span>{{job?.jobLocation}}</span>
+    </div>
+  </div>
+
+  <div class="skills">
+    <span *ngFor="let skill of job?.skills">{{ skill }}</span>
+  </div>
+
+  <div class="footer">
+    <div class="stat">
+      <p>Applicants</p>
+      <h3>{{ job?.applicantCount }}</h3>
+    </div>
+    <div class="stat">
+      <p>Interviews</p>
+      <h3>{{ job?.interview }}</h3>
+    </div>
+    <!-- <div class="stat rejected">
+      <p>Rejected</p>
+      <h3>{{ rejected }}</h3>
+    </div> -->
+  </div>
+
+</div>

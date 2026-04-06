@@ -1,0 +1,300 @@
+
+.container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-job-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.main-job-card-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    padding: 1rem 0;
+    gap: 1rem;
+}
+
+
+.dashboard-layout {
+    flex: 1;
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+
+.left-section {
+    width: 72%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+
+.job-activity-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+
+.activity-body {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 114vh;
+    
+}
+
+
+.jobs-card {
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+     /* box-shadow: 0 2px 8px rgba(0,0,0,0.05) */
+}
+
+
+.activity-body::-webkit-scrollbar {
+    width: 3px; 
+}
+
+
+.activity-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+
+.activity-body::-webkit-scrollbar-thumb {
+    background: #d0e0fa;
+    border-radius: 10px;
+}
+
+.activity-body::-webkit-scrollbar-thumb:hover {
+    background: #2563EB;
+}
+.card-content-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+}
+
+
+.card-content-body .left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-content-body .icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #1E3A8A, #2563EB, #60A5FA);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.card-content-body .icon i {
+    color: #fff;
+}
+
+
+.card-content-body .text {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.card-content-body p {
+    font-weight: bold;
+}
+
+
+.hire-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.btn-outline-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #3B82F6;
+}
+
+
+.btn-outline-primary span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #3B82F6;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+}
+
+
+.job-scroll-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.job-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 1rem 0;
+    /* scrollbar-width: none; */
+}
+
+.job-list::-webkit-scrollbar {
+    display: none;
+}
+
+.job-details {
+    min-width: 400px;
+}
+
+
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.scroll-btn.left { left: -10px; }
+.scroll-btn.right { right: -10px; }
+
+
+.pipe-line {
+    padding-top: 1rem;
+}
+
+.stages-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
+
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: #3B82F6;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.message {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #111827;
+}
+
+
+.time {
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+
+.activity-item:hover {
+    background-color: #f9fafb;
+}
+@media (max-width: 1024px) {
+
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .left-section {
+        width: 100%;
+    }
+
+    .job-activity-card {
+        width: 100%;
+        max-height: 400px;
+    }
+
+    .stages-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+
+    .main-job-card-content {
+        grid-template-columns: 1fr;
+    }
+
+    .job-details {
+        min-width: 200px;
+    }
+
+
+    .job-list {
+        gap: 12px;
+    }
+
+    /* .card-content-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    } */
+
+    /* .card-content-body p {
+        align-self: flex-end;
+    } */
+}

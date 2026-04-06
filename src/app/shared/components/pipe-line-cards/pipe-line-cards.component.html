@@ -1,0 +1,11 @@
+<div class="card-pipe-line" *ngIf="stage">
+    <div class="card-container">
+        <span>Stage {{stage?.id}}</span>
+        <div class="bottom">
+            <h6>{{stage?.title}}</h6>
+            <div class="count">{{stage?.count}}</div>
+            
+            <nz-progress [nzPercent]="handleProgessBar(stage?.count,stage.total)" [nzShowInfo]="false" nzStatus="active" />
+        </div>
+    </div>
+</div>

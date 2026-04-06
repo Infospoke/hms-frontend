@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   // apiUrl: 'https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Infospoke',
   tokenRefreshInterval: 840000,
-  apiUrl: 'http://172.16.1.101:5003/infospoke-portal',
+  apiUrl: 'http://localhost:5003/infospoke-portal',
   resumeDownloadApi:"https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Website/job/download",
   //resumeDownloadApi:"http://localhost:5000/job/download",
   //atsUrl:"http://localhost:5002/api",

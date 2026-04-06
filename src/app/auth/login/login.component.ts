@@ -93,7 +93,7 @@ export class LoginComponent {
         if (firstModule.submenus?.length > 0) {
           sessionStorage.setItem('userId', this.userId);
           this.permissionService.setModules(data.modules);
-          this.router.navigate(['/user-management/users']);
+          this.router.navigate(['/jobs/job-dashboard']);
         } else {
           this.router.navigate(['/no-modules-found']);
         }

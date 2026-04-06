@@ -13,7 +13,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', loadChildren: () => import('./features/dashboard/routes/dashboard.routes').then(r => r.DASHBOARD_ROUTES) },
-    //   { path: 'jobs', loadChildren: () => import('./features/jobs/jobs.routes').then(r => r.JOBS_ROUTES) },
+      { path: 'jobs', loadChildren: () => import('./features/job/routes/job.routes').then(r => r.JOB_ROUTES) },
     //   { path: 'candidates', loadChildren: () => import('./features/candidates/candidates.routes').then(r => r.CANDIDATES_ROUTES) },
     //   { path: 'interviews', loadChildren: () => import('./features/interviews/interviews.routes').then(r => r.INTERVIEWS_ROUTES) },
     //   { path: 'offers', loadChildren: () => import('./features/offers/offers.routes').then(r => r.OFFERS_ROUTES) },

@@ -1,0 +1,130 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f5f7fa;
+}
+
+.login-card {
+  display: flex;
+  width: 900px;
+  height: 520px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* LEFT PANEL */
+.login-left {
+  width: 50%;
+  background-color: #1f4e95; // 🔵 blue panel like 2nd image
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-left img {
+  width: 65%;
+  height: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* RIGHT PANEL */
+.login-right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.login-subtitle {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.required {
+  color: red;
+  margin-left: 2px;
+}
+/* FORM */
+.form-label {
+  font-size: 16px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+::ng-deep .danger-modal .anticon-warning {
+  color: #ff4d4f !important;
+}
+/* PASSWORD */
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* OPTIONS */
+.options {
+  margin-bottom: 15px;
+  width: 100%;
+  text-align: right;
+}
+
+.forgot-link {
+  color: #1677ff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* BUTTON */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  background-color: #1f4e95;
+  border: none;
+  color: white;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #163c73;
+}
+
+.login-btn:disabled {
+  background-color: #ccc;
+}

@@ -1,0 +1,62 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <!-- Left Panel -->
+    <div class="login-left">
+      <img src="../../../assets/images/loginImage.svg" alt="Login image" class="login-image" />
+    </div>
+
+    <!-- Right Panel -->
+    <div class="login-right">
+      <h2 class="login-title">Admin Login</h2>
+      <p class="login-subtitle">Login to access your Infospoke admin account</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <label class="form-label">Email<span class="required"> *</span></label>
+        <input type="text" formControlName="email" placeholder="Enter Email" class="form-control" />
+        <div>
+                  @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+          @if (loginForm.get('email')?.errors?.['required']) {
+            <small class="error-text">Email is required.</small>
+          }
+        }
+        </div>
+
+        <!-- Password -->
+        <label class="form-label">Password<span class="required"> *</span></label>
+        <div class="password-group">
+          <input [type]="hide() ? 'password' : 'text'"
+                 placeholder="Enter Password"
+                 class="form-control"
+                 formControlName="password" />
+          <span class="toggle-password" (click)="hide.update(v => !v)">
+            <span class="material-icons">
+              {{ hide() ? 'visibility' : 'visibility_off' }}
+            </span>
+          </span>
+        </div>
+        <div>
+                  @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          @if (loginForm.get('password')?.errors?.['required']) {
+            <small class="error-text">Password is required.</small>
+          }
+        }
+        </div>
+
+        <!-- Options -->
+        <div class="options">
+          <a class="forgot-link" (click)="forgotPassword()">Forgot Password ?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="login-btn btn btn-primary" [disabled]="loading()">
+          @if (loading()) {
+            <span class="btn-spinner"></span> Logging in...
+          } @else {
+            Login
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

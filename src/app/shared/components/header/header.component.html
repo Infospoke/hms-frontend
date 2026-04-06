@@ -1,0 +1,27 @@
+<header class="header">
+  <div class="header-left">
+    <button class="menu-btn" (click)="menuToggle.emit()">
+      <span class="material-icons">menu</span>
+    </button>
+    <div class="search-box">
+      <span class="material-icons search-icon">search</span>
+      <input type="text" placeholder="Search jobs, candidates, teams, notes..." />
+    </div>
+  </div>
+
+  <div class="header-right">
+    <button class="icon-btn">
+      <span class="material-icons">notifications_none</span>
+    </button>
+    <div class="user-menu">
+      <div class="avatar">{{ userName.charAt(0) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-role">{{ userRole }}</span>
+      </div>
+      <button class="icon-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+      </button>
+    </div>
+  </div>
+</header>

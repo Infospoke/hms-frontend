@@ -1,0 +1,96 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, tap, timer, Subscription, switchMap, catchError, throwError } from 'rxjs';
+import { TokenService } from './token.service';
+import { PermissionService } from '../services/permission.service';
+import { NotificationService } from '../services/notification.service';
+import { environment } from '../../../environments/environment';
+import { API } from '../../shared/constants/api-endpoints';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+   private http = inject(HttpClient);
+  private router = inject(Router);
+  private tokenService = inject(TokenService);
+  private permissionService = inject(PermissionService);
+  private notification = inject(NotificationService);
+  private refreshTimerSub: Subscription | null = null;
+
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}${API.AUTH.LOGIN}`, credentials).pipe(
+      tap((res: any) => {
+        this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        this.tokenService.setUser(res.user);
+        this.permissionService.setModules(res.modules);
+        this.startTokenRefreshTimer();
+      }),
+      catchError((err: any) => {
+        const code = err.error?.responseCode;
+        const msg = err.error?.responseMessage || err.error?.message;
+
+        switch (code) {
+          case '1001': this.notification.error(msg || 'Account locked'); break;
+          case '1002': this.notification.error(msg || 'Account not activated'); break;
+          case '1003': this.notification.error(msg || 'Password expired'); break;
+          case '1004': this.notification.error(msg || 'Too many attempts'); break;
+          case '1005': this.notification.error(msg || 'Session active on another device'); break;
+          case '1006': this.notification.error(msg || 'User not found'); break;
+          case '1007': this.notification.error(msg || 'Invalid credentials'); break;
+          default:     this.notification.error(msg || 'Login failed');
+        }
+        return throwError(() => err);
+      })
+    );
+  }
+
+  refreshToken(): Observable<any> {
+    const refreshToken = this.tokenService.getRefreshToken();
+    return this.http.post(`${environment.apiUrl}${API.AUTH.REFRESH}`, { refreshToken }).pipe(
+      catchError((err: any) => {
+        this.logout();
+        return throwError(() => err);
+      })
+    );
+  }
+
+  logout() {
+    this.refreshTimerSub?.unsubscribe();
+    this.tokenService.clearTokens();
+    this.permissionService.clear();
+    this.router.navigate(['/auth/login']);
+  }
+
+  startTokenRefreshTimer() {
+    this.refreshTimerSub?.unsubscribe();
+    const interval = environment.tokenRefreshInterval;
+    this.refreshTimerSub = timer(interval, interval).pipe(
+      switchMap(() => this.refreshToken())
+    ).subscribe({
+      next: (res: any) => this.tokenService.setTokens(res.accessToken, res.refreshToken),
+      error: () => this.logout()
+    });
+  }
+
+  tryRestoreSession(): Observable<any> | null {
+    const rt = this.tokenService.getRefreshToken();
+    if (!rt) return null;
+    return this.refreshToken().pipe(
+      tap((res: any) => {
+        this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        this.tokenService.setUser(res.user);
+        this.permissionService.setModules(res.modules);
+        this.startTokenRefreshTimer();
+      }),
+      catchError((err: any) => {
+        this.tokenService.clearTokens();
+        this.permissionService.clear();
+        return throwError(() => err);
+      })
+    );
+  }
+
+  
+}

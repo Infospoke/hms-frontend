@@ -1,0 +1,18 @@
+<div class="app-shell" [class.collapsed]="sidebarCollapsed()">
+  <app-side-bar
+    [collapsed]="sidebarCollapsed()"
+    (toggleCollapse)="toggleSidebar()" />
+
+  <div class="main-area">
+    <app-header
+      [sidebarCollapsed]="sidebarCollapsed()"
+      (menuToggle)="toggleSidebar()" />
+
+    <main class="content-area">
+      <app-breadcrumb />
+      <nz-spin [nzSpinning]="loaderService.isLoading()" nzTip="Loading...">
+        <router-outlet />
+      </nz-spin>
+    </main>
+  </div>
+</div>

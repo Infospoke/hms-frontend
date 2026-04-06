@@ -75,8 +75,67 @@
 
 .sub-nav {
   padding-left: 24px;
-  .nav-item.child { padding: 8px 12px; font-size: 13px; }
+  .nav-item.child { padding: 8px 0px 8px 25px; font-size: 13px; }
 }
+
+.sub-nav::before {
+  content: '';
+  position: absolute;
+  left: 25px;
+
+  /* Dynamic spacing */
+  top: 50px;
+  height: calc(100% - 67px); /* 40px (top) + 17px (bottom) = 57px */
+
+  width: 2px;
+
+  /* Vertical dashed line */
+  background: repeating-linear-gradient(
+    to bottom,
+    #e5e7eb,
+    #e5e7eb 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+.child {
+  position: relative;
+  padding-left: 50px;
+}
+
+.child::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 18px;
+  height: 2px;
+
+  /* horizontal dashed line */
+  background: repeating-linear-gradient(
+    to right,
+    #e5e7eb,
+    #e5e7eb 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.child::after {
+  content: '';
+  position: absolute;
+  left: 13px; /* 20px + 16px dash */
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
+  border-radius: 50%;
+}
+
 
 .super-sub-nav {
   padding-left: 20px;
@@ -85,6 +144,7 @@
     &.active { color: #1a73e8; background: #e8f0fe; }
   }
 }
+
 
 // ── Invisible bridge between icon and flyout ──
 
@@ -174,4 +234,37 @@
 @keyframes flyIn {
   from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
+}
+
+// ── Icon border box ──
+
+// .nav-item.parent {
+//   .nav-img, .nav-icon {
+//     padding: 8px;
+//     border: 1.5px solid #e5e7eb;
+//     border-radius: 8px;
+//     width: 36px;
+//     height: 36px;
+//     box-sizing: border-box;
+//   }
+// }
+
+// ── Active sub-item (level 2) — blue text + blue dot ──
+
+.sub-nav .nav-item.child.active,
+.sub-nav .nav-item.child.child-active {
+  background: transparent;
+  .nav-label { color: #1a73e8; font-weight: 600; }
+
+  &::after {
+    background: #1a73e8;
+  }
+}
+
+// ── Active grandchild (level 3) — blue text + blue dot ──
+
+.super-sub-nav .nav-item.grandchild.active {
+  background: transparent;
+  color: #1a73e8;
+  .nav-label { color: #1a73e8; font-weight: 600; }
 }

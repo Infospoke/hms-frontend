@@ -1,8 +1,8 @@
 <div class="container">
     <div class="top-bar">
         <div class="tabs">
-            <button class="tab active">Job Overview</button>
-            <button class="tab">Applicants</button>
+            <button class="tab" [class.active]="activeTab === 'all-jobs'" (click)="handleTab('all-jobs')">Job Overview</button>
+            <button class="tab" [class.active]="activeTab === 'applicants'" (click)="handleTab('applicants')">Applicants</button>
         </div>
 
         <button class="create-btn">
@@ -28,7 +28,8 @@
                     <app-pipe-line-cards [stage]="item" [height]="'100px'"></app-pipe-line-cards>
                 </div>
             </div>
-            <app-view-job [job]="selectedJob"/>
+            <app-view-job [job]="selectedJob" *ngIf="activeTab === 'all-jobs'"/>
+            <app-applied-candidates *ngIf="activeTab === 'applicants'"/>
         </div>
     </div>
 </div>

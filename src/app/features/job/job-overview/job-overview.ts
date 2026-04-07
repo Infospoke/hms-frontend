@@ -4,10 +4,11 @@ import { PipeLineCardsComponent } from '../../../shared/components/pipe-line-car
 import { CommonModule } from '@angular/common';
 import { JobService } from '../services/job.service';
 import { ViewJob } from '../view-job/view-job';
+import { AppliedCandidatesComponent } from '../applied-candidates/applied-candidates.component';
 
 @Component({
   selector: 'app-job-overview',
-  imports: [JobComponent, PipeLineCardsComponent, CommonModule,ViewJob],
+  imports: [JobComponent, PipeLineCardsComponent, CommonModule,ViewJob,AppliedCandidatesComponent],
   templateUrl: './job-overview.html',
   styleUrl: './job-overview.scss',
 })
@@ -15,6 +16,7 @@ export class JobOverview {
   jobsList: any;
   selectedJobId: any;
   stages: any;
+  activeTab: any = 'all-jobs';
   private jobApi = inject(JobService);
   selectedJob: any;
   selectedBackgroundColor: any = 'linear-gradient(135deg, #2563EB,  #60A5FA, #3059cb)';
@@ -47,5 +49,9 @@ export class JobOverview {
     catch (error) {
 
     }
+  }
+
+  handleTab(tabName:any){
+    this.activeTab = tabName;
   }
 }

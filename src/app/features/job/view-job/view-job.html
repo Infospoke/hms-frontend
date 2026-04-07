@@ -1,12 +1,11 @@
-<div class="job-wrapper">
+<div class="container">
 
-  <h3 class="heading">Job Overview</h3>
+  <h3 class="title">Job Overview</h3>
 
-  <!-- Row 1 -->
-  <div class="row">
+  <div class="grid-5">
     <div>
-      <span class="label">JOB ID</span>
-      <p>INFO {{job.jobId}}</p>
+      <span class="label">JOB CODE</span>
+      <p>{{job.jobCode}}</p>
     </div>
 
     <div>
@@ -30,8 +29,8 @@
     </div>
   </div>
 
-  <!-- Row 2 -->
-  <div class="row">
+  <!-- SECOND ROW -->
+  <div class="grid-5 second-row">
     <div>
       <span class="label">JOB MODE</span>
       <p>{{job.jobMode}}</p>
@@ -41,41 +40,61 @@
       <span class="label">JOB TYPE</span>
       <p>{{job.jobType}}</p>
     </div>
+
+    <div>
+      <span class="label">COUNTRY</span>
+      <p>{{job.jobCountry}}</p>
+    </div>
+
+    <div>
+      <span class="label">CREATED BY</span>
+      <p>{{job.createdBy}}</p>
+    </div>
   </div>
 
   <hr />
 
-  <!-- Skills & Channels -->
-  <div class="row">
-    
-    <div class="half">
+  <!-- JOB INFO -->
+  <div>
+    <span class="label">JOB INFO</span>
+    <p class="info">{{job.jobInfo}}</p>
+  </div>
+
+  <hr />
+
+
+  <div class="grid-2">
+
+    <div>
       <span class="label">SKILLS</span>
       <div class="chips">
-        <span class="chip" *ngFor="let skill of job?.skills">
+        <span class="chip" *ngFor="let skill of job?.skillList">
           {{skill?.skillName || skill?.skillId}}
         </span>
       </div>
     </div>
 
-    <!-- <div class="half">
-      <span class="label">PUBLISHED CHANNELS</span>
-      <div class="chips">
-        <span class="chip" *ngFor="let channel of channels">
-          {{channel}}
-        </span>
-      </div>
-    </div> -->
+    <div>
+      <span class="label">QUALIFICATION</span>
+      <p>{{job.qualification}}</p>
+    </div>
 
   </div>
 
   <hr />
 
-  <!-- Description -->
+  <!-- DESCRIPTION -->
   <div>
     <span class="label">JOB DESCRIPTION</span>
-    <p class="desc">
-      {{job.jobDescription}}
-    </p>
+    <p class="desc">{{job.jobDescription}}</p>
+  </div>
+
+  <hr />
+
+  <!-- REQUIREMENTS -->
+  <div>
+    <span class="label">JOB REQUIREMENTS</span>
+    <p class="desc">{{job.jobRequirements}}</p>
   </div>
 
 </div>

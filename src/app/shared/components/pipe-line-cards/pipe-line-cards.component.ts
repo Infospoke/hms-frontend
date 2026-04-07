@@ -9,8 +9,9 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
   styleUrl: './pipe-line-cards.component.scss'
 })
 export class PipeLineCardsComponent implements OnInit {
-
-  @Input() stage!:any;
+@Input() stage!:any;
+  @Input() showProgess=false;
+  @Input() height='150px';
   constructor(){}
   ngOnInit(): void {
 

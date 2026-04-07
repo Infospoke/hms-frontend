@@ -38,7 +38,9 @@
               <div
                 class="nav-item child has-children"
                 [class.expanded]="isSuperExpanded(sub.path)"
-                (click)="toggleSuperSubmenu($event, sub.path)">
+                (click)="toggleSuperSubmenu($event, sub.path)"
+                [class.child-active]="isActive(sub.path)"
+                >
                 <span class="nav-label">{{ sub.title }}</span>
                 <span class="material-icons arrow" [class.rotated]="isSuperExpanded(sub.path)">
                   expand_more

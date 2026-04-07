@@ -1,0 +1,160 @@
+
+.container {
+    width:100% !important;
+    height: 89vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 10px 20px;
+}
+
+
+.tabs {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: #f2f2f2;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.tab {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: rgb(234, 241, 248);
+    color: #2563eb;
+}
+
+
+.create-btn {
+    margin-left: auto;
+    background: #2563eb;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.jobs-container-data {
+    flex: 1;
+    display: flex;
+    gap: 5px;
+    padding: 0.5rem;
+    overflow: hidden;
+}
+
+
+.jobs-list {
+    width: 35%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+
+    border: 1px solid #e5e7eb;
+}
+
+
+.jobs-overview {
+    flex: 1;
+    /* background: #fff; */
+    border-radius: 10px;
+    padding: 0px 15px;
+    
+    overflow-y: auto;
+    
+}
+
+.jobs-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 2px solid #2563eb;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #2563eb;
+
+    transition: all 0.3s ease-in-out;
+}
+
+
+.filter-btn i {
+    color: #2563eb;
+    transition: color 0.3s ease-in-out;
+}
+
+.filter-btn:hover {
+    background-color: #2563eb;
+    color: white;
+}
+
+.filter-btn:hover i {
+    color: white;
+}
+
+.all-jobs {
+    margin-top: 5px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* max-height: 100Vh;
+    overflow-y: auto; */
+}
+
+.all-jobs::-webkit-scrollbar {
+  width: 6px;
+}
+
+.all-jobs::-webkit-scrollbar-thumb {
+  background: #e5ecfc;
+  border-radius: 10px;
+}
+
+.stages-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+
+     padding: 10px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    
+    box-shadow: inset 0 1px 10px rgba(255,255,255,0.2),
+                0 8px 20px rgba(0,0,0,0.1);
+
+    
+
+    
+}
+

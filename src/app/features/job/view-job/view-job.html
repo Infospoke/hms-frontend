@@ -1,0 +1,81 @@
+<div class="job-wrapper">
+
+  <h3 class="heading">Job Overview</h3>
+
+  <!-- Row 1 -->
+  <div class="row">
+    <div>
+      <span class="label">JOB ID</span>
+      <p>INFO {{job.jobId}}</p>
+    </div>
+
+    <div>
+      <span class="label">JOB TITLE</span>
+      <p>{{job.jobTitle}}</p>
+    </div>
+
+    <div>
+      <span class="label">JOB LEVEL</span>
+      <p>{{job.jobLevel}}</p>
+    </div>
+
+    <div>
+      <span class="label">EXPERIENCE</span>
+      <p>{{job.experience}} Years</p>
+    </div>
+
+    <div>
+      <span class="label">LOCATION</span>
+      <p>{{job.jobLocation}}</p>
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="row">
+    <div>
+      <span class="label">JOB MODE</span>
+      <p>{{job.jobMode}}</p>
+    </div>
+
+    <div>
+      <span class="label">JOB TYPE</span>
+      <p>{{job.jobType}}</p>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Skills & Channels -->
+  <div class="row">
+    
+    <div class="half">
+      <span class="label">SKILLS</span>
+      <div class="chips">
+        <span class="chip" *ngFor="let skill of job?.skills">
+          {{skill?.skillName || skill?.skillId}}
+        </span>
+      </div>
+    </div>
+
+    <!-- <div class="half">
+      <span class="label">PUBLISHED CHANNELS</span>
+      <div class="chips">
+        <span class="chip" *ngFor="let channel of channels">
+          {{channel}}
+        </span>
+      </div>
+    </div> -->
+
+  </div>
+
+  <hr />
+
+  <!-- Description -->
+  <div>
+    <span class="label">JOB DESCRIPTION</span>
+    <p class="desc">
+      {{job.jobDescription}}
+    </p>
+  </div>
+
+</div>

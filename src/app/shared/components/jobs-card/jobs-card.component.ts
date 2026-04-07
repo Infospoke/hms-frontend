@@ -12,11 +12,13 @@ import { CommonModule } from '@angular/common';
 export class JobsCardComponent implements OnChanges{
  
   
-  selectedCard:any;
+   selectedCard:any;
 
   @Input() job!:any;
   @Input() isActive!:any;
   @Input() width:any;
+  @Input() showJobDetails:boolean=false;
+  @Input() isSimpleView:boolean=false;
   @Output() selectedJob=new EventEmitter<any>();
 
   constructor(){}

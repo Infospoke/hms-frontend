@@ -1,4 +1,4 @@
-<div class="card" *ngIf="job!=null && job!==undefined" [ngClass]="{ 'active-card': isActive }" (click)="handleSelectedCard(job?.jobId)" [style.width]="">
+<div class="card" *ngIf="job!=null && job!==undefined" [ngClass]="{ 'active-card': isActive , 'flat': isSimpleView  }" (click)="handleSelectedCard(job?.jobId)" [style.width]="width">
   <div class="card-header-info">
     <div>
       <h6>{{job?.jobTitle}}</h6>
@@ -21,7 +21,7 @@
     <span *ngFor="let skill of job?.skills">{{ skill }}</span>
   </div>
 
-  <div class="footer">
+  <div class="footer" *ngIf="showJobDetails">
     <div class="stat">
       <p>Applicants</p>
       <h3>{{ job?.applicantCount }}</h3>

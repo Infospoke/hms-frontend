@@ -190,7 +190,25 @@
   color: #ef4444;
 } */
 
+.card.flat {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+}
 
+
+.card.flat:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+
+.card.flat.active-card {
+    background: linear-gradient(135deg, #1E3A8A, #2563EB, #60A5FA);
+    color: #ffffff !important;
+    border: none;
+    box-shadow: none !important;
+}
 @media (max-width: 1024px) {
     .card {
         width: 100%;

@@ -1,35 +1,27 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { JobService } from './services/job.service';
+import { CommonModule } from '@angular/common';
+import { JobsCardComponent } from '../../shared/components/jobs-card/jobs-card.component';
 
 @Component({
   selector: 'app-job',
-  imports: [],
+  imports: [CommonModule,JobsCardComponent],
   templateUrl: './job.component.html',
   styleUrl: './job.component.scss',
 })
-export class JobComponent {
+export class JobComponent implements OnInit{
   selectedJobId: any;
   stages: any;
   jobsListData: any;
+
+  @Output() selectedJobIdChange = new EventEmitter<any>();
   private jobApi = inject(JobService)
 
-
-  async handleJobDetailsById() {
-    try {
-      const res: any = await this.jobApi.getJobDetailsById(this.selectedJobId);
-      this.stages = [
-        { id: 1, title: "Applied", count: res?.applicantCount, total: res?.applicantCount },
-        { id: 2, title: "Screened", count: res?.resumeCount, total: res?.applicantCount },
-        { id: 3, title: "Shortlisted", count: res?.shortlisted, total: res?.applicantCount },
-        { id: 4, title: "Interview", count: res?.interviewCount, total: res?.applicantCount },
-        { id: 5, title: "Offer", count: res?.offerReleased, total: res?.applicantCount },
-        { id: 6, title: "Hired", count: res?.hiredCount, total: res?.applicantCount },
-      ]
-    }
-    catch (error) {
-
-    }
+  ngOnInit(): void {
+    this.getJobs();
   }
+
+  
   async getJobs() {
     let isOpen = true;
     try {
@@ -37,7 +29,7 @@ export class JobComponent {
       console.log(res);
       this.jobsListData = res;
       this.selectedJobId = res[0]?.jobId;
-      // this.handleSelectedJob()
+      this.handleSelectedJob(this.selectedJobId);
     }
     catch (error) {
 
@@ -45,7 +37,8 @@ export class JobComponent {
   }
   handleSelectedJob($event: any) {
     this.selectedJobId = $event;
-    this.handleJobDetailsById();
+    this.selectedJobIdChange.emit(this.selectedJobId);
+    
   }
 
  

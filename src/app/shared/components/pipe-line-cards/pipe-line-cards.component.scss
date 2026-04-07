@@ -9,7 +9,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 150px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
 }
 
@@ -71,4 +70,61 @@
 
 ::ng-deep .mdc-linear-progress__bar {
     transition: transform 0.4s ease;
+}
+
+
+
+
+
+
+.pipeline-card {
+    height: 60px;
+
+    border-radius: 14px;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.25),
+        rgba(255,255,255,0.05)
+    );
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.3);
+
+    color: white;
+    text-align: center;
+
+    transition: all 0.3s ease;
+}
+
+
+
+/* .pipeline-card:hover {
+    transform: translateY(-4px) scale(1.03);
+
+    box-shadow: 
+        0 8px 25px rgba(0,0,0,0.2),
+        inset 0 1px 8px rgba(255,255,255,0.3);
+} */
+
+
+.pipeline-card .count {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+
+.pipeline-card .label {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 4px;
 }

@@ -3,6 +3,7 @@
 
     <div class="main-job-content">
 
+        <!-- TOP CARDS -->
         <div class="main-job-card-content">
             <div class="card-content" *ngFor="let item of list">
                 <div class="card-content-body">
@@ -20,6 +21,7 @@
 
         <div class="dashboard-layout">
 
+            <!-- LEFT SIDE -->
             <div class="left-section">
 
                 <!-- Hiring -->
@@ -41,7 +43,7 @@
                         <div class="job-list" #jobList>
                             <div class="job-details" *ngFor="let job of jobsListData">
                                 <app-jobs-card [job]="job" [isActive]="job?.jobId===selectedJobId"
-                                    (selectedJob)="handleSelectedJob($event)" [width]="'400px'">
+                                    (selectedJob)="handleSelectedJob($event)" [width]="'400px'" [showJobDetails]="true">
                                 </app-jobs-card>
                             </div>
                         </div>
@@ -62,7 +64,7 @@
 
                     <div class="stages-list">
                         <div class="helper" *ngFor="let item of stages">
-                            <app-pipe-line-cards [stage]="item"></app-pipe-line-cards>
+                            <app-pipe-line-cards [stage]="item" [showProgess]="true"></app-pipe-line-cards>
                         </div>
                     </div>
                 </div>

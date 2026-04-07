@@ -44,7 +44,7 @@ export class JobDashboardComponent implements OnInit {
       const res: any = await this.jobApi.getJobsList(isOpen);
       console.log(res);
       this.jobsListData = res;
-      this.selectedJobId = res[0]?.jobId;
+      this.selectedJobId = res?.[0]?.jobId;
       this.handleJobSelection();
     }
     catch (error) {

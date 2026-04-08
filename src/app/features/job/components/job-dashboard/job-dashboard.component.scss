@@ -6,7 +6,7 @@
 .card {
     height: 100%;
     border-radius: 12px;
-    padding: 19px;
+    padding: 15px 20px 0px 20px;
     border: 1px solid #e5e7eb;
     cursor: pointer;
     background: #ffffff;
@@ -20,31 +20,32 @@
 }
 
 .active-card {
-    background: linear-gradient(135deg, #1E3A8A, #2563EB, #60A5FA);
+    background: 
+  radial-gradient(ellipse at 85% 85%, rgba(255,255,255,0.45) 0%, transparent 55%),
+  linear-gradient(135deg, #1d4ed8 0%, #2563eb 35%, #3b82f6 65%, #60a5fa 100%);
     color: #ffffff !important;
     border: none;
-    box-shadow:
+    box-shadow: 
         0 8px 20px rgba(37, 99, 235, 0.05),
         0 3px 8px rgba(0, 0, 0, 0.06);
 }
 
-.active-card h6,
-.active-card p,
+.show-details{
+    margin-bottom: 15px !important;
+}
+.active-card .title,
+.active-card .code,
 .active-card span,
-.active-card h3 {
+.active-card .value {
     color: #ffffff !important;
 }
 
-.active-card .card-header-info p,
-.active-card .stat p {
+.active-card .code,
+.active-card .label {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .active-card i {
-    color: #ffffff !important;
-}
-
-.active-card .item {
     color: #ffffff !important;
 }
 
@@ -53,17 +54,10 @@
     color: #ffffff;
 }
 
-.active-card .stat h3 {
-    color: #ffffff;
-}
-
-.active-card .rejected h3 {
-    color: #ffffff !important;
-}
-
 .card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 
+        0 5px 12px rgba(0,0,0,0.08);
 }
 
 .active-card:hover {
@@ -75,38 +69,19 @@
     justify-content: space-between;
     align-items: flex-start;
     line-height: 1;
-    height: 64px;
 }
 
-.card-header-info h6 {
-    margin: 1px;
-    padding: 0;
-    font-size: 14.5px;
+.title {
+    font-size: 14px;
     font-weight: 600;
     line-height: 1.2;
 }
 
-.card-header-info p {
-    margin: 2px 0 0;
+.code {
+    margin-top: 2px;
     color: #9ca3af;
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1.2;
-}
-
-.card-header h2 {
-    margin: 0;
-    font-size: 17.5px;
-    font-weight: 600;
-}
-
-.card-header p {
-    margin: 3px 0 0;
-    color: #9ca3af;
-}
-
-.card-header i {
-    font-size: 14.5px;
-    cursor: pointer;
 }
 
 .info {
@@ -137,25 +112,24 @@
     background: #f3f4f6;
     padding: 5px 10px;
     border-radius: 6px;
-    font-size: 10.5px;
+    font-size: 10px;
     color: #374151;
 }
 
 .footer {
     display: flex;
     justify-content: space-between;
-    padding: 0.8rem 0;
+    padding: 0.8rem 0rem;
     margin-top: auto;
 }
 
-.stat p {
-    margin: 0;
+.label {
     color: #9ca3af;
-    font-size: 10.5px;
+    font-size: 10px;
 }
 
-.stat h3 {
-    margin: 5px 0 0;
+.value {
+    margin-top: 4px;
     font-size: 21px;
     font-weight: 600;
 }

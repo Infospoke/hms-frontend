@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HeadingContainerComponent } from '../../../shared/components/heading-container/heading-container.component';
-import { JobService } from '../services/job.service';
+import { HeadingContainerComponent } from '../../../../shared/components/heading-container/heading-container.component';
+import { JobService } from '../../services/job.service';
 import { first } from 'rxjs';
-import { NotificationService } from '../../../core/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { Router } from '@angular/router';
 
 @Component({

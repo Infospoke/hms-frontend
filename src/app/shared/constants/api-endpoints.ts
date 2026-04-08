@@ -20,6 +20,11 @@ export const API = {
        GET_ALL_SKILLS:`/jobs/get-all-skills`,
        GET_ACTIVITY_LOGS:`/job-overview/activity-feed`,
         ADD_APPLICANT:`/job/application`,
-       GET_JOBS_BY_COUNTRY:(country:any)=>`/job/get-all-jobs-by-country?jobCountry=${country}`
+       GET_JOBS_BY_COUNTRY:(country:any)=>`/job/get-all-jobs-by-country?jobCountry=${country}`,
+    //    GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`,
+       GET_ALL_APPLICANTS:() => `/jobs/get-all-jobs-applicants`,
+       GET_CANDIDATE_BY_ID:() => `/jobs/get-candidate-by-id`,
+       GET_APPLICANT_BY_ID:(id:any) => `/jobs/view-applicant-by-id/${id}`,
+       GET_ALL_ANALYSIS : '/api/resume/analysis'
     }
 }

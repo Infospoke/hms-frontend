@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { JobService } from '../services/job.service';
-import { LoaderService } from '../../../core/services/loader.service';
+import { JobService } from '../../services/job.service';
+import { LoaderService } from '../../../../core/services/loader.service';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../../core/services/notification.service';
-import { HeadingContainerComponent } from '../../../shared/components/heading-container/heading-container.component';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { HeadingContainerComponent } from '../../../../shared/components/heading-container/heading-container.component';
 
 @Component({
   selector: 'app-add-job',

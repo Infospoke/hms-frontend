@@ -10,6 +10,8 @@ export class ApiService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
   private websiteURL = environment.websiteURL;
+  private aiBaseUrl = environment.atsUrl;
+
   get<T>(endpoint : string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
   }
@@ -45,5 +47,34 @@ export class ApiService {
   }
   websiteGet<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.websiteURL}${endpoint}`, { params });
+  }
+  aiGet<T>(endpoint : string, params?: any): Observable<T> {
+    return this.http.get<T>(`${this.aiBaseUrl}${endpoint}`, { params });
+  }
+
+  aiPost<T>(endpoint : string, body: any): Observable<T> {
+    return this.http.post<T>(`${this.aiBaseUrl}${endpoint}`, body);
+  }
+
+  aiPut<T>(endpoint : string, body: any): Observable<T> {
+    return this.http.put<T>(`${this.aiBaseUrl}${endpoint}`, body);
+  }
+
+  aiDelete<T>(endpoint : string): Observable<T> {
+    return this.http.delete<T>(`${this.aiBaseUrl}${endpoint}`);
+  }
+
+  aiPatch<T>(endpoint : string, body: any): Observable<T> {
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body);
+  }
+
+  aiSilentGet<T>(endpoint: string, params?: any): Observable<T> {
+    const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
+    return this.http.get<T>(`${this.aiBaseUrl}${endpoint}`, { params, headers });
+  }
+
+  aiSilentPost<T>(endpoint: string, body: any): Observable<T> {
+    const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
+    return this.http.post<T>(`${this.aiBaseUrl}${endpoint}`, body, { headers });
   }
 }

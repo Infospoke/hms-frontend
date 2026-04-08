@@ -194,6 +194,7 @@ export class JobOverview {
         const url = window.URL.createObjectURL(blob);
         window.open(url, '_blank');
         return;
+        
       }
 
       if (res?.success) {

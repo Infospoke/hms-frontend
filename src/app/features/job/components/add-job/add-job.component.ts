@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { CommonModule } from '@angular/common';
 import { JobService } from '../../services/job.service';
 import { LoaderService } from '../../../../core/services/loader.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { HeadingContainerComponent } from '../../../../shared/components/heading-container/heading-container.component';
 
@@ -16,12 +16,13 @@ import { HeadingContainerComponent } from '../../../../shared/components/heading
 })
 export class AddJobComponent implements OnInit {
   isloading: boolean = false;
-  private loaderService = inject(LoaderService);
+  // private loaderService = inject(LoaderService);
   private notificationService = inject(NotificationService);
   addJobForm!: FormGroup;
   userName: any;
   originalData: any;
   private jobApi = inject(JobService);
+
   countries = [
     { id: 1, name: 'India' },
     { id: 2, name: 'USA' },
@@ -76,9 +77,21 @@ export class AddJobComponent implements OnInit {
   jobSkills: any[] = [
   ];
   skillExp: any[] = [];
+  private route = inject(ActivatedRoute);
   constructor(private fb: FormBuilder, private router: Router) {
+    
   }
+
+  editJobId : any;
   ngOnInit(): void {
+
+    const id = this.route.snapshot.paramMap.get('id');
+    this.editJobId = id;
+  if (id) {
+    this.editfield = true;
+    this.getJobById(id);
+  }
+
     this.addJobForm = this.fb.group({
       jobCode: ['', [Validators.required, Validators.maxLength(50)]],
       jobTitle: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
@@ -110,7 +123,7 @@ export class AddJobComponent implements OnInit {
 
   async getJobById(id: any) {
     try {
-      this.loaderService.show();
+      // this.loaderService.show();
       let data: any = await this.jobApi.getJobDetailsById(id);
       this.originalData = data;
       this.addJobForm.patchValue({
@@ -127,6 +140,8 @@ export class AddJobComponent implements OnInit {
         jobLevel: data.jobLevel,
         jobInfo: data.jobInfo,
         jobLocation: data.jobLocation,
+        endExp : this.parseRange(data.experience).max,
+        startExp : this.parseRange(data.experience).min,
       })
       if (data && data?.skills?.length) {
         this.skills.clear();
@@ -144,11 +159,11 @@ export class AddJobComponent implements OnInit {
           }
           this.skills.push(group);
         });
-        this.handleExperienceSplit(data?.experience);
-        this.loaderService.hide();
+        // this.handleExperienceSplit(data?.experience);
+        // this.loaderService.hide();
       }
     } catch (error) {
-      this.loaderService.hide();
+      // this.loaderService.hide();
       console.log(error);
     }
 
@@ -156,23 +171,27 @@ export class AddJobComponent implements OnInit {
   }
 
   async addJob() {
+    if(this.editfield && this.editJobId) { 
+      this.jobId = this.editJobId;
+    }
     if (this.addJobForm.valid) {
       const data = this.addJobForm.value;
       if (!data || Object.keys(data).length === 0) {
 
         return;
       }
-      // this.loaderService.show();
+      
       let obj = {
         ...data,
         experience: this.addJobForm.get('startExp')?.value + "-" + this.addJobForm.get('endExp')?.value,
         createdBy: this.userName,
-        ...(this.editfield && { jobId: this.jobId, updatedBy: this.userName }),
+        ...(this.editfield && { jobId: this.jobId, updatedBy: this.userName, isOpen : true }),
 
       }
       obj.createdBy = this.userName;
 
       try {
+        // this.loaderService.show();
         const apiCall = this.editfield
           ? this.jobApi.updateJob(obj)
           : this.jobApi.addJob(obj);
@@ -256,6 +275,11 @@ export class AddJobComponent implements OnInit {
     console.log(any);
     this.generateExp(Number(any[0]), Number(any[1]));
   }
+
+  parseRange(str: string) {
+  const [min, max] = str.split('-').map(Number);
+  return { min, max };
+}
   async handleGetAllSkills() {
     try {
       const res: any = await this.jobApi.getAllSkills();

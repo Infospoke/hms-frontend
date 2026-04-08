@@ -13,5 +13,9 @@ export const JOB_ROUTES: Routes = [
   {
     path: 'job-details',
     loadComponent: () => import('../components/job-overview/job-overview').then(c => c.JobOverview)
+  },
+  {
+    path : 'edit-job/:id',
+    loadComponent: () => import('../components/add-job/add-job.component').then(c => c.AddJobComponent)
   }
 ];

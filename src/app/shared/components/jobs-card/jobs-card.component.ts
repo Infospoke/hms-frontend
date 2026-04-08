@@ -21,6 +21,7 @@ export class JobsCardComponent implements OnChanges{
   @Input() showJobDetails:boolean=false;
   @Input() isSimpleView:boolean=false;
   @Output() selectedJob=new EventEmitter<any>();
+  @Output() action = new EventEmitter<{type: 'edit' | 'delete', data: any}>();
 
   constructor(){}
   ngOnChanges(changes: SimpleChanges): void {
@@ -32,9 +33,9 @@ export class JobsCardComponent implements OnChanges{
 
   handleAction(type: 'edit' | 'delete', job: any) {
     if(type === 'edit') {
-      this.selectedJob.emit({type:'edit',data:job});
+      this.action.emit({type:'edit',data:job});
     } else if(type === 'delete') {
-      this.selectedJob.emit({type:'delete',data:job});
+      this.action.emit({type:'delete',data:job});
     }
 }
 }

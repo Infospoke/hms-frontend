@@ -1,10 +1,23 @@
 <div class="card" *ngIf="job!=null && job!==undefined" [ngClass]="{ 'active-card': isActive , 'flat': isSimpleView  }" (click)="handleSelectedCard(job?.jobId)" [style.width]="width">
+    
   <div class="card-header-info">
+
     <div>
       <h6>{{job?.jobTitle}}</h6>
       <p>JOB CODE - {{job?.jobCode}}</p>
     </div>
+
+        <div class="menu-wrapper" (click)="$event.stopPropagation()">
+      <i class="fa-solid fa-ellipsis-vertical menu-icon"></i>
+
+      <div class="menu-dropdown">
+        <div class="menu-item" (click)="handleAction('edit', job?.jobId)">Edit <nz-icon nzType="edit" nzTheme="outline" /></div>
+        <div class="menu-item delete" (click)="handleAction('delete', job?.jobId)">Delete<nz-icon nzType="delete" nzTheme="outline" /></div>
+      </div>
+    </div>
   </div>
+
+
 
   <div class="info">
     <div class="item">

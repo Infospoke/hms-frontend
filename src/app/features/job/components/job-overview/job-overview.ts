@@ -42,7 +42,7 @@ export class JobOverview {
   activeTab: any = 'all-jobs';
   selectedCandidateForDetail: any = null;
   selectedApplicantStatus: any = 'APPLIED';
-
+  pdfSrc:any;
   filtersData: any = {};
   selectedFilters: any = {};
   isVisible = false;
@@ -161,6 +161,7 @@ export class JobOverview {
       let res: any;
 
       switch (event.type) {
+
         case 'interview':
           res = await this.jobApi.moveToInterview({
             application_id: event?.candidate?.id,
@@ -176,17 +177,37 @@ export class JobOverview {
           });
           break;
 
-        case 'schedule':
-          console.log('Scheduling interview for:', event.candidate);
-          return;
-
+        case 'viewResume': 
+          res= await this.jobApi.viewResume(
+            'resume',
+            event.candidate.id,
+            'view'
+          );
+        
+          break;
         default:
           return;
       }
 
-      if(res?.success) {
-        this.notificationService.success('Success', `Candidate ${event.type === 'hire' ? 'hired' : event.type === 'reject' ? 'rejected' : 'moved to interview'} successfully`);
+      if(event.type === 'viewResume') {
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        return;
       }
+
+      if (res?.success) {
+        this.notificationService.success(
+          'Success',
+          `Candidate ${event.type === 'hire'
+            ? 'hired'
+            : event.type === 'reject'
+              ? 'rejected'
+              : 'moved to interview'
+          } successfully`
+        );
+      }
+
       this.loadApplicants(this.selectedApplicantStatus, this.selectedJobId);
 
     } catch (error) {

@@ -31,7 +31,7 @@ export class JobService {
 
   // ================== API CALLS + AUTO STORE ==================
 
-  async getJobsList(isOpen: boolean){
+  async getJobsList(isOpen: boolean) {
     const res = await firstValueFrom(
       this.api.get(API.JOBS.GET_ALL_JOBS(isOpen))
     );
@@ -55,33 +55,33 @@ export class JobService {
     return res;
   }
 
-  async addJob(data:any){
+  async addJob(data: any) {
     return await firstValueFrom(
-      this.api.post(API.JOBS.ADD_JOB,data)
+      this.api.post(API.JOBS.ADD_JOB, data)
     );
   }
-  async updateJob(data:any){
+  async updateJob(data: any) {
     return await firstValueFrom(
-      this.api.put(API.JOBS.UPDATE_JOB,data)
+      this.api.put(API.JOBS.UPDATE_JOB, data)
     );
   }
 
-  async getAllSkills(){
+  async getAllSkills() {
     return await firstValueFrom(
       this.api.get(API.JOBS.GET_ALL_SKILLS)
     );
   }
-  async getActivityLogs(){
+  async getActivityLogs() {
     return await firstValueFrom(
       this.api.get(API.JOBS.GET_ACTIVITY_LOGS)
     );
   }
-  async addApplicant(formData:FormData){
+  async addApplicant(formData: FormData) {
     return await firstValueFrom(
-      this.api.websitePost(API.JOBS.ADD_APPLICANT,formData)
+      this.api.websitePost(API.JOBS.ADD_APPLICANT, formData)
     );
   }
-  async getjobsByCountry(country:any){
+  async getjobsByCountry(country: any) {
     return await firstValueFrom(
       this.api.websiteGet(API.JOBS.GET_JOBS_BY_COUNTRY(country))
     );
@@ -108,6 +108,11 @@ export class JobService {
     return res;
   }
 
+  async scheduleInterview(data: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.JOBS.SCHEDULE_INTERVIEW, data)
+    );
+  }
   async getApplicantById(applicantId: any) {
     const res = await firstValueFrom(
       this.api.get(API.JOBS.GET_APPLICANT_BY_ID(applicantId))
@@ -136,15 +141,28 @@ export class JobService {
 
   async updateApplicantStatus(data: any) {
     return await firstValueFrom(
-     this.api.aiPut(API.JOBS.UPDATE_APPLICANT_BY_ID, data)
+      this.api.aiPut(API.JOBS.UPDATE_APPLICANT_BY_ID, data)
     );
-   }
+  }
 
+  async viewResume(type: any, user: any, action: any) {
+    return await firstValueFrom(
+      this.api.websiteGetBlob(
+        API.JOBS.VIEW_RESUME(type, user, action)
+      )
+    );
+  }
   getJobsListValue() {
     return this.jobsListSignal();
   }
 
   getApplicantsValue() {
     return this.applicantsSignal();
+  }
+
+  async deleteJob(jobId: any) {
+    return await firstValueFrom(
+      this.api.delete(API.JOBS.DELETE_JOB(jobId))
+    );
   }
 }

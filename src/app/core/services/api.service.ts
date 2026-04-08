@@ -12,23 +12,23 @@ export class ApiService {
   private websiteURL = environment.websiteURL;
   private aiBaseUrl = environment.atsUrl;
 
-  get<T>(endpoint : string, params?: any): Observable<T> {
+  get<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
   }
 
-  post<T>(endpoint : string, body: any): Observable<T> {
+  post<T>(endpoint: string, body: any): Observable<T> {
     return this.http.post<T>(`${this.baseUrl}${endpoint}`, body);
   }
 
-  put<T>(endpoint : string, body: any): Observable<T> {
+  put<T>(endpoint: string, body: any): Observable<T> {
     return this.http.put<T>(`${this.baseUrl}${endpoint}`, body);
   }
 
-  delete<T>(endpoint : string): Observable<T> {
+  delete<T>(endpoint: string): Observable<T> {
     return this.http.delete<T>(`${this.baseUrl}${endpoint}`);
   }
 
-  patch<T>(endpoint : string, body: any): Observable<T> {
+  patch<T>(endpoint: string, body: any): Observable<T> {
     return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body);
   }
 
@@ -48,23 +48,30 @@ export class ApiService {
   websiteGet<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.websiteURL}${endpoint}`, { params });
   }
-  aiGet<T>(endpoint : string, params?: any): Observable<T> {
+
+  websiteGetBlob(endpoint: string, params?: any): Observable<Blob> {
+    return this.http.get(`${this.websiteURL}${endpoint}`, {
+      params,
+      responseType: 'blob'
+    });
+  }
+  aiGet<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.aiBaseUrl}${endpoint}`, { params });
   }
 
-  aiPost<T>(endpoint : string, body: any): Observable<T> {
+  aiPost<T>(endpoint: string, body: any): Observable<T> {
     return this.http.post<T>(`${this.aiBaseUrl}${endpoint}`, body);
   }
 
-  aiPut<T>(endpoint : string, body: any): Observable<T> {
+  aiPut<T>(endpoint: string, body: any): Observable<T> {
     return this.http.put<T>(`${this.aiBaseUrl}${endpoint}`, body);
   }
 
-  aiDelete<T>(endpoint : string): Observable<T> {
+  aiDelete<T>(endpoint: string): Observable<T> {
     return this.http.delete<T>(`${this.aiBaseUrl}${endpoint}`);
   }
 
-  aiPatch<T>(endpoint : string, body: any): Observable<T> {
+  aiPatch<T>(endpoint: string, body: any): Observable<T> {
     return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body);
   }
 

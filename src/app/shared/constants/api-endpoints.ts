@@ -25,6 +25,8 @@ export const API = {
        GET_ALL_APPLICANTS:() => `/jobs/get-all-jobs-applicants`,
        GET_CANDIDATE_BY_ID:() => `/jobs/get-candidate-by-id`,
        GET_APPLICANT_BY_ID:(id:any) => `/jobs/view-applicant-by-id/${id}`,
-       GET_ALL_ANALYSIS : '/api/resume/analysis'
+       GET_ALL_ANALYSIS : '/api/resume/analysis',
+       MOVE_TO_INTERVIEW: `/api/interview/create-interview-session`,
+       UPDATE_APPLICANT_BY_ID:'/api/interview/update-final-candidate-decision'
     }
 }

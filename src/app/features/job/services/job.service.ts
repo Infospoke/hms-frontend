@@ -128,6 +128,18 @@ export class JobService {
     return res;
   }
 
+  async moveToInterview(data: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.JOBS.MOVE_TO_INTERVIEW, data)
+    );
+  }
+
+  async updateApplicantStatus(data: any) {
+    return await firstValueFrom(
+     this.api.aiPut(API.JOBS.UPDATE_APPLICANT_BY_ID, data)
+    );
+   }
+
   getJobsListValue() {
     return this.jobsListSignal();
   }

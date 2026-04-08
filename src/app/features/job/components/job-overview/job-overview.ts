@@ -11,6 +11,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { CandidateDetailComponent } from '../candidate-detail/candidate-detail.component';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-job-overview',
@@ -32,6 +33,7 @@ import { Router } from '@angular/router';
 export class JobOverview {
   private jobApi = inject(JobService);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
   jobsList: any[] = [];
   filteredJobsList: any[] = [];
   selectedJobId: any = null;
@@ -116,10 +118,81 @@ export class JobOverview {
     this.loadApplicants(status, this.selectedJobId);
   }
 
-  handleCandidateAction(event: any) {
-    console.log('Candidate action:', event.type, event.candidate);
-  }
+  // async handleCandidateAction(event: any) {
+  //   console.log('Candidate action:', event.type, event.candidate);
+  //   let api: any = '';
+  //   let obj: any = {};
+  //   switch (event.type) {
+  //     case 'interview':
+  //       api = this.jobApi.moveToInterview;
+  //       obj = {
+  //         applicationId: event?.candidate?.id,
+  //         question_type: "AI",
+  //       };
+  //       break;
+  //     case 'hire':
+  //     case 'reject':
+  //       api = this.jobApi.updateApplicantStatus;
+  //       obj = {
+  //         applicationId: event.candidate.id,
+  //         status: event?.type === 'hire' ? 'HIRED' : 'REJECTED',
+  //       };
+  //       break;
+  //     case 'schedule':
 
+  //       console.log('Scheduling interview for:', event.candidate);
+  //       return;
+  //     default: return;
+  //   }
+  //   console.log('API to call:', api);
+  //   console.log('Payload:', obj);
+  //   try {
+  //     let res = await api(obj);
+  //     console.log(res);
+  //     this.loadApplicants(this.selectedApplicantStatus, this.selectedJobId);
+  //   } catch (error) {
+  //     console.error('Error occurred while updating applicant status:', error);
+  //   }
+  // }
+  async handleCandidateAction(event: any) {
+    console.log('Candidate action:', event.type, event.candidate);
+
+    try {
+      let res: any;
+
+      switch (event.type) {
+        case 'interview':
+          res = await this.jobApi.moveToInterview({
+            application_id: event?.candidate?.id,
+            question_type: "AI",
+          });
+          break;
+
+        case 'hire':
+        case 'reject':
+          res = await this.jobApi.updateApplicantStatus({
+            application_id: event.candidate.id,
+            status: event?.type === 'hire' ? 'HIRED' : 'REJECTED',
+          });
+          break;
+
+        case 'schedule':
+          console.log('Scheduling interview for:', event.candidate);
+          return;
+
+        default:
+          return;
+      }
+
+      if(res?.success) {
+        this.notificationService.success('Success', `Candidate ${event.type === 'hire' ? 'hired' : event.type === 'reject' ? 'rejected' : 'moved to interview'} successfully`);
+      }
+      this.loadApplicants(this.selectedApplicantStatus, this.selectedJobId);
+
+    } catch (error) {
+      console.error('Error occurred while updating applicant status:', error);
+    }
+  }
   async openPopup() {
     if (!this.jobsList.length) {
       await this.loadJobs();

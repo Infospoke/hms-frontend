@@ -1,0 +1,82 @@
+<div class="container overflow-container">
+  <div class="top-bar">
+    <div class="tabs-div">
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab === 'all-jobs'" (click)="handleTab('all-jobs')">Job Overview</button>
+        <button class="tab" [class.active]="activeTab === 'applicants'" (click)="handleTab('applicants')">Applicants</button>
+      </div>
+    </div>
+    <div class="btn-div">
+      <button class="create-btn">+ Create Job</button>
+    </div>
+  </div>
+
+  <div class="jobs-container-data">
+    <div class="jobs-list">
+      <div class="jobs-top">
+        <span>Jobs</span>
+        <button class="filter-btn" (click)="openPopup()">
+          <i class="fa-solid fa-filter"></i>
+          Filter
+        </button>
+      </div>
+      <div class="all-jobs">
+        <app-job
+          [filteredJobs]="filteredJobsList"
+          (selectedJobIdChange)="handleSelectedJob($event)" />
+      </div>
+    </div>
+
+    <div class="jobs-overview">
+      <div class="stages-list">
+        <div class="helper" *ngFor="let item of stages">
+          <app-pipe-line-cards [stage]="item" [height]="'100px'"></app-pipe-line-cards>
+        </div>
+      </div>
+
+      <app-view-job [job]="selectedJob" *ngIf="activeTab === 'all-jobs'" />
+
+      <div class="applicants-layout" *ngIf="activeTab === 'applicants'">
+        <div class="applicants-intake-scroll">
+          <app-applied-candidates
+            [jobId]="selectedJobId"
+            (statusSelected)="getStatus($event)"
+            (candidateSelected)="onCandidateSelected($event)" />
+        </div>
+        <div class="applicants-detail-sticky">
+          <app-candidate-detail
+            [candidate]="selectedCandidateForDetail"
+            (action)="handleCandidateAction($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Filters"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleApply()"
+  [nzFooter]="footerTpl">
+
+  <ng-container *nzModalContent>
+    <div class="filters-container">
+      <div class="filter-group" *ngFor="let key of (filtersData | keyvalue)">
+        <div class="heading">{{ key.key }}</div>
+        <label nz-checkbox
+          *ngFor="let val of key.value"
+          [ngModel]="selectedFilters[key.key]?.[val] || false"
+          (ngModelChange)="onCheckboxChange(key.key, val, $event)">
+          {{ val }}
+        </label>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #footerTpl>
+    <button nz-button (click)="handleCancel()">Cancel</button>
+    <button nz-button (click)="handleReset()">Reset</button>
+    <button nz-button nzType="primary" (click)="handleApply()">Apply</button>
+  </ng-template>
+</nz-modal>

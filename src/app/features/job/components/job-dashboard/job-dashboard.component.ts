@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { JobService } from '../services/job.service';
-import { DashboardComponent } from "../../dashboard/dashboard.component";
+import { JobService } from '../../services/job.service';
+import { DashboardComponent } from '../../../dashboard/dashboard.component';
 
 @Component({
   selector: 'app-job-dashboard',

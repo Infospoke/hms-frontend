@@ -5,13 +5,13 @@ import { CommonModule } from '@angular/common';
 
 import { JobService } from '../job/services/job.service';
 import { HeadingContainerComponent } from '../../shared/components/heading-container/heading-container.component';
-import { JobsCardComponent } from '../../shared/components/jobs-card/jobs-card.component';
 import { PipeLineCardsComponent } from '../../shared/components/pipe-line-cards/pipe-line-cards.component';
+import { JobsCardComponent } from '../../shared/components/jobs-card/jobs-card.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeadingContainerComponent, CommonModule, JobsCardComponent, PipeLineCardsComponent],
+  imports: [HeadingContainerComponent, CommonModule, PipeLineCardsComponent,JobsCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

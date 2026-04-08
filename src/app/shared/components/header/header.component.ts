@@ -15,8 +15,8 @@ sidebarCollapsed = input(false);
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
 
-  get userName(): string { return this.tokenService.getUser()?.name || 'User'; }
-  get userRole(): string { return this.tokenService.getUser()?.role || ''; }
+  // get userName(): string { return this.tokenService.getUser()?.name || 'User'; }
+  // get userRole(): string { return this.tokenService.getUser()?.role || ''; }
 
   logout() { this.authService.logout(); }
 }

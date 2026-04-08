@@ -11,6 +11,7 @@ import { PermissionService } from './core/services/permission.service';
 import { authInterceptor } from './core/auth/auth-interceptor';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
 import { loaderInterceptor } from './core/interceptors/loader-interceptor';
+import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 
 function initializeApp(authService: AuthService, permissionService: PermissionService) {
   return () => {
@@ -26,6 +27,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
     provideHttpClient(withInterceptors([loaderInterceptor, authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
+    { provide: NZ_I18N, useValue: en_US },
     provideNzConfig({ notification: { nzPlacement: 'topRight', nzDuration: 4000 } }),
     provideNzIcons([CheckCircleOutline, CloseCircleOutline, ExclamationCircleOutline, InfoCircleOutline]),
     {

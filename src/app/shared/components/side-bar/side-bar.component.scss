@@ -1,5 +1,5 @@
 .sidebar {
-  width: 260px;
+  width: 230px;
   height: 100vh;
   background: #fff;
   border-right: 1px solid #e5e7eb;
@@ -45,7 +45,7 @@
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 8px;
+  padding: 10px;
   overflow-y: auto;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
@@ -54,8 +54,8 @@
 .nav-group { position: relative; }
 
 .nav-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; gap: 2px;
+  padding: 10px 10px 10px 0px; border-radius: 8px; cursor: pointer;
   color: #4b5563; text-decoration: none; white-space: nowrap;
   transition: all 0.15s;
   &:hover { background: #f3f4f6; }
@@ -74,14 +74,14 @@
 }
 
 .sub-nav {
-  padding-left: 24px;
+  padding-left: 10px;
   .nav-item.child { padding: 8px 0px 8px 25px; font-size: 13px; }
 }
 
 .sub-nav::before {
   content: '';
   position: absolute;
-  left: 25px;
+  left: 10px;
 
   /* Dynamic spacing */
   top: 50px;

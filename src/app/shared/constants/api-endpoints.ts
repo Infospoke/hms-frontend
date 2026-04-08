@@ -14,6 +14,10 @@ export const API = {
     JOBS:{
        GET_ALL_JOBS:(id:any)=>`/jobs/get-all-jobs/${id}`,
        GET_DASHBOARD_DATA:"/jobs/get-all-jobs-dashboard-counts",
-       GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`    
+       GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`,
+       GET_ALL_APPLICANTS:() => `/jobs/get-all-jobs-applicants`,
+       GET_CANDIDATE_BY_ID:() => `/jobs/get-candidate-by-id`,
+       GET_APPLICANT_BY_ID:(id:any) => `/jobs/view-applicant-by-id/${id}`,
+       GET_ALL_ANALYSIS : '/api/resume/analysis'
     }
 }

@@ -28,4 +28,36 @@ export class JobService {
       this.api.get(API.JOBS.GET_JOB_BY_ID(jobId))
     );
   }
+
+  async addJob(data:any){
+    return await firstValueFrom(
+      this.api.post(API.JOBS.ADD_JOB,data)
+    );
+  }
+  async updateJob(data:any){
+    return await firstValueFrom(
+      this.api.put(API.JOBS.UPDATE_JOB,data)
+    );
+  }
+
+  async getAllSkills(){
+    return await firstValueFrom(
+      this.api.get(API.JOBS.GET_ALL_SKILLS)
+    );
+  }
+  async getActivityLogs(){
+    return await firstValueFrom(
+      this.api.get(API.JOBS.GET_ACTIVITY_LOGS)
+    );
+  }
+  async addApplicant(formData:FormData){
+    return await firstValueFrom(
+      this.api.websitePost(API.JOBS.ADD_APPLICANT,formData)
+    );
+  }
+  async getjobsByCountry(country:any){
+    return await firstValueFrom(
+      this.api.websiteGet(API.JOBS.GET_JOBS_BY_COUNTRY(country))
+    );
+  }
 }

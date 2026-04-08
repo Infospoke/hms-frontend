@@ -22,21 +22,8 @@ export class DashboardComponent implements OnInit {
   @Input() jobsListData: any[] = [];
   @Input() selectedJobId!:any;
   @Input() selectedJob!:any;
-  activityList: any = [];
-  activityLogs = [
-    { user: 'Venkat', action: 'created a new job posting', time: '2 mins ago' },
-    { user: 'Ravi', action: 'moved candidate to Interview stage', time: '10 mins ago' },
-    { user: 'Anjali', action: 'approved hiring request', time: '30 mins ago' },
-    { user: 'HR Team', action: 'closed a job position', time: '1 hour ago' },
-    { user: 'Venkat', action: 'created a new job posting', time: '2 mins ago' },
-    { user: 'Ravi', action: 'moved candidate to Interview stage', time: '10 mins ago' },
-    { user: 'Anjali', action: 'approved hiring request', time: '30 mins ago' },
-    { user: 'HR Team', action: 'closed a job position', time: '1 hour ago' },
-    { user: 'Venkat', action: 'created a new job posting', time: '2 mins ago' },
-    { user: 'Ravi', action: 'moved candidate to Interview stage', time: '10 mins ago' },
-    { user: 'Anjali', action: 'approved hiring request', time: '30 mins ago' },
-
-  ];
+  @Input() activityList: any = [];
+  
   @Input() pipeLineDetails!: any;
   @Output() emitSelectedJobId=new EventEmitter<any>();
   selectedBackgroundColor: any = 'linear-gradient(135deg, #2563EB,  #60A5FA, #3059cb)';
@@ -47,7 +34,6 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     window.addEventListener('resize', () => this.checkScreen());
-    
   }
   
   checkScreen() {
@@ -75,6 +61,25 @@ export class DashboardComponent implements OnInit {
   }
 
  
+  getTimeAgo(timeStamp: string): string {
+    console.log(timeStamp,'timestamp')
+  const now = new Date();
+  const past = new Date(timeStamp);
+  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
 
+  const minutes = Math.floor(diffInSeconds / 60);
+  const hours = Math.floor(diffInSeconds / 3600);
+  const days = Math.floor(diffInSeconds / 86400);
+
+  if (diffInSeconds < 60) {
+    return 'just now';
+  } else if (minutes < 60) {
+    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  } else if (hours < 24) {
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  } else {
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+  }
+}
  
 }

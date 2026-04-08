@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://172.16.1.101:5003/infospoke-portal',
+  websiteURL:'http://172.16.1.101:5003/infospoke-website',
   // apiUrl:'https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Infospoke',
   //apiUrl: "http://localhost:5000",
   resumeDownloadApi:"https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Website/job/download",

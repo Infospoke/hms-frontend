@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
-
+  private websiteURL = environment.websiteURL;
   get<T>(endpoint : string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
   }
@@ -38,5 +38,12 @@ export class ApiService {
   silentPost<T>(endpoint: string, body: any): Observable<T> {
     const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
     return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { headers });
+  }
+
+  websitePost<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.post<T>(`${this.websiteURL}${endpoint}`, body);
+  }
+  websiteGet<T>(endpoint: string, params?: any): Observable<T> {
+    return this.http.get<T>(`${this.websiteURL}${endpoint}`, { params });
   }
 }

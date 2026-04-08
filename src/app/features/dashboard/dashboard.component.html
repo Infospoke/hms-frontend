@@ -78,7 +78,7 @@
 
                 <div class="activity-body">
                     <div class="activity-list">
-                        <div class="activity-item" *ngFor="let log of activityLogs">
+                        <div class="activity-item" *ngFor="let log of activityList">
 
                             <!-- DOT -->
                             <div class="dot"></div>
@@ -86,9 +86,9 @@
                             <!-- CONTENT -->
                             <div class="activity-content">
                                 <p class="message">
-                                    <strong>{{log.user}}</strong> {{log.action}}
+                                    {{log?.activity}}
                                 </p>
-                                <span class="time">{{log.time}}</span>
+                                <span class="time">{{getTimeAgo(log?.timeStamp)}}</span>
                             </div>
 
                         </div>

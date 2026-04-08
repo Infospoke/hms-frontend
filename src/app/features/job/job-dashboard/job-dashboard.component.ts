@@ -17,9 +17,11 @@ export class JobDashboardComponent implements OnInit {
   jobsListData:any;
   selectedJobId:any;
   selectedJob:any;
+  activityList:any;
   ngOnInit(): void {
     this.getJobs();
     this.getDashboardCount();
+    this.getActityvityLogs();
   }
 
   async getDashboardCount() {
@@ -51,6 +53,17 @@ export class JobDashboardComponent implements OnInit {
 
     }
 
+  }
+
+  async getActityvityLogs(){
+    try {
+      const res: any = await this.jobApi.getActivityLogs();
+      this.activityList = res;
+      console.log(this.activityList);
+    }
+    catch (error) {
+
+    }
   }
   handleSelectedJob($event: any) {
     this.selectedJobId = $event;

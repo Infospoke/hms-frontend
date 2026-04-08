@@ -5,10 +5,11 @@ import { CommonModule } from '@angular/common';
 import { JobService } from '../services/job.service';
 import { ViewJob } from '../view-job/view-job';
 import { AppliedCandidatesComponent } from '../applied-candidates/applied-candidates.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-job-overview',
-  imports: [JobComponent, PipeLineCardsComponent, CommonModule,ViewJob,AppliedCandidatesComponent],
+  imports: [JobComponent, PipeLineCardsComponent, CommonModule, ViewJob, AppliedCandidatesComponent],
   templateUrl: './job-overview.html',
   styleUrl: './job-overview.scss',
 })
@@ -18,22 +19,27 @@ export class JobOverview {
   stages: any;
   activeTab: any = 'all-jobs';
   private jobApi = inject(JobService);
+  private router = inject(Router);
   selectedJob: any;
   selectedBackgroundColor: any = 'linear-gradient(135deg, #2563EB,  #60A5FA, #3059cb)';
   normalBackgroundColor: any = '#ffffff';
   constructor() { }
 
   ngOnInit(): void {
-   
+    const activeTab = history.state?.activeTab;
+    if (activeTab === 'applicants' || activeTab === 'job-details') {
+      this.activeTab = activeTab;
+    }
+
   }
 
-  
+
   handleSelectedJob($event: any) {
     this.selectedJobId = $event;
     this.handleJobDetailsById();
   }
 
- async handleJobDetailsById() {
+  async handleJobDetailsById() {
     try {
       const res: any = await this.jobApi.getJobDetailsById(this.selectedJobId);
       this.stages = [
@@ -51,7 +57,10 @@ export class JobOverview {
     }
   }
 
-  handleTab(tabName:any){
+  handleTab(tabName: any) {
     this.activeTab = tabName;
+  }
+  handleCreateJob() {
+    this.router.navigate(['/jobs/add-job']);
   }
 }

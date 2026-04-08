@@ -18,7 +18,7 @@
   </div>
 
   <div class="skills">
-    <span *ngFor="let skill of job?.skills">{{ skill }}</span>
+    <span *ngFor="let skill of job?.skills">{{ skill?.skillName }}</span>
   </div>
 
   <div class="footer" *ngIf="showJobDetails">

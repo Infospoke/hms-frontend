@@ -75,6 +75,11 @@ export class DashboardComponent implements OnInit {
   }
 
  
-
+getHirePercentage(): number {
+  const hired = this.stages?.find((s: any) => s.title === 'Hired')?.count || 0;
+  const totalApplied = this.stages?.find((s: any) => s.title === 'Applied')?.count || 0;
+  if (!totalApplied) return 0;
+  return (hired / totalApplied) * 100;
+}
  
 }

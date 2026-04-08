@@ -140,4 +140,10 @@ export class JobService {
   getApplicantsValue() {
     return this.applicantsSignal();
   }
+
+  async deleteJob(jobId: any) {
+    return await firstValueFrom(
+      this.api.delete(API.JOBS.DELETE_JOB(jobId))
+    );
+  }
 }

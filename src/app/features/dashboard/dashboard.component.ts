@@ -62,7 +62,6 @@ export class DashboardComponent implements OnInit {
 
 
   getTimeAgo(timeStamp: string): string {
-    console.log(timeStamp, 'timestamp')
     const now = new Date();
     const past = new Date(timeStamp);
     const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);

@@ -25,6 +25,7 @@ export const API = {
        GET_ALL_APPLICANTS:() => `/jobs/get-all-jobs-applicants`,
        GET_CANDIDATE_BY_ID:() => `/jobs/get-candidate-by-id`,
        GET_APPLICANT_BY_ID:(id:any) => `/jobs/view-applicant-by-id/${id}`,
-       GET_ALL_ANALYSIS : '/api/resume/analysis'
+       GET_ALL_ANALYSIS : '/api/resume/analysis',
+       SCHEDULE_INTERVIEW : '/api/interview/admin-schedule-interview'
     }
 }

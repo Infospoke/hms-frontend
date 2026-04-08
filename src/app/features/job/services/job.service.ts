@@ -108,6 +108,11 @@ export class JobService {
     return res;
   }
 
+  async scheduleInterview(data : any){
+    return await firstValueFrom(
+      this.api.aiPost(API.JOBS.SCHEDULE_INTERVIEW,data)
+    );
+  }
   async getApplicantById(applicantId: any) {
     const res = await firstValueFrom(
       this.api.get(API.JOBS.GET_APPLICANT_BY_ID(applicantId))

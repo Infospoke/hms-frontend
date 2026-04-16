@@ -92,5 +92,12 @@ export class AuthService {
     );
   }
 
-  
+    getRole() {
+    const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1])).role;
+  }
+   isLoggedIn() {
+    return !!this.tokenService.getAccessToken();
+  }
 }

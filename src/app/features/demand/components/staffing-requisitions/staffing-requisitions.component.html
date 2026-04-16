@@ -1,0 +1,44 @@
+<div class="sr-page">
+
+    <div class="sr-header">
+        <h2 class="sr-title">My Staffing Requisitions</h2>
+        <button class="btn-new" (click)="newSR()">+ New SR</button>
+    </div>
+
+    <div class="banner" *ngIf="draftSR">
+        <span class="dot"></span>
+        You have 1 draft SR in progress.
+        <span class="banner-link" (click)="resumeSR(draftSR!)">Resume {{ draftSR.id }}</span>
+    </div>
+
+    <div class="sr-list">
+        <div class="sr-row" *ngFor="let sr of requisitions">
+
+
+            <div class="sr-left">
+                <span class="sr-id">{{ sr.id }}</span>
+
+                <div class="sr-info">
+                    <p class="sr-name">{{ sr.title }}</p>
+                    <p class="sr-meta">{{ sr.meta }}</p>
+                </div>
+            </div>
+
+
+            <div class="sr-right" (click)="$event.stopPropagation()">
+
+
+
+                <span class="badge" [ngClass]="badgeClass(sr.status)">
+                    {{ sr.status }}
+                </span>
+                <div class="sr-actions" *ngIf="showActions(sr)">
+                    <i class="fa fa-eye action-icon" (click)="viewSR(sr)"></i>
+                    <i class="fa fa-pencil action-icon edit" *ngIf="canEdit(sr)" (click)="editSR(sr)"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

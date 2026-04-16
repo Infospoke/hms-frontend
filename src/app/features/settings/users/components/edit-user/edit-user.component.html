@@ -1,0 +1,78 @@
+<div class="user-card">
+  <div class="header">
+    <div class="avatar">PS</div>
+    <div>
+      <h3>{{user.name}}</h3>
+      <p>{{user.email}} • 
+        <span [ngClass]="user.isActive ? 'status active' : 'status inactive'">
+          {{ user.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </p>
+    </div>
+  </div>
+
+  <hr>
+  <div class="form-group">
+    <label>Current Role</label>
+    <div class="role-box">
+      <span class="role">{{user.currentRole}}</span>
+      <span class="assigned">
+        Assigned {{user.assignedDate}} by {{user.assignedBy}}
+      </span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Change Role</label>
+    <select [(ngModel)]="form.role">
+      <option value="" disabled selected>Select Role</option>
+      <option *ngFor="let role of roles" [value]="role">
+        {{role}}
+      </option>
+    </select>
+    <small class="info">
+      Role change takes effect on next login or within 5 minutes
+    </small>
+  </div>
+
+  <div class="grid">
+
+    <div class="form-group">
+      <label>Business Unit</label>
+      <select [(ngModel)]="form.businessUnit">
+        <option value="" disabled selected>Select Business Unit</option>
+        <option *ngFor="let bu of businessUnits">{{bu}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Department</label>
+      <select [(ngModel)]="form.department">
+        <option value="" disabled selected>Select Department</option>
+        <option *ngFor="let dept of departments">{{dept}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Designation</label>
+      <select [(ngModel)]="form.designation">
+        <option value="" disabled selected>Select Designation</option>
+        <option *ngFor="let d of designations">{{d}}</option>
+      </select>
+    </div>
+
+  </div>
+
+
+  <div class="danger" *ngIf="user.isActive">
+    <button class="deactivate-btn" (click)="deactivateUser()">
+      Deactivate user account
+    </button>
+  </div>
+
+  <div class="actions">
+    <button class="cancel" (click)="reset()">Cancel</button>
+    <button class="save" (click)="save()">Save changes</button>
+  </div>
+
+</div>

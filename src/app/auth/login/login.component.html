@@ -1,62 +1,88 @@
 <div class="login-wrapper">
-  <div class="login-card">
-    <!-- Left Panel -->
-    <div class="login-left">
-      <img src="../../../assets/images/loginImage.svg" alt="Login image" class="login-image" />
+  <div class="login-c">
+
+    <div class="login-logo">
+      <app-heading [heading]="'NEXUS'" [subHeading]="'Hiring Management System'" [headingFontSize]="'20px'"
+        [subHeadingFontSize]="'14px'" [headingColor]="'var(--brand-color)'" [subHeadingColor]="'#64748b'"
+        [isCenter]="true"></app-heading>
     </div>
 
-    <!-- Right Panel -->
-    <div class="login-right">
-      <h2 class="login-title">Admin Login</h2>
-      <p class="login-subtitle">Login to access your Infospoke admin account</p>
+    <app-heading [heading]="'Welcome'" [subHeading]="'Sign in to your workspace'" [headingFontSize]="'20px'"
+      [subHeadingFontSize]="'14px'" [headingColor]="'var(--brand-color)'" [subHeadingColor]="'#64748b'"
+      [isCenter]="true"></app-heading>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <!-- Email -->
-        <label class="form-label">Email<span class="required"> *</span></label>
-        <input type="text" formControlName="email" placeholder="Enter Email" class="form-control" />
-        <div>
-                  @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
-          @if (loginForm.get('email')?.errors?.['required']) {
-            <small class="error-text">Email is required.</small>
-          }
-        }
-        </div>
 
-        <!-- Password -->
-        <label class="form-label">Password<span class="required"> *</span></label>
-        <div class="password-group">
-          <input [type]="hide() ? 'password' : 'text'"
-                 placeholder="Enter Password"
-                 class="form-control"
-                 formControlName="password" />
-          <span class="toggle-password" (click)="hide.update(v => !v)">
-            <span class="material-icons">
-              {{ hide() ? 'visibility' : 'visibility_off' }}
-            </span>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="field-g">
+        <label class="fl-label">
+          Work email <span class="req">*</span>
+        </label>
+
+        <input type="email" class="fi" formControlName="email" placeholder="Enter your email" />
+
+        <!-- Error -->
+        <div class="error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">
+            Email is required
+          </span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">
+            Enter valid email
           </span>
         </div>
-        <div>
-                  @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
-          @if (loginForm.get('password')?.errors?.['required']) {
-            <small class="error-text">Password is required.</small>
-          }
-        }
+      </div>
+
+      <!-- Password -->
+      <div class="field-g">
+        <label class="fl-label">
+          Password <span class="req">*</span>
+        </label>
+
+        <div class="password-wrapper">
+          <input [type]="hide() ? 'password' : 'text'" class="fi" formControlName="password"
+            placeholder="Enter your password" />
+
+          <span class="eye-icon" (click)="hide.set(!hide())">
+            <i *ngIf="hide()" class="fa fa-eye-slash"></i>
+            <i *ngIf="!hide()" class="fa fa-eye"></i>
+          </span>
         </div>
 
-        <!-- Options -->
-        <div class="options">
-          <a class="forgot-link" (click)="forgotPassword()">Forgot Password ?</a>
+        <div class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+
+          <span *ngIf="loginForm.get('password')?.errors?.['required']">
+            Password is required
+          </span>
+
+          <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+            Minimum 8 characters required
+          </span>
+
+          <span *ngIf="loginForm.get('password')?.errors?.['pattern']">
+            Must contain 1 uppercase & 1 special character
+          </span>
+
         </div>
 
-        <!-- Login Button -->
-        <button type="submit" class="login-btn btn btn-primary" [disabled]="loading()">
-          @if (loading()) {
-            <span class="btn-spinner"></span> Logging in...
-          } @else {
-            Login
-          }
-        </button>
-      </form>
-    </div>
+
+      </div>
+
+      <div class="forgot">
+        <span (click)="forgotPassword()">Forgot password?</span>
+      </div>
+
+
+      <button class="btn bp" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Signing in...' : 'Sign in' }}
+      </button>
+
+
+      <div class="footer-text">
+        Your role and access are assigned by your Admin at onboarding
+      </div>
+
+    </form>
   </div>
+
 </div>

@@ -1,10 +1,11 @@
 import { Component, input, output, inject } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
+import { CardComponent } from "../card/card.component";
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [CardComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

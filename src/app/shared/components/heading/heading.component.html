@@ -1,0 +1,4 @@
+<div class="heading-component" [style.text-align]="isCenter ? 'center' : 'left'" >
+    <h4 class="heading-h4" *ngIf="heading" [style.font-size]="headingFontSize" [style.color]="headingColor">{{heading}}</h4>
+    <p class="sub-heading" *ngIf="subHeading" [style.font-size]="subHeadingFontSize" [style.color]="subHeadingColor">{{subHeading}}</p>
+</div>

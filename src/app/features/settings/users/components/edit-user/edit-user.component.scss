@@ -1,0 +1,156 @@
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding:0px !important;
+}
+.header h3 {
+  margin: 0; 
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.header p {
+  margin: 2px 0 0 0;
+  font-size: 14px;
+}
+.avatar {
+  width: 50px;
+  height: 50px;
+  background: #e0e7ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--brand-color);
+}
+
+.status.active {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.status.inactive {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* FORM */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-top: 18px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--color-text-secondary);
+}
+
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+select:focus {
+  border-color: var(--brand-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+}
+
+.role-box {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.role {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.assigned {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 10px;
+}
+
+/* INFO */
+.info {
+  font-size: 12px;
+  color: #f59e0b;
+  margin-top: 5px;
+}
+
+.danger {
+  margin-top: 20px;
+}
+
+.deactivate-btn {
+  width: 100%;
+  padding: 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.deactivate-btn:hover {
+  background: #fecaca;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--color-text-secondary);
+  background: white;
+}
+
+.save {
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+}
+
+
+.ant-modal-header {
+  padding: 10px 16px !important;
+}
+
+.ant-modal-title {
+  font-size: 14px !important;
+}
+
+.ant-modal-body {
+  padding: 12px 16px !important;
+}

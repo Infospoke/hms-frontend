@@ -1,270 +1,67 @@
 .sidebar {
-  width: 230px;
-  height: 100vh;
-  background: #fff;
-  border-right: 1px solid #e5e7eb;
+  width: 250px;
+  height: 100%;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  padding: 14px;
+}
+
+
+
+.nav {
   display: flex;
   flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 100;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  gap: 6px;
 }
 
-.sidebar.collapsed {
-  width: 64px;
-  overflow: visible;
-
-  .sidebar-header { justify-content: center; padding: 16px 8px; }
-  .collapse-btn { display: none; }
-  .nav-item { justify-content: center; padding: 10px; }
-  .nav-img { width: 24px; height: 24px; }
-  .sidebar-nav { overflow: visible; }
-}
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid #e5e7eb;
-  min-height: 64px;
-  flex-shrink: 0;
-}
-
-.logo-text { font-size: 20px; font-weight: 600; color: #1a73e8; white-space: nowrap; }
-.logo-icon { font-size: 20px; font-weight: 700; color: #1a73e8; }
-
-.collapse-btn {
-  background: none; border: none; cursor: pointer;
-  padding: 4px; border-radius: 6px; color: #6b7280;
-  &:hover { background: #f3f4f6; }
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
-}
-
-.nav-group { position: relative; }
-
-.nav-item {
-  display: flex; align-items: center; gap: 2px;
-  padding: 10px 10px 10px 0px; border-radius: 8px; cursor: pointer;
-  color: #4b5563; text-decoration: none; white-space: nowrap;
-  transition: all 0.15s;
-  &:hover { background: #f3f4f6; }
-  &.active { background: #e8f0fe; color: #1a73e8; }
-  &.parent { user-select: none; }
-  &.has-children { user-select: none; }
-}
-
-.nav-img { width: 20px; height: 20px; flex-shrink: 0; }
-.nav-icon { font-size: 20px; color: #6b7280; flex-shrink: 0; }
-.nav-label { flex: 1; font-size: 14px; }
-
-.arrow {
-  font-size: 18px; transition: transform 0.2s;
-  &.rotated { transform: rotate(180deg); }
-}
-
-.sub-nav {
-  padding-left: 10px;
-  .nav-item.child { padding: 8px 0px 8px 25px; font-size: 13px; }
-}
-
-.sub-nav::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-
-  /* Dynamic spacing */
-  top: 50px;
-  height: calc(100% - 67px); /* 40px (top) + 17px (bottom) = 57px */
-
-  width: 2px;
-
-  /* Vertical dashed line */
-  background: repeating-linear-gradient(
-    to bottom,
-    #e5e7eb,
-    #e5e7eb 6px,
-    transparent 6px,
-    transparent 12px
-  );
-}
-.child {
-  position: relative;
-  padding-left: 50px;
-}
-
-.child::before {
-  content: '';
-  position: absolute;
-  left: 1px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 18px;
-  height: 2px;
-
-  /* horizontal dashed line */
-  background: repeating-linear-gradient(
-    to right,
-    #e5e7eb,
-    #e5e7eb 4px,
-    transparent 4px,
-    transparent 8px
-  );
-}
-
-.child::after {
-  content: '';
-  position: absolute;
-  left: 13px; /* 20px + 16px dash */
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 6px;
-  height: 6px;
-  background: #9ca3af;
-  border-radius: 50%;
-}
-
-
-.super-sub-nav {
-  padding-left: 20px;
-  .nav-item.grandchild {
-    padding: 6px 12px; font-size: 12px; color: #6b7280;
-    &.active { color: #1a73e8; background: #e8f0fe; }
-  }
-}
-
-
-// ── Invisible bridge between icon and flyout ──
-
-.flyout-bridge {
-  position: fixed;
-  left: 48px;       // starts inside the sidebar icon area
-  width: 20px;      // covers the gap to flyout
-  height: 44px;     // same height as the nav icon
-  z-index: 9998;
-  // background: rgba(255,0,0,0.1);  // uncomment to debug
-}
-
-// ── Flyout ──
-
-.flyout {
-  position: fixed;
-  min-width: 220px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+.item {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  z-index: 9999;
-  animation: flyIn 0.15s ease;
+  cursor: pointer;
 }
 
-.flyout-header {
-  padding: 12px 16px;
-  font-size: 13px;
+.item:hover {
+  background: #eef2ff;
+}
+
+.item.active {
+  background: #e0e7ff;
+  color: var(--brand-color);
   font-weight: 600;
-  color: #1f2937;
-  border-bottom: 1px solid #f3f4f6;
 }
 
-.flyout-body {
-  padding: 6px 0;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.flyout-item {
+.sub {
+  margin-left: 12px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #4b5563;
+  gap: 6px;
+  border-radius: 6px;
   cursor: pointer;
-  position: relative;
-  white-space: nowrap;
-  &:hover { background: #f3f4f6; color: #1f2937; }
-  &.active { background: #e8f0fe; color: #1a73e8; }
-
-  // Bridge between flyout item and nested flyout
-  &.has-children::after {
-    content: '';
-    position: absolute;
-    right: -8px;
-    top: 0;
-    width: 12px;
-    height: 100%;
-    // background: rgba(0,255,0,0.1);  // uncomment to debug
-  }
 }
 
-.flyout-arrow { font-size: 16px; color: #9ca3af; }
-
-
-.flyout-children {
-  background: #f9fafb;
-  border-top: 1px solid #f3f4f6;
-  border-bottom: 1px solid #f3f4f6;
+.sub:hover {
+  background: #eef2ff;
 }
 
-.flyout-item.child {
-  padding-left: 32px;
-  font-size: 12px;
-  color: #6b7280;
-  &:hover { background: #e8f0fe; color: #1a73e8; }
-  &.active { background: #e8f0fe; color: #1a73e8; }
-}
-
-.flyout-item.sub-active {
-  background: #f3f4f6;
+.active-sub {
+  background: var(--badge-hiring-bg);
+  color: var(--brand-color);
   font-weight: 500;
 }
 
-@keyframes flyIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to { opacity: 1; transform: translateX(0); }
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-text-secondary);
 }
 
-// ── Icon border box ──
-
-// .nav-item.parent {
-//   .nav-img, .nav-icon {
-//     padding: 8px;
-//     border: 1.5px solid #e5e7eb;
-//     border-radius: 8px;
-//     width: 36px;
-//     height: 36px;
-//     box-sizing: border-box;
-//   }
-// }
-
-// ── Active sub-item (level 2) — blue text + blue dot ──
-
-.sub-nav .nav-item.child.active,
-.sub-nav .nav-item.child.child-active {
-  background: transparent;
-  .nav-label { color: #1a73e8; font-weight: 600; }
-
-  &::after {
-    background: #1a73e8;
-  }
-}
-
-// ── Active grandchild (level 3) — blue text + blue dot ──
-
-.super-sub-nav .nav-item.grandchild.active {
-  background: transparent;
-  color: #1a73e8;
-  .nav-label { color: #1a73e8; font-weight: 600; }
+.dot.filled {
+  background: var(--brand-color);
+  border-color: var(--brand-color);
 }

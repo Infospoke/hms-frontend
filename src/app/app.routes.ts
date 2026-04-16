@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
   {
     path: 'auth',
     loadChildren: () => import('./auth/routes/auth.routes').then(r => r.AUTH_ROUTES)
@@ -14,6 +14,8 @@ export const routes: Routes = [
     children: [
       // { path: 'dashboard', loadChildren: () => import('./features/dashboard/routes/dashboard.routes').then(r => r.DASHBOARD_ROUTES) },
       { path: 'jobs', loadChildren: () => import('./features/job/routes/job.routes').then(r => r.JOB_ROUTES) },
+      {path:'users',loadChildren:()=>import("./features/settings/users/routes/user.route").then(r=>r.USER_ROUTES)},
+      {path:'demand',loadChildren:()=>import("./features/demand/routes/demand.routes").then(r=>r.DEMAND_ROUTES)},
     //   { path: 'candidates', loadChildren: () => import('./features/candidates/candidates.routes').then(r => r.CANDIDATES_ROUTES) },
     //   { path: 'interviews', loadChildren: () => import('./features/interviews/interviews.routes').then(r => r.INTERVIEWS_ROUTES) },
     //   { path: 'offers', loadChildren: () => import('./features/offers/offers.routes').then(r => r.OFFERS_ROUTES) },
@@ -26,5 +28,5 @@ export const routes: Routes = [
     //   { path: 'finance-management', loadChildren: () => import('./features/finance-management/finance-management.routes').then(r => r.FINANCE_MANAGEMENT_ROUTES) }
     ]
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: 'auth' }
 ];

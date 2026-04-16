@@ -1,0 +1,40 @@
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div class="pg">Users & Roles</div>
+  <div class="right">
+    <div class="btn">Export </div>
+    <div class="btn bp" (click)="openInvite()">+ Invite User</div>
+  </div>
+</div>
+<div class="card-wrap">
+  <app-dashboard-count-card *ngFor="let c of cards" [value]="c.value" [label]="c.label" [valueColor]="c.valueColor"
+    [borderColor]="c.borderColor" [ngStyle]="{'background': c.bgColor}">
+  </app-dashboard-count-card>
+</div>
+
+<div class="filters-section">
+  <div class="fill" *ngFor="let f of filters">
+    <app-card [label]="f.label" [count]="f.count" [textColor]="f.textColor" [bgColor]="f.bgColor" [borderColor]="f.borderColor">
+
+    </app-card>
+  </div>
+</div>
+<div class="usr-row">
+  <div class="usr-av">PS</div>
+  <div style="flex:1">
+    <div class="usr-n">Priya Sharma</div>
+    <div class="usr-e">priya.s@company.com</div>
+  </div>
+  <span class="rbadge rRec">Recruiter</span>
+  <div class="usr-s active-s">Active</div>
+  <div class="btn bo bs" (click)="edit()">Edit</div>
+</div>
+
+<div class="usr-row">
+  <div class="usr-av">AK</div>
+  <div style="flex:1">
+    <div class="usr-n">Anand Kumar</div>
+    <div class="usr-e">anand.k@company.com</div>
+  </div>
+  <span class="rbadge rHM">Hiring Manager</span>
+  <div class="usr-s active-s">Active</div>
+</div>

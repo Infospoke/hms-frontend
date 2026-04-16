@@ -1,135 +1,41 @@
-<aside class="sidebar" [class.collapsed]="collapsed()">
+<div class="sidebar">
 
-  <div class="sidebar-header">
-    <span *ngIf="!collapsed()" class="logo-text">Infospoke</span>
-    <span *ngIf="collapsed()" class="logo-icon">I</span>
-  </div>
+  <div class="nav">
 
-  <nav class="sidebar-nav">
-    <div
-      class="nav-group"
-      *ngFor="let mod of modules()"
-      (mouseenter)="onModuleEnter($event, mod.title)"
-      (mouseleave)="onModuleLeave()">
+    <!-- HOME -->
+    <div class="item">Home</div>
 
-      <!-- LEVEL 1: Module -->
-      <div
-        class="nav-item parent"
-        [class.expanded]="isExpanded(mod.title)"
-        (click)="toggleSubmenu(mod.title)">
-        <img *ngIf="mod.image" [src]="mod.image" class="nav-img" />
-        <span *ngIf="!mod.image" class="material-icons nav-icon">folder</span>
-        <ng-container *ngIf="!collapsed()">
-          <span class="nav-label">{{ mod.title }}</span>
-          <span class="material-icons arrow" [class.rotated]="isExpanded(mod.title)">
-            expand_more
-          </span>
-        </ng-container>
+    <div class="item" (click)="toggle('demand')">Demand</div>
+
+    <div *ngIf="activeMenu === 'demand'" class="sub">
+      <span class="dot" (click)="handlenavigate('/demand/my-jds')"></span> My JDs
+    </div>
+
+
+    <div class="item" (click)="toggle('settings')">Settings & Admin</div>
+
+    <div *ngIf="activeMenu === 'settings'">
+
+      <div class="sub active-sub">
+        <span class="dot filled"></span> Users & Roles
       </div>
 
-      <!-- ══════════════════════════════════════ -->
-      <!-- EXPANDED MODE: inline sub-nav         -->
-      <!-- ══════════════════════════════════════ -->
-      <div class="sub-nav" *ngIf="!collapsed() && isExpanded(mod.title)">
-        <ng-container *ngFor="let sub of mod.submenus">
-          <ng-container *ngIf="sub.view">
-
-            <ng-container *ngIf="hasSuperSubs(sub); else directLink">
-              <div
-                class="nav-item child has-children"
-                [class.expanded]="isSuperExpanded(sub.path)"
-                (click)="toggleSuperSubmenu($event, sub.path)"
-                [class.child-active]="isActive(sub.path)"
-                >
-                <span class="nav-label">{{ sub.title }}</span>
-                <span class="material-icons arrow" [class.rotated]="isSuperExpanded(sub.path)">
-                  expand_more
-                </span>
-              </div>
-
-              <div class="super-sub-nav" *ngIf="isSuperExpanded(sub.path)">
-                <ng-container *ngFor="let superSub of sub.supersubmenus">
-                  <a
-                    *ngIf="superSub.view"
-                    class="nav-item grandchild"
-                    [routerLink]="superSub.path"
-                    routerLinkActive="active"
-                    [routerLinkActiveOptions]="{ exact: true }">
-                    <span class="nav-label">{{ superSub.title }}</span>
-                  </a>
-                </ng-container>
-              </div>
-            </ng-container>
-
-            <ng-template #directLink>
-              <a
-                class="nav-item child"
-                [routerLink]="sub.path"
-                routerLinkActive="active"
-                [routerLinkActiveOptions]="{ exact: true }">
-                <span class="nav-label">{{ sub.title }}</span>
-              </a>
-            </ng-template>
-
-          </ng-container>
-        </ng-container>
+      <div class="sub">
+        <span class="dot"></span> Approval Chains
       </div>
 
-  <!-- COLLAPSED MODE — flyout -->
-      <div class="flyout-bridge"
-           *ngIf="collapsed() && hoveredModule() === mod.title">
+      <div class="sub">
+        <span class="dot"></span> Notification Templates
       </div>
-      <div class="flyout"
-           *ngIf="collapsed() && hoveredModule() === mod.title"
-           [style.top.px]="flyoutTop()"
-           [style.left.px]="64"
-           (mouseenter)="onFlyoutEnter()"
-           (mouseleave)="onFlyoutLeave()">
-        <div class="flyout-header">{{ mod.title }}</div>
-        <div class="flyout-body">
-          <ng-container *ngFor="let sub of mod.submenus">
-            <ng-container *ngIf="sub.view">
 
-              <ng-container *ngIf="hasSuperSubs(sub); else flyoutDirect">
-                <div
-                  class="flyout-item has-children"
-                  [class.sub-active]="hoveredSub() === sub.path"
-                  (click)="toggleFlyoutSub(sub.path)">
-                  <span>{{ sub.title }}</span>
-                  <span class="material-icons flyout-arrow">
-                    {{ hoveredSub() === sub.path ? 'expand_less' : 'expand_more' }}
-                  </span>
-                </div>
+      <div class="sub">
+        <span class="dot"></span> Audit Log
+      </div>
 
-                <!-- Inline expand instead of nested flyout -->
-                <div class="flyout-children" *ngIf="hoveredSub() === sub.path">
-                  <ng-container *ngFor="let superSub of sub.supersubmenus">
-                    <div
-                      *ngIf="superSub.view"
-                      class="flyout-item child"
-                      [class.active]="isActive(superSub.path)"
-                      (click)="navigateTo(superSub.path)">
-                      {{ superSub.title }}
-                    </div>
-                  </ng-container>
-                </div>
-              </ng-container>
-
-              <ng-template #flyoutDirect>
-                <div
-                  class="flyout-item"
-                  [class.active]="isActive(sub.path)"
-                  (click)="navigateTo(sub.path)">
-                  {{ sub.title }}
-                </div>
-              </ng-template>
-
-            </ng-container>
-          </ng-container>
-        </div>
+      <div class="sub">
+        <span class="dot"></span> Integrations
       </div>
 
     </div>
-  </nav>
-
-</aside>
+  </div>
+</div>

@@ -1,18 +1,17 @@
-<div class="app-shell" [class.collapsed]="sidebarCollapsed()">
-  <app-side-bar
-    [collapsed]="sidebarCollapsed()"
-    (toggleCollapse)="toggleSidebar()" />
 
-  <div class="main-area">
-    <app-header
-      [sidebarCollapsed]="sidebarCollapsed()"
-      (menuToggle)="toggleSidebar()" />
 
-    <main class="content-area">
-      <!-- <app-breadcrumb /> -->
-      <nz-spin [nzSpinning]="loaderService.isLoading()" nzTip="Loading...">
-        <router-outlet />
-      </nz-spin>
-    </main>
+<div class="app-container">
+
+  <app-header></app-header>
+  <div class="layout">
+    <app-side-bar/>
+    <div class="main-area">
+      <main class="content">
+        <nz-spin [nzSpinning]="loaderService.isLoading()" nzTip="Loading...">
+          <router-outlet></router-outlet>
+        </nz-spin>
+      </main>
+    </div>
+
   </div>
 </div>

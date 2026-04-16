@@ -1,0 +1,153 @@
+<form [formGroup]="form">
+  <div class="grid">
+
+    <!-- User Type -->
+    <div class="field">
+      <label>User Type <span class="astrick">*</span></label>
+      <select formControlName="userType">
+        <option value="" disabled selected>Select user type</option>
+        <option *ngFor="let u of userTypes" [value]="u">{{ u }}</option>
+      </select>
+      <div class="error" *ngIf="c('userType')?.touched">
+        <span *ngIf="c('userType')?.hasError('required')">User type is required</span>
+      </div>
+    </div>
+
+    <!-- First Name -->
+    <div class="field">
+      <label>First Name <span class="astrick">*</span></label>
+      <input formControlName="firstName" placeholder="Enter first name" (blur)="trimField('firstName')">
+      <div class="error" *ngIf="c('firstName')?.touched">
+        <span *ngIf="c('firstName')?.hasError('required')">First name is required</span>
+        <span *ngIf="c('firstName')?.hasError('minlength')">Minimum 2 characters required</span>
+        <span *ngIf="c('firstName')?.hasError('maxlength')">Maximum 50 characters allowed</span>
+        <span *ngIf="c('firstName')?.hasError('alphabetsOnly')">Only alphabets are allowed</span>
+      </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="field">
+      <label>Last Name <span class="astrick">*</span></label>
+      <input formControlName="lastName" placeholder="Enter last name" (blur)="trimField('lastName')">
+      <div class="error" *ngIf="c('lastName')?.touched">
+        <span *ngIf="c('lastName')?.hasError('required')">Last name is required</span>
+        <span *ngIf="c('lastName')?.hasError('minlength')">Minimum 1 character required</span>
+        <span *ngIf="c('lastName')?.hasError('maxlength')">Maximum 50 characters allowed</span>
+        <span *ngIf="c('lastName')?.hasError('alphabetsOnly')">Only alphabets are allowed</span>
+      </div>
+    </div>
+
+    <!-- Employee ID -->
+    <div class="field">
+      <label>Employee ID <span class="astrick">*</span></label>
+      <input formControlName="employeeId" placeholder="Enter employee ID">
+      <div class="error" *ngIf="c('employeeId')?.touched">
+        <span *ngIf="c('employeeId')?.hasError('required')">Employee ID is required</span>
+        <span *ngIf="c('employeeId')?.hasError('numericOnly')">Employee ID must be numeric</span>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="field">
+      <label>Email Address <span class="astrick">*</span></label>
+      <input formControlName="email" placeholder="Enter corporate email address">
+      <div class="error" *ngIf="c('email')?.touched">
+        <span *ngIf="c('email')?.hasError('required')">Email address is required</span>
+        <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email address</span>
+      </div>
+    </div>
+
+    <!-- Mobile -->
+    <div class="field">
+      <label>Mobile Number <span class="astrick">*</span></label>
+      <input formControlName="mobile" placeholder="Enter mobile with country code (e.g. +91 9876543210)">
+      <div class="error" *ngIf="c('mobile')?.touched">
+        <span *ngIf="c('mobile')?.hasError('required')">Mobile number is required</span>
+        <span *ngIf="c('mobile')?.hasError('numericOnly')">Only numeric digits are allowed</span>
+        <span *ngIf="c('mobile')?.hasError('minlength')">Enter a valid mobile number</span>
+      </div>
+    </div>
+
+    <!-- Alternate Contact -->
+    <div class="field">
+      <label>Alternate Contact</label>
+      <input formControlName="altMobile" placeholder="Enter alternate contact (optional)">
+      <div class="error" *ngIf="c('altMobile')?.touched">
+        <span *ngIf="c('altMobile')?.hasError('numericOnly')">Only numeric digits are allowed</span>
+        <span *ngIf="c('altMobile')?.hasError('minlength')">Enter a valid contact number</span>
+        <span *ngIf="c('altMobile')?.hasError('sameAsMobile')">Alternate contact must differ from mobile number</span>
+      </div>
+    </div>
+
+    <!-- Date of Birth -->
+    <div class="field">
+      <label>Date of Birth <span class="astrick">*</span></label>
+      <input type="date" formControlName="dob">
+      <div class="error" *ngIf="c('dob')?.touched">
+        <span *ngIf="c('dob')?.hasError('required')">Date of birth is required</span>
+        <span *ngIf="c('dob')?.hasError('futureDate')">Date of birth cannot be a future date</span>
+        <span *ngIf="c('dob')?.hasError('minAge')">User must be at least 18 years old</span>
+      </div>
+    </div>
+
+    <!-- Employment Type -->
+    <div class="field">
+      <label>Employment Type <span class="astrick">*</span></label>
+      <select formControlName="employmentType">
+        <option value="" disabled selected>Select employment type</option>
+        <option *ngFor="let e of employmentTypes" [value]="e">{{ e }}</option>
+      </select>
+      <div class="error" *ngIf="c('employmentType')?.touched">
+        <span *ngIf="c('employmentType')?.hasError('required')">Employment type is required</span>
+      </div>
+    </div>
+
+    <!-- Business Unit -->
+    <div class="field">
+      <label>Business Unit <span class="astrick">*</span></label>
+      <select formControlName="businessUnit">
+        <option value="" disabled selected>Select business unit</option>
+        <option *ngFor="let b of businessUnits" [value]="b">{{ b }}</option>
+      </select>
+      <div class="error" *ngIf="c('businessUnit')?.touched">
+        <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
+      </div>
+    </div>
+
+    <!-- Department -->
+    <div class="field">
+      <label>Department / Team <span class="astrick">*</span></label>
+      <select formControlName="department" [attr.disabled]="!departments.length ? true : null">
+        <option value="" disabled selected>
+          {{ departments.length ? 'Select department' : 'Select business unit first' }}
+        </option>
+        <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+      </select>
+      <div class="error" *ngIf="c('department')?.touched">
+        <span *ngIf="c('department')?.hasError('required')">Department is required</span>
+      </div>
+    </div>
+
+    <!-- Role -->
+    <div class="field">
+      <label>Designation / Role <span class="astrick">*</span></label>
+      <select formControlName="role" [attr.disabled]="!roles.length ? true : null">
+        <option value="" disabled selected>
+          {{ roles.length ? 'Select role' : 'Select department first' }}
+        </option>
+        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+      </select>
+      <div class="error" *ngIf="c('role')?.touched">
+        <span *ngIf="c('role')?.hasError('required')">Designation / Role is required</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button type="button" class="btn cancel" (click)="close()">Cancel</button>
+    <button type="button" class="btn primary" (click)="submit()" [disabled]="form.invalid">Submit</button>
+  </div>
+
+</form>

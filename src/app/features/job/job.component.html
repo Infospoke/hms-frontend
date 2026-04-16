@@ -1,8 +1,0 @@
-<div class="all-jobs">
-    <div class="job-details" *ngFor="let job of jobsListData">
-        <app-jobs-card [job]="job" (action)="handleJobAction($event)" [isActive]="job?.jobId==selectedJobId" (selectedJob)="handleSelectedJob($event)"
-            [isSimpleView]="true">
-        </app-jobs-card>
-
-    </div>
-</div>

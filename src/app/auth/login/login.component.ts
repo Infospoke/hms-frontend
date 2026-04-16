@@ -9,11 +9,13 @@ import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { PermissionService } from '../../core/services/permission.service';
 import { API } from '../../shared/constants/api-endpoints';
+import { CommonModule } from '@angular/common';
+import { HeadingComponent } from "../../shared/components/heading/heading.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule,NzModalModule],
+  imports: [ReactiveFormsModule, NzModalModule, CommonModule, HeadingComponent,HeadingComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -34,8 +36,12 @@ export class LoginComponent {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      email: ['', [  Validators.required,
+      Validators.email]],
+      password: ['', [ Validators.required,
+      Validators.minLength(8),
+      // Validators.pattern(/^(?=.*[A-Z])(?=.*[\W_]).{8,}$/)]]
+      ]]
     });
   }
 
@@ -93,7 +99,7 @@ export class LoginComponent {
         if (firstModule.submenus?.length > 0) {
           sessionStorage.setItem('userId', this.userId);
           this.permissionService.setModules(data.modules);
-          this.router.navigate(['/jobs/dashboard']);
+          this.router.navigate(['/demand/create']);
         } else {
           this.router.navigate(['/no-modules-found']);
         }

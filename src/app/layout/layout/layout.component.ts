@@ -8,7 +8,7 @@ import { SideBarComponent } from '../../shared/components/side-bar/side-bar.comp
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, SideBarComponent, HeaderComponent, NzSpinComponent],
+  imports: [RouterOutlet, SideBarComponent, NzSpinComponent, HeaderComponent],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
 })

@@ -1,0 +1,830 @@
+<div class="wrap">
+
+    <div class="stepper">
+        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)" (click)="goTo(i)">
+            <div class="ci">
+                <span *ngIf="i < currentStep" class="check-icon">✓</span>
+                <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
+            </div>
+            <div class="lb">{{ step.label }}</div>
+        </div>
+    </div>
+
+
+    <form [formGroup]="step0Form" *ngIf="currentStep === 0" novalidate>
+        <div class="card">
+            <div class="">
+                <div class="sec-title">Position Basics</div>
+            </div>
+
+            <div class="grid2">
+
+                <!-- Job Title -->
+                <div class="field">
+                    <label class="lbl">Job Title <span class="astrick">*</span></label>
+                    <input type="text" formControlName="jobTitle" placeholder="e.g. Senior Backend Engineer"
+                        [class.err]="hasError(step0Form, 'jobTitle')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'jobTitle')">
+                        {{ getError(step0Form, 'jobTitle') }}
+                    </span>
+                </div>
+
+                <!-- Business Unit (auto-filled) -->
+                <div class="field">
+                    <label class="lbl">Business Unit</label>
+                    <select formControlName="bu" (ngModelChange)="onDeptChange($event)"
+                        (change)="onDeptChange($any($event.target).value)" [class.err]="hasError(step0Form, 'dept')">
+                        <option value="" disabled>Select Bussiness Unit</option>
+                        <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
+                    </select>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'bu')">
+                        {{ getError(step0Form, 'bu') }}
+                    </span>
+                </div>
+
+                <!-- Department -->
+                <div class="field">
+                    <label class="lbl">Department <span class="astrick">*</span></label>
+                    <select formControlName="dept" (ngModelChange)="onDeptChange($event)"
+                        (change)="onDeptChange($any($event.target).value)" [class.err]="hasError(step0Form, 'dept')">
+                        <option value="" disabled>Select department</option>
+                        <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
+                    </select>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'dept')">
+                        {{ getError(step0Form, 'dept') }}
+                    </span>
+                </div>
+
+                <div class="field auto-wrap">
+                    <label class="lbl">Reporting Manager <span class="req">*</span></label>
+
+                    <!-- Tag Input Container -->
+                    <div class="tag-input" (click)="focusInput()">
+
+                        <!-- Tags inside input -->
+                        <span class="tag" *ngFor="let m of selectedManagers">
+                            {{ m.name }}
+                            <span class="tx" (click)="removeManager(m)">×</span>
+                        </span>
+
+                        <!-- Actual input -->
+                        <input #managerInput type="text" formControlName="manager" placeholder="Search people..."
+                            (input)="onSearchManager()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div class="dropdown" *ngIf="showDropdown && filteredManagers.length">
+                        <div class="option" *ngFor="let m of filteredManagers" (mousedown)="selectManager(m)">
+                            <div class="avatar">{{ getInitials(m.name) }}</div>
+                            <div class="info">
+                                <div class="name">{{ m.name }}</div>
+                                <div class="role">{{ m.role }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'manager')">
+                        {{ getError(step0Form, 'manager') }}
+                    </span>
+                </div>
+
+                <!-- Location -->
+                <div class="field">
+                    <label class="lbl">Location <span class="astrick">*</span></label>
+                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad, India"
+                        [class.err]="hasError(step0Form, 'location')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
+                        {{ getError(step0Form, 'location') }}
+                    </span>
+                </div>
+
+                <!-- Seniority -->
+                <div class="field">
+                    <label class="lbl">Seniority Level <span class="astrick">*</span></label>
+                    <select formControlName="seniority" [class.err]="hasError(step0Form, 'seniority')">
+                        <option value="" disabled>Select level</option>
+                        <optgroup label="Individual Contributor">
+                            <option *ngFor="let s of seniorityIC" [value]="s">{{ s }}</option>
+                        </optgroup>
+                        <optgroup label="Manager">
+                            <option *ngFor="let s of seniorityMgr" [value]="s">{{ s }}</option>
+                        </optgroup>
+                    </select>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'seniority')">
+                        {{ getError(step0Form, 'seniority') }}
+                    </span>
+                </div>
+
+                <!-- Openings -->
+                <div class="field">
+                    <label class="lbl">Number of Openings <span class="astrick">*</span></label>
+
+                    <input type="number" formControlName="openings" min="1" max="999" />
+                </div>
+
+                <!-- Start Date -->
+                <div class="field">
+                    <label class="lbl">Target Start Date <span class="astrick">*</span></label>
+                    <input type="date" formControlName="startDate" [min]="todayStr"
+                        [class.err]="hasError(step0Form, 'startDate')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'startDate')">
+                        {{ getError(step0Form, 'startDate') }}
+                    </span>
+                </div>
+
+                <!-- Employment Type -->
+                <div class="field ">
+                    <label class="lbl">Employment Type <span class="astrick">*</span></label>
+                    <div class="radio-row">
+                        <div *ngFor="let t of empTypes" class="rbtn" [class.sel]="step0Form.get('empType')?.value === t"
+                            [class.err-radio]="hasError(step0Form, 'empType')" (click)="setEmpType(t)">{{ t }}</div>
+                    </div>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'empType')">
+                        {{ getError(step0Form, 'empType') }}
+                    </span>
+                </div>
+
+                <!-- Work Mode -->
+                <div class="field">
+                    <label class="lbl">Work Mode <span class="astrick">*</span></label>
+                    <div class="radio-row">
+                        <div *ngFor="let m of workModes" class="rbtn"
+                            [class.sel]="step0Form.get('workMode')?.value === m"
+                            [class.err-radio]="hasError(step0Form, 'workMode')" (click)="setWorkMode(m)">{{ m }}</div>
+                    </div>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'workMode')">
+                        {{ getError(step0Form, 'workMode') }}
+                    </span>
+                </div>
+
+                <!-- Priority -->
+                <div class="field">
+                    <label class="lbl">Priority <span class="astrick">*</span></label>
+                    <div class="radio-row">
+                        <div *ngFor="let p of priorities" class="rbtn"
+                            [class.sel]="step0Form.get('priority')?.value === p"
+                            [class.err-radio]="hasError(step0Form, 'priority')" (click)="setPriority(p)">{{ p }}</div>
+                    </div>
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'priority')">
+                        {{ getError(step0Form, 'priority') }}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="footer-btns">
+                <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                <button type="button" class="btn btn-primary" (click)="validateStep0()">
+                    Next: Business Justification →
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ─── STEP 1: Business Justification ───────────────────────────── -->
+    <form [formGroup]="step1Form" *ngIf="currentStep === 1" novalidate>
+        <div class="card">
+            <div class="">
+                <div class="sec-title">Business Justification</div>
+
+            </div>
+
+            <!-- Requisition Type -->
+            <div class="field" style="margin-bottom:18px">
+                <label class="lbl">Requisition Type <span class="astrick">*</span></label>
+                <div class="radio-row">
+                    <div *ngFor="let t of requisitionTypes" class="rbtn"
+                        [class.sel]="step1Form.get('justType')?.value === t" (click)="setJustType(t)">{{ t }}</div>
+                </div>
+            </div>
+
+            <!-- Replaces Employee -->
+            <div class="field" *ngIf="needsReplace" style="margin-bottom:18px">
+                <label class="lbl">Replaces Employee <span class="astrick">*</span></label>
+                <input type="text" formControlName="replacesEmp" placeholder="Search employee..."
+                    [class.err]="hasError(step1Form, 'replacesEmp')" />
+                <span class="err-msg" *ngIf="hasError(step1Form, 'replacesEmp')">
+                    {{ getError(step1Form, 'replacesEmp') }}
+                </span>
+            </div>
+
+            <!-- Business Case -->
+            <div class="field" style="margin-bottom:18px">
+                <div class="field-header">
+                    <label class="lbl">Business Case <span class="astrick">*</span>
+                        <span class="lbl-sub"> — min 100 chars</span>
+                    </label>
+                    <span class="ai-chip" (click)="aiSuggestBizCase()">✦ AI-assist</span>
+                </div>
+                <textarea class="rte" formControlName="bizCase" rows="4" maxlength="2000"
+                    placeholder="Describe the business need for this role..."
+                    [class.err]="hasError(step1Form, 'bizCase')"></textarea>
+                <div class="field-footer">
+                    <span class="err-msg" *ngIf="hasError(step1Form, 'bizCase')">
+                        {{ getError(step1Form, 'bizCase') }}
+                    </span>
+                    <span class="char-count" [class.warn]="bizCaseLen > 0 && bizCaseLen < 100">
+                        {{ bizCaseLen }} / 2000
+                    </span>
+                </div>
+            </div>
+
+            <!-- Impact Note -->
+            <div class="field" style="margin-bottom:18px">
+                <div class="field-header">
+                    <label class="lbl">Impact if Not Filled <span class="astrick">*</span>
+                        <span class="lbl-sub"> — min 100 chars</span>
+                    </label>
+                    <span class="ai-chip" (click)="aiSuggestImpact()">✦ AI-assist</span>
+                </div>
+                <textarea class="rte" formControlName="impactNote" rows="4" maxlength="2000"
+                    placeholder="What happens if this role stays unfilled?"
+                    [class.err]="hasError(step1Form, 'impactNote')"></textarea>
+                <div class="field-footer">
+                    <span class="err-msg" *ngIf="hasError(step1Form, 'impactNote')">
+                        {{ getError(step1Form, 'impactNote') }}
+                    </span>
+                    <span class="char-count" [class.warn]="impactLen > 0 && impactLen < 100">
+                        {{ impactLen }} / 2000
+                    </span>
+                </div>
+            </div>
+
+            <!-- Strategic Alignment -->
+            <div class="field" style="margin-bottom:18px">
+                <label class="lbl">Strategic Alignment <span class="lbl-sub">(optional)</span></label>
+                <div class="ai-sugg">
+                    <span *ngFor="let s of strategicAlignOpts" class="sugg-tag"
+                        [class.sugg-sel]="strategicAlign.includes(s)" (click)="toggleAlign(s)">{{ s }}</span>
+                </div>
+            </div>
+
+            <!-- Supporting Document -->
+            <div class="field">
+                <label class="lbl">Supporting Document <span class="lbl-sub">(optional, PDF max 20MB)</span></label>
+                <div *ngIf="!supportDoc" class="file-drop" (click)="simulateUpload()">
+                    <span class="upload-icon">↑</span>
+                    <span>Click to upload PDF or drag &amp; drop</span>
+                </div>
+                <div *ngIf="supportDoc" class="file-attached">
+                    <span>📄</span>
+                    <span style="flex:1">{{ supportDoc }}</span>
+                    <span class="remove-link" (click)="removeDoc()">Remove</span>
+                </div>
+            </div>
+
+            <div class="footer-btns">
+                <div class="flex-gap">
+                    <button type="button" class="btn btn-ghost" (click)="goTo(0)">← Back</button>
+                    <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="validateStep1()">
+                    Next: Budget &amp; Compensation →
+                </button>
+            </div>
+        </div>
+    </form>
+
+
+    <form [formGroup]="step2Form" *ngIf="currentStep === 2" novalidate>
+        <div class="card">
+            <div class="">
+                <div class="sec-title">Budget &amp; Compensation</div>
+
+            </div>
+
+            <!-- HC Slot -->
+            <div class="field" style="margin-bottom:18px">
+                <label class="lbl">HC Slot Required <span class="astrick">*</span></label>
+                <div class="toggle-row">
+                    <label class="toggle">
+                        <input type="checkbox" formControlName="hcSlot" />
+                        <span class="tslider"></span>
+                    </label>
+                    <span class="toggle-lbl">Link to approved headcount plan</span>
+                </div>
+                <div *ngIf="step2Form.get('hcSlot')?.value" class="inline-banner vb-ok">
+                    ✓ HC Slot HC-2026-ENG-017 confirmed · Approved budget: ₹38 LPA
+                </div>
+                <div *ngIf="!step2Form.get('hcSlot')?.value" class="inline-banner vb-err">
+                    ⚠ No approved HC slot — submission blocked until headcount plan is updated
+                </div>
+            </div>
+
+            <!-- Salary Band -->
+            <div class="field" style="margin-bottom:18px">
+                <div class="field-header">
+                    <label class="lbl">Salary Band · {{ step0Form.get('seniority')?.value || 'Senior (L4)' }}
+                        · {{ step0Form.get('dept')?.value || 'Engineering' }}</label>
+                    <span class="badge" [ngClass]="isInBand ? 'badge-green' : 'badge-red'">
+                        {{ isInBand ? '✓ Within band' : '✗ Over band' }}
+                    </span>
+                </div>
+                <div class="salary-band">
+                    <div class="band-row">
+                        <span class="lbl-sub">Min ₹{{ step2Form.get('salaryMin')?.value }}L</span>
+                        <span class="band-mid">Mid ₹{{ step2Form.get('salaryMid')?.value }}L — Benchmark</span>
+                        <span class="lbl-sub">Max ₹{{ step2Form.get('salaryMax')?.value }}L</span>
+                    </div>
+                    <div class="band-bar">
+                        <div class="band-fill" [style.width.%]="salaryPct"></div>
+                        <div class="band-thumb" [style.left.%]="salaryPct"></div>
+                    </div>
+                    <div class="band-label" [style.color]="isInBand ? '#16a34a' : '#dc2626'">
+                        Proposed CTC: ₹{{ step2Form.get('proposedComp')?.value }} LPA —
+                        {{ isInBand ? 'within approved band' : 'OVER BAND' }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposed Comp Slider -->
+            <div class="field" style="margin-bottom:18px">
+                <label class="lbl">Proposed Total Compensation <span class="astrick">*</span></label>
+                <div class="range-wrap">
+                    <input type="range" [min]="step2Form.get('salaryMin')?.value"
+                        [max]="step2Form.get('salaryMax')?.value" step="0.5" formControlName="proposedComp" />
+                    <div class="range-labels">
+                        <span>₹{{ step2Form.get('salaryMin')?.value }}L</span>
+                        <span class="range-val">₹{{ step2Form.get('proposedComp')?.value }}L selected</span>
+                        <span>₹{{ step2Form.get('salaryMax')?.value }}L</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extras: Signing / Equity / Relocation -->
+            <div class="grid3">
+                <div class="field">
+                    <label class="lbl">Signing Bonus</label>
+                    <div class="toggle-row">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="signingBonus" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable</span>
+                    </div>
+                    <input *ngIf="step2Form.get('signingBonus')?.value" type="text" formControlName="signingAmt"
+                        placeholder="₹ Amount" style="margin-top:8px" />
+                </div>
+                <div class="field">
+                    <label class="lbl">Equity / RSU</label>
+                    <div class="toggle-row">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="equity" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable</span>
+                    </div>
+                    <input *ngIf="step2Form.get('equity')?.value" type="text" formControlName="equityAmt"
+                        placeholder="₹ or % range" style="margin-top:8px" />
+                </div>
+                <div class="field">
+                    <label class="lbl">Relocation Budget</label>
+                    <div class="toggle-row">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="relocation" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable</span>
+                    </div>
+                    <input *ngIf="step2Form.get('relocation')?.value" type="text" formControlName="relocAmt"
+                        placeholder="₹ Amount" style="margin-top:8px" />
+                </div>
+            </div>
+
+            <div *ngIf="!isInBand" class="validation-banner vb-err" style="margin-top:16px">
+                ✗ Budget validation failed: Proposed compensation (₹{{ step2Form.get('proposedComp')?.value }}L)
+                exceeds band maximum (₹{{ step2Form.get('salaryMax')?.value }}L).
+            </div>
+
+            <div class="footer-btns">
+                <div class="flex-gap">
+                    <button type="button" class="btn btn-ghost" (click)="goTo(1)">← Back</button>
+                    <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                </div>
+                <button type="button" class="btn btn-primary" [disabled]="!isInBand || !step2Form.get('hcSlot')?.value"
+                    (click)="validateStep2()">
+                    Next: Role Requirements →
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ─── STEP 3: Role Requirements ─────────────────────────────────── -->
+    <form [formGroup]="step3Form" *ngIf="currentStep === 3" novalidate>
+        <div class="card">
+            <div class="">
+                <div class="sec-title">Role Requirements</div>
+            </div>
+
+            <div class="grid2" style="margin-bottom:18px">
+
+                <!-- Must-Have Skills -->
+                <div class="field">
+                    <div class="field-header">
+                        <label class="lbl">Must-Have Skills <span class="astrick">*</span>
+                            <span class="lbl-sub"> min 3 · max 10</span>
+                        </label>
+                        <span class="ai-chip" (click)="aiSuggestSkills()">✦ AI-suggest</span>
+                    </div>
+                    <div class="tag-area" [class.err]="mustSkills.length < 3 && mustSkills.length > 0"
+                        (click)="mustInput.focus()">
+                        <span class="tag" *ngFor="let t of mustSkills; let i = index; trackBy: trackByIndex">
+                            {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeMust(i)">×</span>
+                        </span>
+                        <input #mustInput class="tag-inp" [(ngModel)]="mustSkillInput"
+                            [ngModelOptions]="{standalone: true}" placeholder="Type &amp; press Enter..."
+                            (keydown)="onMustKeydown($event)" />
+                    </div>
+                    <div class="ai-sugg">
+                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s)">{{ s }}</span>
+                    </div>
+                </div>
+
+                <!-- Nice-to-Have Skills -->
+                <div class="field">
+                    <label class="lbl">Nice-to-Have Skills <span class="lbl-sub">(optional · max 10)</span></label>
+                    <div class="tag-area" (click)="niceInput.focus()">
+                        <span class="tag" *ngFor="let t of niceSkills; let i = index; trackBy: trackByIndex">
+                            {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeNice(i)">×</span>
+                        </span>
+                        <input #niceInput class="tag-inp" [(ngModel)]="niceSkillInput"
+                            [ngModelOptions]="{standalone: true}" placeholder="Type &amp; press Enter..."
+                            (keydown)="onNiceKeydown($event)" />
+                    </div>
+                    <div class="ai-sugg">
+                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s)">{{ s }}</span>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="field">
+                    <label class="lbl">Education Requirement <span class="astrick">*</span></label>
+                    <select formControlName="eduReq" [class.err]="hasError(step3Form, 'eduReq')">
+                        <option value="" disabled>Select education</option>
+                        <option *ngFor="let e of educationOpts" [value]="e">{{ e }}</option>
+                    </select>
+                    <span class="err-msg" *ngIf="hasError(step3Form, 'eduReq')">
+                        {{ getError(step3Form, 'eduReq') }}
+                    </span>
+                </div>
+
+                <!-- Travel -->
+                <div class="field">
+                    <label class="lbl">Travel Requirement <span class="lbl-sub">(optional)</span></label>
+                    <select formControlName="travel">
+                        <option value="" disabled>Select travel %</option>
+                        <option *ngFor="let t of travelOpts" [value]="t">{{ t }}</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Experience Range -->
+            <div class="field" style="margin-bottom:18px">
+                <label class="lbl">Years of Experience <span class="astrick">*</span> —
+                    {{ step3Form.get('expMin')?.value }}–{{ step3Form.get('expMax')?.value }}+ years
+                </label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+                    <div>
+                        <div class="range-sub">Min: {{ step3Form.get('expMin')?.value }} yrs</div>
+                        <input type="range" min="0" max="25" step="1" [value]="step3Form.get('expMin')?.value"
+                            (input)="onExpMinChange(+$any($event.target).value)" />
+                    </div>
+                    <div>
+                        <div class="range-sub">Max: {{ step3Form.get('expMax')?.value }}+ yrs</div>
+                        <input type="range" min="0" max="25" step="1" [value]="step3Form.get('expMax')?.value"
+                            (input)="onExpMaxChange(+$any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid2" style="margin-bottom:18px">
+
+                <!-- Certifications -->
+                <div class="field">
+                    <label class="lbl">Certifications <span class="lbl-sub">(optional)</span></label>
+                    <div class="tag-area" (click)="certInp.focus()">
+                        <span class="tag" *ngFor="let t of certs; let i = index; trackBy: trackByIndex">
+                            {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeCert(i)">×</span>
+                        </span>
+                        <input #certInp class="tag-inp" [(ngModel)]="certInput" [ngModelOptions]="{standalone: true}"
+                            placeholder="Add certification..." (keydown)="onCertKeydown($event)" />
+                    </div>
+                    <div class="ai-sugg">
+                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s)">{{ s }}</span>
+                    </div>
+                </div>
+
+                <!-- Interview Rounds -->
+                <div class="field">
+                    <label class="lbl">Interview Rounds <span class="req">*</span>
+                    </label>
+                    <input type="number" formControlName="interviewRounds" min="1" max="8" readonly />
+
+                </div>
+
+                <!-- Assessment -->
+                <div class="field">
+                    <label class="lbl">Assessment Required</label>
+                    <div class="toggle-row">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="assessmentOn" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable assessments</span>
+                    </div>
+                    <div *ngIf="step3Form.get('assessmentOn')?.value" class="radio-row" style="margin-top:8px">
+                        <div *ngFor="let t of assessmentOpts" class="rbtn" [class.sel]="assessmentTypes.includes(t)"
+                            (click)="toggleAssessType(t)">{{ t }}</div>
+                    </div>
+                </div>
+
+                <!-- Languages -->
+                <div class="field">
+                    <label class="lbl">Language Requirements <span class="lbl-sub">(optional)</span></label>
+                    <div class="tag-area" (click)="langInp.focus()">
+                        <span class="tag" *ngFor="let l of langs; let i = index; trackBy: trackByIndex">
+                            {{ l }}<span class="tx" (click)="$event.stopPropagation(); removeLang(i)">×</span>
+                        </span>
+                        <input #langInp class="tag-inp" [(ngModel)]="langInput" [ngModelOptions]="{standalone: true}"
+                            placeholder="Add language..." (keydown)="onLangKeydown($event)" />
+                    </div>
+                    <div class="ai-sugg">
+                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s)">{{ s }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-btns">
+                <div class="flex-gap">
+                    <button type="button" class="btn btn-ghost" (click)="goTo(2)">← Back</button>
+                    <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="validateStep3()">
+                    Next: Sourcing →
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ─── STEP 4: Sourcing Strategy ─────────────────────────────────── -->
+    <form [formGroup]="step4Form" *ngIf="currentStep === 4" novalidate>
+        <div class="card">
+            <div class="">
+                <div class="sec-title">Sourcing Strategy</div>
+            </div>
+
+            <!-- Job Boards -->
+            <div class="field" style="margin-bottom:20px">
+                <label class="lbl">Sourcing Channels <span class="astrick">*</span></label>
+                <p class="field-hint">Select where candidates should come from</p>
+
+                <div class="grid-boards">
+                    <div *ngFor="let b of boardOptions" class="board-card" [class.sel]="jobBoards.includes(b.n)">
+
+                        <!-- ICON -->
+                        <div class="board-icon">
+                            <i class="fa-solid" [ngClass]="b.icon"></i>
+                        </div>
+
+                        <!-- NAME -->
+                        <div class="board-name">{{ b.n }}</div>
+
+                        <!-- TOGGLE SWITCH -->
+                        <label class="toggle switch-inside">
+                            <input type="checkbox" [checked]="jobBoards.includes(b.n)" (change)="toggleBoard(b.n)" />
+                            <span class="tslider"></span>
+                        </label>
+
+                        <!-- Selected text -->
+                        <div *ngIf="jobBoards.includes(b.n)" class="board-check">
+                            ✓ Selected
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid2" style="margin-bottom:18px">
+
+                <!-- Internal First -->
+                <div class="field">
+                    <label class="lbl">Internal First Policy <span class="astrick">*</span></label>
+                    <div class="toggle-row" style="margin-top:6px">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="internalFirst" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">
+                            {{ step4Form.get('internalFirst')?.value
+                            ? 'Active — Internal applicants reviewed first'
+                            : 'Disabled' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Referral Incentive -->
+                <div class="field">
+                    <label class="lbl">Referral Incentive</label>
+                    <div class="toggle-row" style="margin-top:6px">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="referralOn" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable</span>
+                    </div>
+                    <input *ngIf="step4Form.get('referralOn')?.value" type="text" formControlName="referralAmt"
+                        placeholder="₹ Incentive amount" style="margin-top:8px" />
+                </div>
+
+                <!-- Sourcing Budget -->
+                <div class="field">
+                    <label class="lbl">Sourcing Budget <span class="lbl-sub">(optional)</span></label>
+                    <input type="text" formControlName="sourcingBudget" placeholder="₹ 0" />
+                </div>
+
+                <!-- Diversity Sourcing -->
+                <div class="field">
+                    <label class="lbl">Diversity Sourcing <span class="lbl-sub">(optional)</span></label>
+                    <div class="toggle-row" style="margin-top:6px">
+                        <label class="toggle">
+                            <input type="checkbox" formControlName="diversityOn" />
+                            <span class="tslider"></span>
+                        </label>
+                        <span class="toggle-lbl">Enable diversity boards</span>
+                    </div>
+                    <div *ngIf="step4Form.get('diversityOn')?.value" class="radio-row" style="margin-top:8px">
+                        <div *ngFor="let d of diversityOpts" class="rbtn" [class.sel]="diversityBoards.includes(d)"
+                            (click)="toggleDiversity(d)">{{ d }}</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-btns">
+                <div class="flex-gap">
+                    <button type="button" class="btn btn-ghost" (click)="goTo(3)">← Back</button>
+                    <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="validateStep4()">
+                    Next: Review →
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- ─── STEP 5: Review ─────────────────────────────────────────────── -->
+    <div class="card" *ngIf="currentStep === 5">
+        <div class="">
+            <div class="sec-title">SR Summary — Review</div>
+            <span class="draft-badge">SR-2026-ENG-0042 (draft)</span>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="collapsible">
+            <div class="coll-hdr" (click)="toggleReviewSection(0)">
+                <span>Step 1 — Position Basics</span>
+                <span class="arrow" [class.open]="reviewSectionOpen[0]">▼</span>
+            </div>
+            <div class="coll-body" *ngIf="reviewSectionOpen[0]">
+                <div class="review-grid">
+                    <div class="review-row"><span class="review-label">Job Title</span><span class="review-val">{{
+                            step0Form.get('jobTitle')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Department</span><span class="review-val">{{
+                            step0Form.get('dept')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Business Unit</span><span class="review-val">{{
+                            step0Form.get('bu')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Location</span><span class="review-val">{{
+                            step0Form.get('location')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Work Mode</span><span class="review-val">{{
+                            step0Form.get('workMode')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Employment Type</span><span class="review-val">{{
+                            step0Form.get('empType')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Seniority</span><span class="review-val">{{
+                            step0Form.get('seniority')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Priority</span><span class="review-val">{{
+                            step0Form.get('priority')?.value || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Start Date</span><span class="review-val">{{
+                            step0Form.get('startDate')?.value || '—' }}</span></div>
+                </div>
+                <span class="edit-link" (click)="goTo(0)">✏ Edit</span>
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="collapsible">
+            <div class="coll-hdr" (click)="toggleReviewSection(1)">
+                <span>Step 2 — Business Justification</span>
+                <span class="arrow" [class.open]="reviewSectionOpen[1]">▼</span>
+            </div>
+            <div class="coll-body" *ngIf="reviewSectionOpen[1]">
+                <div class="review-grid">
+                    <div class="review-row"><span class="review-label">Req. Type</span><span class="review-val">{{
+                            step1Form.get('justType')?.value }}</span></div>
+                    <div class="review-row"><span class="review-label">Business Case</span><span class="review-val">{{
+                            step1Form.get('bizCase')?.value ? (step1Form.get('bizCase')!.value.substring(0,80) + '...')
+                            : '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Impact</span><span class="review-val">{{
+                            step1Form.get('impactNote')?.value ? (step1Form.get('impactNote')!.value.substring(0,60) +
+                            '...') : '—' }}</span></div>
+                </div>
+                <span class="edit-link" (click)="goTo(1)">✏ Edit</span>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="collapsible">
+            <div class="coll-hdr" (click)="toggleReviewSection(2)">
+                <span>Step 3 — Budget &amp; Compensation</span>
+                <span class="arrow" [class.open]="reviewSectionOpen[2]">▼</span>
+            </div>
+            <div class="coll-body" *ngIf="reviewSectionOpen[2]">
+                <div class="review-grid">
+                    <div class="review-row"><span class="review-label">Cost Centre</span><span class="review-val">{{
+                            step2Form.get('costCenter')?.value }}</span></div>
+                    <div class="review-row"><span class="review-label">Budget Code</span><span class="review-val">{{
+                            step2Form.get('budgetCode')?.value }}</span></div>
+                    <div class="review-row"><span class="review-label">Proposed CTC</span><span class="review-val">₹{{
+                            step2Form.get('proposedComp')?.value }} LPA</span></div>
+                </div>
+                <span class="edit-link" (click)="goTo(2)">✏ Edit</span>
+            </div>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="collapsible">
+            <div class="coll-hdr" (click)="toggleReviewSection(3)">
+                <span>Step 4 — Sourcing Strategy</span>
+                <span class="arrow" [class.open]="reviewSectionOpen[3]">▼</span>
+            </div>
+            <div class="coll-body" *ngIf="reviewSectionOpen[3]">
+                <div class="review-grid">
+                    <div class="review-row"><span class="review-label">Internal First</span><span class="review-val">{{
+                            step4Form.get('internalFirst')?.value ? 'Active' : 'Off' }}</span></div>
+                    <div class="review-row"><span class="review-label">Job Boards</span><span class="review-val">{{
+                            jobBoards.join(', ') || '—' }}</span></div>
+                    <div class="review-row"><span class="review-label">Budget</span><span class="review-val">{{
+                            step4Form.get('sourcingBudget')?.value || '—' }}</span></div>
+                </div>
+                <span class="edit-link" (click)="goTo(4)">✏ Edit</span>
+            </div>
+        </div>
+
+        <!-- Approval Chain Preview -->
+        <div class="approval-preview">
+            <div class="approval-title">Approval chain preview</div>
+            <div class="prog-steps">
+                <div *ngFor="let item of reviewApprovalChain" class="prog-step">
+                    <div class="prog-dot" [style.background]="item.status === 'Approved' ? '#22c55e' : '#cbd5e1'"></div>
+                    <span style="flex:1">{{ item.n }}</span>
+                    <span class="badge" [ngClass]="item.status === 'Approved' ? 'badge-green' : 'badge-blue'">
+                        {{ item.status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-btns">
+            <div class="flex-gap">
+                <button class="btn btn-ghost" (click)="goTo(4)">← Back</button>
+                <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+            </div>
+            <button class="btn btn-primary" (click)="validateStep5()">
+                Submit SR for Approval →
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── STEP 6: Confirmation ───────────────────────────────────────── -->
+    <div class="card" *ngIf="currentStep === 6">
+        <div class="success-box">
+            <div class="check-circle">✓</div>
+            <div class="success-title">SR-2026-ENG-0042 submitted!</div>
+            <div class="success-sub">
+                {{ step0Form.get('jobTitle')?.value || 'Senior Backend Engineer' }} ·
+                Awaiting approval ·
+                {{ step0Form.get('dept')?.value || 'Engineering' }}
+            </div>
+
+            <div class="approvers-list">
+                <div class="approvers-heading">Approval chain — live status</div>
+                <div *ngFor="let a of approvers" class="approver-row">
+                    <div class="avatar" [style.background]="a.color" [style.color]="a.tc">
+                        {{ getInitials(a.n) }}
+                    </div>
+                    <div class="approver-info">
+                        <div class="approver-name">{{ a.n }}</div>
+                        <div class="approver-role">{{ a.role }}</div>
+                    </div>
+                    <span class="badge badge-blue">{{ a.status }}</span>
+                </div>
+                <p class="confirmation-note">
+                    Email confirmation sent to user&#64;company.com · Track status in My SRs
+                </p>
+                <button class="btn btn-primary btn-full" (click)="viewInMySRs()">View in My SRs →</button>
+                <div class="raise-another" (click)="raiseAnother()">Raise another SR</div>
+            </div>
+        </div>
+    </div>
+
+</div>

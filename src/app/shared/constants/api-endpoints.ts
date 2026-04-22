@@ -1,6 +1,7 @@
 export const API = {
     AUTH : {
-        LOGIN: '/user/login',
+        LOGIN: '/hms/login/user-login',
+        PROFILE:`/hms/login/profile`,
         REFRESH: '/auth/refresh',
         LOGOUT: '/auth/logout',
         FORGOT_PASSWORD: '/auth/forgot-password',
@@ -31,5 +32,24 @@ export const API = {
        SCHEDULE_INTERVIEW : '/api/interview/admin-schedule-interview',
        DELETE_JOB :(id:any) => `/jobs/delete-job-by-id/${id}`,
        VIEW_RESUME : (type:any, user:any, action:any) => `/job/download/${type}?appId=${user}&action=${action}`,
+    },
+    USERS:{
+        CREATE:'/hms/user/create',
+        GET_LIST:`/hms/user/list`,
+        COUNT:'/hms/user/count/total',
+        COUNT_ROLE:(role:any)=>`/hms/user/count/role/${role}`,
+        COUNT_STATUS:(status:any)=>`/hms/user/count/status?status=${status}`,
+        UPDATE_BY_ID:(id:any)=>`/hms/user/update/${id}`,
+        BUSSINESS_UNITS:'/hms/configurations/business-units',
+        DEPARTMENTS:(bussinessId:any)=>`/hms/configurations/departments/${bussinessId}`,
+        ROLES_BY_DEPT:(departmentId:any)=>`/hms/configurations/roles/${departmentId}`,
+        EMP_TYPES:`/hms/configurations/employment-types`,
+        USER_TYPES:`/hms/configurations/user-types`,
+    },
+    ROLES:{
+        ADD_ROLE:`/hms/role/add-role`,
+        UPDATE:`/hms/role/update-role-permissions`,
+        GET_ALL_PERMISSIONS:`/hms/role/get-all-role-permissions`,
+        GET_ALL_MODULES:`/hms/configurations/get-all-modules`
     }
 }

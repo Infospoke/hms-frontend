@@ -1,0 +1,131 @@
+// ── NEXUS Design Tokens ──────────────────────────────────────────────────────
+$color-primary:    #2563eb;   // NEXUS blue
+$color-text:       #1e293b;   // dark slate
+$color-muted:      #64748b;   // secondary text
+$color-border:     #e2e8f0;
+$color-bg-hover:   #f1f5f9;
+$color-active-bg:  #2563eb;
+$color-active-text:#ffffff;
+$radius-btn:       6px;
+$font-base:        'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+// ── Host ─────────────────────────────────────────────────────────────────────
+:host {
+  display: block;
+  font-family: $font-base;
+}
+
+// ── Wrapper ───────────────────────────────────────────────────────────────────
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid $color-border;
+  background: #ffffff;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// ── Info text ─────────────────────────────────────────────────────────────────
+.pagination-info {
+  font-size: 13px;
+  color: $color-muted;
+  white-space: nowrap;
+
+  strong {
+    color: $color-text;
+    font-weight: 600;
+  }
+}
+
+// ── Controls row ──────────────────────────────────────────────────────────────
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ── Shared button ─────────────────────────────────────────────────────────────
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid $color-border;
+  border-radius: $radius-btn;
+  background: #ffffff;
+  color: $color-text;
+  font-size: 13px;
+  font-family: $font-base;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+              box-shadow 0.15s ease;
+  user-select: none;
+  outline: none;
+
+  &:hover:not(:disabled):not(.active) {
+    background: $color-bg-hover;
+    border-color: darken($color-border, 6%);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba($color-primary, 0.25);
+    border-color: $color-primary;
+  }
+
+  // Active / selected page
+  &.active {
+    background: $color-active-bg;
+    border-color: $color-active-bg;
+    color: $color-active-text;
+    font-weight: 600;
+    pointer-events: none;
+    box-shadow: 0 1px 4px rgba($color-active-bg, 0.35);
+  }
+
+  // Prev / Next arrow buttons
+  &.nav-btn {
+    color: $color-muted;
+
+    &:hover:not(:disabled) {
+      color: $color-text;
+    }
+  }
+
+  // Disabled state
+  &.disabled,
+  &:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    background: #ffffff;
+  }
+}
+
+// ── Ellipsis ──────────────────────────────────────────────────────────────────
+.page-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  color: $color-muted;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+// ── Responsive: stack on small screens ───────────────────────────────────────
+@media (max-width: 480px) {
+  .pagination-wrapper {
+    justify-content: center;
+  }
+
+  .pagination-info {
+    width: 100%;
+    text-align: center;
+  }
+}

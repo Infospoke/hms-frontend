@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -10,9 +10,9 @@ import {
   ValidationErrors,
   FormsModule
 } from '@angular/forms';
-
-// ─── Interfaces ───────────────────────────────────────────────────────────────
-
+import { QuillModule } from 'ngx-quill';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { AddSkillComponent } from '../../../../shared/components/add-skill/add-skill.component';
 export interface BannerMessage {
   text: string;
   type: 'ok' | 'err';
@@ -55,7 +55,7 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
 @Component({
   selector: 'app-create-staff',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule, NzModalModule],
   templateUrl: './create-staff.component.html',
   styleUrl: './create-staff.component.scss'
 })
@@ -70,8 +70,10 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     { label: 'Review', icon: '👁' },
     { label: 'Approval', icon: '✅' }
   ];
-
   currentStep = 0;
+  errorMsg: any;
+  modalType: 'must' | 'nice' | 'cert' | 'lang' = 'must';
+  modalLabel: any;
   banner: BannerMessage | null = null;
   private bannerTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -93,7 +95,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   readonly travelOpts = ['None', '< 10%', '10–25%', '25–50%', '50%+'];
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
   readonly diversityOpts = ['Women-in-Tech', 'Veterans', 'LGBTQ+', 'Differently-Abled'];
-  readonly strategicAlignOpts = ['AI/ML Scale-up', 'Customer Growth FY26', 'Platform Reliability', 'Global Expansion', 'Cost Optimization'];
+
 
   readonly boardOptions: BoardOption[] = [
     { n: 'Internal Board', icon: 'fa-building' },
@@ -111,9 +113,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   ];
 
   readonly reviewApprovalChain = [
-    { n: 'Hiring Manager (You)', status: 'Approved' },
-    { n: 'Finance (Aryan K.)', status: 'Pending' },
-    { n: 'VP Eng (Priya R.)', status: 'Pending' }
+    { n: 'Hiring Manager (You)', status: 'Approved',level:'1' },
+    { n: 'Finance (Aryan K.)', status: 'Pending',level:'1' },
+    { n: 'VP Eng (Priya R.)', status: 'Pending',level:'1' }
   ];
   showDropdown = false;
 
@@ -126,10 +128,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     { name: 'Nicholas Arquel', role: 'INARQUEL / SOFTWARE ENGINEER 2' }
   ];
   @ViewChild('managerInput') managerInput!: ElementRef;
-
+  mustSuggestions:any[]=[];
+  niceSuggestions:any[]=[];
+  certSuggestions:any=[];
+  langSuggestions:any[]=[]
   selectedManagers: any[] = [{ name: 'Venkat' }];
   filteredManagers: any[] = [];
-
+  replaceEmployee: any = null;
   mustSkills: string[] = [];
   niceSkills: string[] = [];
   certs: string[] = [];
@@ -138,25 +143,41 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   niceSkillInput = '';
   certInput = '';
   langInput = '';
-
-  strategicAlign: string[] = [];
+  editorConfig = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['clean']
+    ]
+  };
   jobBoards: string[] = [];
   diversityBoards: string[] = [];
   assessmentTypes: string[] = [];
-  supportDoc: string | null = null;
+  supportDoc: any = null;
 
   reviewSectionOpen: boolean[] = [true, true, true, true];
-
+  private modal = inject(NzModalService);
   step0Form!: FormGroup;
   step1Form!: FormGroup;
   step2Form!: FormGroup;
   step3Form!: FormGroup;
   step4Form!: FormGroup;
-
+  bandMin = 8;
+  bandMid = 12;
+  bandMax = 18;
+  bandRef = 14;
+  compMin = 5;
+  compMax = 25;
+  modalForm!: FormGroup;
+  min = 0;
+  max = 25;
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.buildForms();
+    this.modalForm = this.fb.group({
+      value: ['', Validators.required]
+    });
   }
 
   ngOnDestroy(): void {
@@ -189,9 +210,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       costCenter: ['BNG-CC-001 — Engineering Core'],
       budgetCode: ['FY26-BNG-OPEX-42'],
       hcSlot: [true],
-      salaryMin: [18],
-      salaryMid: [23],
-      salaryMax: [28],
+      salaryComp: ['10-20'],
       proposedComp: [23],
       signingBonus: [false],
       signingAmt: [''],
@@ -205,7 +224,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       eduReq: ['', Validators.required],
       expMin: [0],
       expMax: [5],
-      interviewRounds: [3, [Validators.min(1), Validators.max(8)]],
+      interviewMin: [0],
+      interviewMax: [0],
       assessmentOn: [false],
       travel: ['']
     });
@@ -240,47 +260,101 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   get impactLen(): number {
     return (this.step1Form.get('impactNote')?.value || '').length;
   }
-
-  get salaryPct(): number {
-    const f = this.step2Form.value;
-    const range = f.salaryMax - f.salaryMin;
-    return range > 0 ? Math.round(((f.proposedComp - f.salaryMin) / range) * 100) : 0;
+  get bandPct() {
+    return ((this.bandRef - this.bandMin) / (this.bandMax - this.bandMin)) * 100;
+  }
+  get bandMidPct() {
+    return ((this.bandMid - this.bandMin) / (this.bandMax - this.bandMin)) * 100;
+  }
+  get compPct() {
+    const val = this.step2Form.get('proposedComp')?.value || 0;
+    return ((val - this.compMin) / (this.compMax - this.compMin)) * 100;
   }
 
-  get isInBand(): boolean {
-    const f = this.step2Form.value;
-    return f.proposedComp >= f.salaryMin && f.proposedComp <= f.salaryMax;
+  // get isInBand(): boolean {
+  //   const val = this.step2Form.value.proposedComp;
+  //   return val >= this.bandMin && val <= this.bandMax;
+  // }
+
+
+
+  
+  get expMin() {
+    return this.step3Form.get('expMin')?.value;
   }
 
-  get mustSuggestions(): string[] {
-    return ['UX Design', 'Usability Testing', 'Wireframing', 'User Research', 'Figma', 'Prototyping', 'Design Systems', 'Accessibility']
-      .filter(s => !this.mustSkills.includes(s)).slice(0, 5);
+  get expMax() {
+    return this.step3Form.get('expMax')?.value;
   }
 
-  get niceSuggestions(): string[] {
-    return ['HTML', 'CSS', 'Bootstrap', 'jQuery', 'React', 'Animation']
-      .filter(s => !this.niceSkills.includes(s)).slice(0, 5);
+  get minInterviewData() {
+    return this.step3Form.get('interviewMin')?.value;
   }
 
-  get certSuggestions(): string[] {
-    return ['Google UX Design', 'Nielsen Norman', 'CPACC']
-      .filter(s => !this.certs.includes(s)).slice(0, 3);
+  get maxInterviewData() {
+    return this.step3Form.get('interviewMax')?.value;
+  }
+  get minPercent(): number {
+    return ((this.expMin - this.min) / (this.max - this.min)) * 100;
+  }
+  get minInterview(): number {
+    return ((this.minInterviewData - this.min) / (this.max - this.min)) * 100;
+  }
+  get maxInterview(): number {
+    return ((this.maxInterviewData - this.min) / (this.max - this.min)) * 100;
+  }
+  get maxPercent(): number {
+    return ((this.expMax - this.min) / (this.max - this.min)) * 100;
   }
 
-  get langSuggestions(): string[] {
-    return ['English', 'Hindi', 'Mandarin', 'Spanish', 'French', 'German']
-      .filter(l => !this.langs.includes(l)).slice(0, 4);
+  get rangeInterview(): number {
+    return this.maxInterview - this.minInterview;
   }
+  get rangeWidth(): number {
+    return this.maxPercent - this.minPercent;
+  }
+
+  onMinChange() {
+    if (this.expMin >= this.expMax) {
+      this.step3Form.patchValue({
+        expMin: this.expMax - 1
+      });
+    }
+  }
+  onMinInterview() {
+    if (this.minInterviewData >= this.maxInterviewData) {
+      this.step3Form.patchValue({
+        interviewMin: this.maxInterviewData - 1
+      })
+    }
+  }
+  onMaxInterview() {
+    if (this.maxInterviewData <= this.minInterviewData) {
+      this.step3Form.patchValue({
+        interviewMax: this.minInterviewData - 1
+      })
+    }
+  }
+  onMaxChange() {
+    if (this.expMax <= this.expMin) {
+      this.step3Form.patchValue({
+        expMax: this.expMin + 1
+      });
+    }
+  }
+  
+
+  
 
   hasError(form: FormGroup, field: string): boolean {
     const ctrl = form.get(field);
     return !!(ctrl && ctrl.invalid && (ctrl.dirty || ctrl.touched));
   }
 
-  getError(form: FormGroup, field: string): string {
+  getError(form: FormGroup, field: string,name:any): string {
     const ctrl = form.get(field);
     if (!ctrl || !ctrl.errors) return '';
-    if (ctrl.errors['required']) return `${field.replace(/([A-Z])/g, ' $1')} is required`;
+    if (ctrl.errors['required']) return `${name.replace(/([A-Z])/g, ' $1')} is required`;
     if (ctrl.errors['minlength']) return `Min ${ctrl.errors['minlength'].requiredLength} characters`;
     if (ctrl.errors['maxlength']) return `Max ${ctrl.errors['maxlength'].requiredLength} characters`;
     if (ctrl.errors['min']) return `Minimum value is ${ctrl.errors['min'].min}`;
@@ -292,7 +366,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   goTo(n: number): void {
     this.currentStep = n;
   }
-
+  selectReplaceEmployee(m: any) {
+    this.replaceEmployee = m;
+  }
+  removeReplaceEmp() {
+    this.replaceEmployee = null;
+  }
   stepClass(i: number): string {
     if (i === this.currentStep) return 'active';
     if (i < this.currentStep) return 'done';
@@ -303,7 +382,48 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   onDeptChange(val: string): void {
     this.step0Form.patchValue({ dept: val, bu: this.depts[val] || '' });
   }
+  openModal(type: 'must' | 'nice' | 'cert' | 'lang') {
+    const labelMap: any = {
+      must: 'Enter Must Have Skill',
+      nice: 'Enter Nice-to-Have Skill',
+      cert: 'Enter Certification',
+      lang: 'Enter Language '
+    };
+    this.modalType = type;
+    this.modalLabel =labelMap[type];
+    const addSkill = this.modal.create({
+      nzTitle: '',
+      nzContent: AddSkillComponent,
+      nzWidth: '40%',
+      nzCentered: true,
+      nzBodyStyle: {
+        'max-height': '100vh',
+        'overflow-y': 'auto',
+        'padding': '10px'
+      },
+      nzFooter: null,
+    })
+    const instance = addSkill.getContentComponent();
+    instance.modalType = this.modalType;
+    instance.modalForm = this.modalForm;
+    instance.modalLabel=this.modalLabel;
+    addSkill.afterClose.subscribe((result: any) => {
+      if (result) {
+        this.saveModal()
+      }
+    })
+  }
 
+  saveModal() {
+    const val = this.modalForm.get('value')?.value?.trim();
+    if (!val) return;
+
+    if (this.modalType === 'must')this.mustSuggestions.push(val);
+    if (this.modalType === 'nice')this.niceSuggestions.push(val);
+    if (this.modalType === 'cert')this.certSuggestions.push(val);
+    if (this.modalType === 'lang')this.langSuggestions.push(val);
+    this.modalForm.reset();
+  }
   setWorkMode(v: string): void { this.step0Form.patchValue({ workMode: v }); }
   setEmpType(v: string): void { this.step0Form.patchValue({ empType: v }); }
   setPriority(v: string): void { this.step0Form.patchValue({ priority: v }); }
@@ -323,7 +443,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.currentStep = 1;
   }
 
-  // ── Step 1 ────────────────────────────────────────────────────────────────
+
   setJustType(v: string): void {
     this.step1Form.patchValue({ justType: v });
     if (v !== 'Backfill' && v !== 'Replacement') {
@@ -331,26 +451,21 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleAlign(v: string): void {
-    const i = this.strategicAlign.indexOf(v);
-    if (i >= 0) this.strategicAlign.splice(i, 1);
-    else this.strategicAlign.push(v);
+
+
+  onBizCaseChange(event: any) {
+    const text = event.text?.trim() || '';
+    // this.bizCaseLen = text.length;
   }
 
-  simulateUpload(): void { this.supportDoc = 'headcount_approval_q2.pdf — 230 KB'; }
+  onImpactChange(event: any) {
+    const text = event.text?.trim() || '';
+    // this.impactLen = text.length;
+  }
   removeDoc(): void { this.supportDoc = null; }
 
-  aiSuggestBizCase(): void {
-    this.step1Form.patchValue({
-      bizCase: 'The engineering team requires a Senior Backend Engineer to support the scale-up of our payments microservice. Current team capacity is at 100% utilisation with 3 critical projects in flight. This hire will directly unblock the Q3 product roadmap and enable on-time delivery of committed milestones.'
-    });
-  }
 
-  aiSuggestImpact(): void {
-    this.step1Form.patchValue({
-      impactNote: 'Without this hire, Q3 delivery timelines will slip by 6–8 weeks, risking ₹2Cr in contracted commitments and increasing churn risk for 3 enterprise accounts currently in contract renewal.'
-    });
-  }
+
 
   validateStep1(): void {
     this.step1Form.markAllAsTouched();
@@ -367,15 +482,24 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     }
     this.currentStep = 2;
   }
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
 
-  // ── Step 2 ────────────────────────────────────────────────────────────────
+  // Drop file
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files[0];
+    this.validateAndSetFile(file);
+  }
+
   validateStep2(): void {
-    if (!this.isInBand) { this.showBanner('Proposed compensation is outside salary band', 'err'); return; }
+    // if (!this.isInBand) { this.showBanner('Proposed compensation is outside salary band', 'err'); return; }
     if (!this.step2Form.value.hcSlot) { this.showBanner('HC slot required to proceed', 'err'); return; }
     this.currentStep = 3;
   }
 
-  // ── Step 3 tag inputs ─────────────────────────────────────────────────────
+
   addTag(arr: string[], val: string, max = 10): string {
     val = val.trim();
     if (val && arr.length < max && !arr.includes(val)) arr.push(val);
@@ -485,7 +609,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.currentStep = 0;
     this.buildForms();
     this.mustSkills = []; this.niceSkills = []; this.certs = []; this.langs = [];
-    this.strategicAlign = []; this.jobBoards = []; this.diversityBoards = []; this.assessmentTypes = [];
+    this.jobBoards = []; this.diversityBoards = []; this.assessmentTypes = [];
     this.supportDoc = null;
   }
 
@@ -508,7 +632,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.managerInput.nativeElement.focus();
   }
 
-  /* Select manager */
   selectManager(m: any) {
     if (!this.selectedManagers.find(x => x.name === m.name)) {
       this.selectedManagers.push(m);
@@ -536,5 +659,138 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.showDropdown = false;
     }, 200);
   }
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    this.validateAndSetFile(file);
+  }
+  validateAndSetFile(file: any) {
+    this.errorMsg = '';
+
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      this.errorMsg = 'Only PDF files are allowed';
+      return;
+    }
+
+    const maxSize = 20 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.errorMsg = 'File size exceeds 20MB';
+      return;
+    }
+
+    const sizeText = (file.size / 1024).toFixed(1) + ' KB';
+
+    this.supportDoc = {
+      file: file,
+      name: file.name,
+      sizeText: sizeText
+    };
+  }
+  get salaryPct() {
+    const val = this.step2Form.get('salaryComp')?.value || 0;
+    return ((this.step2Form.value.salaryComp - this.bandMin) /
+      (this.bandMax - this.bandMin)) * 100;;
+  }
+  get totalCompensation(): number {
+    const f = this.step2Form.value;
+
+    const base = Number(f.proposedComp) || 0;
+    const salary = Number(f.salaryComp) || 0;
+
+
+    const signing = f.signingBonus
+      ? (Number(f.signingAmt) || 0) / 100000
+      : 0;
+
+    const equity = f.equity
+      ? (Number(f.equityAmt) || 0) / 100000
+      : 0;
+
+    const relocation = f.relocation
+      ? (Number(f.relocAmt) || 0) / 100000
+      : 0;
+
+    return +(base + salary + signing + equity + relocation).toFixed(2);
+  }
+
+  get compStatus() {
+    const f = this.step2Form.value;
+
+
+    const base = Number(f.salaryComp) || 0;
+
+
+    const proposed = Number(f.proposedComp) || 0;
+
+    const signing = f.signingBonus ? (Number(f.signingAmt) || 0) / 100000 : 0;
+    const equity = f.equity ? (Number(f.equityAmt) || 0) / 100000 : 0;
+    const relocation = f.relocation ? (Number(f.relocAmt) || 0) / 100000 : 0;
+
+    const total = proposed + base + signing + equity + relocation;
+
+    const min = this.bandMin;
+    const max = this.bandMax;
+
+    const baseDiff = ((base - max) / max) * 100;
+    const totalDiff = ((total - max) / max) * 100;
+
+
+    if (base < min) {
+      return {
+        color: 'yellow',
+        msg: `⚠ Base ₹${base}L below band (Min ₹${min}L) — candidate rejection risk | Total ₹${total.toFixed(2)}L`
+      };
+    }
+
+
+    if (base > max) {
+      if (baseDiff <= 5) {
+        return {
+          color: 'yellow',
+          msg: `⚠ Base ₹${base}L slightly above band (≤5%) — approval required | Total ₹${total.toFixed(2)}L`
+        };
+      }
+
+      return {
+        color: 'red',
+        msg: `✗ Base ₹${base}L exceeds band (Max ₹${max}L) — budget violation | Total ₹${total.toFixed(2)}L`
+      };
+    }
+    if (base <= max && total > max) {
+      if (totalDiff <= 5) {
+        return {
+          color: 'yellow',
+          msg: `✓ Base within band | ⚠ Total ₹${total.toFixed(2)}L slightly above budget`
+        };
+      }
+
+      return {
+        color: 'red',
+        msg: `✓ Base within band | ✗ Total ₹${total.toFixed(2)}L exceeds budget`
+      };
+    }
+
+
+    return {
+      color: 'green',
+      msg: `✓ Base ₹${base}L within band | Total ₹${total.toFixed(2)}L optimal`
+    };
+  }
+  addMustFromInput() {
+    const value = this.mustSkillInput?.trim();
+    if (!value) return;
+
+    if (this.mustSkills.length >= 10) return;
+
+    if (!this.mustSkills.includes(value)) {
+      this.mustSkills.push(value);
+    }
+
+    this.mustSkillInput = '';
+  }
+
+
+
 
 }

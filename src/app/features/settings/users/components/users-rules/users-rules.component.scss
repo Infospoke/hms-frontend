@@ -146,6 +146,11 @@
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  width: 100%;
+}
+.card-wrap > * {
+  flex: 1;
+  min-width: 0; 
 }
 .filters-section {
   margin-bottom: 10px;
@@ -164,3 +169,5 @@
 .fill app-card span {
   width: 100%;
 }
+
+

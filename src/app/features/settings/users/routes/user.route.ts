@@ -8,5 +8,9 @@ export const USER_ROUTES: Routes = [
   {
     path:'user-onboard-roles/invite',
     loadComponent:()=>import("../components/invite-user/invite-user.component").then(m=>m.InviteUserComponent)
+  },
+  {
+    path:'user-onboard-roles/role-permissions',
+    loadComponent:()=>import("../components/role-permissions/role-permissions.component").then(m=>m.RolePermissionsComponent)
   }
 ];

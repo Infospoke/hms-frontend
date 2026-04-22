@@ -1,0 +1,100 @@
+.modal-input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #262626;
+}
+
+/* Form */
+.modal-form {
+  margin-bottom: 16px;
+}
+
+/* Input */
+.modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #1677ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(22,119,255,0.2);
+}
+
+/* Error */
+.modal-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* Footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn-cancel {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel:hover {
+  border-color: #1677ff;
+  color: #1677ff;
+}
+
+.btn-confirm {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #1677ff;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-confirm:hover {
+  background: #0958d9;
+}
+
+.btn-confirm:disabled {
+  background: #d9d9d9;
+  cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

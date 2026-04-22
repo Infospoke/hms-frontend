@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, NgModuleRef, OnInit, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { UserService } from '../../servics/user-service';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 
 
 function alphabetsOnly(): ValidatorFn {
@@ -44,7 +48,7 @@ function notSameAsMobile(mobileField: string): ValidatorFn {
 @Component({
   selector: 'app-invite-user',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,NzModalModule],
   templateUrl: './invite-user.component.html',
   styleUrl: './invite-user.component.scss',
 })
@@ -52,107 +56,163 @@ export class InviteUserComponent implements OnInit {
 
   form!: FormGroup;
 
-  userTypes = ['Employee', 'Manager', 'HR', 'Admin', 'Client'];
+  userTypes: any = [];
 
-  employmentTypes = ['Full Time', 'Part Time', 'Intern', 'Contract'];
-
-  businessUnits = ['Engineering', 'HR', 'Finance'];
-  departments: string[] = [];
-  allDepartments: Record<string, string[]> = {
-    Engineering: ['Frontend', 'Backend', 'DevOps'],
-    HR: ['HR Ops', 'Talent Acquisition'],
-    Finance: ['Accounts', 'Payroll'],
-  };
-
-  roles: string[] = [];
-  allRoles: Record<string, string[]> = {
-    Frontend: ['Hiring Manager', 'Recruiter'],
-    Backend: ['TA Lead', 'Admin'],
-    'HR Ops': ['HR Manager'],
-    'Talent Acquisition': ['Recruiter', 'TA Lead'],
-    Accounts: ['Finance'],
-    Payroll: ['Finance', 'Admin'],
-    DevOps: ['Admin'],
-  };
-
-  constructor(private fb: FormBuilder) {}
+  employmentTypes: any = [];
+  businessUnits: any = [];
+  departments: any[] = [];
+  roles: any[] = [];
+  private userService = inject(UserService);
+  private notificationService=inject(NotificationService);
+  private modal=inject(NzModalRef)
+  isloading=signal<boolean>(false);
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.form = this.fb.group({
-      userType:       ['', Validators.required],
+      userType: ['', Validators.required],
 
-      firstName:      ['', [
-                        Validators.required,
-                        Validators.minLength(2),
-                        Validators.maxLength(50),
-                        alphabetsOnly()
-                      ]],
+      firstName: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50),
+        alphabetsOnly()
+      ]],
 
-      lastName:       ['', [
-                        Validators.required,
-                        Validators.minLength(1),
-                        Validators.maxLength(50),
-                        alphabetsOnly()
-                      ]],
+      lastName: ['', [
+        Validators.required,
+        Validators.minLength(1),
+        Validators.maxLength(50),
+        alphabetsOnly()
+      ]],
 
-      employeeId:     ['', [
-                        Validators.required,
-                        numericOnly()
-                      ]],
+      employeeId: ['', [
+        Validators.required,
+        numericOnly()
+      ]],
 
-      email:          ['', [
-                        Validators.required,
-                        Validators.email,
-                        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
-                      ]],
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+      ]],
 
-      mobile:         ['', [
-                        Validators.required,
-                        numericOnly(),
-                        Validators.minLength(10),
-                        Validators.maxLength(15)
-                      ]],
+      mobile: ['', [
+        Validators.required,
+        numericOnly(),
+        Validators.minLength(10),
+        Validators.maxLength(15)
+      ]],
 
-      altMobile:      ['', [
-                        numericOnly(),
-                        Validators.minLength(10),
-                        Validators.maxLength(15),
-                        notSameAsMobile('mobile')
-                      ]],
+      altMobile: ['', [
+        numericOnly(),
+        Validators.minLength(10),
+        Validators.maxLength(15),
+        notSameAsMobile('mobile')
+      ]],
 
-      dob:            ['', [
-                        Validators.required,
-                        minAge(18)
-                      ]],
+      dob: ['', [
+        Validators.required,
+        minAge(18)
+      ]],
 
       employmentType: ['', Validators.required],
-      businessUnit:   ['', Validators.required],
-      department:     ['', Validators.required],
-      role:           ['', Validators.required],
+      businessUnit: ['', Validators.required],
+      department: ['', Validators.required],
+      role: ['', Validators.required],
     });
-
+    this.getIntialData();
     this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
-      this.departments = this.allDepartments[unit] || [];
+      this.departments = [];
       this.roles = [];
-      this.form.get('department')?.reset('');
-      this.form.get('role')?.reset('');
+      this.getDeparmentData(unit);
     });
 
     this.form.get('department')?.valueChanges.subscribe(dept => {
-      this.roles = this.allRoles[dept] || [];
-      this.form.get('role')?.reset('');
+      this.roles = [];
+      this.getRoleData(dept);
     });
     this.form.get('mobile')?.valueChanges.subscribe(() => {
       this.form.get('altMobile')?.updateValueAndValidity();
     });
   }
-
-  submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+  getIntialData() {
+    forkJoin({
+      userTypes: this.userService.getUsersTypes(),
+      employmentTypes: this.userService.getEmployeeTypes(),
+      bussinessUnit: this.userService.getBussinessUnits()
+    }).subscribe({
+      next: (res: any) => {
+        this.userTypes = res.userTypes?.data;
+        this.employmentTypes = res.employmentTypes?.data;
+        this.businessUnits = res.bussinessUnit?.data;
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+  getDeparmentData(id: any) {
+    try {
+      this.userService.getDepartments(id)
+        .then((res: any) => {
+          this.departments = res?.data;
+        })
+        .catch(console.error);
     }
-    console.log(this.form.value);
+    catch (error: any) {
+
+    }
+  }
+  getRoleData(id: any) {
+    try {
+      this.userService.getDepartments(id)
+        .then((res: any) => {
+          this.roles = res?.data;
+        })
+        .catch(console.error);
+    }
+    catch (error: any) {
+
+    }
+  }
+  submit() {
+    if (this.form.valid) {
+      const roleId = this.form.get('role')?.value;
+      const role=this.roles.find(item=>item.id==roleId);
+      this.isloading.set(true);
+      let obj = {
+        userTypeId: this.form?.get('userType')?.value,
+        firstName: this.form.get('firstName')?.value,
+        lastName: this.form.get('lastName')?.value,
+        employeeId: this.form.get('employeeId')?.value,
+        email: this.form.get('email')?.value,
+        mobileNumber: this.form.get('mobile')?.value,
+        alternateContact: this.form.get('altMobile')?.value,
+        dateOfBirth: this.form.get('dob')?.value,
+        employmentTypeId: this.form.get('employmentType')?.value,
+        businessUnitId: this.form.get('businessUnit')?.value,
+        departmentId: this.form.get('department')?.value,
+        roleId: role?.id,
+      }
+      try {
+        this.userService.inviteUser(obj)
+          .then((res: any) => {
+            this.notificationService.success(res?.message);
+            this.isloading.set(false);
+            this.close();
+          }).catch((error:any)=>{
+            this.notificationService.error(error?.error?.message);
+           this.isloading.set(false);
+          })
+      }
+      catch (error: any) {
+
+      }
+    }
+    else {
+      this.form.markAllAsTouched();
+    }
   }
 
   trimField(name: string) {
@@ -172,6 +232,6 @@ export class InviteUserComponent implements OnInit {
   }
 
   close() {
-    console.log('close modal');
+    this.modal.close();
   }
 }

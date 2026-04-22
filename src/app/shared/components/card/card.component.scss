@@ -1,5 +1,5 @@
-span{
-      display: inline-flex;
+span {
+  display: inline-flex;
   align-items: center;
   padding: 6px 14px;
   border-radius: 999px;
@@ -8,4 +8,15 @@ span{
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+}
+
+
+span.active {
+  font-weight: 600;
+  box-shadow: 0 3px 4px rgba(0,0,0,0.05);
+  transform: scale(1.05);
+}
+
+span:hover {
+  transform: translateY(-1px);
 }

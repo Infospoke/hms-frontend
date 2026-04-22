@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard-count-card',
@@ -14,4 +14,7 @@ export class DashboardCountCardComponent {
   @Input() valueColor: string = '#2563eb';
   @Input() labelColor: string = '#64748b';
   @Input() borderColor: string = '#e2e8f0';
+
+
+  
 }

@@ -1,0 +1,61 @@
+<div class="rpm-page">
+  <div class="rpm-header">
+    <h2 class="rpm-title">Role Permissions Matrix</h2>
+    <div class="rpm-actions">
+      <button class="btn btn-outline" (click)="openCreateRole('assign')">Assign Permissions</button>
+      <button class="btn-new" (click)="openCreateRole('create')">Create Role</button>
+    </div>
+  </div>
+
+
+  
+
+  <div class="rpm-table-wrap" >
+    <table class="rpm-table">
+      <thead>
+        <tr>
+          <th class="th-role">Role</th>
+          <th *ngFor="let mod of modules" class="th-module">{{ mod.label }}</th>
+          <th class="th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of roles; let ri = index" class="rpm-row" [class.editing]="isRowEditing(ri)">
+          <td class="td-role">{{ role.roleName }}</td>
+          <td *ngFor="let mod of modules" class="td-cell">
+            <app-permission-cell
+              [cell]="role.permissions[mod.key]"
+              [editable]="isRowEditing(ri)"
+              (cellChange)="onCellChange(ri, mod.key, $event)" />
+          </td>
+          <td class="td-actions">
+            <ng-container *ngIf="!isRowEditing(ri)">
+              <div class="action-row view-actions">
+                <button class="action-btn edit-btn" title="Edit row" (click)="startRowEdit(ri)">
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="action-btn del-btn" title="Delete role"
+                  (click)="startRowEdit(ri); deleteRole(role.roleId, ri)">
+                  <i class="fa-regular fa-trash-can"></i>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="isRowEditing(ri)">
+              <div class="action-row edit-actions">
+                <button class="action-btn save-btn" title="Save" [class.saving]="isSaving" (click)="saveRowEdit()">
+                  <i class="fa-solid fa-check"></i>
+                </button>
+                <button class="action-btn cancel-btn" title="Cancel" (click)="cancelRowEdit()">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button class="action-btn del-btn" title="Delete role" (click)="deleteRole(role.roleId, ri)">
+                  <i class="fa-regular fa-trash-can"></i>
+                </button>
+              </div>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

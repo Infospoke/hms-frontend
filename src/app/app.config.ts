@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, APP_INITIALIZER, importProvidersFrom } from '@angular/core';
 import { provideRouter, withPreloading, PreloadAllModules, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -12,6 +12,7 @@ import { authInterceptor } from './core/auth/auth-interceptor';
 import { errorInterceptor } from './core/interceptors/error-interceptor';
 import { loaderInterceptor } from './core/interceptors/loader-interceptor';
 import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
+import { QuillModule } from 'ngx-quill';
 
 function initializeApp(authService: AuthService, permissionService: PermissionService) {
   return () => {
@@ -28,6 +29,17 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([loaderInterceptor, authInterceptor, errorInterceptor])),
     provideAnimationsAsync(),
     { provide: NZ_I18N, useValue: en_US },
+     importProvidersFrom(
+      QuillModule.forRoot({
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['clean']
+          ]
+        }
+      })
+    ),
     provideNzConfig({ notification: { nzPlacement: 'topRight', nzDuration: 4000 } }),
     provideNzIcons([CheckCircleOutline, CloseCircleOutline, ExclamationCircleOutline, InfoCircleOutline]),
     {

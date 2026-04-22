@@ -12,7 +12,7 @@ import { API } from '../../shared/constants/api-endpoints';
   providedIn: 'root',
 })
 export class AuthService {
-   private http = inject(HttpClient);
+  private http = inject(HttpClient);
   private router = inject(Router);
   private tokenService = inject(TokenService);
   private permissionService = inject(PermissionService);
@@ -39,7 +39,7 @@ export class AuthService {
           case '1005': this.notification.error(msg || 'Session active on another device'); break;
           case '1006': this.notification.error(msg || 'User not found'); break;
           case '1007': this.notification.error(msg || 'Invalid credentials'); break;
-          default:     this.notification.error(msg || 'Login failed');
+          default: this.notification.error(msg || 'Login failed');
         }
         return throwError(() => err);
       })
@@ -92,12 +92,22 @@ export class AuthService {
     );
   }
 
-    getRole() {
+  getRole() {
     const t = this.tokenService.getAccessToken();
     if (!t) return null;
     return JSON.parse(atob(t.split('.')[1])).role;
   }
-   isLoggedIn() {
+  getPermissions() {
+    const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1]))?.modules;
+  }
+  getUserName(){
+     const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1]))?.sub;
+  }
+  isLoggedIn() {
     return !!this.tokenService.getAccessToken();
   }
 }

@@ -25,7 +25,7 @@
                     <input type="text" formControlName="jobTitle" placeholder="e.g. Senior Backend Engineer"
                         [class.err]="hasError(step0Form, 'jobTitle')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'jobTitle')">
-                        {{ getError(step0Form, 'jobTitle') }}
+                        {{ getError(step0Form, 'jobTitle','jobTitle') }}
                     </span>
                 </div>
 
@@ -38,7 +38,7 @@
                         <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'bu')">
-                        {{ getError(step0Form, 'bu') }}
+                        {{ getError(step0Form, 'bu','Business Unit') }}
                     </span>
                 </div>
 
@@ -51,7 +51,7 @@
                         <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'dept')">
-                        {{ getError(step0Form, 'dept') }}
+                        {{ getError(step0Form, 'dept','Department') }}
                     </span>
                 </div>
 
@@ -67,7 +67,6 @@
                             <span class="tx" (click)="removeManager(m)">×</span>
                         </span>
 
-                        <!-- Actual input -->
                         <input #managerInput type="text" formControlName="manager" placeholder="Search people..."
                             (input)="onSearchManager()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
                     </div>
@@ -84,7 +83,7 @@
                     </div>
 
                     <span class="err-msg" *ngIf="hasError(step0Form, 'manager')">
-                        {{ getError(step0Form, 'manager') }}
+                        {{ getError(step0Form, 'manager','Reporting manager') }}
                     </span>
                 </div>
 
@@ -94,7 +93,7 @@
                     <input type="text" formControlName="location" placeholder="e.g. Hyderabad, India"
                         [class.err]="hasError(step0Form, 'location')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
-                        {{ getError(step0Form, 'location') }}
+                        {{ getError(step0Form, 'location','Location') }}
                     </span>
                 </div>
 
@@ -111,7 +110,7 @@
                         </optgroup>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'seniority')">
-                        {{ getError(step0Form, 'seniority') }}
+                        {{ getError(step0Form, 'seniority','Seniority Level') }}
                     </span>
                 </div>
 
@@ -128,7 +127,7 @@
                     <input type="date" formControlName="startDate" [min]="todayStr"
                         [class.err]="hasError(step0Form, 'startDate')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'startDate')">
-                        {{ getError(step0Form, 'startDate') }}
+                        {{ getError(step0Form, 'startDate','Start Date') }}
                     </span>
                 </div>
 
@@ -140,7 +139,7 @@
                             [class.err-radio]="hasError(step0Form, 'empType')" (click)="setEmpType(t)">{{ t }}</div>
                     </div>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'empType')">
-                        {{ getError(step0Form, 'empType') }}
+                        {{ getError(step0Form, 'empType','Employment Type') }}
                     </span>
                 </div>
 
@@ -153,7 +152,7 @@
                             [class.err-radio]="hasError(step0Form, 'workMode')" (click)="setWorkMode(m)">{{ m }}</div>
                     </div>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'workMode')">
-                        {{ getError(step0Form, 'workMode') }}
+                        {{ getError(step0Form, 'workMode','Work Mode') }}
                     </span>
                 </div>
 
@@ -166,7 +165,7 @@
                             [class.err-radio]="hasError(step0Form, 'priority')" (click)="setPriority(p)">{{ p }}</div>
                     </div>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'priority')">
-                        {{ getError(step0Form, 'priority') }}
+                        {{ getError(step0Form, 'priority','Priority') }}
                     </span>
                 </div>
 
@@ -181,15 +180,13 @@
         </div>
     </form>
 
-    <!-- ─── STEP 1: Business Justification ───────────────────────────── -->
+
     <form [formGroup]="step1Form" *ngIf="currentStep === 1" novalidate>
         <div class="card">
             <div class="">
                 <div class="sec-title">Business Justification</div>
 
             </div>
-
-            <!-- Requisition Type -->
             <div class="field" style="margin-bottom:18px">
                 <label class="lbl">Requisition Type <span class="astrick">*</span></label>
                 <div class="radio-row">
@@ -199,20 +196,20 @@
             </div>
 
             <!-- Replaces Employee -->
-            <div class="field" *ngIf="needsReplace" style="margin-bottom:18px">
+            <!-- <div class="field" *ngIf="needsReplace" style="margin-bottom:18px">
                 <label class="lbl">Replaces Employee <span class="astrick">*</span></label>
                 <input type="text" formControlName="replacesEmp" placeholder="Search employee..."
                     [class.err]="hasError(step1Form, 'replacesEmp')" />
                 <span class="err-msg" *ngIf="hasError(step1Form, 'replacesEmp')">
                     {{ getError(step1Form, 'replacesEmp') }}
                 </span>
-            </div>
+            </div> -->
 
-            <!-- Business Case -->
-            <div class="field" style="margin-bottom:18px">
+
+            <!-- <div class="field" style="margin-bottom:18px">
                 <div class="field-header">
                     <label class="lbl">Business Case <span class="astrick">*</span>
-                        <span class="lbl-sub"> — min 100 chars</span>
+                        <span class="lbl-sub"></span>
                     </label>
                     <span class="ai-chip" (click)="aiSuggestBizCase()">✦ AI-assist</span>
                 </div>
@@ -228,12 +225,10 @@
                     </span>
                 </div>
             </div>
-
-            <!-- Impact Note -->
             <div class="field" style="margin-bottom:18px">
                 <div class="field-header">
                     <label class="lbl">Impact if Not Filled <span class="astrick">*</span>
-                        <span class="lbl-sub"> — min 100 chars</span>
+                        <span class="lbl-sub"></span>
                     </label>
                     <span class="ai-chip" (click)="aiSuggestImpact()">✦ AI-assist</span>
                 </div>
@@ -248,30 +243,101 @@
                         {{ impactLen }} / 2000
                     </span>
                 </div>
-            </div>
+            </div> -->
 
-            <!-- Strategic Alignment -->
             <div class="field" style="margin-bottom:18px">
-                <label class="lbl">Strategic Alignment <span class="lbl-sub">(optional)</span></label>
-                <div class="ai-sugg">
-                    <span *ngFor="let s of strategicAlignOpts" class="sugg-tag"
-                        [class.sugg-sel]="strategicAlign.includes(s)" (click)="toggleAlign(s)">{{ s }}</span>
+                <div class="field-header">
+                    <label class="lbl">Business Case <span class="astrick">*</span></label>
+
+                </div>
+
+                <quill-editor formControlName="bizCase" [modules]="editorConfig"
+                    (onContentChanged)="onBizCaseChange($event)"
+                    placeholder="Describe the business need for this role...">
+                </quill-editor>
+
+                <div class="field-footer">
+                    <span class="err-msg" *ngIf="hasError(step1Form, 'bizCase')">
+                        {{ getError(step1Form, 'bizCase','Business Case') }}
+                    </span>
+                    <span class="char-count" [class.warn]="bizCaseLen > 0 && bizCaseLen < 100">
+                        {{ bizCaseLen }} / 2000
+                    </span>
+                </div>
+            </div>
+            <div class="field" style="margin-bottom:18px">
+                <div class="field-header">
+                    <label class="lbl">Impact if Not Filled <span class="astrick">*</span></label>
+
+                </div>
+
+                <quill-editor formControlName="impactNote" [modules]="editorConfig"
+                    (onContentChanged)="onImpactChange($event)" placeholder="What happens if this role stays unfilled?">
+                </quill-editor>
+
+                <div class="field-footer">
+                    <span class="err-msg" *ngIf="hasError(step1Form, 'impactNote')">
+                        {{ getError(step1Form, 'impactNote','Impact Note') }}
+                    </span>
+                    <span class="char-count" [class.warn]="impactLen > 0 && impactLen < 100">
+                        {{ impactLen }} / 2000
+                    </span>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="field auto-wrap" *ngIf="needsReplace">
+                    <label class="lbl">Replaces Employee <span class="req">*</span></label>
+
+                    <div class="tag-input" (click)="focusInput()">
+
+                        <span class="tag" *ngIf="replaceEmployee">
+                            {{ replaceEmployee?.name }}
+                            <span class="tx" (click)="removeReplaceEmp()">×</span>
+                        </span>
+
+                        <input #managerInput type="text" formControlName="replacesEmp" placeholder="Search people..."
+                            (input)="onSearchManager()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
+                    </div>
+
+                    <div class="dropdown" *ngIf="showDropdown && filteredManagers.length">
+                        <div class="option" *ngFor="let m of filteredManagers" (mousedown)="selectReplaceEmployee(m)">
+                            <div class="avatar">{{ getInitials(m.name) }}</div>
+                            <div class="info">
+                                <div class="name">{{ m.name }}</div>
+                                <div class="role">{{ m.role }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span class="err-msg" *ngIf="hasError(step1Form, 'replacesEmp')">
+                        {{ getError(step1Form, 'replacesEmp','Replaces Employee') }}
+                    </span>
+                </div>
+                <div class="field">
+                    <label class="lbl">
+                        Supporting Document
+                        <span class="lbl-sub">( PDF max 20MB)</span>
+                    </label>
+                    <input type="file" #fileInput accept="application/pdf" (change)="onFileSelected($event)" hidden />
+
+                    <div *ngIf="!supportDoc" class="file-drop" (click)="fileInput.click()"
+                        (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+                        <span class="upload-icon">↑</span>
+                        <span>Click to upload PDF or drag & drop</span>
+                    </div>
+
+                    <div *ngIf="supportDoc" class="file-attached">
+                        <span>📄</span>
+                        <span style="flex:1">{{ supportDoc.name }} — {{ supportDoc.sizeText }}</span>
+                        <span class="remove-link" (click)="removeDoc()">Remove</span>
+                    </div>
+                    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
                 </div>
             </div>
 
-            <!-- Supporting Document -->
-            <div class="field">
-                <label class="lbl">Supporting Document <span class="lbl-sub">(optional, PDF max 20MB)</span></label>
-                <div *ngIf="!supportDoc" class="file-drop" (click)="simulateUpload()">
-                    <span class="upload-icon">↑</span>
-                    <span>Click to upload PDF or drag &amp; drop</span>
-                </div>
-                <div *ngIf="supportDoc" class="file-attached">
-                    <span>📄</span>
-                    <span style="flex:1">{{ supportDoc }}</span>
-                    <span class="remove-link" (click)="removeDoc()">Remove</span>
-                </div>
-            </div>
+
+
+
 
             <div class="footer-btns">
                 <div class="flex-gap">
@@ -293,8 +359,7 @@
 
             </div>
 
-            <!-- HC Slot -->
-            <div class="field" style="margin-bottom:18px">
+            <!-- <div class="field" style="margin-bottom:18px">
                 <label class="lbl">HC Slot Required <span class="astrick">*</span></label>
                 <div class="toggle-row">
                     <label class="toggle">
@@ -309,49 +374,24 @@
                 <div *ngIf="!step2Form.get('hcSlot')?.value" class="inline-banner vb-err">
                     ⚠ No approved HC slot — submission blocked until headcount plan is updated
                 </div>
-            </div>
+            </div> -->
 
-            <!-- Salary Band -->
-            <div class="field" style="margin-bottom:18px">
-                <div class="field-header">
-                    <label class="lbl">Salary Band · {{ step0Form.get('seniority')?.value || 'Senior (L4)' }}
-                        · {{ step0Form.get('dept')?.value || 'Engineering' }}</label>
-                    <span class="badge" [ngClass]="isInBand ? 'badge-green' : 'badge-red'">
-                        {{ isInBand ? '✓ Within band' : '✗ Over band' }}
-                    </span>
+            <div class="grid" style="margin-bottom:8px">
+                <div class="field">
+                    <label class="lbl">Salary Band <span class="astrick">*</span></label>
+                    <input type="text" name="salary" id="lbl" formControlName="salaryComp" readonly>
                 </div>
-                <div class="salary-band">
-                    <div class="band-row">
-                        <span class="lbl-sub">Min ₹{{ step2Form.get('salaryMin')?.value }}L</span>
-                        <span class="band-mid">Mid ₹{{ step2Form.get('salaryMid')?.value }}L — Benchmark</span>
-                        <span class="lbl-sub">Max ₹{{ step2Form.get('salaryMax')?.value }}L</span>
-                    </div>
-                    <div class="band-bar">
-                        <div class="band-fill" [style.width.%]="salaryPct"></div>
-                        <div class="band-thumb" [style.left.%]="salaryPct"></div>
-                    </div>
-                    <div class="band-label" [style.color]="isInBand ? '#16a34a' : '#dc2626'">
-                        Proposed CTC: ₹{{ step2Form.get('proposedComp')?.value }} LPA —
-                        {{ isInBand ? 'within approved band' : 'OVER BAND' }}
-                    </div>
+                <div class="field">
+
+                    <label class="lbl">
+                        Proposed Total Compensation <span class="astrick">*</span>
+                    </label>
+
+                    <input type="text" name="salary" id="lbl" formControlName="proposedComp"
+                        placeholder="Enter  proposed total compensation">
+
                 </div>
             </div>
-
-            <!-- Proposed Comp Slider -->
-            <div class="field" style="margin-bottom:18px">
-                <label class="lbl">Proposed Total Compensation <span class="astrick">*</span></label>
-                <div class="range-wrap">
-                    <input type="range" [min]="step2Form.get('salaryMin')?.value"
-                        [max]="step2Form.get('salaryMax')?.value" step="0.5" formControlName="proposedComp" />
-                    <div class="range-labels">
-                        <span>₹{{ step2Form.get('salaryMin')?.value }}L</span>
-                        <span class="range-val">₹{{ step2Form.get('proposedComp')?.value }}L selected</span>
-                        <span>₹{{ step2Form.get('salaryMax')?.value }}L</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Extras: Signing / Equity / Relocation -->
             <div class="grid3">
                 <div class="field">
                     <label class="lbl">Signing Bonus</label>
@@ -390,26 +430,39 @@
                         placeholder="₹ Amount" style="margin-top:8px" />
                 </div>
             </div>
+            <div class="ctc-card blue">
 
-            <div *ngIf="!isInBand" class="validation-banner vb-err" style="margin-top:16px">
+                <div class="ctc-header">
+                    <div>
+                        <div class="ctc-title">Annual Hiring Cost </div>
+                        <!-- <div class="ctc-sub">
+                            {{ compStatus.msg }}
+                        </div> -->
+                    </div>
+
+                    <div class="ctc-amount">
+                        ₹{{ totalCompensation }}L
+                    </div>
+                </div>
+
+            </div>
+            <!-- <div *ngIf="!isInBand" class="validation-banner vb-err" style="margin-top:16px">
                 ✗ Budget validation failed: Proposed compensation (₹{{ step2Form.get('proposedComp')?.value }}L)
                 exceeds band maximum (₹{{ step2Form.get('salaryMax')?.value }}L).
-            </div>
+            </div> -->
 
             <div class="footer-btns">
                 <div class="flex-gap">
                     <button type="button" class="btn btn-ghost" (click)="goTo(1)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" [disabled]="!isInBand || !step2Form.get('hcSlot')?.value"
-                    (click)="validateStep2()">
+                <button type="button" class="btn btn-primary" (click)="validateStep2()">
                     Next: Role Requirements →
                 </button>
             </div>
         </div>
     </form>
 
-    <!-- ─── STEP 3: Role Requirements ─────────────────────────────────── -->
     <form [formGroup]="step3Form" *ngIf="currentStep === 3" novalidate>
         <div class="card">
             <div class="">
@@ -422,8 +475,8 @@
                 <div class="field">
                     <div class="field-header">
                         <label class="lbl">Must-Have Skills <span class="astrick">*</span>
-                            <span class="lbl-sub"> min 3 · max 10</span>
                         </label>
+
                         <span class="ai-chip" (click)="aiSuggestSkills()">✦ AI-suggest</span>
                     </div>
                     <div class="tag-area" [class.err]="mustSkills.length < 3 && mustSkills.length > 0"
@@ -437,12 +490,13 @@
                     </div>
                     <div class="ai-sugg">
                         <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s)">{{ s }}</span>
+                        <button type="button" class="btn-add" (click)="openModal('must')">+ Add</button>
                     </div>
                 </div>
 
                 <!-- Nice-to-Have Skills -->
-                <div class="field">
-                    <label class="lbl">Nice-to-Have Skills <span class="lbl-sub">(optional · max 10)</span></label>
+                <div class="field" style="margin-top:5px;">
+                    <label class="lbl">Nice-to-Have Skills</label>
                     <div class="tag-area" (click)="niceInput.focus()">
                         <span class="tag" *ngFor="let t of niceSkills; let i = index; trackBy: trackByIndex">
                             {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeNice(i)">×</span>
@@ -453,6 +507,7 @@
                     </div>
                     <div class="ai-sugg">
                         <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s)">{{ s }}</span>
+                        <button type="button" class="btn-add" (click)="openModal('nice')">+ Add</button>
                     </div>
                 </div>
 
@@ -464,13 +519,13 @@
                         <option *ngFor="let e of educationOpts" [value]="e">{{ e }}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step3Form, 'eduReq')">
-                        {{ getError(step3Form, 'eduReq') }}
+                        {{ getError(step3Form, 'eduReq','Education') }}
                     </span>
                 </div>
 
                 <!-- Travel -->
-                <div class="field">
-                    <label class="lbl">Travel Requirement <span class="lbl-sub">(optional)</span></label>
+                <div class="field" style="margin-top:5px">
+                    <label class="lbl">Travel Requirement <span class="lbl-sub"></span></label>
                     <select formControlName="travel">
                         <option value="" disabled>Select travel %</option>
                         <option *ngFor="let t of travelOpts" [value]="t">{{ t }}</option>
@@ -479,21 +534,58 @@
 
             </div>
 
-            <!-- Experience Range -->
-            <div class="field" style="margin-bottom:18px">
-                <label class="lbl">Years of Experience <span class="astrick">*</span> —
-                    {{ step3Form.get('expMin')?.value }}–{{ step3Form.get('expMax')?.value }}+ years
-                </label>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
-                    <div>
-                        <div class="range-sub">Min: {{ step3Form.get('expMin')?.value }} yrs</div>
-                        <input type="range" min="0" max="25" step="1" [value]="step3Form.get('expMin')?.value"
-                            (input)="onExpMinChange(+$any($event.target).value)" />
+            <div class="grid2" style="margin-bottom:18px">
+                <div class="field">
+                    <label class="lbl">Years of Experience <span class="astrick">*</span>
+                    </label>
+
+                    <div class="slider-container">
+
+                        <div class="range-slider">
+
+                            <div class="slider-track"></div>
+
+                            <div class="slider-range" [style.left.%]="minPercent" [style.width.%]="rangeWidth">
+                            </div>
+
+                            <input type="range" min="0" max="25" formControlName="expMin" (input)="onMinChange()" />
+
+                            <input type="range" min="0" max="25" formControlName="expMax" (input)="onMaxChange()" />
+
+                        </div>
+                        <div class="slider-values">
+                            <span>Min : {{ step3Form.get('expMin')?.value }}</span>
+                            <span>Max : {{ step3Form.get('expMax')?.value }}</span>
+                        </div>
                     </div>
-                    <div>
-                        <div class="range-sub">Max: {{ step3Form.get('expMax')?.value }}+ yrs</div>
-                        <input type="range" min="0" max="25" step="1" [value]="step3Form.get('expMax')?.value"
-                            (input)="onExpMaxChange(+$any($event.target).value)" />
+
+                </div>
+                <div class="field">
+                    <label class="lbl">Interview Rounds <span class="astrick">*</span>
+
+                    </label>
+
+                    <div class="slider-container">
+
+                        <div class="range-slider">
+
+                            <div class="slider-track"></div>
+
+                            <div class="slider-range" [style.left.%]="minInterview" [style.width.%]="rangeInterview">
+                            </div>
+
+                            <input type="range" min="0" max="25" formControlName="interviewMin"
+                                (input)="onMinInterview()" />
+
+                            <input type="range" min="0" max="25" formControlName="interviewMax"
+                                (input)="onMaxInterview()" />
+
+                        </div>
+                        <div class="slider-values">
+                            <span>Min : {{ step3Form.get('interviewMin')?.value }}</span>
+                            <span>Max : {{ step3Form.get('interviewMax')?.value }}</span>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -502,7 +594,7 @@
 
                 <!-- Certifications -->
                 <div class="field">
-                    <label class="lbl">Certifications <span class="lbl-sub">(optional)</span></label>
+                    <label class="lbl">Certifications <span class="lbl-sub"></span></label>
                     <div class="tag-area" (click)="certInp.focus()">
                         <span class="tag" *ngFor="let t of certs; let i = index; trackBy: trackByIndex">
                             {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeCert(i)">×</span>
@@ -512,18 +604,29 @@
                     </div>
                     <div class="ai-sugg">
                         <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s)">{{ s }}</span>
+                        <button type="button" class="btn-add" (click)="openModal('cert')">+ Add</button>
                     </div>
                 </div>
 
-                <!-- Interview Rounds -->
-                <div class="field">
-                    <label class="lbl">Interview Rounds <span class="req">*</span>
-                    </label>
-                    <input type="number" formControlName="interviewRounds" min="1" max="8" readonly />
+                <!-- Assessment -->
 
+
+                <!-- Languages -->
+                <div class="field">
+                    <label class="lbl">Language Requirements <span class="lbl-sub"></span></label>
+                    <div class="tag-area" (click)="langInp.focus()">
+                        <span class="tag" *ngFor="let l of langs; let i = index; trackBy: trackByIndex">
+                            {{ l }}<span class="tx" (click)="$event.stopPropagation(); removeLang(i)">×</span>
+                        </span>
+                        <input #langInp class="tag-inp" [(ngModel)]="langInput" [ngModelOptions]="{standalone: true}"
+                            placeholder="Add language..." (keydown)="onLangKeydown($event)" />
+                    </div>
+                    <div class="ai-sugg">
+                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s)">{{ s }}</span>
+                        <button type="button" class="btn-add" (click)="openModal('lang')">+ Add</button>
+                    </div>
                 </div>
 
-                <!-- Assessment -->
                 <div class="field">
                     <label class="lbl">Assessment Required</label>
                     <div class="toggle-row">
@@ -538,22 +641,6 @@
                             (click)="toggleAssessType(t)">{{ t }}</div>
                     </div>
                 </div>
-
-                <!-- Languages -->
-                <div class="field">
-                    <label class="lbl">Language Requirements <span class="lbl-sub">(optional)</span></label>
-                    <div class="tag-area" (click)="langInp.focus()">
-                        <span class="tag" *ngFor="let l of langs; let i = index; trackBy: trackByIndex">
-                            {{ l }}<span class="tx" (click)="$event.stopPropagation(); removeLang(i)">×</span>
-                        </span>
-                        <input #langInp class="tag-inp" [(ngModel)]="langInput" [ngModelOptions]="{standalone: true}"
-                            placeholder="Add language..." (keydown)="onLangKeydown($event)" />
-                    </div>
-                    <div class="ai-sugg">
-                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s)">{{ s }}</span>
-                    </div>
-                </div>
-
             </div>
 
             <div class="footer-btns">
@@ -568,7 +655,7 @@
         </div>
     </form>
 
-    <!-- ─── STEP 4: Sourcing Strategy ─────────────────────────────────── -->
+
     <form [formGroup]="step4Form" *ngIf="currentStep === 4" novalidate>
         <div class="card">
             <div class="">
@@ -581,7 +668,7 @@
                 <p class="field-hint">Select where candidates should come from</p>
 
                 <div class="grid-boards">
-                    <div *ngFor="let b of boardOptions" class="board-card" [class.sel]="jobBoards.includes(b.n)">
+                    <div *ngFor="let b of boardOptions" class="board-card">
 
                         <!-- ICON -->
                         <div class="board-icon">
@@ -598,9 +685,9 @@
                         </label>
 
                         <!-- Selected text -->
-                        <div *ngIf="jobBoards.includes(b.n)" class="board-check">
+                        <!-- <div *ngIf="jobBoards.includes(b.n)" class="board-check">
                             ✓ Selected
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -639,13 +726,13 @@
 
                 <!-- Sourcing Budget -->
                 <div class="field">
-                    <label class="lbl">Sourcing Budget <span class="lbl-sub">(optional)</span></label>
+                    <label class="lbl">Sourcing Budget <span class="lbl-sub"></span></label>
                     <input type="text" formControlName="sourcingBudget" placeholder="₹ 0" />
                 </div>
 
                 <!-- Diversity Sourcing -->
                 <div class="field">
-                    <label class="lbl">Diversity Sourcing <span class="lbl-sub">(optional)</span></label>
+                    <label class="lbl">Diversity Sourcing <span class="lbl-sub"></span></label>
                     <div class="toggle-row" style="margin-top:6px">
                         <label class="toggle">
                             <input type="checkbox" formControlName="diversityOn" />
@@ -672,19 +759,23 @@
             </div>
         </div>
     </form>
-
-    <!-- ─── STEP 5: Review ─────────────────────────────────────────────── -->
     <div class="card" *ngIf="currentStep === 5">
         <div class="">
             <div class="sec-title">SR Summary — Review</div>
             <span class="draft-badge">SR-2026-ENG-0042 (draft)</span>
         </div>
 
-        <!-- Section 1 -->
+
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(0)">
                 <span>Step 1 — Position Basics</span>
-                <span class="arrow" [class.open]="reviewSectionOpen[0]">▼</span>
+                <div class="step-actions">
+                    <span class="edit-link" (click)="goTo(0)">
+                        <i class="fa fa-pen"></i> Edit
+                    </span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[0]"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[0]">
                 <div class="review-grid">
@@ -707,7 +798,6 @@
                     <div class="review-row"><span class="review-label">Start Date</span><span class="review-val">{{
                             step0Form.get('startDate')?.value || '—' }}</span></div>
                 </div>
-                <span class="edit-link" (click)="goTo(0)">✏ Edit</span>
             </div>
         </div>
 
@@ -715,7 +805,12 @@
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(1)">
                 <span>Step 2 — Business Justification</span>
-                <span class="arrow" [class.open]="reviewSectionOpen[1]">▼</span>
+                <div class="step-actions">
+                    <span class="edit-link" (click)="goTo(1)">
+                        <i class="fa fa-pen"></i> Edit
+                    </span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[1]"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[1]">
                 <div class="review-grid">
@@ -728,7 +823,7 @@
                             step1Form.get('impactNote')?.value ? (step1Form.get('impactNote')!.value.substring(0,60) +
                             '...') : '—' }}</span></div>
                 </div>
-                <span class="edit-link" (click)="goTo(1)">✏ Edit</span>
+
             </div>
         </div>
 
@@ -736,7 +831,12 @@
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(2)">
                 <span>Step 3 — Budget &amp; Compensation</span>
-                <span class="arrow" [class.open]="reviewSectionOpen[2]">▼</span>
+                <div class="step-actions">
+                    <span class="edit-link" (click)="goTo(2)">
+                        <i class="fa fa-pen"></i> Edit
+                    </span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[2]"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[2]">
                 <div class="review-grid">
@@ -747,17 +847,112 @@
                     <div class="review-row"><span class="review-label">Proposed CTC</span><span class="review-val">₹{{
                             step2Form.get('proposedComp')?.value }} LPA</span></div>
                 </div>
-                <span class="edit-link" (click)="goTo(2)">✏ Edit</span>
+
             </div>
         </div>
-
-        <!-- Section 4 -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(3)">
-                <span>Step 4 — Sourcing Strategy</span>
-                <span class="arrow" [class.open]="reviewSectionOpen[3]">▼</span>
+                <span>Step 4 — Role Requirements</span>
+
+                <div class="step-actions">
+                    <span class="edit-link" (click)="goTo(3)">
+                        <i class="fa fa-pen"></i> Edit
+                    </span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
             </div>
+
             <div class="coll-body" *ngIf="reviewSectionOpen[3]">
+
+                <div class="review-grid">
+
+                    <!-- Must Have Skills -->
+                    <div class="review-row">
+                        <span class="review-label">Must-Have Skills</span>
+                        <span class="review-val">
+                            {{ mustSkills.length ? mustSkills.join(', ') : '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Nice to Have -->
+                    <div class="review-row">
+                        <span class="review-label">Nice-to-Have Skills</span>
+                        <span class="review-val">
+                            {{ niceSkills.length ? niceSkills.join(', ') : '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="review-row">
+                        <span class="review-label">Education Requirement</span>
+                        <span class="review-val">
+                            {{ step3Form.get('education')?.value || '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Travel -->
+                    <div class="review-row">
+                        <span class="review-label">Travel Requirement</span>
+                        <span class="review-val">
+                            {{ step3Form.get('travel')?.value || '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="review-row">
+                        <span class="review-label">Years of Experience</span>
+                        <span class="review-val">
+                            {{ step3Form.get('minExp')?.value }} - {{ step3Form.get('maxExp')?.value }}
+                        </span>
+                    </div>
+
+                    <!-- Interview Rounds -->
+                    <div class="review-row">
+                        <span class="review-label">Interview Rounds</span>
+                        <span class="review-val">
+                            {{ step3Form.get('rounds')?.value || '0' }}
+                        </span>
+                    </div>
+
+                    <!-- Certifications -->
+                    <div class="review-row">
+                        <span class="review-label">Certifications</span>
+                        <span class="review-val">
+                            {{ certs.length ? certs.join(', ') : '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Languages -->
+                    <div class="review-row">
+                        <span class="review-label">Languages</span>
+                        <span class="review-val">
+                            {{ langs.length ? langs.join(', ') : '—' }}
+                        </span>
+                    </div>
+
+                    <!-- Assessment -->
+                    <div class="review-row">
+                        <span class="review-label">Assessment Required</span>
+                        <span class="review-val">
+                            {{ step3Form.get('assessment')?.value ? 'Yes' : 'No' }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="collapsible">
+            <div class="coll-hdr" (click)="toggleReviewSection(4)">
+                <span>Step 5 — Sourcing Strategy</span>
+                <div class="step-actions">
+                    <span class="edit-link" (click)="goTo(4)">
+                        <i class="fa fa-pen"></i> Edit
+                    </span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+            </div>
+            <div class="coll-body" *ngIf="reviewSectionOpen[4]">
                 <div class="review-grid">
                     <div class="review-row"><span class="review-label">Internal First</span><span class="review-val">{{
                             step4Form.get('internalFirst')?.value ? 'Active' : 'Off' }}</span></div>
@@ -766,20 +961,24 @@
                     <div class="review-row"><span class="review-label">Budget</span><span class="review-val">{{
                             step4Form.get('sourcingBudget')?.value || '—' }}</span></div>
                 </div>
-                <span class="edit-link" (click)="goTo(4)">✏ Edit</span>
+
             </div>
         </div>
 
         <!-- Approval Chain Preview -->
         <div class="approval-preview">
             <div class="approval-title">Approval chain preview</div>
-            <div class="prog-steps">
-                <div *ngFor="let item of reviewApprovalChain" class="prog-step">
-                    <div class="prog-dot" [style.background]="item.status === 'Approved' ? '#22c55e' : '#cbd5e1'"></div>
-                    <span style="flex:1">{{ item.n }}</span>
-                    <span class="badge" [ngClass]="item.status === 'Approved' ? 'badge-green' : 'badge-blue'">
-                        {{ item.status }}
-                    </span>
+
+            <div class="approval-chain">
+                <div *ngFor="let item of reviewApprovalChain; let i = index" class="chain-step">
+
+                    <div class="step-box">
+                        <span class="step-label">{{ item?.level }}</span>
+                        <span class="step-name">{{ item.n }}</span>
+                    </div>
+
+                    <div *ngIf="i < reviewApprovalChain.length - 1" class="arrow"></div>
+
                 </div>
             </div>
         </div>
@@ -795,36 +994,71 @@
         </div>
     </div>
 
-    <!-- ─── STEP 6: Confirmation ───────────────────────────────────────── -->
-    <div class="card" *ngIf="currentStep === 6">
-        <div class="success-box">
+
+    <div class="card success-card" *ngIf="currentStep === 6">
+
+        <!-- TOP SUCCESS -->
+        <div class="success-top">
             <div class="check-circle">✓</div>
-            <div class="success-title">SR-2026-ENG-0042 submitted!</div>
-            <div class="success-sub">
-                {{ step0Form.get('jobTitle')?.value || 'Senior Backend Engineer' }} ·
-                Awaiting approval ·
-                {{ step0Form.get('dept')?.value || 'Engineering' }}
+
+            <div class="success-title">
+                SR-2026-ENG-0042 submitted!
             </div>
 
-            <div class="approvers-list">
-                <div class="approvers-heading">Approval chain — live status</div>
-                <div *ngFor="let a of approvers" class="approver-row">
-                    <div class="avatar" [style.background]="a.color" [style.color]="a.tc">
-                        {{ getInitials(a.n) }}
-                    </div>
-                    <div class="approver-info">
-                        <div class="approver-name">{{ a.n }}</div>
-                        <div class="approver-role">{{ a.role }}</div>
-                    </div>
-                    <span class="badge badge-blue">{{ a.status }}</span>
-                </div>
-                <p class="confirmation-note">
-                    Email confirmation sent to user&#64;company.com · Track status in My SRs
-                </p>
-                <button class="btn btn-primary btn-full" (click)="viewInMySRs()">View in My SRs →</button>
-                <div class="raise-another" (click)="raiseAnother()">Raise another SR</div>
+            <div class="success-sub">
+                {{ step0Form.get('jobTitle')?.value || 'Senior Backend Engineer' }} ·
+                {{ step0Form.get('dept')?.value || 'Engineering' }} ·
+                {{ step0Form.get('location')?.value || 'Hyderabad' }}
             </div>
         </div>
+
+        <hr class="divider" />
+
+        <!-- APPROVAL CHAIN -->
+        <div class="approval-box">
+
+            <div class="approvers-heading">Approval chain — live status</div>
+
+            <div *ngFor="let a of approvers; let i = index" class="approver-row" [class.active]="i === 0">
+
+                <!-- LEVEL -->
+                <div class="level-badge">L{{ i + 1 }}</div>
+
+                <!-- INFO -->
+                <div class="approver-info">
+                    <div class="approver-name">{{ a.n }}</div>
+                    <div class="approver-role">{{ a.role }}</div>
+                </div>
+
+                <!-- STATUS -->
+                <span class="badge" [ngClass]="{
+              'badge-yellow': a.status === 'Pending',
+              'badge-gray': a.status === 'Waiting',
+              'badge-green': a.status === 'Approved'
+            }">
+                    {{ a.status }}
+                </span>
+            </div>
+
+        </div>
+
+        <!-- INFO BAR -->
+        <div class="info-bar">
+            Email confirmation sent to user@company.com ·
+            You can track status in <span class="link">My SRs</span>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="footer-btns">
+            <button class="btn btn btn-draft" (click)="raiseAnother()">
+                Raise another SR
+            </button>
+
+            <button type="button" class="btn btn-primary" (click)="validateStep4()">
+                View in My SRs →
+            </button>
+        </div>
+
     </div>
 
 </div>

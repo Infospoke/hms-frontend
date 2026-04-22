@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./layout/layout/layout.component').then(c => c.LayoutComponent),
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     children: [
       // { path: 'dashboard', loadChildren: () => import('./features/dashboard/routes/dashboard.routes').then(r => r.DASHBOARD_ROUTES) },
       { path: 'jobs', loadChildren: () => import('./features/job/routes/job.routes').then(r => r.JOB_ROUTES) },

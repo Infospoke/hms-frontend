@@ -1,7 +1,8 @@
 <span
   [style.color]="textColor"
   [style.backgroundColor]="bgColor"
-  [style.borderColor]="borderColor"
+  [style.borderColor]="borderColor",
+  [ngClass]="{ 'active': isActive }"
   style="display:inline-flex;
          align-items:center;
          justify-content:center;
@@ -15,6 +16,6 @@
          white-space:nowrap;
          line-height:1;
          height:32px;
-         box-sizing:border-box;">
+         box-sizing:border-box;" (click)="handleSelectedCard()">
   {{ label }}<span *ngIf="count" style="margin-left:5px; opacity:0.75;">({{ count }})</span>
 </span>

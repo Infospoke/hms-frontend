@@ -31,7 +31,7 @@ export class StaffingRequisitionsComponent {
   }
 
   newSR() {
-    this.router.navigate(['/staffing-requisitions/new']);
+    this.router.navigateByUrl('/demand/create?step=0');
   }
 
   resumeSR(sr: StaffingRequisition) {

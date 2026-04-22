@@ -1,0 +1,163 @@
+// role-permissions.component.scss
+
+$blue:        #2563eb;
+$blue-dark:   #1d4ed8;
+$blue-light:  #eff6ff;
+$text:        #0f172a;
+$text-muted:  #64748b;
+$border:      #e2e8f0;
+$bg:          #f8fafc;
+$white:       #ffffff;
+$red:         #ef4444;
+$red-light:   #fef2f2;
+$green:       #16a34a;
+$green-light: #f0fdf4;
+$radius:      8px;
+
+.rpm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rpm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rpm-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $text;
+}
+
+.rpm-actions { display: flex; gap: 8px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: $radius;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  i { font-size: 12px; }
+}
+
+.btn-outline {
+  background: $white;
+  color: $text;
+  border: 1px solid $border;
+  &:hover { background: $bg; }
+}
+
+.rpm-table-wrap {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: $radius;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  &::-webkit-scrollbar       { height: 5px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+}
+
+.rpm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 680px;
+}
+
+thead tr {
+  background: $bg;
+  border-bottom: 1px solid $border;
+}
+
+th {
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-muted;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.th-role    { text-align: left; width: 110px; }
+.th-actions { width: 110px; }
+
+.rpm-row {
+  border-bottom: 1px solid $border;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+
+  .view-actions { opacity: 1; transition: opacity 0.15s; }
+  &:hover .view-actions { opacity: 1; }
+
+  &.editing {
+    background: #e4e8f7;
+    .view-actions { opacity: 1; }
+  }
+}
+
+td {
+  padding: 10px 16px;
+  vertical-align: middle;
+}
+
+.td-role {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.td-cell    { text-align: center; }
+.td-actions { text-align: center; }
+
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid $border;
+  background: $white;
+  cursor: pointer;
+  font-size: 12px;
+  color: $text-muted;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  outline: none;
+  &:focus-visible { box-shadow: 0 0 0 2px rgba($blue, 0.25); }
+}
+
+.edit-btn   { &:hover { background: $blue-light; color: $blue; border-color: #93c5fd; } }
+
+.save-btn {
+  color: $green; border-color: #bbf7d0; background: $green-light;
+  &:hover    { background: #dcfce7; }
+  &.saving   { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+}
+
+.cancel-btn { &:hover { background: $bg; color: $text; } }
+
+.del-btn    { color: $red; &:hover { background: $red-light; border-color: #fca5a5; } }

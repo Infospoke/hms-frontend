@@ -6,7 +6,7 @@
       <label>User Type <span class="astrick">*</span></label>
       <select formControlName="userType">
         <option value="" disabled selected>Select user type</option>
-        <option *ngFor="let u of userTypes" [value]="u">{{ u }}</option>
+        <option *ngFor="let u of userTypes" [value]="u?.id">{{ u?.name }}</option>
       </select>
       <div class="error" *ngIf="c('userType')?.touched">
         <span *ngIf="c('userType')?.hasError('required')">User type is required</span>
@@ -95,7 +95,7 @@
       <label>Employment Type <span class="astrick">*</span></label>
       <select formControlName="employmentType">
         <option value="" disabled selected>Select employment type</option>
-        <option *ngFor="let e of employmentTypes" [value]="e">{{ e }}</option>
+        <option *ngFor="let e of employmentTypes" [value]="e?.id">{{ e?.name }}</option>
       </select>
       <div class="error" *ngIf="c('employmentType')?.touched">
         <span *ngIf="c('employmentType')?.hasError('required')">Employment type is required</span>
@@ -107,7 +107,7 @@
       <label>Business Unit <span class="astrick">*</span></label>
       <select formControlName="businessUnit">
         <option value="" disabled selected>Select business unit</option>
-        <option *ngFor="let b of businessUnits" [value]="b">{{ b }}</option>
+        <option *ngFor="let b of businessUnits" [value]="b?.id">{{ b?.name }}</option>
       </select>
       <div class="error" *ngIf="c('businessUnit')?.touched">
         <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
@@ -121,7 +121,7 @@
         <option value="" disabled selected>
           {{ departments.length ? 'Select department' : 'Select business unit first' }}
         </option>
-        <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+        <option *ngFor="let d of departments" [value]="d?.id">{{ d?.name }}</option>
       </select>
       <div class="error" *ngIf="c('department')?.touched">
         <span *ngIf="c('department')?.hasError('required')">Department is required</span>
@@ -135,7 +135,7 @@
         <option value="" disabled selected>
           {{ roles.length ? 'Select role' : 'Select department first' }}
         </option>
-        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+        <option *ngFor="let r of roles" [value]="r?.id">{{ r?.name }}</option>
       </select>
       <div class="error" *ngIf="c('role')?.touched">
         <span *ngIf="c('role')?.hasError('required')">Designation / Role is required</span>
@@ -147,7 +147,7 @@
   <!-- Actions -->
   <div class="actions">
     <button type="button" class="btn cancel" (click)="close()">Cancel</button>
-    <button type="button" class="btn primary" (click)="submit()" [disabled]="form.invalid">Submit</button>
+    <button type="button" class="btn primary" (click)="submit()" [disabled]="form.invalid" ><i class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i> Submit</button>
   </div>
 
 </form>

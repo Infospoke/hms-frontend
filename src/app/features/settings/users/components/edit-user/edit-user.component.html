@@ -3,9 +3,9 @@
     <div class="avatar">PS</div>
     <div>
       <h3>{{user.name}}</h3>
-      <p>{{user.email}} • 
-        <span [ngClass]="user.isActive ? 'status active' : 'status inactive'">
-          {{ user.isActive ? 'Active' : 'Inactive' }}
+      <p>{{ user.email }} •
+        <span [ngClass]="user.status ? 'status active' : 'status deactivated'">
+          {{ user.status?'Active':'Deactivated' }}
         </span>
       </p>
     </div>
@@ -15,64 +15,69 @@
   <div class="form-group">
     <label>Current Role</label>
     <div class="role-box">
-      <span class="role">{{user.currentRole}}</span>
+      <span class="role">{{user.roleName}}</span>
       <span class="assigned">
         Assigned {{user.assignedDate}} by {{user.assignedBy}}
       </span>
     </div>
   </div>
 
-  <div class="form-group">
-    <label>Change Role</label>
-    <select [(ngModel)]="form.role">
-      <option value="" disabled selected>Select Role</option>
-      <option *ngFor="let role of roles" [value]="role">
-        {{role}}
-      </option>
-    </select>
-    <small class="info">
-      Role change takes effect on next login or within 5 minutes
-    </small>
-  </div>
+  <form [formGroup]='form'>
+    <div class="grid">
 
-  <div class="grid">
+      <div class="field form-group">
+        <label>Business Unit <span class="astrick">*</span></label>
+        <select formControlName="businessUnit">
+          <option value="" disabled selected>Select business unit</option>
+          <option *ngFor="let b of businessUnits" [value]="b?.id">{{ b?.name }}</option>
+        </select>
+        <div class="error" *ngIf="c('businessUnit')?.touched">
+          <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
+        </div>
+      </div>
 
-    <div class="form-group">
-      <label>Business Unit</label>
-      <select [(ngModel)]="form.businessUnit">
-        <option value="" disabled selected>Select Business Unit</option>
-        <option *ngFor="let bu of businessUnits">{{bu}}</option>
-      </select>
+      <!-- Department -->
+      <div class="field form-group">
+        <label>Department / Team <span class="astrick">*</span></label>
+        <select formControlName="department" [attr.disabled]="!departments.length ? true : null">
+          <option value="" disabled selected>
+            {{ departments.length ? 'Select department' : 'Select business unit first' }}
+          </option>
+          <option *ngFor="let d of departments" [value]="d?.id">{{ d?.name }}</option>
+        </select>
+        <div class="error" *ngIf="c('department')?.touched">
+          <span *ngIf="c('department')?.hasError('required')">Department is required</span>
+        </div>
+      </div>
+
+      <!-- Role -->
+      <div class="field form-group">
+        <label>Designation / Role <span class="astrick">*</span></label>
+        <select formControlName="role" [attr.disabled]="!roles.length ? true : null">
+          <option value="" disabled selected>
+            {{ roles.length ? 'Select role' : 'Select department first' }}
+          </option>
+          <option *ngFor="let r of roles" [value]="r?.id">{{ r?.name }}</option>
+        </select>
+        <div class="error" *ngIf="c('role')?.touched">
+          <span *ngIf="c('role')?.hasError('required')">Designation / Role is required</span>
+        </div>
+      </div>
+
     </div>
-
-    <div class="form-group">
-      <label>Department</label>
-      <select [(ngModel)]="form.department">
-        <option value="" disabled selected>Select Department</option>
-        <option *ngFor="let dept of departments">{{dept}}</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>Designation</label>
-      <select [(ngModel)]="form.designation">
-        <option value="" disabled selected>Select Designation</option>
-        <option *ngFor="let d of designations">{{d}}</option>
-      </select>
-    </div>
-
-  </div>
+  </form>
 
 
-  <div class="danger" *ngIf="user.isActive">
+  <div class="danger" *ngIf="user.status">
     <button class="deactivate-btn" (click)="deactivateUser()">
       Deactivate user account
     </button>
   </div>
-
+  {{isloading()}}
   <div class="actions">
     <button class="cancel" (click)="reset()">Cancel</button>
-    <button class="save" (click)="save()">Save changes</button>
+    <button class="save" (click)="save()"><i class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i>Save
+      changes</button>
   </div>
 
 </div>

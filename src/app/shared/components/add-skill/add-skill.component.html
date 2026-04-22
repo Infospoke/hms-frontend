@@ -1,0 +1,25 @@
+<div class="custom-modal-overlay">
+    <div class="custom-modal-container">
+
+        <h3 class="modal-title">Add {{ modalType }}</h3>
+
+        <form [formGroup]="modalForm" class="modal-form">
+            <label class="modal-input-label">
+                {{ modalLabel }} <span class="astrick">*</span>
+            </label>
+            <input type="text" formControlName="value" placeholder="Enter value..." class="modal-input" />
+
+            <div class="modal-error" *ngIf="modalForm.get('value')?.touched && modalForm.get('value')?.invalid">
+                Value is required
+            </div>
+        </form>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button class="btn-confirm" [disabled]="modalForm.invalid" (click)="saveModal()">
+                Add
+            </button>
+        </div>
+
+    </div>
+</div>

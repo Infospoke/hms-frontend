@@ -1,0 +1,16 @@
+<!-- permission-cell.component.html -->
+<div class="perm-cell">
+  <button
+    *ngFor="let icon of icons"
+    class="perm-icon"
+    [class.active]="cell[icon.key]"
+    [class.editable]="editable"
+    [title]="icon.tooltip"
+    [attr.aria-label]="icon.tooltip + (cell[icon.key] ? ' (enabled)' : ' (disabled)')"
+    [attr.aria-pressed]="cell[icon.key]"
+    (click)="toggle(icon.key)"
+    type="button"
+  >
+    <i [class]="icon.faClass"></i>
+  </button>
+</div>

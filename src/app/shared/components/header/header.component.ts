@@ -20,4 +20,13 @@ sidebarCollapsed = input(false);
   // get userRole(): string { return this.tokenService.getUser()?.role || ''; }
 
   logout() { this.authService.logout(); }
+
+
+  get userName(){
+    return this.authService.getUserName()?.slice(0,2)?.toUpperCase();
+  }
+
+  get roleName(){
+    return this.authService.getRole();
+  }
 }

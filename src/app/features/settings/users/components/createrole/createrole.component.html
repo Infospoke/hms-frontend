@@ -1,0 +1,143 @@
+<div class="cr-page">
+  <div class="cr-card">
+    <form [formGroup]="form">
+
+      <!-- ── Row 1: Business Unit / Department / Role Name ── -->
+      <div class="form-row three-col">
+
+        <!-- Business Unit -->
+        <div class="form-group">
+          <label class="form-label">
+            Business Unit <span class="astrick">*</span>
+          </label>
+          <select class="form-control" formControlName="businessUnit"
+            [class.is-invalid]="isFieldInvalid('businessUnit')">
+            <option value="" disabled>Select Business Unit</option>
+            <option *ngFor="let u of businessUnits" [value]="u.id ?? u">
+              {{ u.name ?? u }}
+            </option>
+          </select>
+          <small class="err-msg" *ngIf="isFieldInvalid('businessUnit')">
+            Business Unit is required.
+          </small>
+        </div>
+
+        <!-- Department -->
+        <div class="form-group">
+          <label class="form-label">
+            Department <span class="astrick">*</span>
+          </label>
+          <select class="form-control" formControlName="department" [class.is-invalid]="isFieldInvalid('department')">
+            <option value="" disabled>Select Department</option>
+            <option *ngFor="let d of departments" [value]="d.id ?? d">
+              {{ d.name ?? d }}
+            </option>
+          </select>
+          <small class="err-msg" *ngIf="isFieldInvalid('department')">
+            Department is required.
+          </small>
+        </div>
+
+        <!-- Role Name -->
+        <div class="form-group">
+          <label class="form-label">
+            Role Name <span class="astrick">*</span>
+          </label>
+
+
+          <input *ngIf="type === 'create'" class="form-control" type="text" placeholder="Enter role name"
+            formControlName="roleName" [class.is-invalid]="isFieldInvalid('roleName')" />
+
+
+          <select *ngIf="type === 'assign'" class="form-control" formControlName="roleName"
+            [class.is-invalid]="isFieldInvalid('roleName')">
+            <option value="" disabled>Select Role</option>
+            <option *ngFor="let r of roles" [value]="r.roleId ?? r.id ?? r">
+              {{ r.roleName ?? r.name ?? r }}
+            </option>
+          </select>
+
+          <small class="err-msg" *ngIf="isFieldInvalid('roleName')">
+            Role Name is required.
+          </small>
+        </div>
+
+      </div>
+
+      <!-- ── Description (create only) ── -->
+      <div class="form-group" *ngIf="type === 'create'">
+        <label class="form-label">
+          Description <span class="astrick">*</span>
+        </label>
+        <textarea class="form-control description" rows="2" placeholder="Write description..."
+          formControlName="description" [class.is-invalid]="isFieldInvalid('description')"></textarea>
+        <small class="err-msg" *ngIf="isFieldInvalid('description')">
+          Description is required.
+        </small>
+      </div>
+
+    </form>
+
+    <!-- ── Permissions Table (always shown for both modes) ── -->
+    <div class="perm-section">
+
+      <div class="perm-header-row">
+        <h4 class="perm-title">
+          Permissions <span class="astrick">*</span>
+        </h4>
+        <small class="err-msg" *ngIf="permTouched && !hasAtLeastOnePermission()">
+          Please select at least one permission.
+        </small>
+      </div>
+
+      <div class="perm-table-wrap" [class.perm-invalid]="permTouched && !hasAtLeastOnePermission()">
+        <table class="perm-table">
+
+          <thead>
+            <tr>
+              <th class="th-module">Module</th>
+              <th *ngFor="let col of permColumns" class="th-perm" [title]="'Toggle all ' + col.label">
+                <div class="th-perm-inner">
+
+                  <span>{{ col.label }}</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let mod of modules" class="perm-row">
+              <td class="td-module">{{ mod.label }}</td>
+              <td *ngFor="let col of permColumns" class="td-check">
+                <input type="checkbox" class="perm-check" [checked]="permissions[mod.key]?.[col.key]"
+                  (change)="togglePerm(mod.key, col.key)" />
+              </td>
+            </tr>
+
+            <!-- Empty state -->
+            <tr *ngIf="modules.length === 0">
+              <td [attr.colspan]="permColumns.length + 1" class="empty-row">
+                No modules available.
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <div class="cr-footer">
+      <button class="btn btn-ghost" type="button" (click)="cancel()">
+        Cancel
+      </button>
+      <button class="btn btn-ghost-primary" type="button" [disabled]="isSubmitting" (click)="submit()">
+        <span *ngIf="!isSubmitting">Submit</span>
+        <span *ngIf="isSubmitting">
+          <i class="fa-solid fa-spinner fa-spin"></i> Saving...
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>

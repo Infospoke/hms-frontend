@@ -11,7 +11,7 @@ export class ApiService {
   private baseUrl = environment.apiUrl;
   private websiteURL = environment.websiteURL;
   private aiBaseUrl = environment.atsUrl;
-
+  private hrmsUrl=environment.hrmsApiUrl;
   get<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
   }
@@ -84,4 +84,36 @@ export class ApiService {
     const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
     return this.http.post<T>(`${this.aiBaseUrl}${endpoint}`, body, { headers });
   }
+
+  hrmsget<T>(endpoint: string, params?: any): Observable<T> {
+    return this.http.get<T>(`${this.hrmsUrl}${endpoint}`, { params });
+  }
+
+  hrmspost<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body);
+  }
+
+  hrmsput<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.put<T>(`${this.hrmsUrl}${endpoint}`, body);
+  }
+
+  hrmsdelete<T>(endpoint: string): Observable<T> {
+    return this.http.delete<T>(`${this.hrmsUrl}${endpoint}`);
+  }
+
+  hrmspatch<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.patch<T>(`${this.hrmsUrl}${endpoint}`, body);
+  }
+
+  hrmssilentGet<T>(endpoint: string, params?: any): Observable<T> {
+    const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
+    return this.http.get<T>(`${this.hrmsUrl}${endpoint}`, { params, headers });
+  }
+
+  hrmssilentPost<T>(endpoint: string, body: any): Observable<T> {
+    const headers = new HttpHeaders({ 'X-Skip-Loader': 'true' });
+    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body, { headers });
+  }
+
+
 }

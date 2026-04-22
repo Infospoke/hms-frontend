@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-card',
@@ -14,4 +14,13 @@ export class CardComponent {
   @Input() textColor: string = '';
   @Input() bgColor: string = '';
   @Input() borderColor: string = '';
+  @Input() isActive: boolean = false;
+
+  @Output() selectedCard=new EventEmitter<any>();
+
+
+
+  handleSelectedCard(){
+    this.selectedCard.emit(this.label);
+  }
 }

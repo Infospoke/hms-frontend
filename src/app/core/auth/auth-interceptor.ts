@@ -9,17 +9,25 @@ let isRefreshing = false;
 const refreshSubject$ = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-   const tokenService = inject(TokenService);
+  const tokenService = inject(TokenService);
   const authService = inject(AuthService);
   const router = inject(Router);
 
   if (req.url.includes(API.AUTH.LOGIN) || req.url.includes(API.AUTH.REFRESH)) {
-    return next(req);
+    return next(req.clone({
+      setHeaders: {
+        'X-Channel': 'web'
+      }
+    }));
   }
 
   const token = tokenService.getAccessToken();
-  const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
-
+  const authReq = req.clone({
+    setHeaders: {
+      Authorization: token ? `Bearer ${token}` : '',
+      'X-Channel': 'web'
+    }
+  });
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status !== 401) return throwError(() => err);

@@ -50,21 +50,24 @@ export class LoginComponent {
 
     this.loading.set(true);
     const { email, password } = this.loginForm.value;
-
+   
     try {
       const data: any = await firstValueFrom(
-        this.api.post(API.AUTH.LOGIN, { email, password })
+        this.api.hrmspost(API.AUTH.LOGIN, { email, password })
       );
 
       this.loading.set(false);
 
-      if (data?.responseCode == 1) {
-        this.tokenService.setTokens(data.token, data.refreshToken);
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('refreshToken', data.refreshToken);
-        localStorage.setItem('lastLoginTime', data.lastLogin);
+      if (data?.responsecode === '00') {
+        this.tokenService.setTokens(data?.data?.token,null);
+        sessionStorage.setItem('token', data?.data?.token);
+        // sessionStorage.setItem('refreshToken', data.refreshToken);
+        // localStorage.setItem('lastLoginTime', data.lastLogin);
         this.userId = data.userId;
-        this.loadUserAndNavigate();
+        this.authService.getPermissions();
+        this.authService.getRole();
+        this.router.navigate(['/users/user-onboard-roles']);
+        // this.loadUserAndNavigate();
       }
       else if (data?.responseCode == 2) {
         this.notification.success(data.responseMessage);
@@ -99,7 +102,7 @@ export class LoginComponent {
         if (firstModule.submenus?.length > 0) {
           sessionStorage.setItem('userId', this.userId);
           this.permissionService.setModules(data.modules);
-          this.router.navigate(['/demand/create']);
+          this.router.navigate(['/users/user-onboard-roles']);
         } else {
           this.router.navigate(['/no-modules-found']);
         }

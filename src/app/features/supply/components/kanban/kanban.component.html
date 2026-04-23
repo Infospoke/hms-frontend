@@ -1,0 +1,163 @@
+<div class="kanban-page">
+
+  <!-- TOP FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-left">
+      <button class="btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filter
+      </button>
+      <button class="btn-outline">
+        JR: QAT
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- BULK ACTION BAR -->
+  <div class="bulk-bar" *ngIf="selectedStage">
+    <span class="bulk-count">{{ getSelectedCount() }} selected</span>
+
+    <div class="bulk-select-wrap">
+      <select class="bulk-select" (change)="onMoveStageSelect($any($event.target).value)">
+        <option value="">Move Stage ▾</option>
+        <option *ngFor="let s of getNextStages()" [value]="s">→ {{ s }}</option>
+      </select>
+    </div>
+
+    <button class="btn-reject" (click)="rejectSelected()">Reject</button>
+    <span class="bulk-hint">Confirmation dialog before execution</span>
+  </div>
+
+  <div class="kanban-body">
+    <!-- BOARD -->
+    <div class="board">
+      <div
+        class="column"
+        *ngFor="let stage of stages"
+        (drop)="onDrop(stage)"
+        (dragover)="onDragOver($event, stage)"
+        (dragleave)="onDragLeave()"
+        [class.drop-target]="dragOverStage === stage"
+      >
+        <!-- Column Header -->
+        <div class="column-header" [style.background]="getStageHeaderBg(stage)">
+          <span class="col-title" [style.color]="getStageColor(stage)">{{ stage }}</span>
+          <div class="col-count-wrap">
+            <span class="col-count" [style.color]="getStageColor(stage)">{{ candidates[stage].length }}</span>
+            <span class="stage-dot" [style.background]="getStageDotColor(stage)" *ngIf="candidates[stage].length > 0"></span>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-area">
+          <div
+            class="card"
+            *ngFor="let c of candidates[stage]"
+            draggable="true"
+            (dragstart)="onDragStart(stage, c)"
+            [class.sla-breach-card]="c.sla === 'BREACHED'"
+            [class.sla-warn-card]="c.sla === 'WARNING'"
+            [class.sla-ok-card]="c.sla === 'OK'"
+          >
+            <!-- SLA color strip at top -->
+            <div class="sla-strip"
+              [class.strip-breach]="c.sla === 'BREACHED'"
+              [class.strip-warn]="c.sla === 'WARNING'"
+              [class.strip-ok]="c.sla === 'OK'">
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+
+              <!-- Row 1: Avatar + Name + REF badge -->
+              <div class="card-top">
+                <div class="avatar"
+                  [style.background]="getAvatarBg(c.name)"
+                  [style.color]="getAvatarText(c.name)">
+                  {{ getInitials(c.name) }}
+                </div>
+                <div class="card-name-wrap">
+                  <span class="cand-name">{{ c.name }}</span>
+                  <span class="ref-badge" *ngIf="c.ref">REF</span>
+                </div>
+              </div>
+
+              <!-- Row 2: Divider -->
+              <div class="card-divider"></div>
+
+              <!-- Row 3: Meta row — Days + JR badge + SLA status pill -->
+              <div class="card-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Days</span>
+                  <span class="meta-value">{{ c.days }}d</span>
+                </div>
+
+                <div class="meta-item" *ngIf="c.jr">
+                  <span class="jr-badge">{{ c.jr }}</span>
+                </div>
+
+                <div class="sla-pill"
+                  [class.pill-breach]="c.sla === 'BREACHED'"
+                  [class.pill-warn]="c.sla === 'WARNING'"
+                  [class.pill-ok]="c.sla === 'OK'">
+                  <span class="sla-dot-sm"></span>
+                  <ng-container *ngIf="c.sla === 'BREACHED'">{{ c.percent }}%+ SLA</ng-container>
+                  <ng-container *ngIf="c.sla === 'WARNING'">{{ c.percent }}% SLA</ng-container>
+                  <ng-container *ngIf="c.sla === 'OK'">On Track</ng-container>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Empty placeholder -->
+          <div class="empty-col" *ngIf="candidates[stage].length === 0">
+            <span>Empty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS PANEL -->
+    <div class="notifications">
+      <div class="notif-title">SLA Notifications</div>
+
+      <div
+        class="notify"
+        *ngFor="let n of notifications; let i = index"
+        [class.notify-breach]="n.type === 'breach'"
+        [class.notify-warn]="n.type === 'warn'"
+        [class.notify-success]="n.type === 'success'"
+      >
+        <div class="notify-body">
+          <span class="notify-heading">{{ n.title }}</span>
+          <span class="notify-sub" *ngIf="n.sub">{{ n.sub }}</span>
+        </div>
+        <a class="notify-dismiss" *ngIf="n.dismissable" (click)="dismissNotification(i)">Dismiss (24h)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-item"><span class="dot dot-red"></span> Breached (&gt;100%)</span>
+    <span class="legend-item"><span class="dot dot-orange"></span> Warning (50–100%)</span>
+    <span class="legend-item"><span class="dot dot-green"></span> On Track (&lt;50%)</span>
+    <span class="legend-item"><span class="ref-badge small">REF</span> Referral</span>
+  </div>
+
+  <!-- REJECT CONFIRM DIALOG -->
+  <ng-template #showRejectConfirm>
+    <p>Are you sure you want to reject <b>{{ getSelectedCount() }}</b> selected candidate(s)?</p>
+  </ng-template>
+
+  <!-- MOVE CONFIRM DIALOG -->
+  <ng-template #moveConfirmModal>
+    <p>
+      Move <b>{{ getSelectedCount() }}</b> candidate(s) to
+      <strong>{{ pendingMoveStage }}</strong>?
+    </p>
+  </ng-template>
+
+</div>

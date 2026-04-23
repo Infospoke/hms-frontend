@@ -9,7 +9,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class CardComponent {
 
-   @Input() label: string = '';
+  @Input() label: string = '';
+  @Input() roleId:any;
   @Input() count?: number | null;
   @Input() textColor: string = '';
   @Input() bgColor: string = '';
@@ -21,6 +22,6 @@ export class CardComponent {
 
 
   handleSelectedCard(){
-    this.selectedCard.emit(this.label);
+    this.selectedCard.emit(this.roleId);
   }
 }

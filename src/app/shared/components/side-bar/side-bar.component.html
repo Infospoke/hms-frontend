@@ -1,41 +1,84 @@
 <div class="sidebar">
-
   <div class="nav">
 
     <!-- HOME -->
-    <div class="item">Home</div>
-
-    <div class="item" (click)="toggle('demand')">Demand</div>
-
-    <div *ngIf="activeMenu === 'demand'" class="sub">
-      <span class="dot" (click)="handlenavigate('/demand/my-jds')"></span> My JDs
+    <div class="item" (click)="handlenavigate('/home')">
+      <i class="fa-solid fa-house"></i> Home
     </div>
 
-
-    <div class="item" (click)="toggle('settings')">Settings & Admin</div>
-
-    <div *ngIf="activeMenu === 'settings'">
-
-      <div class="sub active-sub">
-        <span class="dot filled"></span> Users & Roles
-      </div>
-
-      <div class="sub">
-        <span class="dot"></span> Approval Chains
-      </div>
-
-      <div class="sub">
-        <span class="dot"></span> Notification Templates
-      </div>
-
-      <div class="sub">
-        <span class="dot"></span> Audit Log
-      </div>
-
-      <div class="sub">
-        <span class="dot"></span> Integrations
-      </div>
-
+    <!-- DEMAND -->
+    <div class="item" [class.active]="isOpen('demand')" (click)="toggle('demand')">
+      <i class="fa-solid fa-briefcase"></i> Demand
+      <i class="fa-solid fa-chevron-right chevron" [class.open]="isOpen('demand')"></i>
     </div>
+
+    <div *ngIf="isOpen('demand')" class="sub-group">
+      <div class="sub" [class.active-sub]="isActive('/demand/my-jds')" (click)="handlenavigate('/demand/my-jds')">
+        <i class="fa-regular fa-file-lines sub-icon"></i> My JDs
+      </div>
+      <div class="sub" [class.active-sub]="isActive('/demand/srs')" (click)="handlenavigate('/demand/create?step=0')">
+        <i class="fa-regular fa-clipboard sub-icon"></i> SRs
+      </div>
+    </div>
+
+    <!-- SUPPLY -->
+    <div class="item" [class.active]="isOpen('supply')" (click)="toggle('supply')">
+      <i class="fa-solid fa-boxes-stacked"></i> Supply
+      <i class="fa-solid fa-chevron-right chevron" [class.open]="isOpen('supply')"></i>
+    </div>
+
+    <div *ngIf="isOpen('supply')" class="sub-group">
+      <div class="sub" [class.active-sub]="isActive('/supply/kanban')" (click)="handlenavigate('/supply/kanban')">
+        <i class="fa-solid fa-table-columns sub-icon"></i> Kanban
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="item" [class.active]="isOpen('users')" (click)="toggle('users')">
+      <i class="fa-solid fa-users"></i> Users
+      <i class="fa-solid fa-chevron-right chevron" [class.open]="isOpen('users')"></i>
+    </div>
+
+    <div *ngIf="isOpen('users')" class="sub-group">
+      <div class="sub sub-parent" (click)="toggle('user-roles')">
+        <i class="fa-solid fa-user-shield sub-icon"></i> Users & Roles
+        <i class="fa-solid fa-chevron-right chevron-sm" [class.open]="isOpen('user-roles')"></i>
+      </div>
+
+      <div *ngIf="isOpen('user-roles')" class="sub-group nested">
+        <div class="sub nested-sub" [class.active-sub]="isActive('/users/user-onboard-roles/role-permissions')"
+          (click)="handlenavigate('/users/user-onboard-roles/role-permissions')">
+          <i class="fa-solid fa-key sub-icon sm"></i> Role & Permissions
+        </div>
+        <div class="sub nested-sub" [class.active-sub]="isActive('/users/user-onboard-roles')"
+          (click)="handlenavigate('/users/user-onboard-roles')">
+          <i class="fa-solid fa-user-shield sub-icon"></i> User & Roles
+        </div>
+      </div>
+    </div>
+    <div class="item" [class.active]="isOpen('settings')" (click)="toggle('settings')">
+      <i class="fa-solid fa-gear"></i> Settings & Admin
+      <i class="fa-solid fa-chevron-right chevron" [class.open]="isOpen('settings')"></i>
+    </div>
+
+    <div *ngIf="isOpen('settings')" class="sub-group">
+      <div class="sub" [class.active-sub]="isActive('/settings/approval-chains')"
+        (click)="handlenavigate('/settings/approval-chains')">
+        <i class="fa-solid fa-code-branch sub-icon"></i> Approval Chains
+      </div>
+      <div class="sub" [class.active-sub]="isActive('/settings/notification-templates')"
+        (click)="handlenavigate('/settings/notification-templates')">
+        <i class="fa-regular fa-bell sub-icon"></i> Notification Templates
+      </div>
+      <div class="sub" [class.active-sub]="isActive('/settings/audit-log')"
+        (click)="handlenavigate('/settings/audit-log')">
+        <i class="fa-solid fa-scroll sub-icon"></i> Audit Log
+      </div>
+      <div class="sub" [class.active-sub]="isActive('/settings/integrations')"
+        (click)="handlenavigate('/settings/integrations')">
+        <i class="fa-solid fa-plug sub-icon"></i> Integrations
+      </div>
+    </div>
+
   </div>
 </div>

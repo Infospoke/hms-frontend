@@ -26,13 +26,13 @@ export class UserService {
 
   async getCount(){
     return await firstValueFrom(
-      this.api.hrmsget(API.USERS.COUNT)
+      this.api.hrmspost(API.USERS.COUNT,null)
     );
   }
 
-  async getCountByRole(role:any){
+  async getUserById(id:any){
     return await firstValueFrom(
-      this.api.hrmsget(API.USERS.COUNT_ROLE(role))
+      this.api.hrmsget(API.USERS.USER_DETAILS_BY(id))
     );
   }
 

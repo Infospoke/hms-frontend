@@ -6,12 +6,14 @@ import { Router } from '@angular/router';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { DashboardCountCardComponent } from "../../../../../shared/components/dashboard-count-card/dashboard-count-card.component";
 import { CardComponent } from "../../../../../shared/components/card/card.component";
-import { forkJoin, from, Observable } from 'rxjs';
+import { forkJoin, from } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
+import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
+
 @Component({
   selector: 'app-users-rules',
-  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent],
+  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent,ProfilePipe],
   templateUrl: './users-rules.component.html',
   styleUrl: './users-rules.component.scss',
 })
@@ -22,60 +24,73 @@ export class UsersRulesComponent implements OnInit {
   private router = inject(Router);
   private modal = inject(NzModalService);
   private userService = inject(UserService);
-  totalItems: any;
+
+  totalItems = 0;
   cards: any[] = [];
   usersList: any[] = [];
   filters: any[] = [];
-  selectedFilter = 'All';
+  selectedFilter: any = 'All';
   filteredUsers: any[] = [];
+
   pageSize = 10;
+
+ 
   currentPage = 1;
+
+  private activeRoleId: any = null;
+
   constructor() { }
+
   ngOnInit(): void {
     this.getCardCountAndList();
   }
-  getCardCountAndList() {
-    const payload = {
-      page: this.currentPage - 1,
-      size: this.pageSize
-    };
 
-    this.userService.getList(payload).then((res: any) => {
+  getCardCountAndList() {
+    const payload = this.buildPayload(0, null); 
+
+    forkJoin({
+      userList: from(this.userService.getList(payload)),
+      count: from(this.userService.getCount())
+    }).subscribe({
+      next: (res: any) => {
         this.cards = [
           {
-            value: res?.data?.totalCount,
+            value: res?.count?.data?.total,
             label: 'Total Users',
             valueColor: '#2563eb',
             borderColor: '#bfdbfe',
             bgColor: '#f1f5ff'
           },
           {
-            value: res?.data?.activeCount,
+            value: res?.count?.data?.active,
             label: 'Active',
             valueColor: '#16a34a',
             borderColor: '#bbf7d0',
             bgColor: '#f0fdf4'
           },
           {
-            value: res?.data?.deactivatedCount,
+            value: res?.count?.data?.deactivated,
             label: 'Deactivated',
             valueColor: '#6b7280',
             borderColor: '#e5e7eb',
             bgColor: '#f9fafb'
           }
         ];
-        this.usersList = res?.data?.users;
-        this.totalItems = res?.data?.totalCount;
+
+        this.usersList = res?.userList?.data?.users ?? [];
+        this.totalItems = res?.userList?.data?.totalElements ?? 0;
         this.filteredUsers = this.usersList;
-      })
-      .catch((err: any) => {
-        console.error('API error:', err);
-      });
+        this.currentPage = 1;
+
+        this.generateFilters(res?.count?.data?.roleCounts, res?.count?.data?.total);
+      },
+      error: (error: any) => {
+        console.error('Failed to load users/count:', error);
+      }
+    });
   }
 
-
   openInvite() {
-
     const resf = this.modal.create({
       nzTitle: 'Invite User',
       nzContent: InviteUserComponent,
@@ -91,142 +106,101 @@ export class UsersRulesComponent implements OnInit {
 
     resf.afterClose.subscribe(() => {
       this.getCardCountAndList();
-    })
+    });
   }
 
   edit(user: any) {
-    let editUser = this.modal.create({
+    const editUser = this.modal.create({
       nzTitle: '',
       nzContent: EditUserComponent,
       nzWidth: '60%',
       nzCentered: true,
-
       nzBodyStyle: {
         'max-height': '100vh',
         'overflow-y': 'auto',
         'padding': '10px'
       },
       nzFooter: null,
-    })
+    });
     const instance = editUser.getContentComponent();
-    instance.user = user;
-  }
-  getLogo(name: any): string {
-    if (!name) return '';
-
-    const parts = name.trim().split(' ');
-
-    if (parts.length === 1) {
-      return parts[0].charAt(0).toUpperCase();
-    }
-
-    return (
-      parts[0].charAt(0) +
-      parts[parts.length - 1].charAt(0)
-    ).toUpperCase();
+    instance.userId = user?.id;
   }
 
-  // generateFilters(users: any[]) {
-  //   const roleMap = new Map<string, number>();
+  
+  generateFilters(roleCounts: any[], total: any) {
+    const colors = this.getColorPalette();
 
-  //   users.forEach(user => {
-  //     const role = user.roleName || 'Unknown';
-  //     roleMap.set(role, (roleMap.get(role) || 0) + 1);
-  //   });
+    const dynamicFilters = (roleCounts ?? []).map((role, index) => {
+      const color = colors[index % colors.length];
+      return {
+        label: role.roleName || 'Unknown',
+        id: role.roleId,    
+        roleId: role.roleId,
+        count: role.count || 0,
+        textColor: color.text,
+        bgColor: color.bg,
+        borderColor: color.border
+      };
+    });
 
-  //   const colors = this.getColorPalette();
-
-  //   const dynamicFilters = Array.from(roleMap.entries()).map(([role, count], index) => {
-  //     const color = colors[index % colors.length];
-
-  //     return {
-  //       label: role,
-  //       count,
-  //       textColor: color.text,
-  //       bgColor: color.bg,
-  //       borderColor: color.border
-  //     };
-  //   });
-
-  //   this.filters = [
-  //     {
-  //       label: 'All',
-  //       count: users.length,
-  //       textColor: '#444441',
-  //       bgColor: '#f0f0f0',
-  //       borderColor: '#c8c8c8'
-  //     },
-  //     ...dynamicFilters
-  //   ];
-  // }
-
-  generateFilters(users: any[]) {
-  const roleMap = new Map<string, string>();
-  users.forEach(user => {
-    if (user.roleId && !roleMap.has(user.roleId)) {
-      roleMap.set(user.roleId, user.roleName || 'Unknown');
-    }
-  });
-
-  const roleIds = Array.from(roleMap.keys());
-
-  if (roleIds.length === 0) {
-    this.filters = [{
-      label: 'All',
-      count: users.length,
-      textColor: '#444441',
-      bgColor: '#f0f0f0',
-      borderColor: '#c8c8c8'
-    }];
-    return;
+    this.filters = [
+      {
+        label: 'All',
+        id: 'All',
+        count: total,
+        textColor: '#444441',
+        bgColor: '#f0f0f0',
+        borderColor: '#c8c8c8'
+      },
+      ...dynamicFilters
+    ];
   }
 
-  const countRequests: Record<string, Observable<any>> = {};
-  roleIds.forEach(roleId => {
-    countRequests[roleId] = from(this.userService.getCountByRole(roleId)); // wrap Promise → Observable
-  });
 
-  const colors = this.getColorPalette();
-
-  forkJoin(countRequests).subscribe({
-    next: (results: Record<string, any>) => {
-      const dynamicFilters = roleIds.map((roleId, index) => {
-        const color = colors[index % colors.length];
-        const count = results[roleId]?.data ?? 0;
-
-        return {
-          label: roleMap.get(roleId) ?? 'Unknown',
-          roleId,
-          count,
-          textColor: color.text,
-          bgColor: color.bg,
-          borderColor: color.border
-        };
-      });
-
-      this.filters = [
-        {
-          label: 'All',
-          count: users.length,
-          textColor: '#444441',
-          bgColor: '#f0f0f0',
-          borderColor: '#c8c8c8'
-        },
-        ...dynamicFilters
-      ];
-    },
-    error: (err) => console.error('Error fetching role counts:', err)
-  });
-}
-
-  get pagedUsers(): any[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.usersList.slice(start, start + this.pageSize);
-  }
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadPage(page);
+    this.loadPage(page - 1, this.activeRoleId);
   }
+
+
+  applyFilter(role: any) {
+    this.selectedFilter = role;
+    this.activeRoleId = role === 'All' ? null : role;
+    this.currentPage = 1; // reset to first page on filter change
+    this.loadPage(0, this.activeRoleId); // backend page 0
+  }
+
+
+  loadPage(backendPage: number, roleId: any = null): void {
+    const payload = this.buildPayload(backendPage, roleId);
+
+    from(this.userService.getList(payload)).subscribe({
+      next: (res: any) => {
+        this.usersList = res?.data?.users ?? [];
+        this.filteredUsers = this.usersList;
+        this.totalItems = res?.data?.totalElements ?? 0;
+      },
+      error: (error: any) => {
+        console.error('Failed to load page:', error);
+      }
+    });
+  }
+
+  
+  private buildPayload(backendPage: number, roleId: any) {
+    const filters: any = {};
+    if (roleId !== null && roleId !== undefined) {
+      filters['roleId'] = roleId;
+    }
+    return {
+      page: backendPage,
+      size: this.pageSize,
+      sortBy: 'id',
+      direction: 'DESC',
+      filters
+    };
+  }
+
   getColorPalette() {
     return [
       { text: '#0C447C', bg: '#E6F1FB', border: '#85B7EB' },
@@ -237,32 +211,5 @@ export class UsersRulesComponent implements OnInit {
       { text: '#1A237E', bg: '#E8EAF6', border: '#7986CB' },
       { text: '#004D40', bg: '#E0F2F1', border: '#4DB6AC' }
     ];
-  }
-  applyFilter(role: any) {
-    this.selectedFilter = role;
-    console.log(role);
-    if (role === 'All') {
-      this.filteredUsers = this.usersList;
-    } else {
-      this.filteredUsers = this.usersList.filter(u => u.roleName === role);
-    }
-  }
-
-  loadPage(page: number): void {
-       let payload={
-      page:this.currentPage-1,
-      size:this.pageSize
-    }
-    this.userService.getList(payload)
-      .then((res: any) => {
-        this.usersList = res.data;
-        this.filteredUsers = this.usersList;
-        this.totalItems = res.totalRecords;
-        this.currentPage = page;
-        this.generateFilters(this.usersList);
-      })
-      .catch((error: any) => {
-
-      })
   }
 }

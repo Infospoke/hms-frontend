@@ -5,16 +5,17 @@ import { forkJoin } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 
 @Component({
   selector: 'app-edit-user',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule,ProfilePipe],
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.scss',
 })
 export class EditUserComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
-  @Input() user!: any;
+  @Input() userId!: any;
 
 
 
@@ -29,6 +30,7 @@ export class EditUserComponent implements OnInit {
   private modalRef = inject(NzModalRef);
   private notificationService = inject(NotificationService);
   isloading = signal<boolean>(false);
+  user:any=null;
   constructor() { }
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -84,7 +86,7 @@ export class EditUserComponent implements OnInit {
       nzCancelText: 'Cancel',
 
       nzOnOk: () => {
-        return this.deactive(this.user?.id);
+        return this.deactive(this.userId);
       }
     })
   }
@@ -104,10 +106,12 @@ export class EditUserComponent implements OnInit {
   }
   getIntialData() {
     forkJoin({
-      bussinessUnit: this.userService.getBussinessUnits()
+      bussinessUnit: this.userService.getBussinessUnits(),
+      user:this.userService.getUserById(this.userId),
     }).subscribe({
       next: (res: any) => {
         this.businessUnits = res.bussinessUnit?.data;
+        this.user=res?.user?.data;
       },
       error: (error: any) => {
         console.log(error);
@@ -126,7 +130,7 @@ export class EditUserComponent implements OnInit {
         departmentId: this.form.get('department')?.value,
         roleId: role?.id,
       }
-      this.userService.update(this.user?.id, obj)
+      this.userService.update(this.userId, obj)
         .then((res: any) => {
           this.isloading.set(false);
           this.notificationService.success(res?.message);

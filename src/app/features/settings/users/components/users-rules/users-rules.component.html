@@ -14,20 +14,20 @@
 <div class="filters-section">
   <div class="fill" *ngFor="let f of filters">
     <app-card [label]="f.label" [count]="f.count" [textColor]="f.textColor" [bgColor]="f.bgColor"
-      [borderColor]="f.borderColor" [isActive]="selectedFilter === f.label" (selectedCard)="applyFilter($event)">
+      [borderColor]="f.borderColor" [isActive]="selectedFilter === f.id" [roleId]="f?.id" (selectedCard)="applyFilter($event)">
 
     </app-card>
   </div>
 </div>
 <div class="users-list">
   <div class="usr-row" *ngFor="let u of filteredUsers">
-    <div class="usr-av">{{getLogo(u?.username)}}</div>
+    <div class="usr-av">{{u?.username| profile}}</div>
     <div style="flex:1">
       <div class="usr-n">{{u?.username}}</div>
       <div class="usr-e">{{u?.email}}</div>
     </div>
     <span class="rbadge rRec">{{u?.roleName}}</span>
-    <div class="usr-s" [ngClass]="u.status?'active-s':'inactive-s'">{{u?.status?'Active':'Deactivated'}}</div>
+    <div class="usr-s" [ngClass]="u.active?'active-s':'inactive-s'">{{u?.active?'Active':'Deactivated'}}</div>
     <div class="btn" (click)="edit(u)">Edit</div>
   </div>
 </div>

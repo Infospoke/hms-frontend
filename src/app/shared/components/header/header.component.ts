@@ -2,10 +2,11 @@ import { Component, input, output, inject } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
 import { CardComponent } from "../card/card.component";
+import { ProfilePipe } from '../../pipes/profile.pipe';
 
 @Component({
   selector: 'app-header',
-  imports: [CardComponent],
+  imports: [CardComponent,ProfilePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -23,7 +24,7 @@ sidebarCollapsed = input(false);
 
 
   get userName(){
-    return this.authService.getUserName()?.slice(0,2)?.toUpperCase();
+    return this.authService.getUserName();
   }
 
   get roleName(){

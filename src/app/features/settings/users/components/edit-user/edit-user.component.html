@@ -1,11 +1,11 @@
 <div class="user-card">
   <div class="header">
-    <div class="avatar">PS</div>
+    <div class="avatar">{{user?.username | profile}}</div>
     <div>
-      <h3>{{user.name}}</h3>
+      <h3>{{user.username}}</h3>
       <p>{{ user.email }} •
-        <span [ngClass]="user.status ? 'status active' : 'status deactivated'">
-          {{ user.status?'Active':'Deactivated' }}
+        <span [ngClass]="user.active ? 'status active' : 'status deactivated'">
+          {{ user.active?'Active':'Deactivated' }}
         </span>
       </p>
     </div>
@@ -17,7 +17,7 @@
     <div class="role-box">
       <span class="role">{{user.roleName}}</span>
       <span class="assigned">
-        Assigned {{user.assignedDate}} by {{user.assignedBy}}
+        Assigned {{ user.assignedAt | date:'dd-MM-yyyy hh:mm a' }} by {{ user.assignedBy }}
       </span>
     </div>
   </div>
@@ -68,12 +68,11 @@
   </form>
 
 
-  <div class="danger" *ngIf="user.status">
+  <div class="danger" *ngIf="user.active">
     <button class="deactivate-btn" (click)="deactivateUser()">
       Deactivate user account
     </button>
   </div>
-  {{isloading()}}
   <div class="actions">
     <button class="cancel" (click)="reset()">Cancel</button>
     <button class="save" (click)="save()"><i class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i>Save

@@ -36,9 +36,10 @@ export const API = {
     USERS:{
         CREATE:'/hms/user/create',
         GET_LIST:`/hms/user/list`,
-        COUNT:'/hms/user/count/total',
+        COUNT:'/hms/user/count',
         COUNT_ROLE:(role:any)=>`/hms/user/count/role/${role}`,
         COUNT_STATUS:(status:any)=>`/hms/user/count/status?status=${status}`,
+        USER_DETAILS_BY:(id:any)=>`/hms/user/details/${id}`,
         UPDATE_BY_ID:(id:any)=>`/hms/user/update/${id}`,
         BUSSINESS_UNITS:'/hms/configurations/business-units',
         DEPARTMENTS:(bussinessId:any)=>`/hms/configurations/departments/${bussinessId}`,

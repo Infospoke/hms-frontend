@@ -629,9 +629,8 @@ input[type="range"] {
 
 .review-grid {
   display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(2, auto);
-  gap: 12px 40px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 24px;
 }
 
 .review-row {

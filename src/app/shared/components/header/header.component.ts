@@ -3,10 +3,11 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
 import { CardComponent } from "../card/card.component";
 import { ProfilePipe } from '../../pipes/profile.pipe';
+import { SearchBarComponent } from "../search-bar/search-bar.component";
 
 @Component({
   selector: 'app-header',
-  imports: [CardComponent,ProfilePipe],
+  imports: [CardComponent, ProfilePipe, SearchBarComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

@@ -1,0 +1,329 @@
+<div class="card">
+   
+    <div class="collapsible">
+        <div class="coll-hdr" (click)="toggle(0)">
+            <span>Step 1 — Position Basics</span>
+            <div class="step-actions">
+                <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(0)">
+                    <i class="fa fa-pen"></i> Edit
+                </span>
+                <span class="arrow-view" [class.open]="open[0]">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+        </div>
+        <div class="coll-body" *ngIf="open[0]">
+            <div class="review-grid" *ngIf="step0; else noData">
+                <div class="review-row">
+                    <span class="review-label">Job Title</span>
+                    <span class="review-val">{{ step0.jobTitle || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Department</span>
+                    <span class="review-val">{{ step0.dept || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Business Unit</span>
+                    <span class="review-val">{{ step0.bu || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Reporting Manager(s)</span>
+                    <span class="review-val">
+                        <ng-container *ngIf="selectedManagers.length; else noManagers">
+                            <span *ngFor="let m of selectedManagers; let last = last">
+                                {{ m.name || m.username }}{{ !last ? ', ' : '' }}
+                            </span>
+                        </ng-container>
+                        <ng-template #noManagers>—</ng-template>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Location</span>
+                    <span class="review-val">{{ step0.location || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Work Mode</span>
+                    <span class="review-val">{{ step0.workMode || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Employment Type</span>
+                    <span class="review-val">{{ step0.empType || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Seniority</span>
+                    <span class="review-val">{{ step0.seniority || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">No. of Openings</span>
+                    <span class="review-val">{{ step0.openings || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Priority</span>
+                    <span class="review-val">{{ step0.priority || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Target Start Date</span>
+                    <span class="review-val">{{ step0.startDate || '—' }}</span>
+                </div>
+            </div>
+            <ng-template #noData><span class="review-val">—</span></ng-template>
+        </div>
+    </div>
+
+    <!-- ── Step 2 — Business Justification ── -->
+    <div class="collapsible">
+        <div class="coll-hdr" (click)="toggle(1)">
+            <span>Step 2 — Business Justification</span>
+            <div class="step-actions">
+                <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(1)">
+                    <i class="fa fa-pen"></i> Edit
+                </span>
+                <span class="arrow-view" [class.open]="open[1]">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+        </div>
+        <div class="coll-body" *ngIf="open[1]">
+            <div class="review-grid" *ngIf="step1">
+                <div class="review-row">
+                    <span class="review-label">Requisition Type</span>
+                    <span class="review-val">{{ step1.justType || '—' }}</span>
+                </div>
+                <div class="review-row" *ngIf="needsReplace">
+                    <span class="review-label">Replaces Employee</span>
+                    <span class="review-val">
+                        {{ replaceEmployee ? (replaceEmployee.name || replaceEmployee.username) : '—' }}
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Business Case</span>
+                    <span class="review-val">{{ truncate(step1.bizCase) || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Impact If Not Filled</span>
+                    <span class="review-val">{{ truncate(step1.impactNote) || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Supporting Document</span>
+                    <span class="review-val">
+                        <ng-container *ngIf="supportDoc; else noDoc">
+                            <i class="fa fa-file-pdf" style="color:#e53e3e; margin-right:4px;"></i>
+                            {{ supportDoc.name }} <span style="color:#888;">({{ supportDoc.sizeText }})</span>
+                        </ng-container>
+                        <ng-template #noDoc>No file attached</ng-template>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Step 3 — Budget & Compensation ── -->
+    <div class="collapsible">
+        <div class="coll-hdr" (click)="toggle(2)">
+            <span>Step 3 — Budget &amp; Compensation</span>
+            <div class="step-actions">
+                <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(2)">
+                    <i class="fa fa-pen"></i> Edit
+                </span>
+                <span class="arrow-view" [class.open]="open[2]">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+        </div>
+        <div class="coll-body" *ngIf="open[2]">
+            <div class="review-grid" *ngIf="step2">
+                
+                
+                <div class="review-row">
+                    <span class="review-label">HC Slot Confirmed</span>
+                    <span class="review-val">
+                        <span [style.color]="step2.hcSlot ? '#16a34a' : '#dc2626'">
+                            {{ step2.hcSlot ? ' Yes' : ' No' }}
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Market Salary Range</span>
+                    <span class="review-val">
+                        {{ step2.salaryComp ? ('₹' + step2.salaryComp + ' LPA') : '—' }}
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Proposed CTC</span>
+                    <span class="review-val">
+                        {{ step2.proposedComp ? ('₹' + step2.proposedComp + ' LPA') : '—' }}
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Signing Bonus</span>
+                    <span class="review-val">
+                        <span [style.color]="step2.signingBonus ? '#16a34a' : '#dc2626'">
+                            {{ step2.signingBonus ? ' Yes' : ' No' }}
+                        </span>
+                        <span *ngIf="step2.signingBonus && step2.signingAmt">
+                            — ₹{{ step2.signingAmt }} LPA
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Equity</span>
+                    <span class="review-val">
+                        <span [style.color]="step2.equity ? '#16a34a' : '#dc2626'">
+                            {{ step2.equity ? ' Yes' : ' No' }}
+                        </span>
+                        <span *ngIf="step2.equity && step2.equityAmt">
+                            — ₹{{ step2.equityAmt }} LPA
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Relocation Budget</span>
+                    <span class="review-val">
+                        <span [style.color]="step2.relocation ? '#16a34a' : '#dc2626'">
+                            {{ step2.relocation ? ' Yes' : ' No' }}
+                        </span>
+                        <span *ngIf="step2.relocation && step2.relocAmt">
+                            — ₹{{ step2.relocAmt }} LPA
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Total Annual Hiring Cost</span>
+                    <span class="review-val" style="font-weight:600;">₹{{ totalCompensation }} LPA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Step 4 — Role Requirements ── -->
+    <div class="collapsible">
+        <div class="coll-hdr" (click)="toggle(3)">
+            <span>Step 4 — Role Requirements</span>
+            <div class="step-actions">
+                <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(3)">
+                    <i class="fa fa-pen"></i> Edit
+                </span>
+                <span class="arrow-view" [class.open]="open[3]">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+        </div>
+        <div class="coll-body" *ngIf="open[3]">
+            <div class="review-grid" *ngIf="step3">
+                <div class="review-row">
+                    <span class="review-label">Must-Have Skills</span>
+                    <span class="review-val">{{ mustSkills.length ? mustSkills.join(', ') : '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Nice-to-Have Skills</span>
+                    <span class="review-val">{{ niceSkills.length ? niceSkills.join(', ') : '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Education Requirement</span>
+                    <span class="review-val">{{ step3.eduReq || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Years of Experience</span>
+                    <span class="review-val">{{ step3.expMin }} – {{ step3.expMax }} yrs</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Interview Rounds</span>
+                    <span class="review-val">{{ step3.interviewMin }} – {{ step3.interviewMax }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Travel Requirement</span>
+                    <span class="review-val">{{ step3.travel || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Certifications</span>
+                    <span class="review-val">{{ certs.length ? certs.join(', ') : '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Languages</span>
+                    <span class="review-val">{{ langs.length ? langs.join(', ') : '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Assessment Required</span>
+                    <span class="review-val">
+                        <span [style.color]="step3.assessmentOn ? '#16a34a' : '#dc2626'">
+                            {{ step3.assessmentOn ? ' Yes' : ' No' }}
+                        </span>
+                        <span *ngIf="step3.assessmentOn && assessmentTypes.length">
+                            — {{ assessmentTypes.join(', ') }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Step 5 — Sourcing Strategy ── -->
+    <div class="collapsible">
+        <div class="coll-hdr" (click)="toggle(4)">
+            <span>Step 5 — Sourcing Strategy</span>
+            <div class="step-actions">
+                <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(4)">
+                    <i class="fa fa-pen"></i> Edit
+                </span>
+                <span class="arrow-view" [class.open]="open[4]">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+        </div>
+        <div class="coll-body" *ngIf="open[4]">
+            <div class="review-grid" *ngIf="step4">
+                <div class="review-row">
+                    <span class="review-label">Internal First Policy</span>
+                    <span class="review-val">
+                        <span [style.color]="step4.internalFirst ? '#16a34a' : '#dc2626'">
+                            {{ step4.internalFirst ? ' Active' : ' Off' }}
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Job Boards</span>
+                    <span class="review-val">{{ jobBoards.length ? jobBoards.join(', ') : '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Sourcing Budget</span>
+                    <span class="review-val">
+                        {{ step4.sourcingBudget ? ('₹' + step4.sourcingBudget) : '—' }}
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Referral Programme</span>
+                    <span class="review-val">
+                        <span [style.color]="step4.referralOn ? '#16a34a' : '#dc2626'">
+                            {{ step4.referralOn ? ' Enabled' : ' Disabled' }}
+                        </span>
+                        <span *ngIf="step4.referralOn && step4.referralAmt">
+                            — ₹{{ step4.referralAmt }} bonus
+                        </span>
+                    </span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Diversity Hiring</span>
+                    <span class="review-val">
+                        <span [style.color]="step4.diversityOn ? '#16a34a' : '#dc2626'">
+                            {{ step4.diversityOn ? ' Enabled' : ' Disabled' }}
+                        </span>
+                        <span *ngIf="step4.diversityOn && diversityBoards.length">
+                            — {{ diversityBoards.join(', ') }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Footer buttons (hidden in viewOnly mode) ── -->
+    <div class="footer-btns" *ngIf="!viewOnly">
+        <div class="flex-gap">
+            <button class="btn btn-ghost" (click)="back()">← Back</button>
+            <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+        </div>
+        <button class="btn btn-primary" (click)="submitSr()" [disabled]="isSaving">
+            {{ isSaving ? 'Submitting…' : 'Submit SR for Approval →' }}
+        </button>
+    </div>
+</div>

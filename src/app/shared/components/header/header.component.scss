@@ -1,29 +1,10 @@
 .topbar{background:#fff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;padding:15px 14px;gap:10px}
 .logo{font-size:20px;font-weight:700;color:var(--brand-color)}
-.search-box {
-  flex: 1;
-  max-width: 400px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 11px;
-  outline: none;
-  transition: all 0.2s ease;
-}
+
 .tr{margin-left:auto;display:flex;gap:6px;align-items:center}
 .av{width:35px;height:35px;border-radius:50%;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight: bolder;}
 .lay{display:flex;min-height:100vh}
-
-
-.search-box:focus {
-  border-color: var(--brand-color);              
-  background: #ffffff;
-  // box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
-}
-
-
-.search-box:active {
-  border-color: var(--brand-color);
-  // box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+app-search-bar {
+  flex: 1;
+  max-width: 400px;
 }

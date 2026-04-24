@@ -19,6 +19,7 @@ import { UserService } from '../../../settings/users/servics/user-service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { SrReviewComponent } from '../sr-review/sr-review';
 
 export interface BannerMessage {
   text: string;
@@ -62,7 +63,7 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
 @Component({
   selector: 'app-create-staff',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule, NzModalModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule, NzModalModule, NzModalModule],
   templateUrl: './create-staff.component.html',
   styleUrl: './create-staff.component.scss'
 })
@@ -73,6 +74,10 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   currentStep = 0;
   isSaving = false;
   srId: string | null = null;
+  editMode = false;
+  routeType: string | null = null;
+  private pendingDeptPrefill: any = null;
+  private pendingManagerIds: number[] = [];
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   readonly STEPS: StepConfig[] = [
@@ -183,22 +188,26 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.buildForms();
     this.modalForm = this.fb.group({ value: ['', Validators.required] });
-    this.goTo(0);
 
     this.step0Form.get('bu')?.valueChanges.subscribe((value) => {
       if (!value) return;
       this.getRoles(value);
     });
 
+    this.captureRouteParams();
+    this.goTo(0);
+  }
+
+  private captureRouteParams(): void {
     this.route.queryParams.subscribe(params => {
 
       const srId = params['id'];
-
+      const type = params['type'];
       if (srId) {
         this.srId = srId;
       }
-
-      this.goTo(0);
+      this.routeType = type ?? null;
+      this.editMode = type === 'edit' && !!srId;
     });
 
 
@@ -233,8 +242,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     });
 
     this.step2Form = this.fb.group({
-      costCenter: ['BNG-CC-001 — Engineering Core'],
-      budgetCode: ['FY26-BNG-OPEX-42'],
+      
       hcSlot: [true],
       salaryComp: ['', Validators.required],
       proposedComp: ['', [Validators.required, Validators.min(1)]],
@@ -313,7 +321,10 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          this.srId = res.data;
+          if (res?.data) {
+            this.srId = res.data;
+          }
+
           if (type !== 'draft') this.goTo(1);
           if (type === 'draft') {
             this.notificationService.success(
@@ -389,10 +400,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
 
   validateStep2(type: any): void {
+    this.step1Form.markAllAsTouched();
     if (!this.step2Form.value.hcSlot) {
       this.showBanner('HC slot required to proceed', 'err');
       return;
     }
+    if(this.step2Form.invalid)return;
 
     this.isSaving = true;
 
@@ -497,7 +510,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          if(type!=='draft')this.goTo(4);
+          if (type !== 'draft') this.goTo(4);
           if (type === 'draft') {
             this.notificationService.success(
               'Success',
@@ -736,12 +749,122 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.managersList = res?.content ?? res?.data?.users ?? [];
-          const email = this.authService.getUserName();
-          const findEmp = this.managersList.find(item => item.email === email);
-          this.selectManager(findEmp);
+          if (this.editMode && this.srId) {
+            this.prefillFromSr();
+          } else {
+            const email = this.authService.getUserName();
+            const findEmp = this.managersList.find(item => item.email === email);
+            this.selectManager(findEmp);
+          }
         },
         error: () => this.showBanner('Failed to load users', 'err')
       });
+  }
+
+  private async prefillFromSr(): Promise<void> {
+    if (!this.srId) return;
+    try {
+      const res: any = await this.demandService.getBySrId(this.srId);
+      if (res?.responsecode !== '00' || !res?.data) return;
+
+      const d = res.data;
+      const p = d.positonBasicsResponse ?? {};
+      const bj = d.businessJustificationResponse ?? {};
+      const bc = d.budgetAndCompensationResponse ?? {};
+      const rr = d.rolesAndRequirementsResponse ?? {};
+      const ss = d.sourcingStrategyResponse ?? {};
+
+      // --- Step 0: Position Basics ---
+      this.pendingDeptPrefill = p.departmentId ?? null;
+      this.step0Form.patchValue({
+        jobTitle: p.jobTitle ?? '',
+        bu: p.businessUnitId ?? '',
+        location: p.location ?? '',
+        workMode: p.workMode ?? '',
+        empType: p.employmentType ?? '',
+        seniority: p.seniorityLevel ?? '',
+        openings: p.openings ?? 1,
+        priority: p.priority ?? '',
+        startDate: p.targetStartDate ?? ''
+      });
+
+      // Reporting managers
+      this.selectedManagers = [];
+      this.step0Form.get('manager')?.setValue([]);
+      const managerIds: number[] = Array.isArray(p.reportingManagerInfo) ? p.reportingManagerInfo : [];
+      managerIds.forEach((id: number) => {
+        const mgr = this.managersList.find(m => m.id === id);
+        if (mgr) this.selectManager(mgr);
+      });
+
+      // --- Step 1: Business Justification ---
+      this.step1Form.patchValue({
+        justType: bj.requisitionType ?? 'New Headcount',
+        bizCase: bj.businessCase ?? '',
+        impactNote: bj.impactIfNotFilled ?? '',
+        replacesEmp: bj.replacesEmployee ?? ''
+      });
+
+      // --- Step 2: Budget & Compensation ---
+      this.step2Form.patchValue({
+        proposedComp: bc.proposedTotalCompensation ? (bc.proposedTotalCompensation / 100000) : 0,
+        signingBonus: !!bc.signingBonus,
+        signingAmt: bc.signingBonusAmount ?? '',
+        equity: !!bc.equity,
+        equityAmt: bc.equityAmount ?? '',
+        relocation: !!bc.relocationBudget,
+        relocAmt: bc.relocationBudgetAmount ?? ''
+      });
+
+      // --- Step 3: Role Requirements ---
+      this.step3Form.patchValue({
+        eduReq: rr.educationRequirement ?? '',
+        travel: rr.travelRequirement ?? '',
+        expMin: rr.minExperience ?? 0,
+        expMax: rr.maxExperience ?? 0,
+        interviewMin: rr.minInterviewRounds ?? 0,
+        interviewMax: rr.maxInterviewRounds ?? 0,
+        assessmentOn: !!rr.assessmentRequired
+      });
+      this.mustSkills = this.splitCsv(rr.skillsMustHave);
+      this.niceSkills = this.splitCsv(rr.niceToHaveSkills);
+      this.certs = this.splitCsv(rr.certificationsRequired);
+      this.langs = this.splitCsv(rr.languages);
+
+      // --- Step 4: Sourcing Strategy ---
+      this.step4Form.patchValue({
+        internalFirst: !!ss.internalFirstPolicy,
+        referralOn: !!ss.referralEnabled,
+        referralAmt: ss.referralAmount ?? '',
+        sourcingBudget: ss.sourcingBudget != null ? String(ss.sourcingBudget) : '',
+        diversityOn: !!ss.diversityEnabled
+      });
+
+      this.jobBoards = [];
+      const boardKeys: Record<string, string> = {
+        internalBoard: 'Internal Board',
+        naukri: 'Naukri',
+        linkedIn: 'LinkedIn',
+        indeed: 'Indeed',
+        companySite: 'Company Site',
+        agencyRpo: 'Agency / RPO'
+      };
+      Object.entries(boardKeys).forEach(([key, label]) => {
+        if (ss[key]) this.jobBoards.push(label);
+      });
+      this.diversityBoards = this.splitCsv(ss.diversityTags);
+
+    } catch {
+      this.showBanner('Failed to load SR for editing', 'err');
+    }
+  }
+
+  private splitCsv(value: any): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map((v: any) => String(v).trim()).filter(Boolean);
+    }
+    return String(value).split(',').map((s: string) => s.trim()).filter(Boolean);
   }
 
   aiSuggestSkills(): void {
@@ -780,7 +903,11 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   get empType(): string { return this.step0Form.get('empType')?.value }
   get todayStr(): string { return new Date().toISOString().split('T')[0]; }
   get jobTitle(): string { return this.step0Form.get('jobTitle')?.value; }
-  get department(): string { return this.step0Form.get('dept')?.value; }
+  get department(): string {
+    const deptId = this.step0Form.get('dept')?.value;
+
+    return this.deptKeys.find(d => d?.id === deptId)?.name || '';
+  }
   get location(): string { return this.step0Form.get('location')?.value; }
   get seniority(): string {
     const ser = this.seniorityIC.find(item => item.id == this.step0Form.get('seniority')?.value);
@@ -978,7 +1105,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   getRoles(value: any) {
     this.deptKeys = [];
     this.userService.getDepartments(value)
-      .then((res: any) => { this.deptKeys = res?.data; })
+      .then((res: any) => {
+        this.deptKeys = res?.data;
+        if (this.pendingDeptPrefill != null) {
+          this.step0Form.patchValue({ dept: this.pendingDeptPrefill });
+          this.pendingDeptPrefill = null;
+        }
+      })
       .catch((error: any) => console.log(error));
   }
 
@@ -1143,5 +1276,70 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     const div = document.createElement('div');
     div.innerHTML = html;
     return div.textContent || div.innerText || '';
+  }
+
+  get reviewStep0() {
+    const f = this.step0Form.value;
+    return {
+      jobTitle: f.jobTitle,
+      dept: f.dept,
+      bu: f.bu,
+      location: f.location,
+      workMode: f.workMode,
+      empType: f.empType,
+      seniority: f.seniority,
+      openings: f.openings,
+      priority: f.priority,
+      startDate: f.startDate
+    };
+  }
+
+  get reviewStep1() {
+    const f = this.step1Form.value;
+    return {
+      justType: f.justType,
+      bizCase: f.bizCase,
+      impactNote: f.impactNote
+    };
+  }
+
+  get reviewStep2() {
+    const f = this.step2Form.value;
+    return {
+     
+      hcSlot: f.hcSlot,        // ← was missing
+      salaryComp: f.salaryComp,    // ← was missing
+      proposedComp: f.proposedComp,
+      signingBonus: f.signingBonus,  // ← was missing
+      signingAmt: f.signingAmt,    // ← was missing
+      equity: f.equity,        // ← was missing
+      equityAmt: f.equityAmt,     // ← was missing
+      relocation: f.relocation,    // ← was missing
+      relocAmt: f.relocAmt       // ← was missing
+    };
+  }
+
+  get reviewStep3() {
+    const f = this.step3Form.value;
+    return {
+      eduReq: f.eduReq,
+      travel: f.travel,
+      expMin: f.expMin,
+      expMax: f.expMax,
+      interviewMin: f.interviewMin,
+      interviewMax: f.interviewMax,
+      assessmentOn: f.assessmentOn
+    };
+  }
+
+  get reviewStep4() {
+    const f = this.step4Form.value;
+    return {
+      internalFirst: f.internalFirst,
+      sourcingBudget: f.sourcingBudget,
+      referralOn: f.referralOn,   // ← was missing
+      referralAmt: f.referralAmt,  // ← was missing
+      diversityOn: f.diversityOn
+    };
   }
 }

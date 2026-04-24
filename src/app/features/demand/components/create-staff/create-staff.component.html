@@ -11,7 +11,7 @@
     </div>
 
     <div class="stepper">
-        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)" (click)="goTo(i)">
+        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)">
             <div class="ci">
                 <span *ngIf="i < currentStep" class="check-icon">✓</span>
                 <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
@@ -865,19 +865,21 @@
                         <span class="review-label">Business Case</span>
                         <span class="review-val">
                             {{ step1Form.get('bizCase')?.value
-                            ? (step1Form.get('bizCase')!.value.substring(0, 120) +
-                            (step1Form.get('bizCase')!.value.length > 120 ? '…' : ''))
+                            ? (htmlToText(step1Form.get('bizCase')!.value).substring(0, 120) +
+                            (htmlToText(step1Form.get('bizCase')!.value).length > 120 ? '…' : ''))
                             : '—' }}
                         </span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Impact If Not Filled</span>
-                        <span class="review-val">
-                            {{ step1Form.get('impactNote')?.value
-                            ? (step1Form.get('impactNote')!.value.substring(0, 120) +
-                            (step1Form.get('impactNote')!.value.length > 120 ? '…' : ''))
-                            : '—' }}
-                        </span>
+                        <div class="review-row">
+                            <span class="review-val">
+                                {{ step1Form.get('impactNote')?.value
+                                ? (htmlToText(step1Form.get('impactNote')!.value).substring(0, 120) +
+                                (htmlToText(step1Form.get('impactNote')!.value).length > 120 ? '…' : ''))
+                                : '—' }}
+                            </span>
+                        </div>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Supporting Document</span>
@@ -905,19 +907,13 @@
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[2]">
                 <div class="review-grid">
-                    <div class="review-row">
-                        <span class="review-label">Cost Centre</span>
-                        <span class="review-val">{{ step2Form.get('costCenter')?.value || '—' }}</span>
-                    </div>
-                    <div class="review-row">
-                        <span class="review-label">Budget Code</span>
-                        <span class="review-val">{{ step2Form.get('budgetCode')?.value || '—' }}</span>
-                    </div>
+                    
+                    
                     <div class="review-row">
                         <span class="review-label">HC Slot Confirmed</span>
                         <span class="review-val">
                             <span [style.color]="step2Form.get('hcSlot')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step2Form.get('hcSlot')?.value ? '✔ Yes' : '✘ No' }}
+                                {{ step2Form.get('hcSlot')?.value ? ' Yes' : ' No' }}
                             </span>
                         </span>
                     </div>
@@ -939,7 +935,7 @@
                         <span class="review-label">Signing Bonus</span>
                         <span class="review-val">
                             <span [style.color]="step2Form.get('signingBonus')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step2Form.get('signingBonus')?.value ? '✔ Yes' : '✘ No' }}
+                                {{ step2Form.get('signingBonus')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('signingBonus')?.value && step2Form.get('signingAmt')?.value">
                                 — ₹{{ step2Form.get('signingAmt')?.value }} LPA
@@ -950,7 +946,7 @@
                         <span class="review-label">Equity</span>
                         <span class="review-val">
                             <span [style.color]="step2Form.get('equity')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step2Form.get('equity')?.value ? '✔ Yes' : '✘ No' }}
+                                {{ step2Form.get('equity')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('equity')?.value && step2Form.get('equityAmt')?.value">
                                 — ₹{{ step2Form.get('equityAmt')?.value }} LPA
@@ -961,7 +957,7 @@
                         <span class="review-label">Relocation Budget</span>
                         <span class="review-val">
                             <span [style.color]="step2Form.get('relocation')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step2Form.get('relocation')?.value ? '✔ Yes' : '✘ No' }}
+                                {{ step2Form.get('relocation')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('relocation')?.value && step2Form.get('relocAmt')?.value">
                                 — ₹{{ step2Form.get('relocAmt')?.value }} LPA
@@ -1028,7 +1024,7 @@
                         <span class="review-label">Assessment Required</span>
                         <span class="review-val">
                             <span [style.color]="step3Form.get('assessmentOn')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step3Form.get('assessmentOn')?.value ? '✔ Yes' : '✘ No' }}
+                                {{ step3Form.get('assessmentOn')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step3Form.get('assessmentOn')?.value && assessmentTypes.length">
                                 — {{ assessmentTypes.join(', ') }}
@@ -1055,7 +1051,7 @@
                         <span class="review-label">Internal First Policy</span>
                         <span class="review-val">
                             <span [style.color]="step4Form.get('internalFirst')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('internalFirst')?.value ? '✔ Active' : '✘ Off' }}
+                                {{ step4Form.get('internalFirst')?.value ? ' Active' : ' Off' }}
                             </span>
                         </span>
                     </div>
@@ -1074,7 +1070,7 @@
                         <span class="review-label">Referral Programme</span>
                         <span class="review-val">
                             <span [style.color]="step4Form.get('referralOn')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('referralOn')?.value ? '✔ Enabled' : '✘ Disabled' }}
+                                {{ step4Form.get('referralOn')?.value ? ' Enabled' : ' Disabled' }}
                             </span>
                             <span *ngIf="step4Form.get('referralOn')?.value && step4Form.get('referralAmt')?.value">
                                 — ₹{{ step4Form.get('referralAmt')?.value }} bonus
@@ -1085,7 +1081,7 @@
                         <span class="review-label">Diversity Hiring</span>
                         <span class="review-val">
                             <span [style.color]="step4Form.get('diversityOn')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('diversityOn')?.value ? '✔ Enabled' : '✘ Disabled' }}
+                                {{ step4Form.get('diversityOn')?.value ? ' Enabled' : ' Disabled' }}
                             </span>
                             <span *ngIf="step4Form.get('diversityOn')?.value && diversityBoards.length">
                                 — {{ diversityBoards.join(', ') }}
@@ -1106,6 +1102,9 @@
             </button>
         </div>
     </div>
+    <!-- Paste this block in create-staff.component.html replacing the existing <app-sr-review> usage (around currentStep === 5) -->
+
+
 
 
     <div class="card success-card" *ngIf="currentStep === 6">

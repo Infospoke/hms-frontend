@@ -66,6 +66,7 @@ export const API = {
         STAFFING_CREATION:`/hms/staffing-requisition/new-staffing-requisition`,
         SENIORITY:`/hms/configurations/position-basic-seniority-levels`,
         TRAVEL:`/hms/configurations/travel-requirements`,
-        ALL_SRS:`/hms/staffing-requisition/sr-list`
+        ALL_SRS:`/hms/staffing-requisition/sr-list`,
+        BY_SR_ID:`/hms/staffing-requisition/by-sr-id`
     }
 }

@@ -52,5 +52,20 @@ export const API = {
         UPDATE:`/hms/role/update-role-permissions`,
         GET_ALL_PERMISSIONS:`/hms/role/get-all-role-permissions`,
         GET_ALL_MODULES:`/hms/configurations/get-all-modules`
+    },
+    ROLE_AND_REQUIREMENTS:{
+        MUST_HAVE_SKILLS:`/api/admin/ai-suggest-must-have-skills`,
+        NICE_SKILLS:`/api/admin/ai-suggest-nice-to-have-skills`,
+        EDUCATION_REQUIREMENTS:`/api/admin/qualifications-suggestions`,
+        CERTIFICATE:`/api/admin/certifications-suggestions`,
+        LANGUAGE:`/api/admin/language-suggestions`,
+        QUALIFICATION:`/api/admin/qualifications-suggestions`,
+        CTC:`/api/admin/ctc-review`
+    },
+    SRS:{
+        STAFFING_CREATION:`/hms/staffing-requisition/new-staffing-requisition`,
+        SENIORITY:`/hms/configurations/position-basic-seniority-levels`,
+        TRAVEL:`/hms/configurations/travel-requirements`,
+        ALL_SRS:`/hms/staffing-requisition/sr-list`
     }
 }

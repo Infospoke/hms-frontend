@@ -76,6 +76,33 @@ export class EditUserComponent implements OnInit {
 
     }
   }
+  activateUser() {
+    this.modal.confirm({
+      nzTitle: 'Are you sure you want to activate this user?',
+      nzContent: 'This action will enable user access.',
+      nzOkText: 'Yes, Activate',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzCancelText: 'Cancel',
+
+      nzOnOk: () => {
+        return this.active(this.userId);
+      }
+    })
+  }
+  active(userId:any){
+     let obj = {
+      "activate": true
+    }
+    this.userService.update(userId, obj)
+      .then((res: any) => {
+        this.notificationService.success(res?.message);
+        this.reset()
+      })
+      .catch((error: any) => {
+        this.notificationService.error(error?.error?.message);
+      });
+  }
   deactivateUser() {
     this.modal.confirm({
       nzTitle: 'Are you sure you want to deactivate this user?',

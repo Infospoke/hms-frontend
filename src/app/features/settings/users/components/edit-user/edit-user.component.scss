@@ -37,7 +37,7 @@
   font-weight: 500;
 }
 
-/* FORM */
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -99,10 +99,20 @@ select:focus {
   margin-top: 5px;
 }
 
-.danger {
+.danger,.success {
   margin-top: 20px;
 }
-
+.activate-btn{
+   width: 100%;
+  padding: 12px;
+  background: #f0fee2;
+  color: #6fdc26;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
 .deactivate-btn {
   width: 100%;
   padding: 12px;
@@ -118,7 +128,9 @@ select:focus {
 .deactivate-btn:hover {
   background: #fecaca;
 }
-
+.activate-btn{
+   background: #ecfeca;
+}
 /* ACTIONS */
 .actions {
   display: flex;

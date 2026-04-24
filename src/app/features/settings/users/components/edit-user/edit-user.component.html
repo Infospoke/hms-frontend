@@ -73,6 +73,11 @@
       Deactivate user account
     </button>
   </div>
+  <div class="success" *ngIf="!user.active">
+    <button class="activate-btn" (click)="activateUser()">
+      Activate user account
+    </button>
+  </div>
   <div class="actions">
     <button class="cancel" (click)="reset()">Cancel</button>
     <button class="save" (click)="save()"><i class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i>Save

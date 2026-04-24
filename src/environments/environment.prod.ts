@@ -5,7 +5,7 @@ export const environment = {
   apiUrl: 'http://172.16.1.101:5003/infospoke-portal',
   hrmsApiUrl:'http://172.16.1.101:5006',
   websiteURL:'http://172.16.1.101:5003/infospoke-website',
-  atsUrl : 'http://172.16.1.101:5003/ats',
+  atsUrl : 'http://172.16.1.101:5002',
   resumeDownloadApi:"https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Website/job/download",
   //resumeDownloadApi:"http://localhost:5000/job/download",
   //atsUrl:"http://localhost:5002/api",

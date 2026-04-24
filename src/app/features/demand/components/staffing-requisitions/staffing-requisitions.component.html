@@ -1,44 +1,71 @@
 <div class="sr-page">
 
-    <div class="sr-header">
-        <h2 class="sr-title">My Staffing Requisitions</h2>
-        <button class="btn-new" (click)="newSR()">+ New SR</button>
-    </div>
+  <!-- Header -->
+  <div class="sr-header">
+    <h2 class="sr-title">My Staffing Requisitions</h2>
+    <button class="btn-new" (click)="newSR()">+ New SR</button>
+  </div>
 
-    <div class="banner" *ngIf="draftSR">
-        <span class="dot"></span>
-        You have 1 draft SR in progress.
-        <span class="banner-link" (click)="resumeSR(draftSR!)">Resume {{ draftSR.id }}</span>
-    </div>
+  <!-- Draft banner -->
+  <div class="banner" *ngIf="draftSR">
+    <span class="dot"></span>
+    You have a draft SR in progress.
+    <span class="banner-link" (click)="resumeSR(draftSR!)">
+      Resume {{ draftSR.id !== 'Draft – Pending ID' ? draftSR.id : 'Draft' }}
+    </span>
+  </div>
 
-    <div class="sr-list">
-        <div class="sr-row" *ngFor="let sr of requisitions">
+  <!-- Loading state -->
+  <div class="sr-loading" *ngIf="isLoading">
+    <span>Loading requisitions…</span>
+  </div>
 
+  <!-- Error state -->
+  <div class="sr-error" *ngIf="!isLoading && errorMessage">
+    <span>{{ errorMessage }}</span>
+    <button class="btn-retry" (click)="loadPage(currentPage)">Retry</button>
+  </div>
 
-            <div class="sr-left">
-                <span class="sr-id">{{ sr.id }}</span>
+  <!-- Empty state -->
+  <div class="sr-empty" *ngIf="!isLoading && !errorMessage && requisitions.length === 0">
+    <span>No staffing requisitions found.</span>
+  </div>
 
-                <div class="sr-info">
-                    <p class="sr-name">{{ sr.title }}</p>
-                    <p class="sr-meta">{{ sr.meta }}</p>
-                </div>
-            </div>
+  <!-- SR List -->
+  <div class="sr-list" *ngIf="!isLoading && !errorMessage && requisitions.length > 0">
+    <div class="sr-row" *ngFor="let sr of requisitions">
 
-
-            <div class="sr-right" (click)="$event.stopPropagation()">
-
-
-
-                <span class="badge" [ngClass]="badgeClass(sr.status)">
-                    {{ sr.status }}
-                </span>
-                <div class="sr-actions" *ngIf="showActions(sr)">
-                    <i class="fa fa-eye action-icon" (click)="viewSR(sr)"></i>
-                    <i class="fa fa-pencil action-icon edit" *ngIf="canEdit(sr)" (click)="editSR(sr)"></i>
-                </div>
-            </div>
-
+      <!-- Left: ID + info -->
+      <div class="sr-left">
+        <span class="sr-id">{{ sr.id }}</span>
+        <div class="sr-info">
+          <p class="sr-name">{{ sr.title }}</p>
+          <p class="sr-meta">{{ sr.meta }}</p>
         </div>
+      </div>
+
+      <!-- Right: badge + actions -->
+      <div class="sr-right" (click)="$event.stopPropagation()">
+        <span class="badge" [ngClass]="badgeClass(sr.status)">
+          {{ sr.status }}
+        </span>
+        <div class="sr-actions" *ngIf="showActions(sr)">
+          <i class="fa fa-eye action-icon" title="View" (click)="viewSR(sr)"></i>
+          <i class="fa fa-pencil action-icon edit" title="Edit"
+             *ngIf="canEdit(sr)" (click)="editSR(sr)"></i>
+        </div>
+      </div>
+
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    *ngIf="!isLoading && !errorMessage && totalElements > 0"
+    [totalItems]="totalElements"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
 
 </div>

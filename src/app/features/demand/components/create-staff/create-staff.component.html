@@ -1,5 +1,15 @@
 <div class="wrap">
 
+   
+    <div class="banner" *ngIf="banner" [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
+        {{ banner.text }}
+    </div>
+
+
+    <div class="saving-overlay" *ngIf="isSaving">
+        <div class="saving-spinner"></div>
+    </div>
+
     <div class="stepper">
         <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)" (click)="goTo(i)">
             <div class="ci">
@@ -29,13 +39,11 @@
                     </span>
                 </div>
 
-                <!-- Business Unit (auto-filled) -->
                 <div class="field">
-                    <label class="lbl">Business Unit</label>
-                    <select formControlName="bu" (ngModelChange)="onDeptChange($event)"
-                        (change)="onDeptChange($any($event.target).value)" [class.err]="hasError(step0Form, 'dept')">
+                    <label class="lbl">Business Unit <span class="astrick">*</span></label>
+                    <select formControlName="bu" [class.err]="hasError(step0Form, 'dept')">
                         <option value="" disabled>Select Bussiness Unit</option>
-                        <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
+                        <option *ngFor="let d of bussiness" [value]="d?.id">{{ d?.name }}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'bu')">
                         {{ getError(step0Form, 'bu','Business Unit') }}
@@ -45,10 +53,9 @@
                 <!-- Department -->
                 <div class="field">
                     <label class="lbl">Department <span class="astrick">*</span></label>
-                    <select formControlName="dept" (ngModelChange)="onDeptChange($event)"
-                        (change)="onDeptChange($any($event.target).value)" [class.err]="hasError(step0Form, 'dept')">
+                    <select formControlName="dept" [class.err]="hasError(step0Form, 'dept')">
                         <option value="" disabled>Select department</option>
-                        <option *ngFor="let d of deptKeys" [value]="d">{{ d }}</option>
+                        <option *ngFor="let d of deptKeys" [value]="d?.id">{{ d?.name}}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'dept')">
                         {{ getError(step0Form, 'dept','Department') }}
@@ -61,23 +68,22 @@
                     <!-- Tag Input Container -->
                     <div class="tag-input" (click)="focusInput()">
 
-                        <!-- Tags inside input -->
                         <span class="tag" *ngFor="let m of selectedManagers">
-                            {{ m.name }}
+                            {{ m.username }}
                             <span class="tx" (click)="removeManager(m)">×</span>
                         </span>
 
-                        <input #managerInput type="text" formControlName="manager" placeholder="Search people..."
-                            (input)="onSearchManager()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
+                        <input #managerInput type="text" formControlName="managerSearch" placeholder="Search people..."
+                            (input)="onSearchManager($event)" (focus)="showDropdown = true" (blur)="hideDropdown()" />
                     </div>
 
                     <!-- Dropdown -->
                     <div class="dropdown" *ngIf="showDropdown && filteredManagers.length">
                         <div class="option" *ngFor="let m of filteredManagers" (mousedown)="selectManager(m)">
-                            <div class="avatar">{{ getInitials(m.name) }}</div>
+                            <div class="avatar">{{ getInitials(m.username) }}</div>
                             <div class="info">
-                                <div class="name">{{ m.name }}</div>
-                                <div class="role">{{ m.role }}</div>
+                                <div class="name">{{ m.username }}</div>
+                                <div class="role">{{ m.roleName }}</div>
                             </div>
                         </div>
                     </div>
@@ -102,12 +108,9 @@
                     <label class="lbl">Seniority Level <span class="astrick">*</span></label>
                     <select formControlName="seniority" [class.err]="hasError(step0Form, 'seniority')">
                         <option value="" disabled>Select level</option>
-                        <optgroup label="Individual Contributor">
-                            <option *ngFor="let s of seniorityIC" [value]="s">{{ s }}</option>
-                        </optgroup>
-                        <optgroup label="Manager">
-                            <option *ngFor="let s of seniorityMgr" [value]="s">{{ s }}</option>
-                        </optgroup>
+
+                        <option *ngFor="let s of seniorityIC" [value]="s?.id">{{ s?.name }}</option>
+
                     </select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'seniority')">
                         {{ getError(step0Form, 'seniority','Seniority Level') }}
@@ -173,8 +176,8 @@
 
             <div class="footer-btns">
                 <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
-                <button type="button" class="btn btn-primary" (click)="validateStep0()">
-                    Next: Business Justification →
+                <button type="button" class="btn btn-primary" (click)="validateStep0()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Next: Business Justification →' }}
                 </button>
             </div>
         </div>
@@ -291,20 +294,20 @@
                     <div class="tag-input" (click)="focusInput()">
 
                         <span class="tag" *ngIf="replaceEmployee">
-                            {{ replaceEmployee?.name }}
+                            {{ replaceEmployee?.username }}
                             <span class="tx" (click)="removeReplaceEmp()">×</span>
                         </span>
 
-                        <input #managerInput type="text" formControlName="replacesEmp" placeholder="Search people..."
-                            (input)="onSearchManager()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
+                        <input #managerInput type="text" formControlName="replacesSearch" placeholder="Search people..."
+                            (input)="onSearchReplace()" (focus)="showDropdown = true" (blur)="hideDropdown()" />
                     </div>
 
                     <div class="dropdown" *ngIf="showDropdown && filteredManagers.length">
                         <div class="option" *ngFor="let m of filteredManagers" (mousedown)="selectReplaceEmployee(m)">
-                            <div class="avatar">{{ getInitials(m.name) }}</div>
+                            <div class="avatar">{{ getInitials(m.username) }}</div>
                             <div class="info">
-                                <div class="name">{{ m.name }}</div>
-                                <div class="role">{{ m.role }}</div>
+                                <div class="name">{{ m.username }}</div>
+                                <div class="role">{{ m.roleName }}</div>
                             </div>
                         </div>
                     </div>
@@ -344,8 +347,8 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(0)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep1()">
-                    Next: Budget &amp; Compensation →
+                <button type="button" class="btn btn-primary" (click)="validateStep1()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Next: Budget &amp; Compensation →' }}
                 </button>
             </div>
         </div>
@@ -430,14 +433,15 @@
                         placeholder="₹ Amount" style="margin-top:8px" />
                 </div>
             </div>
-            <div class="ctc-card blue">
+            <div class="ctc-card" [ngClass]="getCompStatus(compValidationStatus).color">
 
                 <div class="ctc-header">
                     <div>
-                        <div class="ctc-title">Annual Hiring Cost </div>
-                        <!-- <div class="ctc-sub">
-                            {{ compStatus.msg }}
-                        </div> -->
+                        <div class="ctc-title">Annual Hiring Cost</div>
+
+                        <div class="ctc-sub">
+                            {{ getCompStatus(compValidationStatus).msg }}
+                        </div>
                     </div>
 
                     <div class="ctc-amount">
@@ -456,8 +460,8 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(1)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep2()">
-                    Next: Role Requirements →
+                <button type="button" class="btn btn-primary" (click)="validateStep2()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Next: Role Requirements →' }}
                 </button>
             </div>
         </div>
@@ -489,12 +493,11 @@
                             (keydown)="onMustKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s)">{{ s }}</span>
+                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s?.skill_title)">{{ s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('must')">+ Add</button>
                     </div>
                 </div>
 
-                <!-- Nice-to-Have Skills -->
                 <div class="field" style="margin-top:5px;">
                     <label class="lbl">Nice-to-Have Skills</label>
                     <div class="tag-area" (click)="niceInput.focus()">
@@ -506,7 +509,7 @@
                             (keydown)="onNiceKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s)">{{ s }}</span>
+                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s?.skill_title)">{{ s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('nice')">+ Add</button>
                     </div>
                 </div>
@@ -528,7 +531,7 @@
                     <label class="lbl">Travel Requirement <span class="lbl-sub"></span></label>
                     <select formControlName="travel">
                         <option value="" disabled>Select travel %</option>
-                        <option *ngFor="let t of travelOpts" [value]="t">{{ t }}</option>
+                        <option *ngFor="let t of travelOpts" [value]="t?.id">{{ t?.name }}</option>
                     </select>
                 </div>
 
@@ -603,15 +606,11 @@
                             placeholder="Add certification..." (keydown)="onCertKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s)">{{ s }}</span>
+                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s?.name)">{{ s?.name }}</span>
                         <button type="button" class="btn-add" (click)="openModal('cert')">+ Add</button>
                     </div>
                 </div>
 
-                <!-- Assessment -->
-
-
-                <!-- Languages -->
                 <div class="field">
                     <label class="lbl">Language Requirements <span class="lbl-sub"></span></label>
                     <div class="tag-area" (click)="langInp.focus()">
@@ -622,7 +621,7 @@
                             placeholder="Add language..." (keydown)="onLangKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s)">{{ s }}</span>
+                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s?.language)">{{ s?.language}}</span>
                         <button type="button" class="btn-add" (click)="openModal('lang')">+ Add</button>
                     </div>
                 </div>
@@ -648,8 +647,8 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(2)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep3()">
-                    Next: Sourcing →
+                <button type="button" class="btn btn-primary" (click)="validateStep3()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Next: Sourcing →' }}
                 </button>
             </div>
         </div>
@@ -753,16 +752,16 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(3)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep4()">
-                    Next: Review →
+                <button type="button" class="btn btn-primary" (click)="validateStep4()" [disabled]="isSaving">
+                    {{ isSaving ? 'Saving...' : 'Next: Review →' }}
                 </button>
             </div>
         </div>
     </form>
     <div class="card" *ngIf="currentStep === 5">
         <div class="">
-            <div class="sec-title">SR Summary — Review</div>
-            <span class="draft-badge">SR-2026-ENG-0042 (draft)</span>
+            <div class="sec-title">{{jobTitle}}</div>
+            <span class="draft-badge">{{srId}}</span>
         </div>
 
 
@@ -773,7 +772,8 @@
                     <span class="edit-link" (click)="goTo(0)">
                         <i class="fa fa-pen"></i> Edit
                     </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[0]"><i class="fa-solid fa-chevron-down"></i></span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[0]"><i
+                            class="fa-solid fa-chevron-down"></i></span>
                 </div>
 
             </div>
@@ -809,7 +809,8 @@
                     <span class="edit-link" (click)="goTo(1)">
                         <i class="fa fa-pen"></i> Edit
                     </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[1]"><i class="fa-solid fa-chevron-down"></i></span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[1]"><i
+                            class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[1]">
@@ -835,7 +836,8 @@
                     <span class="edit-link" (click)="goTo(2)">
                         <i class="fa fa-pen"></i> Edit
                     </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[2]"><i class="fa-solid fa-chevron-down"></i></span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[2]"><i
+                            class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[2]">
@@ -858,7 +860,8 @@
                     <span class="edit-link" (click)="goTo(3)">
                         <i class="fa fa-pen"></i> Edit
                     </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i class="fa-solid fa-chevron-down"></i></span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i
+                            class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
 
@@ -886,7 +889,7 @@
                     <div class="review-row">
                         <span class="review-label">Education Requirement</span>
                         <span class="review-val">
-                            {{ step3Form.get('education')?.value || '—' }}
+                            {{ step3Form.get('eduReq')?.value || '—' }}
                         </span>
                     </div>
 
@@ -902,7 +905,7 @@
                     <div class="review-row">
                         <span class="review-label">Years of Experience</span>
                         <span class="review-val">
-                            {{ step3Form.get('minExp')?.value }} - {{ step3Form.get('maxExp')?.value }}
+                            {{ step3Form.get('expMin')?.value }} - {{ step3Form.get('expMax')?.value }}
                         </span>
                     </div>
 
@@ -910,7 +913,7 @@
                     <div class="review-row">
                         <span class="review-label">Interview Rounds</span>
                         <span class="review-val">
-                            {{ step3Form.get('rounds')?.value || '0' }}
+                            {{ step3Form.get('interviewMin')?.value }} - {{ step3Form.get('interviewMax')?.value }}
                         </span>
                     </div>
 
@@ -934,7 +937,10 @@
                     <div class="review-row">
                         <span class="review-label">Assessment Required</span>
                         <span class="review-val">
-                            {{ step3Form.get('assessment')?.value ? 'Yes' : 'No' }}
+                            {{ step3Form.get('assessmentOn')?.value ? 'Yes' : 'No' }}
+                            <span *ngIf="step3Form.get('assessmentOn')?.value && assessmentTypes.length">
+                                ({{ assessmentTypes.join(', ') }})
+                            </span>
                         </span>
                     </div>
 
@@ -949,7 +955,8 @@
                     <span class="edit-link" (click)="goTo(4)">
                         <i class="fa fa-pen"></i> Edit
                     </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i class="fa-solid fa-chevron-down"></i></span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i
+                            class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[4]">
@@ -966,7 +973,7 @@
         </div>
 
         <!-- Approval Chain Preview -->
-        <div class="approval-preview">
+        <!-- <div class="approval-preview">
             <div class="approval-title">Approval chain preview</div>
 
             <div class="approval-chain">
@@ -981,15 +988,15 @@
 
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="footer-btns">
             <div class="flex-gap">
                 <button class="btn btn-ghost" (click)="goTo(4)">← Back</button>
                 <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
             </div>
-            <button class="btn btn-primary" (click)="validateStep5()">
-                Submit SR for Approval →
+            <button class="btn btn-primary" (click)="validateStep5()" [disabled]="isSaving">
+                {{ isSaving ? 'Submitting...' : 'Submit SR for Approval →' }}
             </button>
         </div>
     </div>
@@ -1002,7 +1009,7 @@
             <div class="check-circle">✓</div>
 
             <div class="success-title">
-                SR-2026-ENG-0042 submitted!
+                {{ srId || 'SR Submitted' }} submitted!
             </div>
 
             <div class="success-sub">
@@ -1054,7 +1061,7 @@
                 Raise another SR
             </button>
 
-            <button type="button" class="btn btn-primary" (click)="validateStep4()">
+            <button type="button" class="btn btn-primary" (click)="viewInMySRs()">
                 View in My SRs →
             </button>
         </div>

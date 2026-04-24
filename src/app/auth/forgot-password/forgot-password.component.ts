@@ -3,6 +3,8 @@ import { HeadingComponent } from "../../shared/components/heading/heading.compon
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -13,8 +15,9 @@ import { Router } from '@angular/router';
 export class ForgotPasswordComponent {
   forgotForm: FormGroup;
   loading = signal(false);
-  private router=inject(Router);
-  constructor(private fb: FormBuilder) {
+  private router = inject(Router);
+  constructor(private fb: FormBuilder,  private authService: AuthService,
+  private notification: NotificationService,) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
@@ -28,14 +31,29 @@ export class ForgotPasswordComponent {
 
     this.loading.set(true);
 
-    const email = this.forgotForm.value.email;
+    const payload = {
+      email: this.forgotForm.value.email
+    };
 
-    console.log('Send reset link to:', email);
+    this.authService.forgotPassword(payload).subscribe({
+      next: (res: any) => {
+        this.loading.set(false);
 
+   
+        this.notification.success(
+          res?.message || 'Reset link sent to your email'
+        );
 
-    setTimeout(() => {
-      this.loading.set(false);
-    }, 1500);
+        
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+
+      error: () => {
+        this.loading.set(false);
+      }
+    });
   }
 
   goToLogin() {

@@ -1,6 +1,6 @@
 <div class="wrap">
 
-   
+
     <div class="banner" *ngIf="banner" [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
         {{ banner.text }}
     </div>
@@ -176,7 +176,7 @@
 
             <div class="footer-btns">
                 <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
-                <button type="button" class="btn btn-primary" (click)="validateStep0()" [disabled]="isSaving">
+                <button type="button" class="btn btn-primary" (click)="validateStep0('next')" [disabled]="isSaving">
                     {{ isSaving ? 'Saving...' : 'Next: Business Justification →' }}
                 </button>
             </div>
@@ -347,7 +347,7 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(0)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep1()" [disabled]="isSaving">
+                <button type="button" class="btn btn-primary" (click)="validateStep1('next')" [disabled]="isSaving">
                     {{ isSaving ? 'Saving...' : 'Next: Budget &amp; Compensation →' }}
                 </button>
             </div>
@@ -383,6 +383,9 @@
                 <div class="field">
                     <label class="lbl">Salary Band <span class="astrick">*</span></label>
                     <input type="text" name="salary" id="lbl" formControlName="salaryComp" readonly>
+                    <span class="err-msg" *ngIf="hasError(step2Form, 'salaryComp')">
+                        {{ getError(step2Form, 'salaryComp','Salary Band') }}
+                    </span>
                 </div>
                 <div class="field">
 
@@ -392,7 +395,9 @@
 
                     <input type="text" name="salary" id="lbl" formControlName="proposedComp"
                         placeholder="Enter  proposed total compensation">
-
+                    <span class="err-msg" *ngIf="hasError(step2Form, 'proposedComp')">
+                        {{ getError(step2Form, 'proposedComp',' Proposed Total Compensation') }}
+                    </span>
                 </div>
             </div>
             <div class="grid3">
@@ -460,7 +465,7 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(1)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep2()" [disabled]="isSaving">
+                <button type="button" class="btn btn-primary" (click)="validateStep2('next')" [disabled]="isSaving">
                     {{ isSaving ? 'Saving...' : 'Next: Role Requirements →' }}
                 </button>
             </div>
@@ -493,7 +498,8 @@
                             (keydown)="onMustKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s?.skill_title)">{{ s?.skill_title }}</span>
+                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s?.skill_title)">{{
+                            s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('must')">+ Add</button>
                     </div>
                 </div>
@@ -509,17 +515,17 @@
                             (keydown)="onNiceKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s?.skill_title)">{{ s?.skill_title }}</span>
+                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s?.skill_title)">{{
+                            s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('nice')">+ Add</button>
                     </div>
                 </div>
 
-                <!-- Education -->
                 <div class="field">
                     <label class="lbl">Education Requirement <span class="astrick">*</span></label>
                     <select formControlName="eduReq" [class.err]="hasError(step3Form, 'eduReq')">
                         <option value="" disabled>Select education</option>
-                        <option *ngFor="let e of educationOpts" [value]="e">{{ e }}</option>
+                        <option *ngFor="let e of educationOpts" [value]="e?.degree">{{ e?.degree }}</option>
                     </select>
                     <span class="err-msg" *ngIf="hasError(step3Form, 'eduReq')">
                         {{ getError(step3Form, 'eduReq','Education') }}
@@ -606,7 +612,8 @@
                             placeholder="Add certification..." (keydown)="onCertKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s?.name)">{{ s?.name }}</span>
+                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s?.name)">{{ s?.name
+                            }}</span>
                         <button type="button" class="btn-add" (click)="openModal('cert')">+ Add</button>
                     </div>
                 </div>
@@ -621,7 +628,8 @@
                             placeholder="Add language..." (keydown)="onLangKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s?.language)">{{ s?.language}}</span>
+                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s?.language)">{{
+                            s?.language}}</span>
                         <button type="button" class="btn-add" (click)="openModal('lang')">+ Add</button>
                     </div>
                 </div>
@@ -647,7 +655,7 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(2)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep3()" [disabled]="isSaving">
+                <button type="button" class="btn btn-primary" (click)="validateStep3('next')" [disabled]="isSaving">
                     {{ isSaving ? 'Saving...' : 'Next: Sourcing →' }}
                 </button>
             </div>
@@ -752,7 +760,7 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(3)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep4()" [disabled]="isSaving">
+                <button type="button" class="btn btn-primary" (click)="validateStep4('next')" [disabled]="isSaving">
                     {{ isSaving ? 'Saving...' : 'Next: Review →' }}
                 </button>
             </div>
@@ -764,239 +772,337 @@
             <span class="draft-badge">{{srId}}</span>
         </div>
 
-
+        <!-- ── Step 1 — Position Basics ── -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(0)">
                 <span>Step 1 — Position Basics</span>
                 <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(0)">
-                        <i class="fa fa-pen"></i> Edit
-                    </span>
+                    <span class="edit-link" (click)="goTo(0)"><i class="fa fa-pen"></i> Edit</span>
                     <span class="arrow-view" [class.open]="reviewSectionOpen[0]"><i
                             class="fa-solid fa-chevron-down"></i></span>
                 </div>
-
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[0]">
                 <div class="review-grid">
-                    <div class="review-row"><span class="review-label">Job Title</span><span class="review-val">{{
-                            step0Form.get('jobTitle')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Department</span><span class="review-val">{{
-                            step0Form.get('dept')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Business Unit</span><span class="review-val">{{
-                            step0Form.get('bu')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Location</span><span class="review-val">{{
-                            step0Form.get('location')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Work Mode</span><span class="review-val">{{
-                            step0Form.get('workMode')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Employment Type</span><span class="review-val">{{
-                            step0Form.get('empType')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Seniority</span><span class="review-val">{{
-                            step0Form.get('seniority')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Priority</span><span class="review-val">{{
-                            step0Form.get('priority')?.value || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Start Date</span><span class="review-val">{{
-                            step0Form.get('startDate')?.value || '—' }}</span></div>
+                    <div class="review-row">
+                        <span class="review-label">Job Title</span>
+                        <span class="review-val">{{ step0Form.get('jobTitle')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Department</span>
+                        <span class="review-val">{{ step0Form.get('dept')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Business Unit</span>
+                        <span class="review-val">{{ step0Form.get('bu')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Reporting Manager(s)</span>
+                        <span class="review-val">
+                            <ng-container *ngIf="selectedManagers.length; else noManagers">
+                                <span *ngFor="let m of selectedManagers; let last = last">
+                                    {{ m.name || m.username }}{{ !last ? ', ' : '' }}
+                                </span>
+                            </ng-container>
+                            <ng-template #noManagers>—</ng-template>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Location</span>
+                        <span class="review-val">{{ step0Form.get('location')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Work Mode</span>
+                        <span class="review-val">{{ step0Form.get('workMode')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Employment Type</span>
+                        <span class="review-val">{{ step0Form.get('empType')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Seniority</span>
+                        <span class="review-val">{{ step0Form.get('seniority')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">No. of Openings</span>
+                        <span class="review-val">{{ step0Form.get('openings')?.value ?? '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Priority</span>
+                        <span class="review-val">{{ step0Form.get('priority')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Target Start Date</span>
+                        <span class="review-val">{{ step0Form.get('startDate')?.value || '—' }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section 2 -->
+        <!-- ── Step 2 — Business Justification ── -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(1)">
                 <span>Step 2 — Business Justification</span>
                 <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(1)">
-                        <i class="fa fa-pen"></i> Edit
-                    </span>
+                    <span class="edit-link" (click)="goTo(1)"><i class="fa fa-pen"></i> Edit</span>
                     <span class="arrow-view" [class.open]="reviewSectionOpen[1]"><i
                             class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[1]">
                 <div class="review-grid">
-                    <div class="review-row"><span class="review-label">Req. Type</span><span class="review-val">{{
-                            step1Form.get('justType')?.value }}</span></div>
-                    <div class="review-row"><span class="review-label">Business Case</span><span class="review-val">{{
-                            step1Form.get('bizCase')?.value ? (step1Form.get('bizCase')!.value.substring(0,80) + '...')
-                            : '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Impact</span><span class="review-val">{{
-                            step1Form.get('impactNote')?.value ? (step1Form.get('impactNote')!.value.substring(0,60) +
-                            '...') : '—' }}</span></div>
+                    <div class="review-row">
+                        <span class="review-label">Requisition Type</span>
+                        <span class="review-val">{{ step1Form.get('justType')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row" *ngIf="needsReplace">
+                        <span class="review-label">Replaces Employee</span>
+                        <span class="review-val">
+                            {{ replaceEmployee ? (replaceEmployee.name || replaceEmployee.username) : '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Business Case</span>
+                        <span class="review-val">
+                            {{ step1Form.get('bizCase')?.value
+                            ? (step1Form.get('bizCase')!.value.substring(0, 120) +
+                            (step1Form.get('bizCase')!.value.length > 120 ? '…' : ''))
+                            : '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Impact If Not Filled</span>
+                        <span class="review-val">
+                            {{ step1Form.get('impactNote')?.value
+                            ? (step1Form.get('impactNote')!.value.substring(0, 120) +
+                            (step1Form.get('impactNote')!.value.length > 120 ? '…' : ''))
+                            : '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Supporting Document</span>
+                        <span class="review-val">
+                            <ng-container *ngIf="supportDoc; else noDoc">
+                                <i class="fa fa-file-pdf" style="color:#e53e3e; margin-right:4px;"></i>
+                                {{ supportDoc.name }} <span style="color:#888;">({{ supportDoc.sizeText }})</span>
+                            </ng-container>
+                            <ng-template #noDoc>No file attached</ng-template>
+                        </span>
+                    </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Section 3 -->
+        <!-- ── Step 3 — Budget & Compensation ── -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(2)">
                 <span>Step 3 — Budget &amp; Compensation</span>
                 <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(2)">
-                        <i class="fa fa-pen"></i> Edit
-                    </span>
+                    <span class="edit-link" (click)="goTo(2)"><i class="fa fa-pen"></i> Edit</span>
                     <span class="arrow-view" [class.open]="reviewSectionOpen[2]"><i
                             class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[2]">
                 <div class="review-grid">
-                    <div class="review-row"><span class="review-label">Cost Centre</span><span class="review-val">{{
-                            step2Form.get('costCenter')?.value }}</span></div>
-                    <div class="review-row"><span class="review-label">Budget Code</span><span class="review-val">{{
-                            step2Form.get('budgetCode')?.value }}</span></div>
-                    <div class="review-row"><span class="review-label">Proposed CTC</span><span class="review-val">₹{{
-                            step2Form.get('proposedComp')?.value }} LPA</span></div>
+                    <div class="review-row">
+                        <span class="review-label">Cost Centre</span>
+                        <span class="review-val">{{ step2Form.get('costCenter')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Budget Code</span>
+                        <span class="review-val">{{ step2Form.get('budgetCode')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">HC Slot Confirmed</span>
+                        <span class="review-val">
+                            <span [style.color]="step2Form.get('hcSlot')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step2Form.get('hcSlot')?.value ? '✔ Yes' : '✘ No' }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Market Salary Range</span>
+                        <span class="review-val">
+                            {{ step2Form.get('salaryComp')?.value ? ('₹' + step2Form.get('salaryComp')?.value + ' LPA')
+                            : '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Proposed CTC</span>
+                        <span class="review-val">
+                            {{ step2Form.get('proposedComp')?.value ? ('₹' + step2Form.get('proposedComp')?.value + '
+                            LPA') : '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Signing Bonus</span>
+                        <span class="review-val">
+                            <span [style.color]="step2Form.get('signingBonus')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step2Form.get('signingBonus')?.value ? '✔ Yes' : '✘ No' }}
+                            </span>
+                            <span *ngIf="step2Form.get('signingBonus')?.value && step2Form.get('signingAmt')?.value">
+                                — ₹{{ step2Form.get('signingAmt')?.value }} LPA
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Equity</span>
+                        <span class="review-val">
+                            <span [style.color]="step2Form.get('equity')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step2Form.get('equity')?.value ? '✔ Yes' : '✘ No' }}
+                            </span>
+                            <span *ngIf="step2Form.get('equity')?.value && step2Form.get('equityAmt')?.value">
+                                — ₹{{ step2Form.get('equityAmt')?.value }} LPA
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Relocation Budget</span>
+                        <span class="review-val">
+                            <span [style.color]="step2Form.get('relocation')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step2Form.get('relocation')?.value ? '✔ Yes' : '✘ No' }}
+                            </span>
+                            <span *ngIf="step2Form.get('relocation')?.value && step2Form.get('relocAmt')?.value">
+                                — ₹{{ step2Form.get('relocAmt')?.value }} LPA
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Total Annual Hiring Cost</span>
+                        <span class="review-val" style="font-weight:600;">₹{{ totalCompensation }} LPA</span>
+                    </div>
                 </div>
-
             </div>
         </div>
+
+        <!-- ── Step 4 — Role Requirements ── -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(3)">
                 <span>Step 4 — Role Requirements</span>
-
                 <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(3)">
-                        <i class="fa fa-pen"></i> Edit
-                    </span>
+                    <span class="edit-link" (click)="goTo(3)"><i class="fa fa-pen"></i> Edit</span>
                     <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i
                             class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
-
             <div class="coll-body" *ngIf="reviewSectionOpen[3]">
-
                 <div class="review-grid">
-
-                    <!-- Must Have Skills -->
                     <div class="review-row">
                         <span class="review-label">Must-Have Skills</span>
-                        <span class="review-val">
-                            {{ mustSkills.length ? mustSkills.join(', ') : '—' }}
-                        </span>
+                        <span class="review-val">{{ mustSkills.length ? mustSkills.join(', ') : '—' }}</span>
                     </div>
-
-                    <!-- Nice to Have -->
                     <div class="review-row">
                         <span class="review-label">Nice-to-Have Skills</span>
-                        <span class="review-val">
-                            {{ niceSkills.length ? niceSkills.join(', ') : '—' }}
-                        </span>
+                        <span class="review-val">{{ niceSkills.length ? niceSkills.join(', ') : '—' }}</span>
                     </div>
-
-                    <!-- Education -->
                     <div class="review-row">
                         <span class="review-label">Education Requirement</span>
-                        <span class="review-val">
-                            {{ step3Form.get('eduReq')?.value || '—' }}
-                        </span>
+                        <span class="review-val">{{ step3Form.get('eduReq')?.value || '—' }}</span>
                     </div>
-
-                    <!-- Travel -->
-                    <div class="review-row">
-                        <span class="review-label">Travel Requirement</span>
-                        <span class="review-val">
-                            {{ step3Form.get('travel')?.value || '—' }}
-                        </span>
-                    </div>
-
-                    <!-- Experience -->
                     <div class="review-row">
                         <span class="review-label">Years of Experience</span>
                         <span class="review-val">
-                            {{ step3Form.get('expMin')?.value }} - {{ step3Form.get('expMax')?.value }}
+                            {{ step3Form.get('expMin')?.value }} – {{ step3Form.get('expMax')?.value }} yrs
                         </span>
                     </div>
-
-                    <!-- Interview Rounds -->
                     <div class="review-row">
                         <span class="review-label">Interview Rounds</span>
                         <span class="review-val">
-                            {{ step3Form.get('interviewMin')?.value }} - {{ step3Form.get('interviewMax')?.value }}
+                            {{ step3Form.get('interviewMin')?.value }} – {{ step3Form.get('interviewMax')?.value }}
                         </span>
                     </div>
-
-                    <!-- Certifications -->
+                    <div class="review-row">
+                        <span class="review-label">Travel Requirement</span>
+                        <span class="review-val">{{ step3Form.get('travel')?.value || '—' }}</span>
+                    </div>
                     <div class="review-row">
                         <span class="review-label">Certifications</span>
-                        <span class="review-val">
-                            {{ certs.length ? certs.join(', ') : '—' }}
-                        </span>
+                        <span class="review-val">{{ certs.length ? certs.join(', ') : '—' }}</span>
                     </div>
-
-                    <!-- Languages -->
                     <div class="review-row">
                         <span class="review-label">Languages</span>
-                        <span class="review-val">
-                            {{ langs.length ? langs.join(', ') : '—' }}
-                        </span>
+                        <span class="review-val">{{ langs.length ? langs.join(', ') : '—' }}</span>
                     </div>
-
-                    <!-- Assessment -->
                     <div class="review-row">
                         <span class="review-label">Assessment Required</span>
                         <span class="review-val">
-                            {{ step3Form.get('assessmentOn')?.value ? 'Yes' : 'No' }}
+                            <span [style.color]="step3Form.get('assessmentOn')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step3Form.get('assessmentOn')?.value ? '✔ Yes' : '✘ No' }}
+                            </span>
                             <span *ngIf="step3Form.get('assessmentOn')?.value && assessmentTypes.length">
-                                ({{ assessmentTypes.join(', ') }})
+                                — {{ assessmentTypes.join(', ') }}
                             </span>
                         </span>
                     </div>
-
                 </div>
-
             </div>
         </div>
+
+        <!-- ── Step 5 — Sourcing Strategy ── -->
         <div class="collapsible">
             <div class="coll-hdr" (click)="toggleReviewSection(4)">
                 <span>Step 5 — Sourcing Strategy</span>
                 <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(4)">
-                        <i class="fa fa-pen"></i> Edit
-                    </span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[3]"><i
+                    <span class="edit-link" (click)="goTo(4)"><i class="fa fa-pen"></i> Edit</span>
+                    <span class="arrow-view" [class.open]="reviewSectionOpen[4]"><i
                             class="fa-solid fa-chevron-down"></i></span>
                 </div>
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[4]">
                 <div class="review-grid">
-                    <div class="review-row"><span class="review-label">Internal First</span><span class="review-val">{{
-                            step4Form.get('internalFirst')?.value ? 'Active' : 'Off' }}</span></div>
-                    <div class="review-row"><span class="review-label">Job Boards</span><span class="review-val">{{
-                            jobBoards.join(', ') || '—' }}</span></div>
-                    <div class="review-row"><span class="review-label">Budget</span><span class="review-val">{{
-                            step4Form.get('sourcingBudget')?.value || '—' }}</span></div>
+                    <div class="review-row">
+                        <span class="review-label">Internal First Policy</span>
+                        <span class="review-val">
+                            <span [style.color]="step4Form.get('internalFirst')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step4Form.get('internalFirst')?.value ? '✔ Active' : '✘ Off' }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Job Boards</span>
+                        <span class="review-val">{{ jobBoards.length ? jobBoards.join(', ') : '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Sourcing Budget</span>
+                        <span class="review-val">
+                            {{ step4Form.get('sourcingBudget')?.value ? ('₹' + step4Form.get('sourcingBudget')?.value) :
+                            '—' }}
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Referral Programme</span>
+                        <span class="review-val">
+                            <span [style.color]="step4Form.get('referralOn')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step4Form.get('referralOn')?.value ? '✔ Enabled' : '✘ Disabled' }}
+                            </span>
+                            <span *ngIf="step4Form.get('referralOn')?.value && step4Form.get('referralAmt')?.value">
+                                — ₹{{ step4Form.get('referralAmt')?.value }} bonus
+                            </span>
+                        </span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Diversity Hiring</span>
+                        <span class="review-val">
+                            <span [style.color]="step4Form.get('diversityOn')?.value ? '#16a34a' : '#dc2626'">
+                                {{ step4Form.get('diversityOn')?.value ? '✔ Enabled' : '✘ Disabled' }}
+                            </span>
+                            <span *ngIf="step4Form.get('diversityOn')?.value && diversityBoards.length">
+                                — {{ diversityBoards.join(', ') }}
+                            </span>
+                        </span>
+                    </div>
                 </div>
-
             </div>
         </div>
-
-        <!-- Approval Chain Preview -->
-        <!-- <div class="approval-preview">
-            <div class="approval-title">Approval chain preview</div>
-
-            <div class="approval-chain">
-                <div *ngFor="let item of reviewApprovalChain; let i = index" class="chain-step">
-
-                    <div class="step-box">
-                        <span class="step-label">{{ item?.level }}</span>
-                        <span class="step-name">{{ item.n }}</span>
-                    </div>
-
-                    <div *ngIf="i < reviewApprovalChain.length - 1" class="arrow"></div>
-
-                </div>
-            </div>
-        </div> -->
 
         <div class="footer-btns">
             <div class="flex-gap">
                 <button class="btn btn-ghost" (click)="goTo(4)">← Back</button>
                 <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
             </div>
-            <button class="btn btn-primary" (click)="validateStep5()" [disabled]="isSaving">
-                {{ isSaving ? 'Submitting...' : 'Submit SR for Approval →' }}
+            <button class="btn btn-primary" (click)="validateStep5('next')" [disabled]="isSaving">
+                {{ isSaving ? 'Submitting…' : 'Submit SR for Approval →' }}
             </button>
         </div>
     </div>

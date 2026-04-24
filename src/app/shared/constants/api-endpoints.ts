@@ -4,7 +4,7 @@ export const API = {
         PROFILE:`/hms/login/profile`,
         REFRESH: '/auth/refresh',
         LOGOUT: '/auth/logout',
-        FORGOT_PASSWORD: '/auth/forgot-password',
+        FORGOT_PASSWORD: '/hms/login/forgot-password',
         RESET_PASSWORD: '/auth/reset-password',
         FORCED_LOGOUT: '/user/forceful-logout'
     },

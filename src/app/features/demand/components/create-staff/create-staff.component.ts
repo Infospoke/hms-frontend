@@ -18,6 +18,7 @@ import { StaffingServiceService } from '../../services/staffing-service.service'
 import { UserService } from '../../../settings/users/servics/user-service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 export interface BannerMessage {
   text: string;
@@ -94,7 +95,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   private demandService = inject(StaffingServiceService);
   private userService = inject(UserService);
   private authService = inject(AuthService);
-
+  private notificationService = inject(NotificationService);
 
   seniorityIC: any[] = [];
   deptKeys: any[] = [];
@@ -104,8 +105,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   readonly workModes = ['Remote', 'Hybrid', 'On-site'];
   readonly empTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
   readonly priorities = ['Critical', 'High', 'Standard'];
-  readonly educationOpts = ['None', 'Degree preferred', 'Degree required — CS', 'Degree required — Design', 'Degree required — Business'];
-  travelOpts: any = []
+  educationOpts: any[] = [];
+  travelOpts: any = [];
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
   readonly diversityOpts = ['Women-in-Tech', 'Veterans', 'LGBTQ+', 'Differently-Abled'];
 
@@ -158,8 +159,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   assessmentTypes: string[] = [];
   supportDoc: any = null;
   reviewSectionOpen: boolean[] = [true, true, true, true, true];
-  bandMin = 8; bandMid = 12; bandMax = 18; bandRef = 14;
-  compMin = 5; compMax = 25;
   min = 0; max = 25;
 
   editorConfig = {
@@ -192,17 +191,17 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     });
 
     this.route.queryParams.subscribe(params => {
-     
+
       const srId = params['id'];
 
       if (srId) {
-        this.srId = srId;  
+        this.srId = srId;
       }
 
       this.goTo(0);
     });
 
-    
+
   }
 
   ngOnDestroy(): void {
@@ -237,8 +236,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       costCenter: ['BNG-CC-001 — Engineering Core'],
       budgetCode: ['FY26-BNG-OPEX-42'],
       hcSlot: [true],
-      salaryComp: ['10-20'],
-      proposedComp: [23],
+      salaryComp: ['', Validators.required],
+      proposedComp: ['', [Validators.required, Validators.min(1)]],
       signingBonus: [false],
       signingAmt: [''],
       equity: [false],
@@ -272,16 +271,31 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   private loadDataForStep(step: number): void {
-    if (this.stepDataLoaded[step]) return;
+
     switch (step) {
       case 0: this.loadStep0Data(); break;
+      case 2: this.loadStep2Data(); break;
       case 3: this.aiSuggestSkills(); break;
     }
-    this.stepDataLoaded[step] = true;
+
+  }
+  loadStep2Data() {
+    let payload = {
+      job_title: this.jobTitle,
+      department: this.department,
+      seniority: this.seniority,
+      location: this.location,
+      employment_type: this.empType,
+      business_justification: this.bizCase,
+    }
+    this.demandService.CTC(payload).then((res: any) => {
+      const salary = res?.min_salary + '-' + res?.max_salary
+      this.step2Form.get('salaryComp')?.setValue(salary);
+    }
+    ).catch((error: any) => console.log(error));
   }
 
-
-  validateStep0(): void {
+  validateStep0(type: any): void {
     this.step0Form.markAllAsTouched();
     if (this.step0Form.invalid) {
       this.showBanner('Please fix the highlighted fields', 'err');
@@ -300,7 +314,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         this.isSaving = false;
         if (res?.responsecode === '00') {
           this.srId = res.data;
-          this.goTo(1);
+          if (type !== 'draft') this.goTo(1);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
         } else {
           this.showBanner(res?.message || 'Failed to save Position Basics', 'err');
         }
@@ -312,7 +332,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
 
-  validateStep1(): void {
+  validateStep1(type: any): void {
     this.step1Form.markAllAsTouched();
 
     if (this.needsReplace) {
@@ -349,7 +369,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          this.goTo(2);
+          if (type !== 'draft') this.goTo(2);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
         } else {
           this.showBanner(res?.message || 'Failed to save Business Justification', 'err');
         }
@@ -361,45 +387,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
 
-  // validateStep2(): void {
-  //   if (!this.step2Form.value.hcSlot) {
-  //     this.showBanner('HC slot required to proceed', 'err');
-  //     return;
-  //   }
 
-  //   this.isSaving = true;
-  //   const payload = {
-  //     positonBascicsRequest: this.buildPositionBasicsRequest(),
-  //     businessJustificationRequest: this.buildBusinessJustificationRequest(),
-  //     budgetAndCompensationRequest: this.buildBudgetRequest()
-  //   };
-  //   const formData = new FormData();
-
-  //   const jsonBlob = new Blob(
-  //     [JSON.stringify(payload)],
-  //     { type: 'application/json' }
-  //   );
-
-  //   formData.append('request', jsonBlob);
-
-  //   if (this.supportDoc?.file) {
-  //     formData.append('file', this.supportDoc.file);
-  //   }
-  //   this.demandService.createStaffing(formData)
-  //     .then((res: any) => {
-  //       this.isSaving = false;
-  //       if (res?.responsecode === '00') {
-  //         this.goTo(3);
-  //       } else {
-  //         this.showBanner(res?.message || 'Failed to save Budget & Compensation', 'err');
-  //       }
-  //     })
-  //     .catch(() => {
-  //       this.isSaving = false;
-  //       this.showBanner('Error saving Budget & Compensation. Please try again.', 'err');
-  //     });
-  // }
-  validateStep2(): void {
+  validateStep2(type: any): void {
     if (!this.step2Form.value.hcSlot) {
       this.showBanner('HC slot required to proceed', 'err');
       return;
@@ -448,14 +437,20 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
 
             setTimeout(() => {
-              this.goTo(3);
+              if (type !== 'draft') this.goTo(3);
             }, 2000);
 
             return;
           }
 
 
-          this.goTo(3);
+          if (type !== 'draft') this.goTo(3);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
 
         } else {
           this.showBanner(res?.message || 'Failed to save Budget & Compensation', 'err');
@@ -467,7 +462,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       });
   }
 
-  validateStep3(): void {
+  validateStep3(type: any): void {
     this.step3Form.markAllAsTouched();
 
     if (this.mustSkills.length < 3) {
@@ -502,7 +497,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          this.goTo(4);
+          if(type!=='draft')this.goTo(4);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
         } else {
           this.showBanner(res?.message || 'Failed to save Role Requirements', 'err');
         }
@@ -514,7 +515,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
 
-  validateStep4(): void {
+  validateStep4(type: any): void {
     if (this.jobBoards.length === 0) {
       this.showBanner('Select at least one sourcing channel', 'err');
       return;
@@ -546,7 +547,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          this.goTo(5);
+          if (type !== 'draft') this.goTo(5);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
         } else {
           this.showBanner(res?.message || 'Failed to save Sourcing Strategy', 'err');
         }
@@ -557,7 +564,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       });
   }
 
-  validateStep5(): void {
+  validateStep5(type: any): void {
     this.isSaving = true;
     const payload = {
       positonBascicsRequest: this.buildPositionBasicsRequest(),
@@ -595,7 +602,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
             this.showBanner(`Notice: ${res?.data?.message}`, 'ok');
           }
-          this.goTo(6);
+          if (type !== 'draft') this.goTo(6);
+          if (type === 'draft') {
+            this.notificationService.success(
+              'Success',
+              'Draft saved successfully!'
+            );
+          }
         } else {
           this.showBanner(res?.message || 'Submission failed. Please try again.', 'err');
         }
@@ -751,6 +764,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       language: this.demandService.language(objLanguage),
       certificate: this.demandService.certificate(objLanguage),
       travelOpts: this.demandService.getTravel(),
+      education: this.demandService.education(objLanguage),
     }).subscribe({
       next: (res: any) => {
         this.mustSuggestions = res.mustSkills?.skills ?? [];
@@ -758,11 +772,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         this.langSuggestions = res.language?.languages ?? [];
         this.certSuggestions = res.certificate?.certifications ?? [];
         this.travelOpts = res?.travelOpts?.data;
+        this.educationOpts = res?.education?.qualifications;
       },
       error: () => this.showBanner('AI suggestions unavailable', 'err')
     });
   }
-
+  get empType(): string { return this.step0Form.get('empType')?.value }
   get todayStr(): string { return new Date().toISOString().split('T')[0]; }
   get jobTitle(): string { return this.step0Form.get('jobTitle')?.value; }
   get department(): string { return this.step0Form.get('dept')?.value; }
@@ -778,7 +793,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   get bizCaseLen(): number { return (this.step1Form.get('bizCase')?.value || '').length; }
-  get bizCase(): string { return this.step1Form.get('bizCase')?.value || ''; }
+  get bizCase(): string { return this.htmlToText(this.step1Form.get('bizCase')?.value || ''); }
   get impactLen(): number { return (this.step1Form.get('impactNote')?.value || '').length; }
 
   get expMin() { return this.step3Form.get('expMin')?.value; }
@@ -793,26 +808,33 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   get maxInterview(): number { return ((this.maxInterviewData - this.min) / (this.max - this.min)) * 100; }
   get rangeInterview(): number { return this.maxInterview - this.minInterview; }
 
-  get bandPct() { return ((this.bandRef - this.bandMin) / (this.bandMax - this.bandMin)) * 100; }
-  get bandMidPct() { return ((this.bandMid - this.bandMin) / (this.bandMax - this.bandMin)) * 100; }
-  get compPct() {
-    const val = this.step2Form.get('proposedComp')?.value || 0;
-    return ((val - this.compMin) / (this.compMax - this.compMin)) * 100;
-  }
-  get salaryPct() {
-    return ((this.step2Form.value.salaryComp - this.bandMin) / (this.bandMax - this.bandMin)) * 100;
-  }
+
+
 
   get totalCompensation(): number {
     const f = this.step2Form.value;
-    const base = Number(f.proposedComp) || 0;
-    const salary = Number(f.salaryComp) || 0;
-    const signing = f.signingBonus ? (Number(f.signingAmt) || 0) / 100000 : 0;
-    const equity = f.equity ? (Number(f.equityAmt) || 0) / 100000 : 0;
-    const relocation = f.relocation ? (Number(f.relocAmt) || 0) / 100000 : 0;
+
+    const toLPA = (val: number) => (val || 0) / 100000;
+
+
+    const base = toLPA(Number(f.proposedComp));
+
+    let salary = 0;
+    if (f.salaryComp) {
+      const parts = String(f.salaryComp).split('-');
+
+      const min = Number(parts[0]) || 0;
+      const max = Number(parts[1]) || 0;
+
+      salary = (min + max) / 2 / 100000;
+    }
+
+    const signing = f.signingBonus ? toLPA(Number(f.signingAmt)) : 0;
+    const equity = f.equity ? toLPA(Number(f.equityAmt)) : 0;
+    const relocation = f.relocation ? toLPA(Number(f.relocAmt)) : 0;
+
     return +(base + salary + signing + equity + relocation).toFixed(2);
   }
-
   getCompStatus(status: string) {
     switch (status) {
       case 'RED':
@@ -1064,7 +1086,16 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.bannerTimeout = setTimeout(() => { this.banner = null; }, 3500);
   }
 
-  saveDraft(): void { this.showBanner('Draft saved successfully', 'ok'); }
+  saveDraft(): void {
+    switch (this.currentStep) {
+      case 0: this.validateStep0('draft'); break;
+      case 1: this.validateStep1('draft'); break;
+      case 2: this.validateStep2('draft'); break;
+      case 3: this.validateStep3('draft'); break;
+      case 4: this.validateStep4('draft'); break;
+      case 5: this.validateStep5('draft'); break;
+    }
+  }
 
   viewInMySRs(): void {
     this.router.navigateByUrl('/demand/my-jds')
@@ -1107,4 +1138,10 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   trackByIndex(i: number): number { return i; }
+
+  htmlToText(html: string): string {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  }
 }

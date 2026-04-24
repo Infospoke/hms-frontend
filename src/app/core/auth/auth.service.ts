@@ -110,4 +110,30 @@ export class AuthService {
   isLoggedIn() {
     return !!this.tokenService.getAccessToken();
   }
+
+  forgotPassword(payload: any): Observable<any> {
+  return this.http
+    .post(`${environment.apiUrl}${API.AUTH.FORGOT_PASSWORD}`, payload)
+    .pipe(
+      tap((res: any) => {
+        this.notification.success(
+          res?.message || 'Reset link sent to your email'
+        );
+      }),
+      catchError((err: any) => {
+        const code = err.error?.responseCode;
+        const msg = err.error?.responseMessage || err.error?.message;
+
+        const errorMap: Record<string, string> = {
+          '2001': 'Email not registered',
+          '2002': 'Account not active',
+          '2003': 'Too many requests, try later'
+        };
+
+        this.notification.error(msg || errorMap[code] || 'Forgot password failed');
+
+        return throwError(() => err);
+      })
+    );
+}
 }

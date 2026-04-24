@@ -1,26 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
-
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 import { StaffingServiceService } from '../../services/staffing-service.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { SrReviewComponent } from '../sr-review/sr-review';
 
 export interface StaffingRequisition {
-  id: string;         
-  title: string;       
-  meta: string;         
+  id: string;
+  title: string;
+  meta: string;
   status: 'Draft' | 'Submitted' | 'Approved' | 'Rejected';
 }
-
 
 interface SrListItem {
   createdDate: string;
   jobTitle: string;
   srId: string | null;
-  status: string;      
+  status: string;
 }
 
 interface SrListResponse {
@@ -37,7 +36,7 @@ interface SrListResponse {
 @Component({
   selector: 'app-staffing-requisitions',
   standalone: true,
-  imports: [CommonModule, PaginationComponent],
+  imports: [CommonModule, PaginationComponent, NzModalModule],
   templateUrl: './staffing-requisitions.component.html',
   styleUrl: './staffing-requisitions.component.scss',
 })
@@ -45,55 +44,155 @@ export class StaffingRequisitionsComponent implements OnInit {
 
   requisitions: StaffingRequisition[] = [];
   draftSR: StaffingRequisition | null = null;
-  private demandService=inject(StaffingServiceService);
+
+  private demandService = inject(StaffingServiceService);
+  private modal = inject(NzModalService);
+  private router = inject(Router);
+
   currentPage = 1;
   pageSize = 10;
   totalPages = 0;
   totalElements = 0;
-
-
   isLoading = false;
+  viewLoading = false;
   errorMessage: string | null = null;
-
-  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.loadPage(1);
   }
 
-
   async loadPage(page: number): Promise<void> {
     this.isLoading = true;
     this.errorMessage = null;
-    let obj={
-      page:page-1, 
-      size:this.pageSize
-    }
     try {
-      const response = await this.demandService.getAllSRS(obj) as SrListResponse;
-
+      const response = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
       if (response?.responsecode === '00' && response.data) {
-        const { content, totalPages, currentPage, totalElements } = response.data;
-
+        const { content, totalPages, totalElements } = response.data;
         this.totalPages = totalPages;
-        
         this.totalElements = totalElements;
-
         this.requisitions = content.map(item => this.mapToRequisition(item));
         this.draftSR = this.requisitions.find(r => r.status === 'Draft') ?? null;
       } else {
         this.errorMessage = response?.message ?? 'Failed to load requisitions.';
       }
-    } catch (err) {
-      console.error('Error loading SR list:', err);
+    } catch {
       this.errorMessage = 'An error occurred while fetching requisitions.';
     } finally {
       this.isLoading = false;
     }
   }
 
- 
+  async viewSR(sr: StaffingRequisition): Promise<void> {
+    if (!sr?.id || sr.id === 'Draft – Pending ID') return;
 
+    this.viewLoading = true;
+    try {
+      const res: any = await this.demandService.getBySrId(sr.id);
+      if (res?.responsecode !== '00') {
+        this.viewLoading = false;
+        return;
+      }
+
+      const d = res.data ?? {};
+      const p = d.positonBasicsResponse ?? {};
+      const bj = d.businessJustificationResponse ?? {};
+      const bc = d.budgetAndCompensationResponse ?? {};
+      const rr = d.rolesAndRequirementsResponse ?? {};
+      const ss = d.sourcingStrategyResponse ?? {};
+
+      const boardKeys: Record<string, string> = {
+        internalBoard: 'Internal Board',
+        naukri: 'Naukri',
+        linkedIn: 'LinkedIn',
+        indeed: 'Indeed',
+        companySite: 'Company Site',
+        agencyRpo: 'Agency / RPO',
+      };
+      const jobBoards = Object.entries(boardKeys)
+        .filter(([key]) => ss[key])
+        .map(([, label]) => label);
+
+      const modal = this.modal.create({
+        nzTitle: `${p.jobTitle ?? sr.title} — ${sr.id}`,
+        nzContent: SrReviewComponent,
+        nzWidth: 780,
+        nzCentered: true,
+        nzBodyStyle: { 'max-height': '78vh', 'overflow-y': 'auto', padding: '0' },
+        nzFooter: [
+          {
+            label: 'Cancel',
+            onClick: () => modal.destroy()
+          }
+        ],
+      });
+
+      const instance = modal.getContentComponent() as SrReviewComponent;
+      instance.viewOnly = true;
+      instance.srId = sr.id;
+      instance.jobTitle = p.jobTitle ?? sr.title;
+
+      instance.step0 = {
+        jobTitle: p.jobTitle ?? '',
+        dept: p.departmentId ?? '',
+        bu: p.businessUnitId ?? '',
+        location: p.location ?? '',
+        workMode: p.workMode ?? '',
+        empType: p.employmentType ?? '',
+        seniority: p.seniorityLevel ?? '',
+        priority: p.priority ?? '',
+        startDate: p.targetStartDate ?? '',
+      };
+
+      instance.step1 = {
+        justType: bj.requisitionType ?? '',
+        bizCase: bj.businessCase ?? '',
+        impactNote: bj.impactIfNotFilled ?? '',
+      };
+
+      instance.step2 = {
+        costCenter: bc.costCenter ?? '',
+        budgetCode: bc.budgetCode ?? '',
+        proposedComp: bc.proposedTotalCompensation
+          ? (bc.proposedTotalCompensation / 100000).toFixed(2)
+          : '',
+      };
+
+      instance.step3 = {
+        eduReq: rr.educationRequirement ?? '',
+        travel: rr.travelRequirement ?? '',
+        expMin: rr.minExperience ?? 0,
+        expMax: rr.maxExperience ?? 0,
+        interviewMin: rr.minInterviewRounds ?? 0,
+        interviewMax: rr.maxInterviewRounds ?? 0,
+        assessmentOn: rr.assessmentRequired ?? false,
+      };
+
+      instance.step4 = {
+        internalFirst: ss.internalFirstPolicy ?? false,
+        sourcingBudget: ss.sourcingBudget != null ? String(ss.sourcingBudget) : '',
+      };
+
+      instance.mustSkills = this.splitCsv(rr.skillsMustHave);
+      instance.niceSkills = this.splitCsv(rr.niceToHaveSkills);
+      instance.certs = this.splitCsv(rr.certificationsRequired);
+      instance.langs = this.splitCsv(rr.languages);
+      instance.jobBoards = jobBoards;
+      instance.assessmentTypes = [];
+
+    } catch {
+      // silently fail — could show a banner here if needed
+    } finally {
+      this.viewLoading = false;
+    }
+  }
+
+  private splitCsv(value: any): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value.map(v => String(v).trim()).filter(Boolean);
+    }
+    return String(value).split(',').map(s => s.trim()).filter(Boolean);
+  }
 
   private mapToRequisition(item: SrListItem): StaffingRequisition {
     const statusMap: Record<string, StaffingRequisition['status']> = {
@@ -102,7 +201,6 @@ export class StaffingRequisitionsComponent implements OnInit {
       APPROVED: 'Approved',
       REJECTED: 'Rejected',
     };
-
     return {
       id: item.srId ?? 'Draft – Pending ID',
       title: item.jobTitle,
@@ -111,29 +209,22 @@ export class StaffingRequisitionsComponent implements OnInit {
     };
   }
 
-
   onPageChange(page: number): void {
-    this.currentPage=page
+    this.currentPage = page;
     this.loadPage(page);
   }
-
 
   newSR(): void {
     this.router.navigateByUrl('/demand/create?step=0');
   }
 
   resumeSR(sr: StaffingRequisition): void {
-    this.router.navigate(['/demand/create?step=0', {queryParams:{id:sr?.id,type:'edit'}}]);
-  }
-
-  viewSR(sr: StaffingRequisition): void {
-    this.router.navigate(['/demand/create?step=0', {queryParams:{id:sr?.id,type:'view'}}]);
+    this.router.navigate(['/demand/create'], { queryParams: { id: sr.id, type: 'edit' } });
   }
 
   editSR(sr: StaffingRequisition): void {
-    this.router.navigate(['/demand/create?step=0', {queryParams:{id:sr?.id,type:'edit'}}]);
+    this.router.navigate(['/demand/create'], { queryParams: { id: sr.id, type: 'edit' } });
   }
-
 
   badgeClass(status: string): string {
     const map: Record<string, string> = {

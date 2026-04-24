@@ -82,4 +82,10 @@ export class StaffingServiceService {
       this.api.hrmspost(API.SRS.ALL_SRS,payload)
     )
   }
+
+  async getBySrId(srId: string) {
+    return await firstValueFrom(
+      this.api.hrmsget(API.SRS.BY_SR_ID, { request: srId })
+    );
+  }
 }

@@ -1,0 +1,103 @@
+<div class="container">
+    <app-heading [heading]="'Dashboard'" [headingFontSize]="'1rem'"></app-heading>
+
+    <div class="main-job-content">
+
+        <!-- TOP CARDS -->
+        <div class="main-job-card-content">
+            <div class="card-content" *ngFor="let item of list">
+                <div class="card-content-body">
+                    <div class="left">
+                        <div class="icon">
+                            <i [class]="item.icon"></i>
+                        </div>
+                        <h6 class="text">{{item.title}}</h6>
+                    </div>
+                    <p>{{item.count}}</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="dashboard-layout">
+
+            <!-- LEFT SIDE -->
+            <div class="left-section">
+
+                <!-- Hiring -->
+                <div class="jobs-card">
+                    <div class="hire-heading">
+                        <app-heading [heading]="'Hiring Dashboard'" [headingFontSize]="'1rem'"
+                            [subHeading]="'A holistic view of jobs, pipeline movement, and candidate progress'"
+                            [subHeadingFontSize]="'1rem'">
+                        </app-heading>
+
+                        <button class="btn btn-outline-primary" style="font-weight: 500; font-size: 0.9rem;">
+                            <span></span>Live Updates
+                        </button>
+                    </div>
+
+                    <div class="job-scroll-wrapper">
+                        <button class="scroll-btn left" (click)="scrollLeft()">&#10094;</button>
+
+                        <div class="job-list" #jobList>
+                            <div class="job-details" *ngFor="let job of jobsListData">
+                                <app-jobs-card [job]="job" [isActive]="job?.jobId===selectedJobId"
+                                    (selectedJob)="handleSelectedJob($event)" [width]="'100%'" [showJobDetails]="true">
+                                </app-jobs-card>
+                            </div>
+                        </div>
+
+                        <button class="scroll-btn right" (click)="scrollRight()">&#10095;</button>
+                    </div>
+                </div>
+
+                <!-- Pipeline -->
+                <div class="jobs-card pipe-line">
+                    <div class="hire-heading">
+                        <app-heading [heading]="'Pipeline Funnel'" [headingFontSize]="'1rem'"
+                            [subHeading]="selectedJob?.jobTitle" [subHeadingFontSize]="'1rem'">
+                        </app-heading>
+
+                        <button class="btn btn-outline-primary" style="font-weight: 500;font-size: 0.9rem;">
+                            Conversion {{getHirePercentage()}}%
+                        </button>
+                    </div>
+
+                    <div class="stages-list">
+                        <div class="helper" *ngFor="let item of stages">
+                            <app-pipe-line-cards [stage]="item" [showProgess]="true"></app-pipe-line-cards>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="job-activity-card">
+                <app-heading [heading]="'Activity Feed'" [headingFontSize]="'1rem'">
+                </app-heading>
+
+                <div class="activity-body">
+                    <div class="activity-list">
+                        <div class="activity-item" *ngFor="let log of activityList">
+
+                            <!-- DOT -->
+                            <div class="dot"></div>
+
+                            <!-- CONTENT -->
+                            <div class="activity-content">
+                                <p class="message">
+                                    {{log?.activity}}
+                                </p>
+                                <span class="time">{{getTimeAgo(log?.timeStamp)}}</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -242,7 +242,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     });
 
     this.step2Form = this.fb.group({
-      
+
       hcSlot: [true],
       salaryComp: ['', Validators.required],
       proposedComp: ['', [Validators.required, Validators.min(1)]],
@@ -333,7 +333,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             );
           }
         } else {
-          this.showBanner(res?.message || 'Failed to save Position Basics', 'err');
+         this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -388,7 +389,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             );
           }
         } else {
-          this.showBanner(res?.message || 'Failed to save Business Justification', 'err');
+           this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -405,7 +407,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.showBanner('HC slot required to proceed', 'err');
       return;
     }
-    if(this.step2Form.invalid)return;
+    if (this.step2Form.invalid) return;
 
     this.isSaving = true;
 
@@ -466,7 +468,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
           }
 
         } else {
-          this.showBanner(res?.message || 'Failed to save Budget & Compensation', 'err');
+         this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -518,7 +521,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             );
           }
         } else {
-          this.showBanner(res?.message || 'Failed to save Role Requirements', 'err');
+           this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -568,7 +572,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             );
           }
         } else {
-          this.showBanner(res?.message || 'Failed to save Sourcing Strategy', 'err');
+        this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -623,7 +628,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             );
           }
         } else {
-          this.showBanner(res?.message || 'Submission failed. Please try again.', 'err');
+         this.notificationService.error(this.getResponseError(res),)
+          
         }
       })
       .catch(() => {
@@ -1306,7 +1312,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   get reviewStep2() {
     const f = this.step2Form.value;
     return {
-     
+
       hcSlot: f.hcSlot,        // ← was missing
       salaryComp: f.salaryComp,    // ← was missing
       proposedComp: f.proposedComp,
@@ -1341,5 +1347,18 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       referralAmt: f.referralAmt,  // ← was missing
       diversityOn: f.diversityOn
     };
+  }
+
+ 
+  private getResponseError(res: any): string {
+ 
+    if (Array.isArray(res?.errors) && res.errors.length > 0) {
+      return res.errors.join(' • ');
+    }
+
+    if (res?.message && res.message !== 'Failure') {
+      return res.message;
+    }
+    return 'Something went wrong. Please try again.';
   }
 }

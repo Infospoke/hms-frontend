@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.prod';
 import { Observable } from 'rxjs';
@@ -89,8 +89,8 @@ export class ApiService {
     return this.http.get<T>(`${this.hrmsUrl}${endpoint}`, { params });
   }
 
-  hrmspost<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body);
+  hrmspost<T>(endpoint: string, body: any,options?: { params?: HttpParams }): Observable<T> {
+    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body,options);
   }
 
   hrmsput<T>(endpoint: string, body: any): Observable<T> {

@@ -63,23 +63,25 @@ export class LoginComponent {
         sessionStorage.setItem('token', data?.data?.token);
         // sessionStorage.setItem('refreshToken', data.refreshToken);
         // localStorage.setItem('lastLoginTime', data.lastLogin);
+        if(this.authService.getIsFirstTimeUser()){
+          this.router.navigateByUrl("/auth/change-password");
+          return;
+        }
         this.userId = data.userId;
         this.authService.getPermissions();
         this.authService.getRole();
         this.router.navigate(['/users/user-onboard-roles']);
         // this.loadUserAndNavigate();
       }
-      else if (data?.responseCode == 2) {
-        this.notification.success(data.responseMessage);
-        localStorage.setItem('token', data.token);
-        sessionStorage.setItem('userId', data.userId);
-        this.router.navigate(['/change-password'], { queryParams: { firstTime: true } });
+      else if (data?.responsecode == '01' && data?.message=="Please reset your password") {
+        this.notification.error(data.message);
+        this.router.navigateByUrl('/auth/forgot-password')
       }
       else {
-        if (data?.responseMessage === 'An active session exists already.Please try again later.') {
-          this.forcedLogout();
+        if (data?.message === 'An active session exists already.Please try again later.') {
+          // this.forcedLogout();
         } else {
-          this.notification.error(data?.responseMessage || 'Login failed');
+          this.notification.error(data?.message || 'Login failed');
         }
       }
     }
@@ -116,41 +118,7 @@ export class LoginComponent {
     }
   }
 
- forcedLogout() {
-  const modalRef = this.modal.confirm({
-    nzTitle: 'An Active Session Exists',
-    nzContent: 'Do you want to force logout from the other device and continue?',
-    nzOkText: 'Yes, Continue',
-    nzCancelText: 'Cancel',
-    nzIconType: 'warning',
-    nzClassName: 'danger-modal',
-    nzOkDanger: true,
-    nzOnOk: () => {
-      modalRef.destroy(); 
-
-      this.api.post(API.AUTH.FORCED_LOGOUT, {
-        email: this.loginForm.get('email')?.value,
-        forceFulLogout: true
-      }).subscribe({
-        next: (res: any) => {
-          if (res?.responseCode == 1) {
-            this.modal.success({
-              nzTitle: 'Session Terminated',
-              nzContent: (res?.responseMessage || 'Previous session terminated') + '. Please login again.',
-              nzOkText: 'Ok',
-            });
-          }
-        },
-        error: () => {
-          this.modal.error({
-            nzTitle: 'Error',
-            nzContent: 'Failed to terminate session'
-          });
-        }
-      });
-    }
-  });
-}
+ 
 
   forgotPassword() {
     this.router.navigate(['/auth/forgot-password']);

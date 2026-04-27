@@ -1,0 +1,240 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.card {
+    height: 100%;
+    border-radius: 12px;
+    padding: 19px;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    background: #ffffff;
+    color: #111827;
+    transition:
+        background 0.5s ease,
+        color 0.3s ease,
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.35s ease,
+        border 0.3s ease;
+}
+
+.active-card {
+    background: linear-gradient(135deg, #1E3A8A, #2563EB, #60A5FA);
+    color: #ffffff !important;
+    border: none;
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.05),
+        0 3px 8px rgba(0, 0, 0, 0.06);
+}
+
+.active-card h6,
+.active-card p,
+.active-card span,
+.active-card h3 {
+    color: #ffffff !important;
+}
+
+.active-card .card-header-info p,
+.active-card .stat p {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.active-card i {
+    color: #ffffff !important;
+}
+
+.active-card .item {
+    color: #ffffff !important;
+}
+
+.active-card .skills span {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.active-card .stat h3 {
+    color: #ffffff;
+}
+
+.active-card .rejected h3 {
+    color: #ffffff !important;
+}
+
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+}
+
+.active-card:hover {
+    transform: translateY(-1px);
+}
+
+.card-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    line-height: 1;
+    height: 64px;
+}
+
+.card-header-info h6 {
+    margin: 1px;
+    padding: 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.card-header-info p {
+    margin: 2px 0 0;
+    color: #9ca3af;
+    font-size: 10.5px;
+    line-height: 1.2;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 17.5px;
+    font-weight: 600;
+}
+
+.card-header p {
+    margin: 3px 0 0;
+    color: #9ca3af;
+}
+
+.card-header i {
+    font-size: 14.5px;
+    cursor: pointer;
+}
+
+.info {
+    display: flex;
+    gap: 16px;
+    margin: 14px 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #374151;
+    font-size: 11px;
+}
+
+.item i {
+    color: #3b82f6;
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.skills span {
+    background: #f3f4f6;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    color: #374151;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    margin-top: auto;
+}
+
+.stat p {
+    margin: 0;
+    color: #9ca3af;
+    font-size: 10.5px;
+}
+
+.stat h3 {
+    margin: 5px 0 0;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.card.flat {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.card.flat:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.card.flat.active-card {
+    background: linear-gradient(135deg, #1E3A8A, #2563EB, #60A5FA);
+    color: #ffffff !important;
+    border: none;
+    box-shadow: none !important;
+}
+
+@media (max-width: 1024px) {
+    .card {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+    }
+}
+
+.menu-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.menu-icon {
+    font-size: 14px;
+    padding: 6px;
+}
+
+.menu-dropdown {
+    position: absolute;
+    top: 22px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    min-width: 100px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: none;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.menu-wrapper:hover .menu-dropdown {
+    display: flex;
+}
+
+.menu-item {
+    padding: 8px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    color : black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu-item:hover {
+    color: black;
+    background: #f3f4f6;
+    border-radius: 10px;
+}
+
+.menu-item.delete {
+    color: #ef4444;
+}

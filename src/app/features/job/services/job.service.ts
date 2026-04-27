@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
 export class JobService {
   private api = inject(ApiService);
 
-  // ================== STATE (Signals) ==================
+
 
   private jobsListSignal = signal<any>(null);
   private dashboardSignal = signal<any>(null);
@@ -19,7 +19,6 @@ export class JobService {
   private applicantByIdSignal = signal<any>(null);
   private analysisSignal = signal<any>(null);
 
-  // ================== GETTERS ==================
 
   jobs$ = this.jobsListSignal;
   dashboard$ = this.dashboardSignal;
@@ -29,11 +28,10 @@ export class JobService {
   applicantById$ = this.applicantByIdSignal;
   analysis$ = this.analysisSignal;
 
-  // ================== API CALLS + AUTO STORE ==================
 
   async getJobsList(isOpen: boolean) {
     const res = await firstValueFrom(
-      this.api.get(API.JOBS.GET_ALL_JOBS(isOpen))
+      this.api.hrmsget(API.JOBS.GET_ALL_JOBS(isOpen))
     );
     this.jobsListSignal.set(res);
     return res;
@@ -41,7 +39,7 @@ export class JobService {
 
   async getJobDashboardCount() {
     const res = await firstValueFrom(
-      this.api.get(API.JOBS.GET_DASHBOARD_DATA)
+      this.api.hrmsget(API.JOBS.GET_DASHBOARD_DATA)
     );
     this.dashboardSignal.set(res);
     return res;
@@ -49,7 +47,7 @@ export class JobService {
 
   async getJobDetailsById(jobId: any) {
     const res = await firstValueFrom(
-      this.api.get(API.JOBS.GET_JOB_BY_ID(jobId))
+      this.api.hrmsget(API.JOBS.GET_JOB_BY_ID(jobId))
     );
     this.jobDetailsSignal.set(res);
     return res;
@@ -57,23 +55,23 @@ export class JobService {
 
   async addJob(data: any) {
     return await firstValueFrom(
-      this.api.post(API.JOBS.ADD_JOB, data)
+      this.api.hrmspost(API.JOBS.ADD_JOB, data)
     );
   }
   async updateJob(data: any) {
     return await firstValueFrom(
-      this.api.put(API.JOBS.UPDATE_JOB, data)
+      this.api.hrmsput(API.JOBS.UPDATE_JOB, data)
     );
   }
 
   async getAllSkills() {
     return await firstValueFrom(
-      this.api.get(API.JOBS.GET_ALL_SKILLS)
+      this.api.hrmsget(API.JOBS.GET_ALL_SKILLS)
     );
   }
   async getActivityLogs() {
     return await firstValueFrom(
-      this.api.get(API.JOBS.GET_ACTIVITY_LOGS)
+      this.api.hrmsget(API.JOBS.GET_ACTIVITY_LOGS)
     );
   }
   async addApplicant(formData: FormData) {
@@ -89,7 +87,7 @@ export class JobService {
 
   async getApplicants(status: any, id: any) {
     const res = await firstValueFrom(
-      this.api.get(API.JOBS.GET_ALL_APPLICANTS(), {
+      this.api.hrmsget(API.JOBS.GET_ALL_APPLICANTS(), {
         filter: status,
         jobId: id
       })
@@ -115,7 +113,7 @@ export class JobService {
   }
   async getApplicantById(applicantId: any) {
     const res = await firstValueFrom(
-      this.api.get(API.JOBS.GET_APPLICANT_BY_ID(applicantId))
+      this.api.hrmsget(API.JOBS.GET_APPLICANT_BY_ID(applicantId))
     );
     this.applicantByIdSignal.set(res);
     return res;
@@ -162,7 +160,7 @@ export class JobService {
 
   async deleteJob(jobId: any) {
     return await firstValueFrom(
-      this.api.delete(API.JOBS.DELETE_JOB(jobId))
+      this.api.hrmsdelete(API.JOBS.DELETE_JOB(jobId))
     );
   }
 }

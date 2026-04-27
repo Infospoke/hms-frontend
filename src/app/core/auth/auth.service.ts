@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, timer, Subscription, switchMap, catchError, throwError } from 'rxjs';
 import { TokenService } from './token.service';
@@ -7,12 +7,14 @@ import { PermissionService } from '../services/permission.service';
 import { NotificationService } from '../services/notification.service';
 import { environment } from '../../../environments/environment';
 import { API } from '../../shared/constants/api-endpoints';
+import { ApiService } from '../services/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private api = inject(ApiService);
   private router = inject(Router);
   private tokenService = inject(TokenService);
   private permissionService = inject(PermissionService);
@@ -102,38 +104,60 @@ export class AuthService {
     if (!t) return null;
     return JSON.parse(atob(t.split('.')[1]))?.modules;
   }
-  getUserName(){
-     const t = this.tokenService.getAccessToken();
+  getUserName() {
+    const t = this.tokenService.getAccessToken();
     if (!t) return null;
     return JSON.parse(atob(t.split('.')[1]))?.sub;
+  }
+
+  getIsFirstTimeUser() {
+    const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1]))?.firstTimeLogin;
   }
   isLoggedIn() {
     return !!this.tokenService.getAccessToken();
   }
 
-  forgotPassword(payload: any): Observable<any> {
-  return this.http
-    .post(`${environment.apiUrl}${API.AUTH.FORGOT_PASSWORD}`, payload)
-    .pipe(
+  forgotPassword(email: string): Observable<any> {
+    const params = new HttpParams().set('email', email);
+
+    return this.api.hrmspost(`${API.AUTH.FORGOT_PASSWORD}`, null, { params })
+      .pipe(
+        tap((res: any) => {
+          if (res?.responsecode === '00') {
+            this.notification.success(res?.message || 'New credentials sent to your registered email');
+          }
+        }),
+        catchError((err: any) => {
+          const errors = err.error?.errors;
+          const msg = err.error?.message;
+          const errorMap: Record<string, string> = {
+            '2001': 'Email not registered',
+            '2002': 'Account is not active',
+            '2003': 'Too many requests, please try again later'
+          };
+          const displayMsg =
+            (Array.isArray(errors) && errors.length > 0)
+              ? errors.join(' • ')
+              : msg && msg !== 'Failure'
+                ? msg
+                : errorMap[err.error?.responsecode] ?? 'Forgot password request failed';
+          this.notification.error(displayMsg);
+          return throwError(() => err);
+        })
+      );
+  }
+  changePassword(payload: { oldPassword: string; newPassword: string }): Observable<any> {
+    return this.api.hrmspost(`${API.AUTH.CHANGE_PASSWORD}`, payload).pipe(
       tap((res: any) => {
-        this.notification.success(
-          res?.message || 'Reset link sent to your email'
-        );
+        this.notification.success(res?.message || 'Password changed successfully');
       }),
       catchError((err: any) => {
-        const code = err.error?.responseCode;
         const msg = err.error?.responseMessage || err.error?.message;
-
-        const errorMap: Record<string, string> = {
-          '2001': 'Email not registered',
-          '2002': 'Account not active',
-          '2003': 'Too many requests, try later'
-        };
-
-        this.notification.error(msg || errorMap[code] || 'Forgot password failed');
-
+        this.notification.error(msg || 'Failed to change password');
         return throwError(() => err);
       })
     );
-}
+  }
 }

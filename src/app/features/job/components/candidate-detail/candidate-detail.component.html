@@ -1,0 +1,326 @@
+<div class="detail-container" *ngIf="candidate; else noSelection">
+  <div class="detail-scroll">
+
+    <ng-container *ngIf="viewMode === 'default'">
+      <div class="detail-header">
+        <h3 class="detail-title">Candidate Detail</h3>
+        <button class="view-resume-btn" (click)="onViewResume()">
+          <nz-icon nzType="eye" nzTheme="outline" />
+          View Resume
+        </button>
+      </div>
+      <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+
+      <div class="profile-card">
+        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
+        <h4 class="profile-name">{{ candidate.name }}</h4>
+        <p class="profile-role">{{ candidate.role }}</p>
+        <div class="score-row">
+          <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span class="score-label">Skill</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.keywordScore }}%</span><span class="score-label">Keywords</span></div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-block">
+          <span class="info-label">EMAIL</span>
+          <span class="info-value">{{ candidate.email }}</span>
+        </div>
+        <div class="info-block">
+          <span class="info-label">PHONE</span>
+          <span class="info-value">{{ candidate.phone }}</span>
+        </div>
+      </div>
+
+      <div class="note-section">
+        <span class="section-label">Recruiter Note</span>
+        <div class="note-box">{{ candidate.recruiterNote }}</div>
+      </div>
+
+      <div class="skills-section">
+        <span class="section-label">Skills Identified</span>
+        <div class="skills-list">
+          <span class="skill-chip" *ngFor="let skill of candidate.skillsIdentified">{{ skill }}</span>
+        </div>
+      </div>
+
+      <div class="bars-section">
+        <div class="bar-item">
+          <span class="bar-label">Keyword Match</span>
+          <div class="bar-track"><div class="bar-fill keyword" [style.width.%]="candidate.keywordMatch"></div></div>
+        </div>
+        <div class="bar-item">
+          <span class="bar-label">Experience Match</span>
+          <div class="bar-track"><div class="bar-fill experience" [style.width.%]="candidate.experienceMatch"></div></div>
+        </div>
+        <div class="bar-item">
+          <span class="bar-label">Portfolio Quality</span>
+          <div class="bar-track"><div class="bar-fill portfolio" [style.width.%]="candidate.portfolioQuality"></div></div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode === 'screening'">
+      <div class="detail-header">
+        <h3 class="detail-title">Screening Details</h3>
+        <button class="view-resume-btn" (click)="onViewResume()">
+          <nz-icon nzType="eye" nzTheme="outline" />
+          View Resume
+        </button>
+      </div>
+      <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+
+      <div class="profile-card">
+        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
+        <h4 class="profile-name">{{ candidate.name }}</h4>
+        <p class="profile-role">{{ candidate.role }}</p>
+        <div class="score-row">
+          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span class="score-label">Experience</span></div>
+        </div>
+        <div class="score-row" style="margin-top: 10px;">
+          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span class="score-label">Growth</span></div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Recommendation</div>
+      <div class="sc-card">
+        <div class="sc-tag-row">
+          <span class="sc-tag blue">{{ screeningData.recommendation.level }}</span>
+          <span class="sc-tag green">{{ screeningData.recommendation.action }}</span>
+        </div>
+        <p class="sc-text">{{ screeningData.summary }}</p>
+        <div class="sc-grid-2">
+          <div><span class="info-label">EMAIL</span><span class="info-value">{{ candidate.email }}</span></div>
+          <div><span class="info-label">PHONE</span><span class="info-value">{{ candidate.phone }}</span></div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Skills Analysis</div>
+      <div class="sc-card">
+        <span class="info-label">MATCH PERCENTAGE</span>
+        <p class="sc-big-value">{{ screeningData.skillsAnalysis.matchPercentage }}</p>
+        <span class="info-label">MATCHED SKILLS</span>
+        <div class="skills-list" style="margin: 8px 0 14px;">
+          <span class="skill-chip" *ngFor="let s of screeningData.skillsAnalysis.matched">{{ s }}</span>
+        </div>
+        <span class="info-label">MISSING SKILLS</span>
+        <p class="sc-text">{{ screeningData.skillsAnalysis.missing }}</p>
+      </div>
+
+      <div class="sc-section-title">Education Analysis</div>
+      <div class="sc-card">
+        <span class="info-label">LEVEL</span>
+        <p class="sc-big-value">{{ screeningData.educationAnalysis.level }}</p>
+        <span class="info-label">EDUCATION HIGHLIGHTS</span>
+        <p class="sc-text">{{ screeningData.educationAnalysis.highlights }}</p>
+        <span class="info-label">MATCHED EDUCATION</span>
+        <span class="skill-chip blue-chip" style="margin-top: 6px;">{{ screeningData.educationAnalysis.matched }}</span>
+      </div>
+
+      <div class="sc-section-title">Assessment</div>
+      <div class="sc-card">
+        <div class="sc-grid-2">
+          <div>
+            <span class="info-label">STRENGTHS</span>
+            <div class="sc-bullet-list green" *ngFor="let s of screeningData.assessment.strengths">
+              <span class="sc-bullet"></span> {{ s }}
+            </div>
+          </div>
+          <div>
+            <span class="info-label">WEAKNESS</span>
+            <div class="sc-bullet-list red" *ngFor="let w of screeningData.assessment.weaknesses">
+              <span class="sc-bullet"></span> {{ w }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Job Analysis</div>
+      <div class="sc-card">
+        <div class="sc-grid-2">
+          <div><span class="info-label">FRESHER</span><p class="sc-bold-value">{{ screeningData.jobAnalysis.fresher }}</p></div>
+          <div><span class="info-label">FIRST JOB START YEAR</span><p class="sc-bold-value">{{ screeningData.jobAnalysis.firstJobStartYear }}</p></div>
+        </div>
+        <div class="sc-grid-2" style="margin-top: 14px;">
+          <div><span class="info-label">LAST JOB END YEAR</span><p class="sc-bold-value">{{ screeningData.jobAnalysis.lastJobEndYear }}</p></div>
+          <div><span class="info-label">TOTAL JOBS COUNT</span><p class="sc-bold-value">{{ screeningData.jobAnalysis.totalJobsCount }}</p></div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode === 'interview'">
+      <div class="detail-header">
+        <h3 class="detail-title">Interview Analysis</h3>
+        <button class="view-resume-btn" (click)="onViewResume()">
+          <nz-icon nzType="eye" nzTheme="outline" />
+          View Resume
+        </button>
+      </div>
+      <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+
+      <div class="profile-card">
+        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
+        <h4 class="profile-name">{{ candidate.name }}</h4>
+        <p class="profile-role">{{ candidate.role }}</p>
+        <div class="score-row">
+          <div class="score-box"><span class="score-value">{{ interviewData.finalScore }}</span><span class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.experience }}</span><span class="score-label">Experience</span></div>
+        </div>
+        <div class="score-row" style="margin-top: 10px;">
+          <div class="score-box"><span class="score-value">{{ interviewData.education }}</span><span class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.keywords }}</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.growth }}</span><span class="score-label">Growth</span></div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Overall Score</div>
+      <div class="sc-card iv-score-card">
+        <svg viewBox="0 0 120 120" class="iv-gauge">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#e8ecf1" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10"
+            stroke-dasharray="314" [attr.stroke-dashoffset]="314 - (314 * interviewData.overallScore / 100)"
+            stroke-linecap="round" transform="rotate(-90 60 60)"/>
+          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{ interviewData.overallScore }}</text>
+          <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
+        </svg>
+      </div>
+
+      <div class="sc-section-title">Interview Details</div>
+      <div class="sc-card">
+        <div class="sc-grid-2">
+          <div>
+            <span class="info-label">Questions Attempted :</span>
+            <p class="sc-big-value">{{ interviewData.questionsAttempted }}</p>
+          </div>
+          <div>
+            <span class="info-label">Proctoring Violations</span>
+            <p class="sc-big-value red-text">{{ interviewData.proctoringViolations }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Proctoring Results</div>
+      <div class="sc-card" *ngFor="let p of interviewData.proctoringResults">
+        <div class="iv-proctor-row">
+          <div>
+            <div class="sc-bullet-list red"><span class="sc-bullet"></span> {{ p.issue }}</div>
+            <span class="iv-proctor-time">{{ p.time }}</span>
+          </div>
+          <div class="iv-proctor-img"></div>
+        </div>
+      </div>
+
+      <div class="sc-section-title">Question Wise Analysis</div>
+      <div class="iv-question" *ngFor="let q of interviewData.questions; let i = index">
+        <div class="iv-question-header" (click)="toggleQuestion(i)">
+          <span class="iv-question-title">Question {{ i + 1 }} :</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
+            [style.transform]="expandedQuestion === i ? 'rotate(180deg)' : 'none'"
+            style="transition: transform 0.2s;">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+        <p class="iv-question-text" *ngIf="expandedQuestion === i">{{ q.q }}</p>
+      </div>
+    </ng-container>
+
+    <!-- Action buttons only shown for candidates still in APPLIED or SCREENED stage -->
+    <div class="action-grid"
+      *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
+      <button class="action-btn primary" (click)="onAction('interview')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+        Move to Interview
+      </button>
+      <button class="action-btn success" (click)="onAction('hire')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
+        </svg>
+        Hire Candidate
+      </button>
+      <button class="action-btn outline" (click)="onAction('schedule')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        Schedule Interview
+      </button>
+      <button class="action-btn danger" (click)="onAction('reject')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>
+        </svg>
+        Reject Candidate
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #noSelection>
+  <div class="empty-detail">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    <p>Select a candidate to view details</p>
+  </div>
+</ng-template>
+
+<nz-modal
+  [(nzVisible)]="scheduleVisible"
+  nzTitle="Schedule Interview"
+  [nzWidth]="520"
+  (nzOnCancel)="cancelSchedule()"
+  [nzFooter]="scheduleFooter">
+
+  <ng-container *nzModalContent>
+    <div class="schedule-body">
+      <div class="schedule-candidate-info">
+        <div class="schedule-avatar" [style.background]="candidate?.avatarBg">{{ candidate?.initials }}</div>
+        <div>
+          <div class="schedule-name">{{ candidate?.name }}</div>
+          <div class="schedule-role">{{ candidate?.role }}</div>
+        </div>
+      </div>
+
+      <div class="schedule-section-label">Select Date</div>
+      <nz-calendar
+        [nzFullscreen]="false"
+        (nzSelectChange)="onDateSelect($event)"
+        [nzDisabledDate]="disabledDate">
+      </nz-calendar>
+
+      <div class="schedule-selected-date" *ngIf="selectedDate">
+        {{ selectedDate | date:'EEEE, MMMM d, y' }}
+      </div>
+
+      <div class="schedule-section-label" style="margin-top: 16px;">Select Time Slot</div>
+      <div class="time-slots-grid">
+        <button
+          class="time-slot"
+          *ngFor="let slot of timeSlots"
+          [class.active]="selectedTime === slot"
+          (click)="selectTime(slot)">
+          {{ formatDisplayTime(slot) }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #scheduleFooter>
+    <button nz-button (click)="cancelSchedule()">Cancel</button>
+    <button
+      nz-button
+      nzType="primary"
+      [disabled]="!selectedDate || !selectedTime"
+      (click)="confirmSchedule()">
+      Confirm Schedule
+    </button>
+  </ng-template>
+</nz-modal>

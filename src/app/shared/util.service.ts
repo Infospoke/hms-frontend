@@ -16,4 +16,11 @@ export class UtilService {
   clearQuery(): void {
     this.querySubject.next('');
   }
+
+   camelToNormal(str: string): string {
+    return str
+      .replace(/([A-Z])/g, ' $1')          
+      .replace(/^./, s => s.toUpperCase())   
+      .trim();
+  }
 }

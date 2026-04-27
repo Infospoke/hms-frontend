@@ -1,0 +1,88 @@
+<div class="intake-container">
+  <div class="pipeline-tabs">
+    <button
+      *ngFor="let tab of tabs"
+      class="tab-btn"
+      [class.active]="activeTab === tab.key"
+      (click)="setActiveTab(tab.key)">
+      {{ tab.label }}
+    </button>
+  </div>
+
+  <div class="intake-header">
+    <div class="intake-title-section">
+      <h2 class="intake-title">Application Intake</h2>
+      <p class="intake-subtitle">Click candidates, switch tabs, and move through the flow without leaving the pipeline</p>
+    </div>
+    <button class="add-applicant-btn" (click)="onAddApplicant()">
+      <span class="plus-icon">+</span> Applicant
+    </button>
+  </div>
+
+  <div class="search-row">
+    <div class="search-box">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+      </svg>
+      <input
+        type="text"
+        placeholder="Search candidate by name, role, location"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="applyFilter(candidates())" />
+    </div>
+    <nz-range-picker
+      [(ngModel)]="dateRange"
+      (ngModelChange)="applyFilter(candidates())"
+      nzFormat="dd-MM-yyyy"
+      class="date-range-picker">
+    </nz-range-picker>
+  </div>
+
+  <div class="candidates-list">
+    <div
+      class="candidate-card"
+      *ngFor="let candidate of filteredCandidates; trackBy: trackById"
+      [class.selected]="selectedCandidate?.id === candidate.id"
+      (click)="selectCandidate(candidate)">
+      <div class="card-top">
+        <div class="avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
+        <div class="card-info">
+          <div class="name-row">
+            <h3 class="candidate-name">{{ candidate.name }}</h3>
+            <span class="status-badge" [ngClass]="'badge-' + candidate.status.toLowerCase()">{{ candidate.status }}</span>
+          </div>
+          <p class="candidate-role">{{ candidate.role }} &middot; Applied on : {{ candidate.appliedDate }}</p>
+        </div>
+      </div>
+      <div class="skill-tags">
+        <span class="skill-tag" *ngFor="let skill of candidate.skills">{{ skill }}</span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-label">EXPERIENCE</span>
+          <span class="meta-value experience">{{ candidate.experience }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">SOURCE</span>
+          <span class="meta-value source">{{ candidate.source }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">LOCATION</span>
+          <span class="meta-value location">{{ candidate.location }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">STATUS</span>
+          <span class="meta-value status">{{ candidate.displayStatus }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">MATCH SCORE</span>
+          <span class="meta-value match-score">{{ candidate.matchScore }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredCandidates.length === 0">
+      <p>No candidates found in this stage.</p>
+    </div>
+  </div>
+</div>

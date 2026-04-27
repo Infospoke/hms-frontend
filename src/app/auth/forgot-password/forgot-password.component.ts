@@ -16,38 +16,32 @@ export class ForgotPasswordComponent {
   forgotForm: FormGroup;
   loading = signal(false);
   private router = inject(Router);
-  constructor(private fb: FormBuilder,  private authService: AuthService,
-  private notification: NotificationService,) {
+  constructor(private fb: FormBuilder, private authService: AuthService,
+    private notification: NotificationService,) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
   }
 
   onSubmit() {
+
     if (this.forgotForm.invalid) {
       this.forgotForm.markAllAsTouched();
       return;
     }
 
     this.loading.set(true);
-
-    const payload = {
-      email: this.forgotForm.value.email
-    };
-
-    this.authService.forgotPassword(payload).subscribe({
+    this.authService.forgotPassword(this.forgotForm.value.email).subscribe({
       next: (res: any) => {
         this.loading.set(false);
 
-   
-        this.notification.success(
-          res?.message || 'Reset link sent to your email'
-        );
-
-        
-        setTimeout(() => {
+        if (res?.responsecode == '00' && res?.message === 'New credentials sent to registered email') {
+         
           this.router.navigate(['/login']);
-        }, 2000);
+          
+        }
+
+
       },
 
       error: () => {

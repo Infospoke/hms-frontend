@@ -2,11 +2,9 @@ export const API = {
     AUTH : {
         LOGIN: '/hms/login/user-login',
         PROFILE:`/hms/login/profile`,
-        REFRESH: '/auth/refresh',
-        LOGOUT: '/auth/logout',
         FORGOT_PASSWORD: '/hms/login/forgot-password',
-        RESET_PASSWORD: '/auth/reset-password',
-        FORCED_LOGOUT: '/user/forceful-logout'
+        CHANGE_PASSWORD:'/hms/login/change-password',
+        REFRESH:'/hms/login/refresh'
     },
 
     MODULES : {

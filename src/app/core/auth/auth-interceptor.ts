@@ -13,7 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (req.url.includes(API.AUTH.LOGIN) || req.url.includes(API.AUTH.REFRESH)) {
+  if (req.url.includes(API.AUTH.LOGIN) || req.url.includes(API.AUTH.REFRESH) || req.url.includes(API.AUTH.FORGOT_PASSWORD)) {
     return next(req.clone({
       setHeaders: {
         'X-Channel': 'web'

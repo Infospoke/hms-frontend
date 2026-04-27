@@ -112,11 +112,12 @@ export class AddApplicantComponent implements OnInit {
       );
 
       let res:any= await this.jobApi.addApplicant(formData);
-      if(res && res?.responseCode==1){
+      if(res && res?.responseCode=='1'){
         this.applicationForm.reset();
         this.additionalFileName = '';
         this.resumeFileName = '';
         this.notificationService.success(res?.responseMessage || 'Application submitted successfully');
+        this.handleResume(res?.id);
         this.handleClose();
       }else{
         this.notificationService.error(res?.responseMessage || 'Failed to submit application. Please try again.');
@@ -131,6 +132,19 @@ export class AddApplicantComponent implements OnInit {
   }
 
   handleClose(){
-    this.router.navigateByUrl('/jobs/job-details',{state:{activeTab:'applicants'}})
+    this.router.navigateByUrl('/supply/jobs/job-details',{state:{activeTab:'applicants'}})
+  }
+
+  handleResume(id:any){
+    let payload={
+      batch_id: 1,
+      resume_batch:[id]
+    }
+    this.jobApi.resumeAnalysis(payload).then((res:any)=>{
+      
+    })
+    .catch((error:any)=>{
+
+    })
   }
 }

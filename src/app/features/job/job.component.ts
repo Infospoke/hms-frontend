@@ -41,8 +41,8 @@ export class JobComponent implements OnInit, OnChanges {
   async getJobs() {
     try {
       const res: any = await this.jobApi.getJobsList(true);
-      this.jobsListData = res;
-      this.selectedJobId = res[0]?.jobId;
+      this.jobsListData = res?.data;
+      this.selectedJobId = res?.data?.[0]?.jobId;
       this.handleSelectedJob(this.selectedJobId);
     } catch (error) {
       console.error(error);

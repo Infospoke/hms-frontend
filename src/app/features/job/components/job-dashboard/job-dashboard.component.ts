@@ -28,10 +28,10 @@ export class JobDashboardComponent implements OnInit {
     try {
       const res: any = await this.jobApi.getJobDashboardCount();
       this.list = [
-        { title: 'Open Jobs', count: res.openJobs, icon: 'fa-solid fa-briefcase' },
-        { title: 'Candidates', count: res.candidates, icon: 'fa-solid fa-user' },
-        { title: 'Interviews', count: res.interviews, icon: 'fa-solid fa-calendar-check' },
-        { title: 'Offers Accepted', count: res.offersAccepted, icon: 'fa-solid fa-circle-check' }
+        { title: 'Open Jobs', count: res?.data?.openJobs, icon: 'fa-solid fa-briefcase' },
+        { title: 'Candidates', count: res?.data?.candidates, icon: 'fa-solid fa-user' },
+        { title: 'Interviews', count: res?.data?.interviews, icon: 'fa-solid fa-calendar-check' },
+        { title: 'Offers Accepted', count: res?.data.offersAccepted, icon: 'fa-solid fa-circle-check' }
       ]
     }
     catch (error: any) {
@@ -44,9 +44,9 @@ export class JobDashboardComponent implements OnInit {
     let isOpen = true;
     try {
       const res: any = await this.jobApi.getJobsList(isOpen);
-      console.log(res);
-      this.jobsListData = res;
-      this.selectedJobId = res?.[0]?.jobId;
+
+      this.jobsListData = res?.data;
+      this.selectedJobId = res?.data?.[0]?.jobId;
       this.handleJobSelection();
     }
     catch (error) {
@@ -58,7 +58,7 @@ export class JobDashboardComponent implements OnInit {
   async getActityvityLogs(){
     try {
       const res: any = await this.jobApi.getActivityLogs();
-      this.activityList = res;
+      this.activityList = res?.data;
       console.log(this.activityList);
     }
     catch (error) {
@@ -79,12 +79,12 @@ export class JobDashboardComponent implements OnInit {
     try {
       const res: any = await this.jobApi.getJobDetailsById(this.selectedJobId);
       this.stages = [
-        { id: 1, title: "Applied", count: res?.applicantCount, total: res?.applicantCount },
-        { id: 2, title: "Screened", count: res?.resumeCount, total: res?.applicantCount },
-        { id: 3, title: "Shortlisted", count: res?.shortlisted, total: res?.applicantCount },
-        { id: 4, title: "Interview", count: res?.interviewCount, total: res?.applicantCount },
-        { id: 5, title: "Offer", count: res?.offerReleased, total: res?.applicantCount },
-        { id: 6, title: "Hired", count: res?.hiredCount, total: res?.applicantCount },
+        { id: 1, title: "Applied", count: res?.data?.applicantCount, total: res?.data?.applicantCount },
+        { id: 2, title: "Screened", count: res?.data?.resumeCount, total: res?.data?.applicantCount },
+        { id: 3, title: "Shortlisted", count: res?.data?.shortlisted, total: res?.data?.applicantCount },
+        { id: 4, title: "Interview", count: res?.data?.interviewCount, total: res?.data?.applicantCount },
+        { id: 5, title: "Offer", count: res?.data?.offerReleased, total: res?.data?.applicantCount },
+        { id: 6, title: "Hired", count: res?.data?.hiredCount, total: res?.data?.applicantCount },
       ]
     }
     catch (error) {

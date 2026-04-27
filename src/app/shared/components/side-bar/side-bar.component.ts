@@ -33,38 +33,34 @@ export class SideBarComponent implements OnInit {
   activePath: string = '';
 
   navItems: NavItem[] = [
-     {
-      id: 'users',
-      label: 'Users',
-      icon: 'fa-solid fa-users',
 
-      children: [
-        { label: 'Role & Permissions', icon: 'fa-solid fa-key', path: '/users/user-onboard-roles/role-permissions' },
-        { label: 'Users', icon: 'fa-solid fa-user-shield', path: '/users/user-onboard-roles' },
-      ],
-    },
     {
       id: 'demand',
       label: 'Demand',
       icon: 'fa-solid fa-briefcase',
       children: [
-        { label: 'My JDs', icon: 'fa-regular fa-file-lines', path: '/demand/my-jds' },
-        { label: 'SRs', icon: 'fa-regular fa-clipboard', path: '/demand/create?step=0' },
+        { label: "My SR's", icon: 'fa-solid fa-file-contract', path: '/demand/my-jds' },
       ],
     },
     {
       id: 'supply',
       label: 'Supply',
-      icon: 'fa-solid fa-boxes-stacked',
+      icon: 'fa-solid fa-layer-group',
       children: [
-        { label: 'Dashboard', icon: 'fa-solid fa-suitcase', path: '/supply/jobs/dashboard' },
-        { label: 'Jobs', icon: 'fa-solid fa-suitcase', path: '/supply/jobs/job-details' },
-        { label: 'Kanban', icon: 'fa-solid fa-table-columns', path: '/supply/kanban' },
-
-
+        { label: 'Hiring Dashboard', icon: 'fa-solid fa-chart-pie', path: '/supply/jobs/dashboard' },
+        { label: 'Jobs Details',     icon: 'fa-solid fa-file-lines',    path: '/supply/jobs/job-details' },
+        { label: 'Kanban',           icon: 'fa-solid fa-table-columns', path: '/supply/kanban' },
       ],
     },
-   
+    {
+      id: 'Setting & Admin',
+      label: 'Setting & Admin',
+      icon: 'fa-solid fa-gear',
+      children: [
+        { label: 'Users',             icon: 'fa-solid fa-users',    path: '/users/user-onboard-roles' },
+        { label: 'Role & Permissions', icon: 'fa-solid fa-shield-halved', path: '/users/user-onboard-roles/role-permissions' },
+      ],
+    },
 
   ];
 
@@ -128,6 +124,7 @@ export class SideBarComponent implements OnInit {
   }
 
   isActive(path: string): boolean {
-    return !!path && this.activePath === path;
+    if(path==='/demand/my-jds' && this.activePath==='/demand/create?step=0')return true;
+    return !!path && this.activePath.startsWith(path);
   }
 }

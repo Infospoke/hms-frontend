@@ -199,13 +199,13 @@ export class AddJobComponent implements OnInit {
 
         let res: any = await apiCall;
         console.log(res);
-        if (res?.responseCode == 1) {
+        if (res?.responsecode == '00') {
           // this.loaderService.hide();
-          this.notificationService.success(res?.responseMessage || `Job ${this.editfield ? 'updated' : 'added'} successfully`);
+          this.notificationService.success(res?.message || `Job ${this.editfield ? 'updated' : 'added'} successfully`);
           this.handleClose();
         }
         else {
-          this.notificationService.error(res?.responseMessage)
+          this.notificationService.error(res?.message)
         }
       }
       catch (error: any) {
@@ -284,7 +284,7 @@ export class AddJobComponent implements OnInit {
   async handleGetAllSkills() {
     try {
       const res: any = await this.jobApi.getAllSkills();
-      this.jobSkills = res;
+      this.jobSkills = res?.data;
     }
     catch (error: any) {
     }

@@ -6,11 +6,13 @@ import { UserService } from '../../servics/user-service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 
-
 function alphabetsOnly(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    return /^[a-zA-Z\s]+$/.test(control.value) ? null : { alphabetsOnly: true };
+    const value = control.value;
+    if (!value) return null;
+
+    const regex = /^[A-Za-z]+$/
+    return regex.test(value) ? null : { alphabetsOnly: true };
   };
 }
 

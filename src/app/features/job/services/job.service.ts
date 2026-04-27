@@ -30,15 +30,15 @@ export class JobService {
 
 
   async getJobsList(isOpen: boolean) {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_ALL_JOBS(isOpen))
     );
-    this.jobsListSignal.set(res);
+    this.jobsListSignal.set(res?.data);
     return res;
   }
 
   async getJobDashboardCount() {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_DASHBOARD_DATA)
     );
     this.dashboardSignal.set(res);
@@ -86,23 +86,23 @@ export class JobService {
   }
 
   async getApplicants(status: any, id: any) {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_ALL_APPLICANTS(), {
         filter: status,
         jobId: id
       })
     );
-    this.applicantsSignal.set(res);
+    this.applicantsSignal.set(res?.data);
     return res;
   }
 
   async getCandidateById(candidateId: any) {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.aiGet(API.JOBS.GET_CANDIDATE_BY_ID(), {
         applicationId: candidateId
       })
     );
-    this.candidateSignal.set(res);
+    this.candidateSignal.set(res?.data);
     return res;
   }
 
@@ -112,11 +112,11 @@ export class JobService {
     );
   }
   async getApplicantById(applicantId: any) {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_APPLICANT_BY_ID(applicantId))
     );
-    this.applicantByIdSignal.set(res);
-    return res;
+    this.applicantByIdSignal.set(res?.data);
+    return res?.data;
   }
 
   async getAllAnalysisDetails() {
@@ -162,5 +162,21 @@ export class JobService {
     return await firstValueFrom(
       this.api.hrmsdelete(API.JOBS.DELETE_JOB(jobId))
     );
+  }
+  async resumeAnalysis(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.JOBS.ANALYSIS_RESUME,payload)
+    );
+  }
+
+   async exportByJobId(jobId:any) {
+    return await firstValueFrom(
+      this.api.aiGet(API.USERS.JOB_BY_EXPORT(jobId))
+    );
+  }
+  async exportByCandidateId(id:any) {
+    return await firstValueFrom(
+      this.api.aiGet(API.USERS.EXPORT_BY_APPLICANT(id))
+    )
   }
 }

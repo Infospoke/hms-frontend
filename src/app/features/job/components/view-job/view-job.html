@@ -60,7 +60,7 @@
 
   <div>
     <span class="label">JOB TITLE</span>
-    <p class="info">{{job.jobTitle}}</p>
+    <p class="info">{{job?.jobTitle}}</p>
   </div>
 
   <div></div>
@@ -78,7 +78,7 @@
         <span class="chip" *ngFor="let skill of job?.skills">
           {{skill?.skillName}}
         </span>
-        <span *ngIf="!job?.skills || job?.skills.length === 0">-</span>
+        <span *ngIf="!job?.skills || job?.skills?.length === 0">-</span>
       </div>
     </div>
 

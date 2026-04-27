@@ -3,13 +3,25 @@
 
     <ng-container *ngIf="viewMode === 'default'">
       <div class="detail-header">
-        <h3 class="detail-title">Candidate Detail</h3>
-        <button class="view-resume-btn" (click)="onViewResume()">
-          <nz-icon nzType="eye" nzTheme="outline" />
-          View Resume
-        </button>
+        <div class="heading-group">
+          <h3 class="detail-title">Candidate Detail</h3>
+         <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+        </div>
+        <div class="header-actions">
+          <button class="view-resume-btn" (click)="onViewResume()">
+            <nz-icon nzType="eye" nzTheme="outline" />
+            View Resume
+          </button>
+          <button class="export-btn" (click)="handleExport()" [class.loading]="isExporting">
+            <span class="export-btn-inner">
+              <nz-icon *ngIf="!isExporting" nzType="download" nzTheme="outline" />
+              <nz-icon *ngIf="isExporting" nzType="loading" nzTheme="outline" class="spin" />
+              <span>{{ isExporting ? 'Exporting…' : 'Export' }}</span>
+            </span>
+          </button>
+        </div>
       </div>
-      <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+     
 
       <div class="profile-card">
         <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>

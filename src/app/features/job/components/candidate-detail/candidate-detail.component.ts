@@ -19,6 +19,7 @@ export class CandidateDetailComponent implements OnChanges {
   @Input() candidate: any = null;
   @Output() action = new EventEmitter<{ type: string; candidate: any; payload?: any }>();
   private job = inject(JobService);
+  isExporting = false;
   private notification = inject(NotificationService);
   viewMode: 'default' | 'screening' | 'interview' = 'default';
   expandedQuestion: number | null = null;
@@ -61,6 +62,14 @@ export class CandidateDetailComponent implements OnChanges {
 
   onViewResume(): void {
     if (this.candidate) this.action.emit({ type: 'viewResume', candidate: this.candidate });
+  }
+
+  handleExport(){
+    this.job.exportByCandidateId(this.candidate?.id).then((res:any)=>{
+
+    }).catch((error:any)=>{
+      console.log()
+    })
   }
 
   onAction(type: string): void {

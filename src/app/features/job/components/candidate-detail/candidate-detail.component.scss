@@ -28,16 +28,24 @@
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb { background: #e0e5ec; border-radius: 4px; }
 }
-
+ 
 .detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
   margin-bottom: 4px;
 }
-
-.detail-title { font-size: 16px; font-weight: 700; color: #1a202c; margin: 0; }
-
+.detail-title{
+  font-size: 16px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // flex-direction: column;
+  gap: 8px;
+}
+ 
 .view-resume-btn {
   display: inline-flex;
   align-items: center;
@@ -51,7 +59,45 @@
   padding: 0;
   &:hover { color: #2563eb; }
 }
-
+ 
+/* ── Export button ── */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.28);
+ 
+  &:hover { opacity: 0.88; }
+  &:active { transform: scale(0.96); }
+ 
+  &.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+ 
+.export-btn-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+ 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+ 
+.spin { display: inline-block; animation: spin 0.8s linear infinite; }
 .detail-subtitle { font-size: 11px; color: #94a3b8; margin: 0 0 14px; }
 
 .profile-card {

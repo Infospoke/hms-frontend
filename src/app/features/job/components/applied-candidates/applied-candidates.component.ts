@@ -48,7 +48,9 @@ export class AppliedCandidatesComponent implements OnChanges {
 
   candidates = computed(() => {
     const applicants = this.allApplicants();
+   
     const analysisList = this.allAnalysis();
+    
     if (!applicants?.length) return [];
 
     return applicants.map((app: any) => {
@@ -248,6 +250,14 @@ export class AppliedCandidatesComponent implements OnChanges {
   }
 
   onAddApplicant(): void {
-    this.router.navigate(['/jobs/add-applicant']);
+    this.router.navigate(['/supply/jobs/add-applicant']);
+  }
+  onExportAll(){
+    this.job.exportByJobId(this.jobId).then((res:any)=>{
+
+    })
+    .catch((error:any)=>{
+      
+    })
   }
 }

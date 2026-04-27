@@ -11,25 +11,26 @@ export const API = {
         GET_ALL : '/user/modules',
     },
     JOBS:{
-       GET_ALL_JOBS:(id:any)=>`/jobs/get-all-jobs/${id}`,
-       GET_DASHBOARD_DATA:"/jobs/get-all-jobs-dashboard-counts",
-       GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`
-       ,ADD_JOB:`/jobs/add-new-job`,
-       UPDATE_JOB:`/jobs/update-job-details` ,
-       GET_ALL_SKILLS:`/jobs/get-all-skills`,
-       GET_ACTIVITY_LOGS:`/job-overview/activity-feed`,
+       GET_ALL_JOBS:(id:any)=>`/hms/jobs/get-all-jobs/${id}`,
+       GET_DASHBOARD_DATA:"/hms/jobs/get-all-jobs-dashboard-counts",
+       GET_JOB_BY_ID:(id:any)=>`/hms/jobs/get-job-details-by-id/${id}`
+       ,ADD_JOB:`/hms/jobs/add-new-job`,
+       UPDATE_JOB:`/hms/jobs/update-job-details` ,
+       GET_ALL_SKILLS:`/hms/jobs/get-all-skills`,
+       GET_ACTIVITY_LOGS:`/hms/job-overview/activity-feed`,
         ADD_APPLICANT:`/job/application`,
        GET_JOBS_BY_COUNTRY:(country:any)=>`/job/get-all-jobs-by-country?jobCountry=${country}`,
     //    GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`,
-       GET_ALL_APPLICANTS:() => `/jobs/get-all-jobs-applicants`,
-       GET_CANDIDATE_BY_ID:() => `/jobs/get-candidate-by-id`,
-       GET_APPLICANT_BY_ID:(id:any) => `/jobs/view-applicant-by-id/${id}`,
+       GET_ALL_APPLICANTS:() => `/hms/jobs/get-all-jobs-applicants`,
+       GET_CANDIDATE_BY_ID:() => `/hms/jobs/get-candidate-by-id`,
+       GET_APPLICANT_BY_ID:(id:any) => `/hms/jobs/view-applicant-by-id/${id}`,
        GET_ALL_ANALYSIS : '/api/resume/analysis',
        MOVE_TO_INTERVIEW: `/api/interview/create-interview-session`,
        UPDATE_APPLICANT_BY_ID:'/api/interview/update-final-candidate-decision',
        SCHEDULE_INTERVIEW : '/api/interview/admin-schedule-interview',
-       DELETE_JOB :(id:any) => `/jobs/delete-job-by-id/${id}`,
+       DELETE_JOB :(id:any) => `/hms/jobs/delete-job-by-id/${id}`,
        VIEW_RESUME : (type:any, user:any, action:any) => `/job/download/${type}?appId=${user}&action=${action}`,
+       ANALYSIS_RESUME:`/api/resume/analyze/batch`
     },
     USERS:{
         CREATE:'/hms/user/create',
@@ -44,6 +45,8 @@ export const API = {
         ROLES_BY_DEPT:(departmentId:any)=>`/hms/configurations/roles/${departmentId}`,
         EMP_TYPES:`/hms/configurations/employment-types`,
         USER_TYPES:`/hms/configurations/user-types`,
+        JOB_BY_EXPORT:(jobId:any)=>`/api/admin/generate-applicants-report/${jobId}`,
+        EXPORT_BY_APPLICANT:(id:any)=>`/api/admin/report/${id}`
     },
     ROLES:{
         ADD_ROLE:`/hms/role/add-role`,

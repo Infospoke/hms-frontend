@@ -115,5 +115,11 @@ export class ApiService {
     return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body, { headers });
   }
 
-
+  
+  aiGetBlob(endpoint: string, params?: any): Observable<Blob> {
+    return this.http.get(`${this.aiBaseUrl}${endpoint}`, {
+      params,
+      responseType: 'blob'
+    });
+  }
 }

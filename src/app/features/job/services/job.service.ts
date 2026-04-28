@@ -46,10 +46,10 @@ export class JobService {
   }
 
   async getJobDetailsById(jobId: any) {
-    const res = await firstValueFrom(
+    const res:any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_JOB_BY_ID(jobId))
     );
-    this.jobDetailsSignal.set(res);
+    this.jobDetailsSignal.set(res?.data);
     return res;
   }
 
@@ -171,12 +171,12 @@ export class JobService {
 
    async exportByJobId(jobId:any) {
     return await firstValueFrom(
-      this.api.aiGet(API.USERS.JOB_BY_EXPORT(jobId))
+      this.api.aiGetBlob(API.USERS.JOB_BY_EXPORT(jobId))
     );
   }
   async exportByCandidateId(id:any) {
     return await firstValueFrom(
-      this.api.aiGet(API.USERS.EXPORT_BY_APPLICANT(id))
+      this.api.aiGetBlob(API.USERS.EXPORT_BY_APPLICANT(id))
     )
   }
 }

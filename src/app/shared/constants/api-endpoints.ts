@@ -21,7 +21,7 @@ export const API = {
         ADD_APPLICANT:`/job/application`,
        GET_JOBS_BY_COUNTRY:(country:any)=>`/job/get-all-jobs-by-country?jobCountry=${country}`,
     //    GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`,
-       GET_ALL_APPLICANTS:() => `/hms/jobs/get-all-jobs-applicants`,
+       GET_ALL_APPLICANTS:() => `/hms/jobs/get-all-jobs-applicant`,
        GET_CANDIDATE_BY_ID:() => `/hms/jobs/get-candidate-by-id`,
        GET_APPLICANT_BY_ID:(id:any) => `/hms/jobs/view-applicant-by-id/${id}`,
        GET_ALL_ANALYSIS : '/api/resume/analysis',

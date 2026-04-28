@@ -56,7 +56,7 @@ export class JobComponent implements OnInit, OnChanges {
 
   handleJobAction(event: { type: 'edit' | 'delete'; data: any }) {
     if (event.type === 'edit') {
-      this.router.navigate(['/jobs/edit-job', event.data]);
+      this.router.navigate(['/supply/jobs/edit-job', event.data]);
     } else if (event.type === 'delete') {
       this.deleteJob(event.data);
     }

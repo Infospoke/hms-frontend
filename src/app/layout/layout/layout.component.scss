@@ -75,7 +75,7 @@
 /* Sidebar — fixed, never scrolls */
 .sidebar {
   flex-shrink: 0;          // ← was missing: prevents sidebar from squishing
-  width: 200px;
+  width: 170px;
   background: #f8fafc;
   border-right: 1px solid #e2e8f0;
   padding: 10px;

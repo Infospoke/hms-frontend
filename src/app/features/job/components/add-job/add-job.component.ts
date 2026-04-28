@@ -80,18 +80,18 @@ export class AddJobComponent implements OnInit {
   skillExp: any[] = [];
   private route = inject(ActivatedRoute);
   constructor(private fb: FormBuilder, private router: Router) {
-    
+
   }
 
-  editJobId : any;
+  editJobId: any;
   ngOnInit(): void {
 
     const id = this.route.snapshot.paramMap.get('id');
     this.editJobId = id;
-  if (id) {
-    this.editfield = true;
-    this.getJobById(id);
-  }
+    if (id) {
+      this.editfield = true;
+      this.getJobById(id);
+    }
 
     this.addJobForm = this.fb.group({
       jobCode: ['', [Validators.required, Validators.maxLength(50)]],
@@ -126,28 +126,29 @@ export class AddJobComponent implements OnInit {
     try {
       // this.loaderService.show();
       let data: any = await this.jobApi.getJobDetailsById(id);
-      this.originalData = data;
+      console.log(data);
+      this.originalData = data?.data;
       this.addJobForm.patchValue({
-        jobCode: data.jobCode,
-        jobTitle: data.jobTitle,
-        jobType: data.jobType,
-        jobMode: data.jobMode,
+        jobCode: data?.data.jobCode,
+        jobTitle: data?.data.jobTitle,
+        jobType: data?.data.jobType,
+        jobMode: data?.data.jobMode,
         //experience: data.experience || data?.jobExperince,
-        jobRequirements: data.jobRequirements,
-        jobDescription: data.jobDescription,
-        qualification: data.qualification,
+        jobRequirements: data?.data.jobRequirements,
+        jobDescription: data?.data.jobDescription,
+        qualification: data?.data.qualification,
         // skills: data.skills,
-        jobCountry: data?.jobCountry,
-        jobLevel: data.jobLevel,
-        jobInfo: data.jobInfo,
-        jobLocation: data.jobLocation,
-        endExp : this.parseRange(data.experience).max,
-        startExp : this.parseRange(data.experience).min,
+        jobCountry: data?.data?.jobCountry,
+        jobLevel: data?.data.jobLevel,
+        jobInfo: data?.data.jobInfo,
+        jobLocation: data?.data.jobLocation,
+        endExp: this.parseRange(data?.data.experience).max,
+        startExp: this.parseRange(data?.data.experience).min,
       })
-      if (data && data?.skills?.length) {
+      if (data?.data && data?.data?.skills?.length) {
         this.skills.clear();
-
-        data?.skills?.forEach((skill: any) => {
+        console.log(data?.data?.skills)
+        data?.data?.skills?.forEach((skill: any) => {
           const group = this.fb.group({
             skillId: [skill.skillId, Validators.required],
             categoryId: [skill.categoryId, Validators.required],
@@ -172,7 +173,7 @@ export class AddJobComponent implements OnInit {
   }
 
   async addJob() {
-    if(this.editfield && this.editJobId) { 
+    if (this.editfield && this.editJobId) {
       this.jobId = this.editJobId;
     }
     if (this.addJobForm.valid) {
@@ -181,12 +182,12 @@ export class AddJobComponent implements OnInit {
 
         return;
       }
-      
+
       let obj = {
         ...data,
         experience: this.addJobForm.get('startExp')?.value + "-" + this.addJobForm.get('endExp')?.value,
         createdBy: this.userName,
-        ...(this.editfield && { jobId: this.jobId, updatedBy: this.userName, isOpen : true }),
+        ...(this.editfield && { jobId: this.jobId, updatedBy: this.userName, isOpen: true }),
 
       }
       obj.createdBy = this.userName;
@@ -278,9 +279,9 @@ export class AddJobComponent implements OnInit {
   }
 
   parseRange(str: string) {
-  const [min, max] = str.split('-').map(Number);
-  return { min, max };
-}
+    const [min, max] = str.split('-').map(Number);
+    return { min, max };
+  }
   async handleGetAllSkills() {
     try {
       const res: any = await this.jobApi.getAllSkills();
@@ -334,6 +335,6 @@ export class AddJobComponent implements OnInit {
   }
 
   handleClose() {
-    this.router.navigateByUrl('/jobs/job-details');
+    this.router.navigateByUrl('/supply/jobs/job-details');
   }
 }

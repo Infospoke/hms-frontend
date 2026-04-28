@@ -254,7 +254,15 @@ export class AppliedCandidatesComponent implements OnChanges {
   }
   onExportAll(){
     this.job.exportByJobId(this.jobId).then((res:any)=>{
+      const blob = new Blob([res], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
 
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'candidate.pdf';
+      a.click();
+
+      URL.revokeObjectURL(url);
     })
     .catch((error:any)=>{
       

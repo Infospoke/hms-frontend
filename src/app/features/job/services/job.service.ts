@@ -139,7 +139,7 @@ export class JobService {
 
   async updateApplicantStatus(data: any) {
     return await firstValueFrom(
-      this.api.aiPut(API.JOBS.UPDATE_APPLICANT_BY_ID, data)
+      this.api.aiPost(API.JOBS.UPDATE_APPLICANT_BY_ID, data)
     );
   }
 

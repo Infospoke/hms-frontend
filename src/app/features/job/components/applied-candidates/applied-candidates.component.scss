@@ -4,8 +4,8 @@
 }
 .buttons{
   display: flex;
-  flex-direction: column;
-  gap:8px;
+  // flex-direction: column;
+  gap:4px;
 }
 .intake-container {
   font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -154,13 +154,15 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  // padding:20px 40px;
+  padding-bottom: 10px;
 }
 
 .candidate-card {
   background: #fff;
   border: 1.5px solid #e8ecf1;
   border-radius: 12px;
-  padding: 14px;
+  padding: 14px 20px;
   cursor: pointer;
   transition: box-shadow 0.2s, border-color 0.2s;
 

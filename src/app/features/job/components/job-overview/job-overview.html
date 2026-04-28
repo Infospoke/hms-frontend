@@ -2,8 +2,10 @@
   <div class="top-bar">
     <div class="tabs-div">
       <div class="tabs">
-        <button class="tab" [class.active]="activeTab === 'all-jobs'" (click)="handleTab('all-jobs')">Job Overview</button>
-        <button class="tab" [class.active]="activeTab === 'applicants'" (click)="handleTab('applicants')">Applicants</button>
+        <button class="tab" [class.active]="activeTab === 'all-jobs'" (click)="handleTab('all-jobs')">Job
+          Overview</button>
+        <button class="tab" [class.active]="activeTab === 'applicants'"
+          (click)="handleTab('applicants')">Applicants</button>
       </div>
     </div>
     <div class="btn-div">
@@ -21,9 +23,7 @@
         </button>
       </div>
       <div class="all-jobs">
-        <app-job
-          [filteredJobs]="filteredJobsList"
-          (selectedJobIdChange)="handleSelectedJob($event)" />
+        <app-job [filteredJobs]="filteredJobsList" (selectedJobIdChange)="handleSelectedJob($event)" />
       </div>
     </div>
 
@@ -38,80 +38,108 @@
 
       <div class="applicants-layout" *ngIf="activeTab === 'applicants'">
         <div class="applicants-intake-scroll">
-          <app-applied-candidates
-            [jobId]="selectedJobId"
-            (statusSelected)="getStatus($event)"
+          <app-applied-candidates [jobId]="selectedJobId" (statusSelected)="getStatus($event)"
             (candidateSelected)="onCandidateSelected($event)" />
         </div>
         <div class="applicants-detail-sticky">
-          <app-candidate-detail
-            [candidate]="selectedCandidateForDetail"
-            (action)="handleCandidateAction($event)" />
+          <app-candidate-detail [candidate]="selectedCandidateForDetail" (action)="handleCandidateAction($event)" />
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<nz-modal
-  [(nzVisible)]="isVisible"
-  nzTitle="Filters"
-  (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleApply()"
-  [nzFooter]="footerTpl">
+<!-- Filter popup overlay -->
+<div class="popup-overlay" *ngIf="isVisible" (click)="handleCancel()"></div>
 
-  <ng-container *nzModalContent>
-    <div class="filters-container">
-      <div class="filter-group" *ngFor="let key of (filtersData | keyvalue)">
+<div class="popup-modal" *ngIf="isVisible">
 
-        <!-- Accordion heading — click to expand / collapse -->
-        <div class="filter-heading" (click)="toggleFilterSection(filterKey(key.key))">
-          <span>{{ util.camelToNormal(filterKey(key.key)) }}</span>
-          <span class="filter-chevron" [class.rotated]="expandedFilters[filterKey(key.key)]">
-            &#8964;
+  <!-- HEADER -->
+  <div class="popup-header">
+    <span class="popup-title">Filter by</span>
+    <button class="popup-close" (click)="handleCancel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- BODY: 3 columns -->
+  <div class="filter-modal-body">
+
+    <!-- LEFT -->
+    <div class="filter-sections">
+      <div class="filter-section-tab"
+        *ngFor="let key of (filtersData | keyvalue)"
+        [class.active]="activeFilterSection === filterKey(key.key)"
+        (click)="activeFilterSection = filterKey(key.key)">
+        {{ util.camelToNormal(filterKey(key.key)) }}
+      </div>
+     
+    </div>
+
+    <!-- MIDDLE -->
+    <div class="filter-options-col">
+      <ng-container *ngFor="let key of (filtersData | keyvalue)">
+        <ng-container *ngIf="activeFilterSection === filterKey(key.key)">
+          <label class="filter-checkbox-row" *ngFor="let val of key.value"
+            (click)="onCheckboxChange(filterKey(key.key), val, !selectedFilters[filterKey(key.key)]?.[val])">
+            <span class="check-box" [class.checked]="selectedFilters[filterKey(key.key)]?.[val]">
+              <svg *ngIf="selectedFilters[filterKey(key.key)]?.[val]"
+                width="10" height="10" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="check-label">{{ val }}</span>
+          </label>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="filter-chips-col">
+      <div class="chips-summary" *ngIf="tempActiveChips.length > 0">
+        <span class="chips-count-label">{{ tempActiveChips.length }} Filters Selected</span>
+        <div class="chips-grid">
+          <span class="filter-chip" *ngFor="let chip of tempActiveChips">
+            {{ chip.label }}
+            <span class="chip-remove" (click)="removeTempChip(chip.key)">×</span>
           </span>
         </div>
-
-        <!-- Accordion body — shown only when expanded -->
-        <div class="filter-body" *ngIf="expandedFilters[filterKey(key.key)]">
-          <label nz-checkbox
-            *ngFor="let val of key.value"
-            [ngModel]="selectedFilters[filterKey(key.key)]?.[val] || false"
-            (ngModelChange)="onCheckboxChange(filterKey(key.key), val, $event)">
-            {{ val }}
-          </label>
-        </div>
-
+      </div>
+      <div class="chips-empty" *ngIf="tempActiveChips.length === 0">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        <span>No filters applied</span>
       </div>
     </div>
-  </ng-container>
 
-  <ng-template #footerTpl>
-    <button nz-button (click)="handleCancel()">Cancel</button>
-    <button nz-button (click)="handleReset()">Reset</button>
-    <button nz-button nzType="primary" (click)="handleApply()">Apply</button>
-  </ng-template>
-</nz-modal>
+  </div>
 
+  <!-- FOOTER -->
+  <div class="popup-footer">
+    <div class="reset " (click)="handleReset()">
+      <button class="btn-filter-cancel">Reset </button>
+    </div>
+    <div class="button-actiosn">
+      <button class="btn-filter-cancel" (click)="handleCancel()">Cancel</button>
+    <button class="btn-filter-apply" (click)="handleApply()">Apply</button>
+    </div>
+  </div>
 
-<nz-modal
-  [(nzVisible)]="isPdfVisible"
-  nzTitle="Preview"
-  [nzFooter]="null"
-  nzWidth="80%"
-  nzClassName="pdf-preview-modal"
-  (nzOnCancel)="isPdfVisible = false">
+</div>
+<nz-modal [(nzVisible)]="isPdfVisible" nzTitle="Preview" [nzFooter]="null" nzWidth="80%" [nzCentered]="true"
+  nzClassName="pdf-preview-modal" (nzOnCancel)="isPdfVisible = false">
 
   <ng-container *nzModalContent>
     <div *ngIf="!pdfUrl" style="text-align:center; padding:20px;">
       Loading PDF...
     </div>
 
-    <iframe
-      *ngIf="pdfUrl"
-      [attr.src]="pdfUrl"
-      width="100%"
-      style="height: 75vh; border: none; display: block;">
+    <iframe *ngIf="pdfUrl" [attr.src]="pdfUrl" width="100%" style="height: 75vh; border: none; display: block;">
     </iframe>
   </ng-container>
 

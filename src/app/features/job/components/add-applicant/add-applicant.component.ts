@@ -96,7 +96,8 @@ export class AddApplicantComponent implements OnInit {
         jobTitle:this.selectedJob?.jobTitle,
         location: this.selectedJob?.jobLocation,
         privacyEnabled:true,
-        contactMeEnable:true
+        contactMeEnable:true,
+        referral:true,
       }
        if (this.applicationForm.value.resume) {
         formData.append('cv', this.applicationForm.value.resume);

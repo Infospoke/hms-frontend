@@ -1,51 +1,194 @@
 <div class="kanban-page">
 
-  <!-- TOP FILTER BAR -->
   <div class="filter-bar">
     <div class="filter-left">
-      <button class="btn-outline">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+
+
+      <button class="btn-outline" (click)="openFilterPanel()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
         Filter
+        <span class="filter-badge" *ngIf="appliedFilterCount > 0">{{ appliedFilterCount }}</span>
       </button>
-      <button class="btn-outline">
-        JR: QAT
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
+
+      <!-- Applied filter chips -->
+      <ng-container *ngFor="let chip of tempActiveChips">
+        <!-- shown after apply, rendered from applied state -->
+      </ng-container>
+
+      <!-- JR Selector Dropdown -->
+      <div class="jr-dropdown-wrap">
+        <button
+          class="btn-outline btn-jr"
+          (click)="toggleJrDropdown()"
+          [class.active]="showJrDropdown">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+          </svg>
+          {{ jobsLoading ? 'Loading...' : getSelectedJrLabel() }}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            [style.transform]="showJrDropdown ? 'rotate(180deg)' : 'rotate(0deg)'"
+            style="transition:transform 0.2s">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+
+        <!-- JR dropdown panel -->
+        <div class="jr-dropdown-panel" *ngIf="showJrDropdown">
+          <div class="jr-dropdown-header">Select Job Requisition</div>
+          <div class="jr-dropdown-list">
+            <label
+              class="jr-option"
+              *ngFor="let job of jobsList"
+              [class.selected]="isJrSelected(job.id)"
+              (click)="toggleJrSelection(job.id, $event)">
+              <span class="jr-checkbox" [class.checked]="isJrSelected(job.id)">
+                <svg *ngIf="isJrSelected(job.id)" width="10" height="10" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="jr-code">{{ job.code }}</span>
+              <span class="jr-title">{{ job.title }}</span>
+            </label>
+            <div class="jr-empty" *ngIf="jobsList.length === 0 && !jobsLoading">No open requisitions</div>
+            <div class="jr-loading" *ngIf="jobsLoading">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="animation:spin 1s linear infinite">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/>
+              </svg>
+              Loading...
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- BULK ACTION BAR -->
+  <div class="filter-overlay" *ngIf="showFilterPanel" (click)="closeFilterPanel()">
+    <div class="filter-modal" (click)="$event.stopPropagation()">
+
+      <div class="filter-modal-title">Filter by</div>
+
+      <div class="filter-modal-body">
+
+        <!-- Left: Section tabs -->
+        <div class="filter-sections">
+          <div
+            class="filter-section-tab"
+            *ngFor="let sec of filterSections"
+            [class.active]="activeFilterSection === sec"
+            (click)="activeFilterSection = sec">
+            {{ sec }}
+          </div>
+          <a class="reset-link" (click)="resetFilters()">RESET FILTER</a>
+        </div>
+
+        <!-- Middle: Options for selected section -->
+        <div class="filter-options-col">
+
+          <!-- Applicants -->
+          <ng-container *ngIf="activeFilterSection === 'Applicants'">
+            <label class="filter-radio-row" *ngFor="let opt of ['all', 'referrals', 'non-referrals']">
+              <input type="radio" name="applicant" [value]="opt" [(ngModel)]="tempApplicantType">
+              <span class="radio-circle" [class.checked]="tempApplicantType === opt"></span>
+              <span class="radio-label">{{ opt === 'all' ? 'All' : opt === 'referrals' ? 'Referrals' : 'Non Referrals' }}</span>
+            </label>
+          </ng-container>
+
+          <!-- Date Filters -->
+          <ng-container *ngIf="activeFilterSection === 'Date Filters'">
+            <label class="filter-radio-row" *ngFor="let opt of [{val:'today',lbl:'Today'},{val:'lastweek',lbl:'Last week'},{val:'lastmonth',lbl:'Last month'},{val:'custom',lbl:'Custom'}]">
+              <input type="radio" name="dateFilter" [value]="opt.val" [(ngModel)]="tempDateType">
+              <span class="radio-circle" [class.checked]="tempDateType === opt.val"></span>
+              <span class="radio-label">{{ opt.lbl }}</span>
+            </label>
+          </ng-container>
+
+          <!-- Source -->
+          <ng-container *ngIf="activeFilterSection === 'Source'">
+            <label class="filter-checkbox-row" *ngFor="let src of sourceOptions">
+              <input type="checkbox"
+                [checked]="isTempSourceSelected(src)"
+                (change)="toggleTempSource(src, $any($event.target).checked)">
+              <span class="check-box" [class.checked]="isTempSourceSelected(src)">
+                <svg *ngIf="isTempSourceSelected(src)" width="10" height="10" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="check-label">{{ src }}</span>
+            </label>
+          </ng-container>
+
+          <!-- SLA -->
+          <ng-container *ngIf="activeFilterSection === 'SLA'">
+            <label class="filter-radio-row" *ngFor="let opt of [{val:'green',lbl:'Green'},{val:'orange',lbl:'Orange'},{val:'red',lbl:'Red'}]">
+              <input type="radio" name="slaFilter" [value]="opt.val" [(ngModel)]="tempSla">
+              <span class="radio-circle" [class.checked]="tempSla === opt.val" [style.border-color]="tempSla === opt.val ? getSlaAccent(opt.val) : '#D1D5DB'">
+                <span class="radio-inner" [style.background]="getSlaAccent(opt.val)" *ngIf="tempSla === opt.val"></span>
+              </span>
+              <span class="sla-dot-filter" [style.background]="getSlaAccent(opt.val)"></span>
+              <span class="radio-label">{{ opt.lbl }}</span>
+            </label>
+          </ng-container>
+        </div>
+
+        <!-- Right: Active chip summary -->
+        <div class="filter-chips-col">
+          <div class="chips-summary" *ngIf="tempActiveChips.length > 0">
+            <span class="chips-count-label">{{ tempActiveChips.length }} Filters Selected</span>
+            <div class="chips-grid">
+              <span class="filter-chip" *ngFor="let chip of tempActiveChips">
+                {{ chip.label }}
+                <span class="chip-remove" (click)="removeTempChip(chip.key)">×</span>
+              </span>
+            </div>
+          </div>
+          <div class="chips-empty" *ngIf="tempActiveChips.length === 0">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+            <span>No filters applied</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="filter-modal-footer">
+        <button class="btn-filter-cancel" (click)="closeFilterPanel()">Cancel</button>
+        <button class="btn-filter-apply" (click)="applyFilters()">Apply</button>
+      </div>
+    </div>
+  </div>
+
   <div class="bulk-bar" *ngIf="selectedStage">
     <span class="bulk-count">{{ getSelectedCount() }} selected</span>
-
     <div class="bulk-select-wrap">
       <select class="bulk-select" (change)="onMoveStageSelect($any($event.target).value)">
         <option value="">Move Stage ▾</option>
         <option *ngFor="let s of getNextStages()" [value]="s">→ {{ s }}</option>
       </select>
     </div>
-
     <button class="btn-reject" (click)="rejectSelected()">Reject</button>
     <span class="bulk-hint">Confirmation dialog before execution</span>
   </div>
 
+
   <div class="kanban-body">
+
     <!-- BOARD -->
     <div class="board">
-      <div
-        class="column"
-        *ngFor="let stage of stages"
-        (drop)="onDrop(stage)"
-        (dragover)="onDragOver($event, stage)"
-        (dragleave)="onDragLeave()"
-        [class.drop-target]="dragOverStage === stage"
-      >
+      <div class="column" *ngFor="let stage of stages">
+
         <!-- Column Header -->
         <div class="column-header" [style.background]="getStageHeaderBg(stage)">
           <span class="col-title" [style.color]="getStageColor(stage)">{{ stage }}</span>
           <div class="col-count-wrap">
             <span class="col-count" [style.color]="getStageColor(stage)">{{ candidates[stage].length }}</span>
-            <span class="stage-dot" [style.background]="getStageDotColor(stage)" *ngIf="candidates[stage].length > 0"></span>
+            <span class="stage-dot"
+              [style.background]="getStageDotColor(stage)"
+              *ngIf="candidates[stage].length > 0">
+            </span>
           </div>
         </div>
 
@@ -54,17 +197,24 @@
           <div
             class="card"
             *ngFor="let c of candidates[stage]"
-            draggable="true"
-            (dragstart)="onDragStart(stage, c)"
             [class.sla-breach-card]="c.sla === 'BREACHED'"
             [class.sla-warn-card]="c.sla === 'WARNING'"
             [class.sla-ok-card]="c.sla === 'OK'"
+            [class.card-selected]="c.selected"
+            (click)="toggleSelect(stage, c)"
           >
-            <!-- SLA color strip at top -->
+            <!-- SLA top strip -->
             <div class="sla-strip"
               [class.strip-breach]="c.sla === 'BREACHED'"
               [class.strip-warn]="c.sla === 'WARNING'"
               [class.strip-ok]="c.sla === 'OK'">
+            </div>
+
+            <!-- Selection indicator -->
+            <div class="card-select-check" *ngIf="c.selected">
+              <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
 
             <!-- Card Body -->
@@ -83,20 +233,18 @@
                 </div>
               </div>
 
-              <!-- Row 2: Divider -->
+              <!-- Divider -->
               <div class="card-divider"></div>
 
-              <!-- Row 3: Meta row — Days + JR badge + SLA status pill -->
+              <!-- Row 2: Days + JR badge + SLA pill -->
               <div class="card-meta">
                 <div class="meta-item">
                   <span class="meta-label">Days</span>
                   <span class="meta-value">{{ c.days }}d</span>
                 </div>
-
                 <div class="meta-item" *ngIf="c.jr">
                   <span class="jr-badge">{{ c.jr }}</span>
                 </div>
-
                 <div class="sla-pill"
                   [class.pill-breach]="c.sla === 'BREACHED'"
                   [class.pill-warn]="c.sla === 'WARNING'"
@@ -107,7 +255,6 @@
                   <ng-container *ngIf="c.sla === 'OK'">On Track</ng-container>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -122,14 +269,12 @@
     <!-- NOTIFICATIONS PANEL -->
     <div class="notifications">
       <div class="notif-title">SLA Notifications</div>
-
       <div
         class="notify"
         *ngFor="let n of notifications; let i = index"
         [class.notify-breach]="n.type === 'breach'"
         [class.notify-warn]="n.type === 'warn'"
-        [class.notify-success]="n.type === 'success'"
-      >
+        [class.notify-success]="n.type === 'success'">
         <div class="notify-body">
           <span class="notify-heading">{{ n.title }}</span>
           <span class="notify-sub" *ngIf="n.sub">{{ n.sub }}</span>
@@ -139,7 +284,7 @@
     </div>
   </div>
 
-  <!-- LEGEND -->
+
   <div class="legend">
     <span class="legend-item"><span class="dot dot-red"></span> Breached (&gt;100%)</span>
     <span class="legend-item"><span class="dot dot-orange"></span> Warning (50–100%)</span>
@@ -147,17 +292,14 @@
     <span class="legend-item"><span class="ref-badge small">REF</span> Referral</span>
   </div>
 
-  <!-- REJECT CONFIRM DIALOG -->
+  <!-- REJECT CONFIRM -->
   <ng-template #showRejectConfirm>
     <p>Are you sure you want to reject <b>{{ getSelectedCount() }}</b> selected candidate(s)?</p>
   </ng-template>
 
-  <!-- MOVE CONFIRM DIALOG -->
+  <!-- MOVE CONFIRM -->
   <ng-template #moveConfirmModal>
-    <p>
-      Move <b>{{ getSelectedCount() }}</b> candidate(s) to
-      <strong>{{ pendingMoveStage }}</strong>?
-    </p>
+    <p>Move <b>{{ getSelectedCount() }}</b> candidate(s) to <strong>{{ pendingMoveStage }}</strong>?</p>
   </ng-template>
 
 </div>

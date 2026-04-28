@@ -135,8 +135,15 @@
         </div>
         <p class="sc-text">{{ screeningData.summary }}</p>
         <div class="sc-grid-2">
-          <div><span class="info-label">EMAIL</span><span class="info-value">{{ candidate.email }}</span></div>
-          <div><span class="info-label">PHONE</span><span class="info-value">{{ candidate.phone }}</span></div>
+          <div class="full-width">
+            <span class="info-label">EMAIL :</span>
+            <span class="info-value">{{ candidate.email }}</span>
+          </div>
+
+          <div>
+            <span class="info-label">PHONE :</span>
+            <span class="info-value">{{ candidate.phone }}</span>
+          </div>
         </div>
       </div>
 
@@ -203,12 +210,12 @@
 
     <ng-container *ngIf="viewMode === 'interview'">
       <div class="detail-header">
-       
+
         <div class="heading-group">
-           <h3 class="detail-title">Interview Analysis</h3>
-           <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
+          <h3 class="detail-title">Interview Analysis</h3>
+          <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
         </div>
-         <div class="header-actions">
+        <div class="header-actions">
           <button class="view-resume-btn" (click)="onViewResume()">
             <nz-icon nzType="eye" nzTheme="outline" />
             View Resume
@@ -222,7 +229,7 @@
           </button>
         </div>
       </div>
-      
+
 
       <div class="profile-card">
         <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
@@ -306,7 +313,7 @@
         </svg>
         Move to Interview
       </button>
-      <button class="action-btn success" (click)="onAction('hire')">
+      <button class="action-btn success" (click)="openActionModal($event, 'hire')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
           <path d="m9 11 3 3L22 4" />
@@ -320,7 +327,7 @@
         </svg>
         Schedule Interview
       </button>
-      <button class="action-btn danger" (click)="onAction('reject')">
+      <button class="action-btn danger"  (click)="openActionModal($event, 'reject')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" />
           <path d="m15 9-6 6M9 9l6 6" />
@@ -344,7 +351,7 @@
   </div>
 </ng-template>
 
-<nz-modal [(nzVisible)]="scheduleVisible" nzTitle="Schedule Interview" [nzWidth]="520" (nzOnCancel)="cancelSchedule()"
+<nz-modal [(nzVisible)]="scheduleVisible" nzTitle="Schedule Interview" [nzWidth]="520"  [nzCentered]="true"  (nzOnCancel)="cancelSchedule()"
   [nzFooter]="scheduleFooter">
 
   <ng-container *nzModalContent>
@@ -382,3 +389,56 @@
     </button>
   </ng-template>
 </nz-modal>
+
+
+<div class="modal-overlay" *ngIf="showActionModal" (click)="closeActionModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-icon" [ngClass]="modalAction === 'hire' ? 'icon-hire' : 'icon-reject'">
+        <svg *ngIf="modalAction === 'hire'" width="20" height="20" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        <svg *ngIf="modalAction === 'reject'" width="20" height="20" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="modal-title">
+          {{ modalAction === 'hire' ? 'Confirm Hire' : 'Confirm Rejection' }}
+        </h3>
+        <p class="modal-subtitle">{{ candidate?.name }}</p>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <label class="comment-label">
+        {{ modalAction === 'hire' ? 'Hiring comments' : 'Rejection reason' }}
+        <span class="required">*</span>
+      </label>
+      <textarea
+        class="comment-input"
+        rows="4"
+        [(ngModel)]="actionComment"
+        [placeholder]="modalAction === 'hire'
+          ? 'Add any notes about the offer or next steps...'
+          : 'Briefly explain the reason for rejection...'">
+      </textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn cancel-btn" (click)="closeActionModal()">
+        Cancel
+      </button>
+      <button class="modal-btn confirm-btn"
+        [ngClass]="modalAction === 'hire' ? 'confirm-hire' : 'confirm-reject'"
+        [disabled]="!actionComment.trim() || isSubmittingAction"
+        (click)="confirmAction()">
+        {{ isSubmittingAction ? 'Saving...' : (modalAction === 'hire' ? 'Confirm Hire' : 'Confirm Reject') }}
+      </button>
+    </div>
+
+  </div>
+</div>

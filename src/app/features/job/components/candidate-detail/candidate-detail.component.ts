@@ -11,43 +11,66 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 @Component({
   selector: 'app-candidate-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzModalModule, NzButtonModule, NzCalendarModule,NzIconModule],
+  imports: [CommonModule, FormsModule, NzModalModule, NzButtonModule, NzCalendarModule, NzIconModule],
   templateUrl: './candidate-detail.component.html',
   styleUrls: ['./candidate-detail.component.scss']
 })
 export class CandidateDetailComponent implements OnChanges {
   @Input() candidate: any = null;
-  @Output() action = new EventEmitter<{ type: string; candidate: any; payload?: any }>();
+  @Output() action = new EventEmitter<{ type: string; candidate: any; reason?:any,payload?: any }>();
   private job = inject(JobService);
   isExporting = false;
   private notification = inject(NotificationService);
   viewMode: 'default' | 'screening' | 'interview' = 'default';
   expandedQuestion: number | null = null;
-
+  showActionModal = false;
+  modalAction: 'hire' | 'reject' | null = null;
+  actionComment = '';
+  isSubmittingAction = false;
   scheduleVisible = false;
-  selectedDate: Date | null = null;
+  selectedDate: Date | null = new Date();;
   selectedTime: string | null = null;
 
   timeSlots: string[] = [];
 
   constructor() {
-    this.generateTimeSlots();
+    this.generateTimeSlots(this.selectedDate);
+    this.onDateSelect(this.selectedDate);
   }
 
-  generateTimeSlots(): void {
+  generateTimeSlots(selectedDate: any): void {
     const slots: string[] = [];
+
+    const now = new Date();
+
+
+    const isToday =
+      selectedDate.getDate() === now.getDate() &&
+      selectedDate.getMonth() === now.getMonth() &&
+      selectedDate.getFullYear() === now.getFullYear();
+
     let hour = 9;
     let minute = 30;
+
     while (hour < 18 || (hour === 18 && minute === 0)) {
-      const h = hour.toString().padStart(2, '0');
-      const m = minute.toString().padStart(2, '0');
-      slots.push(`${h}:${m}`);
+      const slotTime = new Date(selectedDate);
+      slotTime.setHours(hour, minute, 0, 0);
+
+
+      if (!isToday || slotTime > now) {
+        const h = hour.toString().padStart(2, '0');
+        const m = minute.toString().padStart(2, '0');
+        slots.push(`${h}:${m}`);
+      }
+
       minute += 30;
+
       if (minute >= 60) {
         minute = 0;
         hour++;
       }
     }
+
     this.timeSlots = slots;
   }
 
@@ -64,21 +87,21 @@ export class CandidateDetailComponent implements OnChanges {
     if (this.candidate) this.action.emit({ type: 'viewResume', candidate: this.candidate });
   }
 
-  handleExport(){
+  handleExport() {
     this.job.exportByCandidateId(this.candidate?.id)
-    .then((res:any)=>{
-      const blob = new Blob([res], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
+      .then((res: any) => {
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'candidate.pdf';
-      a.click();
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'candidate.pdf';
+        a.click();
 
-      URL.revokeObjectURL(url);
-    }).catch((error:any)=>{
-      console.log()
-    })
+        URL.revokeObjectURL(url);
+      }).catch((error: any) => {
+        console.log()
+      })
   }
 
   onAction(type: string): void {
@@ -88,11 +111,12 @@ export class CandidateDetailComponent implements OnChanges {
       this.scheduleVisible = true;
       return;
     }
-    if (this.candidate) this.action.emit({ type, candidate: this.candidate });
+    if (this.candidate) this.action.emit({ type, candidate: this.candidate,reason:this.actionComment });
   }
 
-  onDateSelect(date: Date): void {
+  onDateSelect(date: Date | null): void {
     this.selectedDate = date;
+    this.generateTimeSlots(date);
   }
 
   selectTime(time: string): void {
@@ -108,10 +132,10 @@ export class CandidateDetailComponent implements OnChanges {
     };
     this.action.emit({ type: 'schedule', candidate: this.candidate, payload });
     this.scheduleVisible = false;
-    try{
+    try {
       const res = await this.job.scheduleInterview(payload);
       this.notification.success('Interview scheduled successfully');
-    }catch(err){
+    } catch (err) {
       console.error('Error scheduling interview:', err);
       this.notification.error('Failed to schedule interview');
     }
@@ -160,5 +184,26 @@ export class CandidateDetailComponent implements OnChanges {
       overallScore: 0, questionsAttempted: '0/0', proctoringViolations: 0,
       proctoringResults: [], questions: []
     };
+  }
+
+  openActionModal(event: MouseEvent, action: 'hire' | 'reject'): void {
+    event.stopPropagation();
+  
+    this.modalAction = action;
+    this.actionComment = '';
+    this.showActionModal = true;
+  }
+  closeActionModal(): void {
+    this.showActionModal = false;
+    this.modalAction = null;
+
+    this.actionComment = '';
+  }
+
+  confirmAction(): void {
+    if (!this.modalAction || !this.actionComment.trim()) return;
+
+    this.onAction(this.modalAction);
+    this.closeActionModal();
   }
 }

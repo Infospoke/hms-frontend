@@ -53,7 +53,9 @@ export class JobOverview {
   isVisible = false;
   pdfUrl: any;
   isPdfVisible = false;
-  constructor(private sanitizer: DomSanitizer) {}
+  activeFilterSection: string = '';
+  tempActiveChips: { key: string; label: string }[] = [];
+  constructor(private sanitizer: DomSanitizer) { }
   ngOnInit(): void {
     this.loadJobs();
     const activeTab = history.state?.activeTab;
@@ -65,7 +67,7 @@ export class JobOverview {
   async loadJobs() {
     try {
       const res = await this.jobApi.getJobsList(true);
-      this.jobsList = this.jobApi.jobs$()?.data || [];
+      this.jobsList = this.jobApi.jobs$() || [];
       this.filteredJobsList = [...this.jobsList];
     } catch (error) {
       console.error(error);
@@ -131,7 +133,6 @@ export class JobOverview {
   }
 
   async handleCandidateAction(event: any) {
-    console.log('Candidate action:', event.type, event.candidate);
 
     try {
       let res: any;
@@ -148,7 +149,8 @@ export class JobOverview {
         case 'reject':
           res = await this.jobApi.updateApplicantStatus({
             application_id: event.candidate.id,
-            status: event?.type === 'hire' ? 'HIRED' : 'REJECTED',
+            decision: event?.type === 'hire' ? 'HIRED' : 'REJECTED',
+            comment: event?.reason,
           });
           break;
 
@@ -161,36 +163,35 @@ export class JobOverview {
       }
 
       if (event.type === 'viewResume') {
-  const blob = new Blob([res], { type: 'application/pdf' });
-  const url = window.URL.createObjectURL(blob);
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
 
-  const safeUrl = url + '#toolbar=0&navpanes=0&scrollbar=0';
+        const safeUrl = url + '#toolbar=0&navpanes=0&scrollbar=0';
 
-// sanitize AFTER building full url
-this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
-  this.isPdfVisible = true;
-  return;
-}
+        // sanitize AFTER building full url
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
+        this.isPdfVisible = true;
+        return;
+      }
 
       if (res?.success) {
         this.notificationService.success(
           'Success',
-          `Candidate ${
-            event.type === 'hire'
-              ? 'hired'
-              : event.type === 'reject'
-                ? 'rejected'
-                : 'moved to interview'
+          `Candidate ${event.type === 'hire'
+            ? 'hired'
+            : event.type === 'reject'
+              ? 'rejected'
+              : 'moved to interview'
           } successfully`,
         );
       }
-
+      this.handleJobDetailsById();
       this.loadApplicants(this.selectedApplicantStatus, this.selectedJobId);
     } catch (error) {
       console.error('Error occurred while updating applicant status:', error);
     }
   }
-
+ 
   async openPopup() {
     if (!this.jobsList.length) {
       await this.loadJobs();
@@ -201,6 +202,11 @@ this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
       (acc, key) => ({ ...acc, [key]: false }),
       {}
     );
+    const keys = Object.keys(this.filtersData);
+    if (keys.length) {
+      this.activeFilterSection = this.filterKey(keys[0]);
+    }
+    this.syncChips();
     this.isVisible = true;
   }
 
@@ -221,9 +227,13 @@ this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
 
   handleReset() {
     this.selectedFilters = {};
+    this.tempActiveChips = [];
     this.filteredJobsList = [...this.jobsList];
   }
-
+  removeTempChip(key: string) {
+    delete this.selectedFilters[key];
+    this.syncChips();
+  }
   handleCancel() {
     this.isVisible = false;
   }
@@ -231,6 +241,7 @@ this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
   onCheckboxChange(key: any, value: any, checked: boolean) {
     this.selectedFilters[key] = this.selectedFilters[key] || {};
     this.selectedFilters[key][value] = checked;
+    this.syncChips();
   }
 
   applyFiltersToJobs(jobs: any[], filters: any): any[] {
@@ -283,5 +294,19 @@ this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
 
   handleCreateJob() {
     this.router.navigate(['/supply/jobs/add-job']);
+  }
+  private syncChips() {
+    this.tempActiveChips = [];
+    for (const key of Object.keys(this.selectedFilters)) {
+      const selected = Object.entries(this.selectedFilters[key])
+        .filter(([_, checked]) => checked)
+        .map(([val]) => val);
+      if (selected.length) {
+        this.tempActiveChips.push({
+          key,
+          label: `${this.util.camelToNormal(key)}: ${selected.join(', ')}`
+        });
+      }
+    }
   }
 }

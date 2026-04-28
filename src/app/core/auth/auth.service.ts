@@ -97,6 +97,7 @@ export class AuthService {
   getRole() {
     const t = this.tokenService.getAccessToken();
     if (!t) return null;
+    console.log(JSON.parse(atob(t.split('.')[1])))
     return JSON.parse(atob(t.split('.')[1])).role;
   }
   getPermissions() {

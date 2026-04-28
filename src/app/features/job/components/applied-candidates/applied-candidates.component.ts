@@ -55,7 +55,7 @@ export class AppliedCandidatesComponent implements OnChanges {
 
     return applicants.map((app: any) => {
       const analysis = analysisList.find((a: any) => a.application_id === app.id);
-      const createdDate = app.createdDate ? new Date(app.createdDate) : null;
+      const createdDate = app.CreatedDate ? new Date(app.CreatedDate) : null;
 
       return {
         id: app.id,
@@ -234,7 +234,7 @@ export class AppliedCandidatesComponent implements OnChanges {
       from.setHours(0, 0, 0, 0);
       const to = new Date(this.dateRange[1]);
       to.setHours(23, 59, 59, 999);
-
+      console.log(result);
       result = result.filter((c: any) => {
         if (!c.createdDateRaw) return false;
         const d = new Date(c.createdDateRaw);

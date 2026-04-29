@@ -58,7 +58,7 @@ export class SideBarComponent implements OnInit {
       icon: 'fa-solid fa-gear',
       children: [
         { label: 'Users',             icon: 'fa-solid fa-users',    path: '/users/user-onboard-roles' },
-        { label: 'Role & Permissions', icon: 'fa-solid fa-shield-halved', path: '/users/user-onboard-roles/role-permissions' },
+        { label: 'Role & Permissions', icon: 'fa-solid fa-shield-halved', path: '/users/role-permissions' },
       ],
     },
 

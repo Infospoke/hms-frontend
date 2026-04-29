@@ -179,4 +179,10 @@ export class JobService {
       this.api.aiGetBlob(API.USERS.EXPORT_BY_APPLICANT(id))
     )
   }
+
+  async fetchInterViewAnalysis(payload:any){
+    return await firstValueFrom(
+      this.api.aiPost(API.JOBS.INTERVIEW_ANALYSIS,payload)
+    );
+  }
 }

@@ -1,12 +1,17 @@
 <div class="topbar">
   <div class="logo">NEXUS</div>
 
-  <app-search-bar class="search-flex" />   <!-- no wrapper div -->
+  <app-search-bar class="search-flex" />
 
   <div class="top-right tr">
     <span class="role-badge">
       <app-card [label]="roleName" [textColor]="'var(--badge-ta-text)'" [bgColor]="'var(--badge-ta-bg)'"></app-card>
     </span>
-    <div class="avatar av">{{userName | profile}}</div>
+    <div class="avatar av">{{ userName | profile }}</div>
+
+    <button class="logout-btn" (click)="logout()">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      
+    </button>
   </div>
 </div>

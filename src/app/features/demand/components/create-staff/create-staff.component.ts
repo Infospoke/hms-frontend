@@ -288,6 +288,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
   }
   loadStep2Data() {
+    if(this.routeType){
+      return;
+    }
     let payload = {
       job_title: this.jobTitle,
       department: this.department,
@@ -671,9 +674,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     const f = this.step2Form.value;
 
     const parts = String(f.salaryComp).split('-');
-    const minSalary = parseFloat(parts[0] || '0') * 100000;
-    const maxSalary = parseFloat(parts[1] || '0') * 100000;
-    const proposedTotal = (Number(f.proposedComp) || 0) * 100000;
+    const minSalary = parseFloat(parts[0] || '0');
+    const maxSalary = parseFloat(parts[1] || '0');
+    const proposedTotal = (Number(f.proposedComp) || 0);
     const signingAmt = f.signingBonus ? (Number(f.signingAmt) || 0) : 0;
     const equityAmt = f.equity ? (Number(f.equityAmt) || 0) : 0;
     const relocAmt = f.relocation ? (Number(f.relocAmt) || 0) : 0;
@@ -813,7 +816,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
       // --- Step 2: Budget & Compensation ---
       this.step2Form.patchValue({
-        proposedComp: bc.proposedTotalCompensation ? (bc.proposedTotalCompensation / 100000) : 0,
+        proposedComp: bc.proposedTotalCompensation ? bc.proposedTotalCompensation : 0,
+        salaryComp:bc?.minSalary +'-'+bc?.maxSalary,
         signingBonus: !!bc.signingBonus,
         signingAmt: bc.signingBonusAmount ?? '',
         equity: !!bc.equity,
@@ -1314,7 +1318,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     return {
 
       hcSlot: f.hcSlot,        // ← was missing
-      salaryComp: f.salaryComp,    // ← was missing
+      salaryComp: f.minSalary + '-' +f.maxSalary,    // ← was missing
       proposedComp: f.proposedComp,
       signingBonus: f.signingBonus,  // ← was missing
       signingAmt: f.signingAmt,    // ← was missing

@@ -927,8 +927,7 @@
                     <div class="review-row">
                         <span class="review-label">Proposed CTC</span>
                         <span class="review-val">
-                            {{ step2Form.get('proposedComp')?.value ? ('₹' + step2Form.get('proposedComp')?.value + '
-                            LPA') : '—' }}
+                            {{ step2Form.get('proposedComp')?.value ? ('₹' + step2Form.get('proposedComp')?.value ) : '—' }}
                         </span>
                     </div>
                     <div class="review-row">
@@ -938,7 +937,7 @@
                                 {{ step2Form.get('signingBonus')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('signingBonus')?.value && step2Form.get('signingAmt')?.value">
-                                — ₹{{ step2Form.get('signingAmt')?.value }} LPA
+                                — ₹{{ step2Form.get('signingAmt')?.value }}
                             </span>
                         </span>
                     </div>
@@ -949,7 +948,7 @@
                                 {{ step2Form.get('equity')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('equity')?.value && step2Form.get('equityAmt')?.value">
-                                — ₹{{ step2Form.get('equityAmt')?.value }} LPA
+                                — ₹{{ step2Form.get('equityAmt')?.value }}
                             </span>
                         </span>
                     </div>
@@ -960,7 +959,7 @@
                                 {{ step2Form.get('relocation')?.value ? ' Yes' : ' No' }}
                             </span>
                             <span *ngIf="step2Form.get('relocation')?.value && step2Form.get('relocAmt')?.value">
-                                — ₹{{ step2Form.get('relocAmt')?.value }} LPA
+                                — ₹{{ step2Form.get('relocAmt')?.value }}
                             </span>
                         </span>
                     </div>

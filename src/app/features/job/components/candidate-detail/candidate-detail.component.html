@@ -258,10 +258,10 @@
         <svg viewBox="0 0 120 120" class="iv-gauge">
           <circle cx="60" cy="60" r="50" fill="none" stroke="#e8ecf1" stroke-width="10" />
           <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="314"
-            [attr.stroke-dashoffset]="314 - (314 * interviewData.overallScore / 100)" stroke-linecap="round"
+            [attr.stroke-dashoffset]="314 - (314 * interviewData.total_score / 100)" stroke-linecap="round"
             transform="rotate(-90 60 60)" />
           <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{
-            interviewData.overallScore }}</text>
+            interviewData.total_score }}</text>
           <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
         </svg>
       </div>
@@ -271,28 +271,30 @@
         <div class="sc-grid-2">
           <div>
             <span class="info-label">Questions Attempted :</span>
-            <p class="sc-big-value">{{ interviewData.questionsAttempted }}</p>
+            <p class="sc-big-value">{{ interviewData.qna_count }}</p>
           </div>
           <div>
             <span class="info-label">Proctoring Violations</span>
-            <p class="sc-big-value red-text">{{ interviewData.proctoringViolations }}</p>
+            <p class="sc-big-value red-text">{{ interviewData.proctoring_violations }}</p>
           </div>
         </div>
       </div>
 
       <div class="sc-section-title">Proctoring Results</div>
-      <div class="sc-card" *ngFor="let p of interviewData.proctoringResults">
+      <div class="sc-card" *ngFor="let p of interviewData.proctoring_logs">
         <div class="iv-proctor-row">
           <div>
-            <div class="sc-bullet-list red"><span class="sc-bullet"></span> {{ p.issue }}</div>
-            <span class="iv-proctor-time">{{ p.time }}</span>
+            <div class="sc-bullet-list red"><span class="sc-bullet"></span> {{ p.event_type }}</div>
+            <span class="iv-proctor-time">{{ p.timestamp }}</span>
           </div>
-          <div class="iv-proctor-img"></div>
+          <div class="iv-proctor-img" *ngIf="p.image_base64">
+            <img [src]="p.image_base64" alt="Proctor capture" />
+          </div>
         </div>
       </div>
 
       <div class="sc-section-title">Question Wise Analysis</div>
-      <div class="iv-question" *ngFor="let q of interviewData.questions; let i = index">
+      <div class="iv-question" *ngFor="let q of interviewData.qna_analysis; let i = index">
         <div class="iv-question-header" (click)="toggleQuestion(i)">
           <span class="iv-question-title">Question {{ i + 1 }} :</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
@@ -300,7 +302,16 @@
             <path d="m6 9 6 6 6-6" />
           </svg>
         </div>
-        <p class="iv-question-text" *ngIf="expandedQuestion === i">{{ q.q }}</p>
+        <div class="iv-qa-block iv-question-text" *ngIf="expandedQuestion === i">
+          <div class="iv-question ">
+            <span class="iv-label"><strong>Question</strong></span>
+            <p>{{ q.question_text }}</p>
+          </div>
+          <div class="iv-answer">
+            <span class="iv-label"><strong>Answer</strong></span>
+            <p>{{ q.answer_text }}</p>
+          </div>
+        </div>
       </div>
     </ng-container>
 
@@ -327,7 +338,7 @@
         </svg>
         Schedule Interview
       </button>
-      <button class="action-btn danger"  (click)="openActionModal($event, 'reject')">
+      <button class="action-btn danger" (click)="openActionModal($event, 'reject')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" />
           <path d="m15 9-6 6M9 9l6 6" />
@@ -351,8 +362,8 @@
   </div>
 </ng-template>
 
-<nz-modal [(nzVisible)]="scheduleVisible" nzTitle="Schedule Interview" [nzWidth]="520"  [nzCentered]="true"  (nzOnCancel)="cancelSchedule()"
-  [nzFooter]="scheduleFooter">
+<nz-modal [(nzVisible)]="scheduleVisible" nzTitle="Schedule Interview" [nzWidth]="520" [nzCentered]="true"
+  (nzOnCancel)="cancelSchedule()" [nzFooter]="scheduleFooter">
 
   <ng-container *nzModalContent>
     <div class="schedule-body">
@@ -396,13 +407,13 @@
 
     <div class="modal-header">
       <div class="modal-icon" [ngClass]="modalAction === 'hire' ? 'icon-hire' : 'icon-reject'">
-        <svg *ngIf="modalAction === 'hire'" width="20" height="20" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 6L9 17l-5-5"/>
+        <svg *ngIf="modalAction === 'hire'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M20 6L9 17l-5-5" />
         </svg>
-        <svg *ngIf="modalAction === 'reject'" width="20" height="20" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 6L6 18M6 6l12 12"/>
+        <svg *ngIf="modalAction === 'reject'" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
         </svg>
       </div>
       <div>
@@ -418,11 +429,7 @@
         {{ modalAction === 'hire' ? 'Hiring comments' : 'Rejection reason' }}
         <span class="required">*</span>
       </label>
-      <textarea
-        class="comment-input"
-        rows="4"
-        [(ngModel)]="actionComment"
-        [placeholder]="modalAction === 'hire'
+      <textarea class="comment-input" rows="4" [(ngModel)]="actionComment" [placeholder]="modalAction === 'hire'
           ? 'Add any notes about the offer or next steps...'
           : 'Briefly explain the reason for rejection...'">
       </textarea>
@@ -432,10 +439,8 @@
       <button class="modal-btn cancel-btn" (click)="closeActionModal()">
         Cancel
       </button>
-      <button class="modal-btn confirm-btn"
-        [ngClass]="modalAction === 'hire' ? 'confirm-hire' : 'confirm-reject'"
-        [disabled]="!actionComment.trim() || isSubmittingAction"
-        (click)="confirmAction()">
+      <button class="modal-btn confirm-btn" [ngClass]="modalAction === 'hire' ? 'confirm-hire' : 'confirm-reject'"
+        [disabled]="!actionComment.trim() || isSubmittingAction" (click)="confirmAction()">
         {{ isSubmittingAction ? 'Saving...' : (modalAction === 'hire' ? 'Confirm Hire' : 'Confirm Reject') }}
       </button>
     </div>

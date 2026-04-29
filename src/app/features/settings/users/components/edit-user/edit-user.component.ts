@@ -9,13 +9,13 @@ import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 
 @Component({
   selector: 'app-edit-user',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule,ProfilePipe],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule, ProfilePipe],
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.scss',
 })
 export class EditUserComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
-  @Input() userId!: any;
+  @Input() userId: any = null;
 
 
 
@@ -30,7 +30,7 @@ export class EditUserComponent implements OnInit {
   private modalRef = inject(NzModalRef);
   private notificationService = inject(NotificationService);
   isloading = signal<boolean>(false);
-  user:any=null;
+  user: any = null;
   constructor() { }
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -40,14 +40,14 @@ export class EditUserComponent implements OnInit {
     })
     this.getIntialData();
     this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
-      if(!unit)return;
+      if (!unit) return;
       this.departments = [];
       this.roles = [];
       this.getDeparmentData(unit);
     });
 
     this.form.get('department')?.valueChanges.subscribe(dept => {
-      if(!dept)return;
+      if (!dept) return;
       this.roles = [];
       this.getRoleData(dept);
     });
@@ -66,7 +66,7 @@ export class EditUserComponent implements OnInit {
   }
   getRoleData(id: any) {
     try {
-      this.userService.getDepartments(id)
+      this.userService.getRoles(id)
         .then((res: any) => {
           this.roles = res?.data;
         })
@@ -90,8 +90,8 @@ export class EditUserComponent implements OnInit {
       }
     })
   }
-  active(userId:any){
-     let obj = {
+  active(userId: any) {
+    let obj = {
       "activate": true
     }
     this.userService.update(userId, obj)
@@ -134,11 +134,27 @@ export class EditUserComponent implements OnInit {
   getIntialData() {
     forkJoin({
       bussinessUnit: this.userService.getBussinessUnits(),
-      user:this.userService.getUserById(this.userId),
+      user: this.userService.getUserById(this.userId),
     }).subscribe({
-      next: (res: any) => {
+      next: async (res: any) => {
         this.businessUnits = res.bussinessUnit?.data;
-        this.user=res?.user?.data;
+        this.user = res?.user?.data;
+
+        this.form.patchValue({
+          businessUnit: this.user?.businessUnitId
+        });
+
+        await this.getDeparmentData(this.user?.businessUnitId);
+
+        this.form.patchValue({
+          department: this.user?.departmentId
+        });
+
+        await this.getRoleData(this.user?.departmentId);
+
+        this.form.patchValue({
+          role: this.user?.roleId
+        });
       },
       error: (error: any) => {
         console.log(error);

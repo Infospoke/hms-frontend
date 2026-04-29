@@ -121,8 +121,15 @@ export class JobOverview {
     }
   }
 
-  onCandidateSelected(candidate: any) {
-    this.selectedCandidateForDetail = candidate;
+  async onCandidateSelected(candidate: any) {
+    let data:any;
+    if(candidate.status==='INTERVIEW'){
+      let payload={
+        application_id:candidate?.id
+      }
+       data=await this.jobApi.fetchInterViewAnalysis(payload);
+    }
+    this.selectedCandidateForDetail = { ...candidate, interviewData: data?.data ?? {} };
   }
 
   getStatus(status: any) {

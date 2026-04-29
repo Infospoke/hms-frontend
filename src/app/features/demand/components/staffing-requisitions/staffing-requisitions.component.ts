@@ -185,18 +185,18 @@ export class StaffingRequisitionsComponent implements OnInit {
         costCenter:   bc.costCenter              ?? '',
         budgetCode:   bc.budgetCode              ?? '',
         hcSlot:       bc.approved               ?? false,
-        salaryComp:   '',                                   // derived server-side; not in API response
-        proposedComp: toLPA(bc.proposedTotalCompensation),
+        salaryComp:   bc?.minSalary + '-' + bc?.maxSalary,                                   // derived server-side; not in API response
+        proposedComp: Number(bc.proposedTotalCompensation),
         signingBonus: bc.signingBonus            ?? false,
-        signingAmt:   toLPA(bc.signingBonusAmount),
+        signingAmt:   Number(bc.signingBonusAmount),
         equity:       bc.equity                  ?? false,
-        equityAmt:    toLPA(bc.equityAmount),
+        equityAmt:    Number(bc.equityAmount),
         relocation:   bc.relocationBudget        ?? false,
-        relocAmt:     toLPA(bc.relocationBudgetAmount),
+        relocAmt:     Number(bc.relocationBudgetAmount),
         annualHiringCost: bc.annualHiringCost    ?? 0,
       };
 
-      // ── Step 3: Role Requirements ─────────────────────────────────────────
+      
       instance.step3 = {
         eduReq:       rr.educationRequirement ?? '',
         travel:       rr.travelRequirement    ?? '',

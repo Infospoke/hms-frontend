@@ -5,6 +5,7 @@ import { forkJoin } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
+import { Router } from '@angular/router';
 
 function alphabetsOnly(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -23,19 +24,6 @@ function numericOnly(): ValidatorFn {
   };
 }
 
-function minAge(minYears: number): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    const today = new Date();
-    const dob = new Date(control.value);
-    if (dob > today) return { futureDate: true };
-    const age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    const dayDiff = today.getDate() - dob.getDate();
-    const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
-    return actualAge >= minYears ? null : { minAge: { required: minYears, actual: actualAge } };
-  };
-}
 
 function notSameAsMobile(mobileField: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -46,11 +34,22 @@ function notSameAsMobile(mobileField: string): ValidatorFn {
     return control.value === mobile ? { sameAsMobile: true } : null;
   };
 }
+function mobileValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
 
+    const value = control.value.trim();
+
+   
+    const regex = /^(\+\d{1,3}\s?)?\d{10}$/;
+
+    return regex.test(value) ? null : { invalidMobile: true };
+  };
+}
 @Component({
   selector: 'app-invite-user',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,NzModalModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './invite-user.component.html',
   styleUrl: './invite-user.component.scss',
 })
@@ -66,7 +65,7 @@ export class InviteUserComponent implements OnInit {
   roles: any[] = [];
   private userService = inject(UserService);
   private notificationService=inject(NotificationService);
-  private modal=inject(NzModalRef)
+  private router=inject(Router);
   isloading=signal<boolean>(false);
   constructor(private fb: FormBuilder) { }
 
@@ -90,7 +89,8 @@ export class InviteUserComponent implements OnInit {
 
       employeeId: ['', [
         Validators.required,
-        numericOnly()
+        numericOnly(),
+        Validators.maxLength(4)
       ]],
 
       email: ['', [
@@ -101,22 +101,19 @@ export class InviteUserComponent implements OnInit {
 
       mobile: ['', [
         Validators.required,
-        numericOnly(),
+        mobileValidator(),
         Validators.minLength(10),
         Validators.maxLength(15)
       ]],
 
       altMobile: ['', [
-        numericOnly(),
+        mobileValidator(),
         Validators.minLength(10),
         Validators.maxLength(15),
         notSameAsMobile('mobile')
       ]],
 
-      dob: ['', [
-        Validators.required,
-        minAge(18)
-      ]],
+     
 
       employmentType: ['', Validators.required],
       businessUnit: ['', Validators.required],
@@ -168,7 +165,7 @@ export class InviteUserComponent implements OnInit {
   }
   getRoleData(id: any) {
     try {
-      this.userService.getDepartments(id)
+      this.userService.getRoles(id)
         .then((res: any) => {
           this.roles = res?.data;
         })
@@ -234,6 +231,6 @@ export class InviteUserComponent implements OnInit {
   }
 
   close() {
-    this.modal.close();
+    this.router.navigateByUrl("/users/user-onboard-roles");
   }
 }

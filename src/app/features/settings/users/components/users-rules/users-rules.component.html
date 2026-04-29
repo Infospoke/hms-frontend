@@ -29,6 +29,7 @@
     <span class="rbadge rRec">{{u?.roleName}}</span>
     <div class="usr-s" [ngClass]="u.active?'active-s':'inactive-s'">{{u?.active?'Active':'Deactivated'}}</div>
     <div class="btn" (click)="edit(u)">Edit</div>
+    <div class="btn btn-view" (click)="view(u)">View</div>
   </div>
 </div>
 

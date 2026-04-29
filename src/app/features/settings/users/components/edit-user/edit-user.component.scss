@@ -1,20 +1,34 @@
+// ─── Variables ───────────────────────────────────────────
+$brand: #2563eb;
+$brand-light: rgba(99, 102, 241, 0.15);
+
+
+.user-card {
+  padding: 10px;
+  background: #fff;
+  border-radius: 14px;
+}
 
 .header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding:0px !important;
-}
-.header h3 {
-  margin: 0; 
-  font-size: 22px;
-  font-weight: 600;
+  gap: 12px;
+  padding: 0 !important;
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 3px 0 0;
+    font-size: 13px;
+    color: #6b7280;
+  }
 }
 
-.header p {
-  margin: 2px 0 0 0;
-  font-size: 14px;
-}
+// ─── Avatar ──────────────────────────────────────────────
 .avatar {
   width: 50px;
   height: 50px;
@@ -24,137 +38,223 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: var(--brand-color);
+  font-size: 15px;
+  color: $brand;
+  flex-shrink: 0;
 }
 
-.status.active {
-  color: #16a34a;
+// ─── Status Badge ─────────────────────────────────────────
+.status {
+  font-size: 12px;
   font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+
+  &.active {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  &.deactivated {
+    background: #fee2e2;
+    color: #dc2626;
+  }
 }
 
-.status.deactivated {
-  color: #dc2626;
-  font-weight: 500;
+// ─── Divider ──────────────────────────────────────────────
+hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 16px 0;
 }
 
-
+// ─── Form Group ───────────────────────────────────────────
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-top: 18px;
+  margin-bottom: 14px;
 }
 
 label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  margin-bottom: 6px;
-  color: var(--color-text-secondary);
+  color: #6b7280;
+  margin-bottom: 5px;
 }
 
+// ─── Required Asterisk ────────────────────────────────────
+.astrick {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+// ─── Select ───────────────────────────────────────────────
 select {
-  padding: 10px;
+  width: 100%;
+  padding: 9px 36px 9px 12px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
-  font-size: 14px;
-  transition: 0.2s;
+  font-size: 13px;
+  background-color: #fff;
+  color: #111827;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:focus {
+    border-color: $brand;
+    outline: none;
+    box-shadow: 0 0 0 2px $brand-light;
+  }
+
+  &:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+  }
 }
 
-select:focus {
-  border-color: var(--brand-color);
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+// ─── Error Messages ───────────────────────────────────────
+.error {
+  margin-top: 4px;
+
+  span {
+    font-size: 11px;
+    color: #dc2626;
+  }
 }
 
-.role-box {
-  background: #ecfdf5;
-  border: 1px solid #bbf7d0;
-  padding: 12px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-}
+
+
 
 .role {
   font-weight: 600;
-  color: #16a34a;
+  font-size: 14px;
+  color: #000000;
 }
 
 .assigned {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: #6b7280;
 }
 
-/* GRID */
+// ─── Grid ─────────────────────────────────────────────────
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: 10px;
+  gap: 16px;
+  margin-top: 6px;
 }
 
-/* INFO */
-.info {
-  font-size: 12px;
-  color: #f59e0b;
-  margin-top: 5px;
-}
-
-.danger,.success {
-  margin-top: 20px;
-}
-.activate-btn{
-   width: 100%;
-  padding: 12px;
-  background: #f0fee2;
-  color: #6fdc26;
-  border: none;
+// ─── Danger / Success Sections ────────────────────────────
+.danger,
+.success {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
   border-radius: 10px;
+  margin-top: 18px;
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+.danger {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+// ─── Buttons ──────────────────────────────────────────────
+%btn-base {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: 0.2s;
+  border: 1px solid;
+  transition: opacity 0.15s, background 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
 }
+
 .deactivate-btn {
-  width: 100%;
-  padding: 12px;
+  @extend %btn-base;
   background: #fee2e2;
+  border-color: #fca5a5;
   color: #dc2626;
-  border: none;
-  border-radius: 10px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s;
+
+  &:hover {
+    background: #fecaca;
+  }
 }
 
-.deactivate-btn:hover {
-  background: #fecaca;
+.activate-btn {
+  @extend %btn-base;
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #16a34a;
+
+  &:hover {
+    background: #bbf7d0;
+  }
 }
-.activate-btn{
-   background: #ecfeca;
-}
-/* ACTIONS */
+
+// ─── Actions Row ──────────────────────────────────────────
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   margin-top: 20px;
 }
 
 .cancel {
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: 1px solid var(--color-text-secondary);
-  background: white;
+  @extend %btn-base;
+  background: #fff;
+  border-color: #d1d5db;
+  color: #374151;
+
+  &:hover {
+    background: #f9fafb;
+  }
 }
 
 .save {
-  padding: 10px 18px;
-  border-radius: 8px;
-  background: var(--color-primary);
-  color: white;
-  border: none;
+  @extend %btn-base;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: $brand;
+  border-color: $brand;
+  color: #fff;
+
+  &:hover {
+    opacity: 0.88;
+  }
+
+  i {
+    font-size: 13px;
+  }
 }
 
-
+// ─── Ant Design Modal Overrides ───────────────────────────
 .ant-modal-header {
   padding: 10px 16px !important;
 }

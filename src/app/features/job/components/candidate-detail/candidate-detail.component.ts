@@ -178,6 +178,7 @@ export class CandidateDetailComponent implements OnChanges {
 
   get interviewData(): any {
     if (!this.candidate) return null;
+    console.log(this.candidate);
     if (this.candidate.interviewData) return this.candidate.interviewData;
     return {
       finalScore: 0, skillMatch: 0, experience: 0, education: 0, keywords: 0, growth: 0,

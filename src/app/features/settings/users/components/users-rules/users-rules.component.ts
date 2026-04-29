@@ -91,22 +91,8 @@ export class UsersRulesComponent implements OnInit {
   }
 
   openInvite() {
-    const resf = this.modal.create({
-      nzTitle: 'Invite User',
-      nzContent: InviteUserComponent,
-      nzWidth: '60%',
-      nzCentered: true,
-      nzBodyStyle: {
-        'max-height': '81vh',
-        'overflow-y': 'auto',
-        'padding': '10px'
-      },
-      nzFooter: null,
-    });
-
-    resf.afterClose.subscribe(() => {
-      this.getCardCountAndList();
-    });
+    this.router.navigateByUrl("/users/user-onboard-roles/invite-user");
+   
   }
 
   edit(user: any) {
@@ -118,8 +104,10 @@ export class UsersRulesComponent implements OnInit {
       nzBodyStyle: {
         'max-height': '100vh',
         'overflow-y': 'auto',
-        'padding': '10px'
+        'padding': '10px',
+        'border-radius':'20px'
       },
+      nzWrapClassName: 'custom-edit-modal',
       nzFooter: null,
     });
     const instance = editUser.getContentComponent();
@@ -211,5 +199,9 @@ export class UsersRulesComponent implements OnInit {
       { text: '#1A237E', bg: '#E8EAF6', border: '#7986CB' },
       { text: '#004D40', bg: '#E0F2F1', border: '#4DB6AC' }
     ];
+  }
+
+  view(data:any){
+    
   }
 }

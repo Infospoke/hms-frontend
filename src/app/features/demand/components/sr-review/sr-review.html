@@ -151,7 +151,7 @@
                 <div class="review-row">
                     <span class="review-label">Proposed CTC</span>
                     <span class="review-val">
-                        {{ step2.proposedComp ? ('₹' + step2.proposedComp + ' LPA') : '—' }}
+                        {{ step2.proposedComp ? ('₹' + step2.proposedComp) : '—' }}
                     </span>
                 </div>
                 <div class="review-row">
@@ -161,7 +161,7 @@
                             {{ step2.signingBonus ? ' Yes' : ' No' }}
                         </span>
                         <span *ngIf="step2.signingBonus && step2.signingAmt">
-                            — ₹{{ step2.signingAmt }} LPA
+                            — ₹{{ step2.signingAmt }}
                         </span>
                     </span>
                 </div>
@@ -172,7 +172,7 @@
                             {{ step2.equity ? ' Yes' : ' No' }}
                         </span>
                         <span *ngIf="step2.equity && step2.equityAmt">
-                            — ₹{{ step2.equityAmt }} LPA
+                            — ₹{{ step2.equityAmt }}
                         </span>
                     </span>
                 </div>
@@ -183,7 +183,7 @@
                             {{ step2.relocation ? ' Yes' : ' No' }}
                         </span>
                         <span *ngIf="step2.relocation && step2.relocAmt">
-                            — ₹{{ step2.relocAmt }} LPA
+                            — ₹{{ step2.relocAmt }} 
                         </span>
                     </span>
                 </div>

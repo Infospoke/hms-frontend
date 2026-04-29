@@ -123,7 +123,7 @@ export class SrReviewComponent implements OnInit {
     const s = this.step2;
     const toLPA = (v: any) => (Number(v) || 0) / 100000;
 
-    const base = toLPA(s.proposedComp);
+    const base = Number(s.proposedComp);
 
     let salaryMid = 0;
     if (s.salaryComp) {

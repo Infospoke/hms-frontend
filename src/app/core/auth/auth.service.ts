@@ -59,10 +59,24 @@ export class AuthService {
   }
 
   logout() {
-    this.refreshTimerSub?.unsubscribe();
-    this.tokenService.clearTokens();
-    this.permissionService.clear();
-    this.router.navigate(['/auth/login']);
+
+    this.api.hrmspost(`${API.AUTH.LOGOUT}`, null).pipe(
+      catchError((err) => {
+        this.notification.error('Logout failed, redirecting...');
+        this.router.navigate(['/auth/login']);
+        return throwError(() => err);
+      })
+    ).subscribe((res: any) => {
+      if (res?.responsecode === '00' || res?.responseCode === '00') {
+        this.refreshTimerSub?.unsubscribe();
+        this.tokenService.clearTokens();
+        this.permissionService.clear();
+        this.notification.success(res?.message || 'Logged out successfully');
+        this.router.navigate(['/auth/login']);
+      } else {
+        this.notification.error(res?.message || 'Logout failed');
+      }
+    });
   }
 
   startTokenRefreshTimer() {

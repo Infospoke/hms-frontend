@@ -4,7 +4,9 @@ export const API = {
         PROFILE:`/hms/login/profile`,
         FORGOT_PASSWORD: '/hms/login/forgot-password',
         CHANGE_PASSWORD:'/hms/login/change-password',
-        REFRESH:'/hms/login/refresh'
+        REFRESH:'/hms/login/refresh',
+        LOGOUT:`/hms/login/logout`,
+        
     },
 
     MODULES : {
@@ -30,7 +32,8 @@ export const API = {
        SCHEDULE_INTERVIEW : '/api/interview/admin-schedule-interview',
        DELETE_JOB :(id:any) => `/hms/jobs/delete-job-by-id/${id}`,
        VIEW_RESUME : (type:any, user:any, action:any) => `/job/download/${type}?appId=${user}&action=${action}`,
-       ANALYSIS_RESUME:`/api/resume/analyze/batch`
+       ANALYSIS_RESUME:`/api/resume/analyze/batch`,
+       INTERVIEW_ANALYSIS:`/api/interview/fetch-interview-analysis`
     },
     USERS:{
         CREATE:'/hms/user/create',

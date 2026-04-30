@@ -29,7 +29,7 @@
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.35-4.35" />
       </svg>
-      <input type="text" placeholder="Search candidate by name, role, location" [(ngModel)]="searchQuery"
+      <input type="text" placeholder="Search by name, designation or status" [(ngModel)]="searchQuery"
         (ngModelChange)="applyFilter(candidates())" />
     </div>
     <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="applyFilter(candidates())" nzFormat="dd-MM-yyyy"

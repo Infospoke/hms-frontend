@@ -11,7 +11,7 @@
     </div>
 
     <div class="stepper">
-        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)">
+        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)" (click)="goTo(i)">
             <div class="ci">
                 <span *ngIf="i < currentStep" class="check-icon">✓</span>
                 <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
@@ -178,8 +178,8 @@
                 <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
 
                 <div class='next-buttons'>
-                    <button type="button" class="btn btn-success " *ngIf="isDraftSuccess">
-                        {{srId }} Saved as draft
+                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
+                        <i class="fas fa-check"></i> {{srId }} Saved as draft
                     </button>
                     <button type="button" class="btn btn-primary" (click)="validateStep0('next')" [disabled]="isSaving">
                         {{ isSaving ? 'Saving...' : 'Next: Business Justification →' }}
@@ -354,8 +354,8 @@
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
                 <div class="next-buttons">
-                    <button type="button" class="btn btn-success " *ngIf="isDraftSuccess">
-                        {{srId }} Saved as draft
+                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
+                        <i class="fas fa-check"></i> {{srId }} Saved as draft
                     </button>
                     <button type="button" class="btn btn-primary" (click)="validateStep1('next')" [disabled]="isSaving">
                         {{ isSaving ? 'Saving...' : 'Next: Budget &amp; Compensation →' }}
@@ -424,6 +424,9 @@
                     </div>
                     <input *ngIf="step2Form.get('signingBonus')?.value" type="text" formControlName="signingAmt"
                         placeholder="₹ Amount" style="margin-top:8px" />
+                    <span class="err-msg" *ngIf="hasError(step2Form, 'signingAmt')">
+                        {{ getError(step2Form, 'signingAmt',' Signing Bonus') }}
+                    </span>
                 </div>
                 <div class="field">
                     <label class="lbl">Equity / RSU</label>
@@ -436,6 +439,9 @@
                     </div>
                     <input *ngIf="step2Form.get('equity')?.value" type="text" formControlName="equityAmt"
                         placeholder="₹ or % range" style="margin-top:8px" />
+                    <span class="err-msg" *ngIf="hasError(step2Form, 'equityAmt')">
+                        {{ getError(step2Form, 'equityAmt',' Equity') }}
+                    </span>
                 </div>
                 <div class="field">
                     <label class="lbl">Relocation Budget</label>
@@ -448,7 +454,17 @@
                     </div>
                     <input *ngIf="step2Form.get('relocation')?.value" type="text" formControlName="relocAmt"
                         placeholder="₹ Amount" style="margin-top:8px" />
+                    <span class="err-msg" *ngIf="hasError(step2Form, 'relocAmt')">
+                        {{ getError(step2Form, 'relocAmt',' Relocation Budget') }}
+                    </span>
                 </div>
+            </div>
+            <div class="grid3">
+
+                <button type="button" class="btn-primary-check" (click)="validateStep2('next')">
+                    <i class="fa-solid fa-play me-2"></i> Run Budget Check
+                </button>
+
             </div>
             <div class="ctc-card" [ngClass]="getCompStatus(compValidationStatus).color">
 
@@ -477,9 +493,16 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(1)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep2('next')" [disabled]="isSaving">
-                    {{ isSaving ? 'Saving...' : 'Next: Role Requirements →' }}
-                </button>
+
+                <div class="next-buttons">
+                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
+                        <i class="fas fa-check"></i> {{srId }} Saved as draft
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="goTo(3)" [disabled]="hideNext">
+                        {{ isSaving ? 'Saving...' : 'Next: Role Requirements →' }}
+                    </button>
+                </div>
+
             </div>
         </div>
     </form>
@@ -510,7 +533,8 @@
                             (keydown)="onMustKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of mustSuggestions" class="sugg-tag" (click)="addMust(s?.skill_title)">{{
+                        <span *ngFor="let s of filteredMustSuggestions" class="sugg-tag"
+                            (click)="addMust(s?.skill_title)">{{
                             s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('must')">+ Add</button>
                     </div>
@@ -527,7 +551,8 @@
                             (keydown)="onNiceKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of niceSuggestions" class="sugg-tag" (click)="addNice(s?.skill_title)">{{
+                        <span *ngFor="let s of filteredNiceSuggestions" class="sugg-tag"
+                            (click)="addNice(s?.skill_title)">{{
                             s?.skill_title }}</span>
                         <button type="button" class="btn-add" (click)="openModal('nice')">+ Add</button>
                     </div>
@@ -624,7 +649,8 @@
                             placeholder="Add certification..." (keydown)="onCertKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of certSuggestions" class="sugg-tag" (click)="addCert(s?.name)">{{ s?.name
+                        <span *ngFor="let s of filteredCertSuggestions" class="sugg-tag" (click)="addCert(s?.name)">{{
+                            s?.name
                             }}</span>
                         <button type="button" class="btn-add" (click)="openModal('cert')">+ Add</button>
                     </div>
@@ -640,7 +666,8 @@
                             placeholder="Add language..." (keydown)="onLangKeydown($event)" />
                     </div>
                     <div class="ai-sugg">
-                        <span *ngFor="let s of langSuggestions" class="sugg-tag" (click)="addLang(s?.language)">{{
+                        <span *ngFor="let s of filteredLangSuggestions" class="sugg-tag"
+                            (click)="addLang(s?.language)">{{
                             s?.language}}</span>
                         <button type="button" class="btn-add" (click)="openModal('lang')">+ Add</button>
                     </div>
@@ -667,9 +694,15 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(2)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep3('next')" [disabled]="isSaving">
-                    {{ isSaving ? 'Saving...' : 'Next: Sourcing →' }}
-                </button>
+                <div class="next-buttons">
+                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
+                        <i class="fas fa-check"></i> {{srId }} Saved as draft
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="validateStep3('next')" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Next: Sourcing →' }}
+                    </button>
+                </div>
+
             </div>
         </div>
     </form>
@@ -741,12 +774,19 @@
                     </div>
                     <input *ngIf="step4Form.get('referralOn')?.value" type="text" formControlName="referralAmt"
                         placeholder="₹ Incentive amount" style="margin-top:8px" />
+
+                    <span class="err-msg" *ngIf="hasError(step4Form, 'referralAmt')">
+                        {{ getError(step4Form, 'referralAmt','Referral Incentive') }}
+                    </span>
                 </div>
 
                 <!-- Sourcing Budget -->
                 <div class="field">
                     <label class="lbl">Sourcing Budget <span class="lbl-sub"></span></label>
                     <input type="text" formControlName="sourcingBudget" placeholder="₹ 0" />
+                    <span class="err-msg" *ngIf="hasError(step4Form, 'sourcingBudget')">
+                        {{ getError(step4Form, 'sourcingBudget','Sourcing Budget') }}
+                    </span>
                 </div>
 
                 <!-- Diversity Sourcing -->
@@ -772,9 +812,15 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(3)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep4('next')" [disabled]="isSaving">
-                    {{ isSaving ? 'Saving...' : 'Next: Review →' }}
-                </button>
+
+                <div class="next-buttons">
+                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
+                        <i class="fas fa-check"></i> {{srId }} Saved as draft
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="validateStep4('next')" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Next: Review →' }}
+                    </button>
+                </div>
             </div>
         </div>
     </form>
@@ -802,11 +848,11 @@
                     </div>
                     <div class="review-row">
                         <span class="review-label">Department</span>
-                        <span class="review-val">{{ step0Form.get('dept')?.value || '—' }}</span>
+                        <span class="review-val">{{ departmentName }}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Business Unit</span>
-                        <span class="review-val">{{ step0Form.get('bu')?.value || '—' }}</span>
+                        <span class="review-val">{{ businessUnitName}}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Reporting Manager(s)</span>
@@ -833,7 +879,7 @@
                     </div>
                     <div class="review-row">
                         <span class="review-label">Seniority</span>
-                        <span class="review-val">{{ step0Form.get('seniority')?.value || '—' }}</span>
+                        <span class="review-val">{{ seniorityName }}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">No. of Openings</span>
@@ -1022,7 +1068,7 @@
                     </div>
                     <div class="review-row">
                         <span class="review-label">Travel Requirement</span>
-                        <span class="review-val">{{ step3Form.get('travel')?.value || '—' }}</span>
+                        <span class="review-val">{{ tavelName }}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Certifications</span>
@@ -1087,6 +1133,7 @@
                             <span *ngIf="step4Form.get('referralOn')?.value && step4Form.get('referralAmt')?.value">
                                 — ₹{{ step4Form.get('referralAmt')?.value }} bonus
                             </span>
+
                         </span>
                     </div>
                     <div class="review-row">
@@ -1138,41 +1185,8 @@
 
         <hr class="divider" />
 
-        <!-- APPROVAL CHAIN -->
-        <div class="approval-box">
 
-            <div class="approvers-heading">Approval chain — live status</div>
 
-            <div *ngFor="let a of approvers; let i = index" class="approver-row" [class.active]="i === 0">
-
-                <!-- LEVEL -->
-                <div class="level-badge">L{{ i + 1 }}</div>
-
-                <!-- INFO -->
-                <div class="approver-info">
-                    <div class="approver-name">{{ a.n }}</div>
-                    <div class="approver-role">{{ a.role }}</div>
-                </div>
-
-                <!-- STATUS -->
-                <span class="badge" [ngClass]="{
-              'badge-yellow': a.status === 'Pending',
-              'badge-gray': a.status === 'Waiting',
-              'badge-green': a.status === 'Approved'
-            }">
-                    {{ a.status }}
-                </span>
-            </div>
-
-        </div>
-
-        <!-- INFO BAR -->
-        <div class="info-bar">
-            Email confirmation sent to user@company.com ·
-            You can track status in <span class="link">My SRs</span>
-        </div>
-
-        <!-- ACTIONS -->
         <div class="footer-btns">
             <button class="btn btn btn-draft" (click)="raiseAnother()">
                 Raise another SR

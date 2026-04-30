@@ -25,4 +25,24 @@ export class AddSkillComponent {
     const value = this.modalForm.value.value;
     this.modal.close(value);
   }
+
+
+  getPlaceholder(): string {
+  switch (this.modalType) {
+    case 'Must-Have Skills':
+      return 'Enter Skills (e.g. Java, Python )';
+
+    case 'Nice-to-Have Skills':
+      return 'TEnter Skills (e.g. HTML, CSS )';
+
+    case 'Certifications':
+      return 'Enter certification (e.g. AWS, Azure...)';
+
+    case 'Language Requirements':
+      return 'Enter language (e.g. English, Hindi...)';
+
+    default:
+      return 'Enter value...';
+  }
+}
 }

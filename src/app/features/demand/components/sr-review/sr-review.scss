@@ -11,11 +11,11 @@
 }
 
 /* ─── Card ─── */
-.card {
-  background: var(--color-background-primary);
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: var(--border-radius-lg);
-  padding: 20px;
+.card-drop {
+  // background: var(--color-background-primary);
+  // border: 0.5px solid var(--color-border-tertiary);
+  // border-radius: var(--border-radius-lg);
+  padding: 15px;
   margin-bottom: 12px;
 }
 
@@ -36,7 +36,7 @@
   font-weight: 500;
 }
 
-/* ─── Collapsible ─── */
+
 .collapsible {
   border: 0.5px solid var(--color-border-tertiary);
   border-radius: var(--border-radius-md);

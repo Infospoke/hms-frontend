@@ -457,11 +457,23 @@ select {
 }
 
 
-.custom-edit-modal .ant-modal-content {
-  border-radius: 10px;
-  // overflow: hidden;
-}
+// styles.scss (global)
 
+.custom-edit-modal {
+
+  .ant-modal-content {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .ant-modal-header {
+    border-radius: 16px 16px 0 0 !important;
+  }
+
+  .ant-modal-footer {
+    border-radius: 0 0 16px 16px !important;
+  }
+}
 
 input:disabled,
 select:disabled {

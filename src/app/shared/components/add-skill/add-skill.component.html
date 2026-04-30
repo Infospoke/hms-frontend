@@ -7,7 +7,7 @@
             <label class="modal-input-label">
                 {{ modalLabel }} <span class="astrick">*</span>
             </label>
-            <input type="text" formControlName="value" placeholder="Enter value..." class="modal-input" />
+            <input type="text" formControlName="value" [placeholder]="getPlaceholder()" class="modal-input" />
 
             <div class="modal-error" *ngIf="modalForm.get('value')?.touched && modalForm.get('value')?.invalid">
                 Value is required

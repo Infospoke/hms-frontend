@@ -225,7 +225,8 @@ export class AppliedCandidatesComponent implements OnChanges {
       result = result.filter(c =>
         c.name.toLowerCase().includes(q) ||
         c.role.toLowerCase().includes(q) ||
-        c.location.toLowerCase().includes(q)
+        (c.status || '').toLowerCase().includes(q) ||
+        (c.displayStatus || '').toLowerCase().includes(q)
       );
     }
 

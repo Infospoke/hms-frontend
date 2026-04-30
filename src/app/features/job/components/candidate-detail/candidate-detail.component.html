@@ -1,42 +1,92 @@
 <div class="detail-container" *ngIf="candidate; else noSelection">
   <div class="detail-scroll">
 
-    <ng-container *ngIf="viewMode === 'default'">
-      <div class="detail-header">
-        <div class="heading-group">
-          <h3 class="detail-title">Candidate Detail</h3>
-          <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
-        </div>
-        <div class="header-actions">
-          <button class="view-resume-btn" (click)="onViewResume()">
-            <nz-icon nzType="eye" nzTheme="outline" />
-            View Resume
-          </button>
-          <button class="export-btn" (click)="handleExport()" [class.loading]="isExporting">
-            <span class="export-btn-inner">
-              <nz-icon *ngIf="!isExporting" nzType="download" nzTheme="outline" />
-              <nz-icon *ngIf="isExporting" nzType="loading" nzTheme="outline" class="spin" />
-              <span>{{ isExporting ? 'Exporting…' : 'Export' }}</span>
-            </span>
-          </button>
-        </div>
+    <!-- ── Single Header (title changes with viewMode) ── -->
+    <div class="detail-header">
+      <div class="heading-group">
+        <h3 class="detail-title">{{ headerTitle }}</h3>
+        <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
       </div>
+      <div class="header-actions">
+        <button class="view-resume-btn" (click)="onViewResume()">
+          <nz-icon nzType="eye" nzTheme="outline" />
+          View Resume
+        </button>
+        <button class="export-btn" (click)="handleExport()" [class.loading]="isExporting">
+          <span class="export-btn-inner">
+            <nz-icon *ngIf="!isExporting" nzType="download" nzTheme="outline" />
+            <nz-icon *ngIf="isExporting" nzType="loading" nzTheme="outline" class="spin" />
+            <span>{{ isExporting ? 'Exporting…' : 'Export' }}</span>
+          </span>
+        </button>
+      </div>
+    </div>
 
+    <!-- ── Single Profile Card (scores change per viewMode) ── -->
+    <div class="profile-card">
+      <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
+      <h4 class="profile-name">{{ candidate.name }}</h4>
+      <p class="profile-role">{{ candidate.role }}</p>
 
-      <div class="profile-card">
-        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
-        <h4 class="profile-name">{{ candidate.name }}</h4>
-        <p class="profile-role">{{ candidate.role }}</p>
+      <!-- Scores locked to candidate status — never change when switching tabs -->
+
+      <!-- SCREENED: always show screening scores -->
+      <ng-container *ngIf="candidate.status?.toUpperCase() === 'SCREENED'">
         <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span
-              class="score-label">Skill</span></div>
-          <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span
-              class="score-label">Experience</span></div>
-          <div class="score-box"><span class="score-value">{{ candidate.keywordScore }}%</span><span
-              class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span class="score-label">Experience</span></div>
         </div>
-      </div>
+        <div class="score-row" style="margin-top: 10px;">
+          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span class="score-label">Growth</span></div>
+        </div>
+      </ng-container>
 
+      <!-- INTERVIEW: always show interview scores -->
+      <ng-container *ngIf="candidate.status?.toUpperCase() === 'INTERVIEW'">
+        <div class="score-row">
+          <div class="score-box"><span class="score-value">{{ interviewData.finalScore }}</span><span class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.experience }}</span><span class="score-label">Experience</span></div>
+        </div>
+        <div class="score-row" style="margin-top: 10px;">
+          <div class="score-box"><span class="score-value">{{ interviewData.education }}</span><span class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.keywords }}</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ interviewData.growth }}</span><span class="score-label">Growth</span></div>
+        </div>
+      </ng-container>
+
+      <!-- All other statuses (APPLIED, OFFER, HIRED): show basic 3-box scores -->
+      <ng-container *ngIf="candidate.status?.toUpperCase() !== 'SCREENED' && candidate.status?.toUpperCase() !== 'INTERVIEW'">
+        <div class="score-row">
+          <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span class="score-label">Skill</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.keywordScore }}%</span><span class="score-label">Keywords</span></div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- ── Tab Nav: 2 tabs for SCREENED ── -->
+    <div class="iv-tabs" *ngIf="candidate.status?.toUpperCase() === 'SCREENED'">
+      <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Applied</button>
+      <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screened</button>
+    </div>
+
+    <!-- ── Tab Nav: 3 tabs for INTERVIEW ── -->
+    <div class="iv-tabs" *ngIf="candidate.status?.toUpperCase() === 'INTERVIEW'">
+      <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Candidate Details</button>
+      <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screening Details</button>
+      <button class="iv-tab" [class.active]="activeTab === 'interview'" (click)="setTab('interview')">Interview Analysis</button>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         BODY CONTENT — switches by viewMode
+    ══════════════════════════════════════════════════════ -->
+
+    <!-- ── Applied / Default body ── -->
+    <ng-container *ngIf="viewMode === 'default'">
       <div class="info-section">
         <div class="info-block">
           <span class="info-label">EMAIL</span>
@@ -82,51 +132,8 @@
       </div>
     </ng-container>
 
+    <!-- ── Screening body ── -->
     <ng-container *ngIf="viewMode === 'screening'">
-      <div class="detail-header">
-        <div class="heading-group">
-          <h3 class="detail-title">Screening Details</h3>
-          <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
-        </div>
-
-        <div class="header-actions">
-          <button class="view-resume-btn" (click)="onViewResume()">
-            <nz-icon nzType="eye" nzTheme="outline" />
-            View Resume
-          </button>
-          <button class="export-btn" (click)="handleExport()" [class.loading]="isExporting">
-            <span class="export-btn-inner">
-              <nz-icon *ngIf="!isExporting" nzType="download" nzTheme="outline" />
-              <nz-icon *ngIf="isExporting" nzType="loading" nzTheme="outline" class="spin" />
-              <span>{{ isExporting ? 'Exporting…' : 'Export' }}</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-
-      <div class="profile-card">
-        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
-        <h4 class="profile-name">{{ candidate.name }}</h4>
-        <p class="profile-role">{{ candidate.role }}</p>
-        <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span
-              class="score-label">Final Score</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span
-              class="score-label">Skill Match</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span
-              class="score-label">Experience</span></div>
-        </div>
-        <div class="score-row" style="margin-top: 10px;">
-          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span
-              class="score-label">Education</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span
-              class="score-label">Keywords</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span
-              class="score-label">Growth</span></div>
-        </div>
-      </div>
-
       <div class="sc-section-title">Recommendation</div>
       <div class="sc-card">
         <div class="sc-tag-row">
@@ -139,7 +146,6 @@
             <span class="info-label">EMAIL :</span>
             <span class="info-value">{{ candidate.email }}</span>
           </div>
-
           <div>
             <span class="info-label">PHONE :</span>
             <span class="info-value">{{ candidate.phone }}</span>
@@ -208,51 +214,8 @@
       </div>
     </ng-container>
 
+    <!-- ── Interview Analysis body ── -->
     <ng-container *ngIf="viewMode === 'interview'">
-      <div class="detail-header">
-
-        <div class="heading-group">
-          <h3 class="detail-title">Interview Analysis</h3>
-          <p class="detail-subtitle">Inline preview without leaving the pipeline.</p>
-        </div>
-        <div class="header-actions">
-          <button class="view-resume-btn" (click)="onViewResume()">
-            <nz-icon nzType="eye" nzTheme="outline" />
-            View Resume
-          </button>
-          <button class="export-btn" (click)="handleExport()" [class.loading]="isExporting">
-            <span class="export-btn-inner">
-              <nz-icon *ngIf="!isExporting" nzType="download" nzTheme="outline" />
-              <nz-icon *ngIf="isExporting" nzType="loading" nzTheme="outline" class="spin" />
-              <span>{{ isExporting ? 'Exporting…' : 'Export' }}</span>
-            </span>
-          </button>
-        </div>
-      </div>
-
-
-      <div class="profile-card">
-        <div class="profile-avatar" [style.background]="candidate.avatarBg">{{ candidate.initials }}</div>
-        <h4 class="profile-name">{{ candidate.name }}</h4>
-        <p class="profile-role">{{ candidate.role }}</p>
-        <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ interviewData.finalScore }}</span><span
-              class="score-label">Final Score</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.skillMatch }}</span><span
-              class="score-label">Skill Match</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.experience }}</span><span
-              class="score-label">Experience</span></div>
-        </div>
-        <div class="score-row" style="margin-top: 10px;">
-          <div class="score-box"><span class="score-value">{{ interviewData.education }}</span><span
-              class="score-label">Education</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.keywords }}</span><span
-              class="score-label">Keywords</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.growth }}</span><span
-              class="score-label">Growth</span></div>
-        </div>
-      </div>
-
       <div class="sc-section-title">Overall Score</div>
       <div class="sc-card iv-score-card">
         <svg viewBox="0 0 120 120" class="iv-gauge">
@@ -260,8 +223,7 @@
           <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="314"
             [attr.stroke-dashoffset]="314 - (314 * interviewData.total_score / 100)" stroke-linecap="round"
             transform="rotate(-90 60 60)" />
-          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{
-            interviewData.total_score }}</text>
+          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{ interviewData.total_score }}</text>
           <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
         </svg>
       </div>
@@ -303,7 +265,7 @@
           </svg>
         </div>
         <div class="iv-qa-block iv-question-text" *ngIf="expandedQuestion === i">
-          <div class="iv-question ">
+          <div class="iv-question">
             <span class="iv-label"><strong>Question</strong></span>
             <p>{{ q.question_text }}</p>
           </div>
@@ -315,7 +277,7 @@
       </div>
     </ng-container>
 
-    <!-- Action buttons only shown for candidates still in APPLIED or SCREENED stage -->
+    <!-- ── Action buttons — only for APPLIED or SCREENED ── -->
     <div class="action-grid" *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
       <button class="action-btn primary" (click)="onAction('interview')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -4,11 +4,11 @@
     <div class="header">
       <div class="avatar">{{ user?.firstName | profile }}</div>
       <div>
-        <h3>{{ user.firstName +  user?.lastName }}</h3>
+        <h3>{{ user?.firstName +  user?.lastName }}</h3>
         <p>
-          {{ user.email }} &nbsp;•&nbsp;
-          <span [ngClass]="user.active ? 'status active' : 'status deactivated'">
-            {{ user.active ? 'Active' : 'Deactivated' }}
+          {{ user?.email }} &nbsp;•&nbsp;
+          <span [ngClass]="user?.active ? 'status active' : 'status deactivated'">
+            {{ user?.active ? 'Active' : 'Deactivated' }}
           </span>
         </p>
       </div>
@@ -18,15 +18,15 @@
     <div class="grid">
       <div class="form-group">
         <label>Current Role</label>
-        <span class="role">{{ user.roleName }}</span>
+        <span class="role">{{ user?.roleName }}</span>
       </div>
       <div class="form-group">
         <label>Assigned</label>
-        <span class="role">{{ user.assignedAt | date:'dd-MM-yyyy hh:mm a' }}</span>
+        <span class="role">{{ user?.assignedAt | date:'dd-MM-yyyy hh:mm a' }}</span>
       </div>
       <div class="form-group">
         <label>Assigned By</label>
-        <span class="role">{{ user.assignedBy }}</span>
+        <span class="role">{{ user?.assignedBy }}</span>
       </div>
     </div>
 
@@ -41,13 +41,11 @@
           <label>Business Unit <span class="astrick">*</span></label>
           <select formControlName="businessUnit" [attr.disabled]="!businessUnits.length ? true : null">
             <option value="" disabled selected>
-              {{ businessUnits.length ? 'Select business unit' : 'No business units available' }}
+             Select business unit
             </option>
             <option *ngFor="let b of businessUnits" [value]="b?.id">{{ b?.name }}</option>
           </select>
-          <span class="no-data" *ngIf="!businessUnits.length">
-            <i class="fa-solid fa-circle-exclamation"></i> No business units present
-          </span>
+          
           <div class="error" *ngIf="c('businessUnit')?.touched">
             <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
           </div>
@@ -58,13 +56,11 @@
           <label>Department / Team <span class="astrick">*</span></label>
           <select formControlName="department" [attr.disabled]="!departments.length ? true : null">
             <option value="" disabled selected>
-              {{ !businessUnits.length ? 'No business units available' : !departments.length ? 'No departments available' : 'Select department' }}
+              Select department 
             </option>
             <option *ngFor="let d of departments" [value]="d?.id">{{ d?.name }}</option>
           </select>
-          <span class="no-data" *ngIf="c('businessUnit')?.value && !departments.length">
-            <i class="fa-solid fa-circle-exclamation"></i> No departments present
-          </span>
+          
           <div class="error" *ngIf="c('department')?.touched">
             <span *ngIf="c('department')?.hasError('required')">Department is required</span>
           </div>
@@ -75,14 +71,11 @@
           <label>Designation / Role <span class="astrick">*</span></label>
           <select formControlName="role" [attr.disabled]="!roles.length ? true : null">
             <option value="" disabled selected>
-              {{ !departments.length ? 'No departments available' : !roles.length ? 'No roles available' : 'Select role'
-              }}
+             Select role
             </option>
             <option *ngFor="let r of roles" [value]="r?.id">{{ r?.name }}</option>
           </select>
-          <span class="no-data" *ngIf="c('department')?.value && !roles.length">
-            <i class="fa-solid fa-circle-exclamation"></i> No roles present
-          </span>
+          
           <div class="error" *ngIf="c('role')?.touched">
             <span *ngIf="c('role')?.hasError('required')">Designation / Role is required</span>
           </div>

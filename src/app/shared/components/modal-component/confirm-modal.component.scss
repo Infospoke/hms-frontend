@@ -1,0 +1,121 @@
+.modal-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: center;
+
+}
+
+
+.modal-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+
+  i {
+    font-size: 28px;
+  }
+
+  &.icon-activate {
+    background: #e8f8f0;
+
+    i {
+      color: #16a34a;
+    }
+  }
+
+  &.icon-deactivate {
+    background: #fdecec;
+
+    i {
+      color: #dc2626;
+    }
+  }
+}
+
+/* TITLE */
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+/* DESCRIPTION */
+.modal-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+  line-height: 1.5;
+  max-width: 260px;
+}
+
+/* BUTTONS */
+.modal-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: white;;
+}
+
+/* PRIMARY BUTTON */
+.btn-primary {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* ACTIVATE (GREEN) */
+.btn-activate {
+  background: #16a34a;
+  color: #fff;
+
+  &:hover {
+    background: #15803d;
+  }
+}
+
+/* DELETE (RED) */
+.btn-deactivate {
+  background: #e02424;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  &:hover {
+    background: #c81e1e;
+  }
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  border-radius: 12px;
+}
+
+/* SECONDARY BUTTON */
+.btn-secondary {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}

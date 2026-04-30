@@ -6,6 +6,7 @@ import { CreateRoleComponent } from '../createrole/createrole.component';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../servics/user-service';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-role-permissions',
@@ -21,7 +22,7 @@ export class RolePermissionsComponent implements OnInit {
   private modal = inject(NzModalService);
   private roleService = inject(UserService);
   private _rowSnapshot: RolePermission | null = null;
-
+  private notificationService=inject(NotificationService);
   modules: PermissionModule[] = [];
   roles: RolePermission[] = [];
 
@@ -142,9 +143,14 @@ export class RolePermissionsComponent implements OnInit {
     };
 
     this.roleService.updatePermission(payload)
-      .then(() => {
+      .then((res:any) => {
+        if(res?.responsecode=='00'){
         this.editingRowIndex = -1;
         this._rowSnapshot = null;
+        this.loadModulesAndPermissions();}
+        else{
+          this.notificationService.error(res?.message || res?.responsemessage || res?.error[0])
+        }
       })
       .catch((err) => {
         console.error('Save error:', err);

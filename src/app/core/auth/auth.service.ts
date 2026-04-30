@@ -166,7 +166,14 @@ export class AuthService {
   changePassword(payload: { oldPassword: string; newPassword: string }): Observable<any> {
     return this.api.hrmspost(`${API.AUTH.CHANGE_PASSWORD}`, payload).pipe(
       tap((res: any) => {
-        this.notification.success(res?.message || 'Password changed successfully');
+        if (res?.responsecode == '00') {
+          this.notification.success(res?.responsemessage);
+          // this.logout();
+          this.router.navigate(['/auth/login']);
+        }
+        else {
+          this.notification.error(res?.responsemessage || res?.message);
+        }
       }),
       catchError((err: any) => {
         const msg = err.error?.responseMessage || err.error?.message;

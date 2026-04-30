@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-change-password',
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 export class ChangePasswordComponent {
   private auth   = inject(AuthService);
   private router = inject(Router);
-
+  private notificationService=inject(NotificationService)
   changeForm: FormGroup;
   loading = signal(false);
 
@@ -76,10 +77,16 @@ export class ChangePasswordComponent {
     };
 
     this.auth.changePassword(payload).subscribe({
-      next: () => {
+      next: (res:any) => {
         this.loading.set(false);
+        if(res?.responsecode=='00'){
+        
         this.auth.logout();                  
         this.router.navigate(['/auth/login']);
+        }
+        else {
+          this.notificationService.error(res?.responsemessage || res?.message);
+        }
       },
       error: () => {
         this.loading.set(false);             

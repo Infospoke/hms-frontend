@@ -1,0 +1,39 @@
+<div class="modal-wrapper">
+
+  <!-- Icon -->
+  <div class="modal-icon" [ngClass]="mode === 'activate' ? 'icon-activate' : 'icon-deactivate'">
+    <i [class]="mode === 'activate' ? 'fas fa-circle-check' : 'fas fa-circle-exclamation'"></i>
+  </div>
+
+  <!-- Title -->
+  <h3 class="modal-title">
+    {{ mode === 'activate' ? 'Activate' : 'Deactivate' }}
+  </h3>
+
+  <!-- Description -->
+  <p class="modal-desc">
+    {{ mode === 'activate'
+      ? 'Are you sure you want to activate this user?'
+      : 'Are you sure you want to delete this user?' }}
+  </p>
+
+  <!-- Buttons -->
+  <div class="modal-actions">
+
+    <!-- Primary -->
+    <button
+      class="btn-primary"
+      [ngClass]="mode === 'activate' ? 'btn-activate' : 'btn-deactivate'"
+      (click)="onConfirm()"
+      [disabled]="loading">
+
+      {{ loading ? 'Please wait...' : (mode === 'activate' ? 'Activate' : 'Delete') }}
+    </button>
+
+    <!-- Secondary -->
+    <button class="btn-secondary" (click)="onCancel()" [disabled]="loading">
+      Cancel
+    </button>
+
+  </div>
+</div>

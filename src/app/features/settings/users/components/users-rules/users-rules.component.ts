@@ -10,10 +10,11 @@ import { forkJoin, from } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-users-rules',
-  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent,ProfilePipe],
+  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent, ProfilePipe],
   templateUrl: './users-rules.component.html',
   styleUrl: './users-rules.component.scss',
 })
@@ -24,17 +25,22 @@ export class UsersRulesComponent implements OnInit {
   private router = inject(Router);
   private modal = inject(NzModalService);
   private userService = inject(UserService);
-
+  private notificationService=inject(NotificationService)
+  showConfirmModal = false;
+  modalType: 'activate' | 'deactivate' = 'deactivate';
+  modalTitle = '';
+  modalMessage = '';
+  confirmText = '';
+  selectedUserId: any = null;
   totalItems = 0;
   cards: any[] = [];
   usersList: any[] = [];
   filters: any[] = [];
   selectedFilter: any = 'All';
   filteredUsers: any[] = [];
-
   pageSize = 10;
 
- 
+
   currentPage = 1;
 
   private activeRoleId: any = null;
@@ -46,7 +52,7 @@ export class UsersRulesComponent implements OnInit {
   }
 
   getCardCountAndList() {
-    const payload = this.buildPayload(0, null); 
+    const payload = this.buildPayload(0, null);
 
     forkJoin({
       userList: from(this.userService.getList(payload)),
@@ -92,10 +98,29 @@ export class UsersRulesComponent implements OnInit {
 
   openInvite() {
     this.router.navigateByUrl("/users/user-onboard-roles/invite-user");
-   
-  }
 
-  edit(user: any) {
+  }
+  editUser(user:any) {
+    forkJoin({
+
+      user: this.userService.getUserById(user?.id),
+    }).subscribe({
+      next:(res: any) => {
+        if(res?.user?.responsecode=='00'){
+          this.edit(user?.id,res?.user?.data);
+        }
+        else{
+          this.notificationService.error(res?.user?.message || res?.user?.responsemessage);
+        }
+        
+
+      },
+      error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+  edit(userId: any,user:any) {
     const editUser = this.modal.create({
       nzTitle: '',
       nzContent: EditUserComponent,
@@ -105,16 +130,18 @@ export class UsersRulesComponent implements OnInit {
         'max-height': '100vh',
         'overflow-y': 'auto',
         'padding': '10px',
-        'border-radius':'20px'
+        'border-radius': '20px'
       },
       nzWrapClassName: 'custom-edit-modal',
       nzFooter: null,
     });
     const instance = editUser.getContentComponent();
-    instance.userId = user?.id;
+
+    instance.userId = userId;
+    instance.user=user;
   }
 
-  
+
   generateFilters(roleCounts: any[], total: any) {
     const colors = this.getColorPalette();
 
@@ -122,7 +149,7 @@ export class UsersRulesComponent implements OnInit {
       const color = colors[index % colors.length];
       return {
         label: role.roleName || 'Unknown',
-        id: role.roleId,    
+        id: role.roleId,
         roleId: role.roleId,
         count: role.count || 0,
         textColor: color.text,
@@ -174,7 +201,7 @@ export class UsersRulesComponent implements OnInit {
     });
   }
 
-  
+
   private buildPayload(backendPage: number, roleId: any) {
     const filters: any = {};
     if (roleId !== null && roleId !== undefined) {
@@ -201,7 +228,20 @@ export class UsersRulesComponent implements OnInit {
     ];
   }
 
-  view(data:any){
-    
+  view(data: any) {
+    this.router.navigateByUrl('/users/user-onboard-roles/invite-user', {
+      state: { type: 'view', user: data }
+    });
   }
+
+  openConfirm(config: any) {
+    this.modalType = config.type;
+    this.modalTitle = config.title;
+    this.modalMessage = config.message;
+    this.confirmText = config.confirmText;
+    this.selectedUserId = config.userId;
+
+    this.showConfirmModal = true;
+  }
+
 }

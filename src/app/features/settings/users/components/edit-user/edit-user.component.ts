@@ -6,6 +6,7 @@ import { UserService } from '../../servics/user-service';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
+import { ConfirmModalComponent } from '../../../../../shared/components/modal-component/confirm-modal.component';
 
 @Component({
   selector: 'app-edit-user',
@@ -17,7 +18,7 @@ export class EditUserComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Input() userId: any = null;
 
-
+  @Input() user:any=null;
 
   roles: any[] = [];
   businessUnits: any[] = [];
@@ -30,7 +31,6 @@ export class EditUserComponent implements OnInit {
   private modalRef = inject(NzModalRef);
   private notificationService = inject(NotificationService);
   isloading = signal<boolean>(false);
-  user: any = null;
   constructor() { }
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -77,20 +77,11 @@ export class EditUserComponent implements OnInit {
     }
   }
   activateUser() {
-    this.modal.confirm({
-      nzTitle: 'Are you sure you want to activate this user?',
-      nzContent: 'This action will enable user access.',
-      nzOkText: 'Yes, Activate',
-      nzOkType: 'primary',
-      nzOkDanger: true,
-      nzCancelText: 'Cancel',
-
-      nzOnOk: () => {
-        return this.active(this.userId);
-      }
-    })
+    this.modalRef?.close();
+    this.openConfirmModal('activate');
   }
   active(userId: any) {
+    console.log(this.userId,this.user);
     let obj = {
       "activate": true
     }
@@ -104,18 +95,8 @@ export class EditUserComponent implements OnInit {
       });
   }
   deactivateUser() {
-    this.modal.confirm({
-      nzTitle: 'Are you sure you want to deactivate this user?',
-      nzContent: 'This action will disable user access.',
-      nzOkText: 'Yes, Deactivate',
-      nzOkType: 'primary',
-      nzOkDanger: true,
-      nzCancelText: 'Cancel',
-
-      nzOnOk: () => {
-        return this.deactive(this.userId);
-      }
-    })
+    this.modalRef.close();
+    this.openConfirmModal('deactivate');
   }
 
   deactive(userId: any) {
@@ -132,14 +113,14 @@ export class EditUserComponent implements OnInit {
       });
   }
   getIntialData() {
+    console.log(this.userId);
     forkJoin({
       bussinessUnit: this.userService.getBussinessUnits(),
-      user: this.userService.getUserById(this.userId),
+
     }).subscribe({
       next: async (res: any) => {
         this.businessUnits = res.bussinessUnit?.data;
-        this.user = res?.user?.data;
-
+  
         this.form.patchValue({
           businessUnit: this.user?.businessUnitId
         });
@@ -197,5 +178,24 @@ export class EditUserComponent implements OnInit {
   c(name: string) {
     return this.form.get(name);
   }
+  private openConfirmModal(mode: 'activate' | 'deactivate'): void {
+    console.log(mode);
+    const modal = this.modal.create<ConfirmModalComponent>({
+      nzContent: ConfirmModalComponent,
+      nzData: { mode },
+      nzClassName: 'custom-confirm-modal custom-edit-modal',
+      nzFooter: null,
+      nzCentered: true,
+      nzWidth: 360,
+      nzClosable: false,
+    });
 
+    modal.afterClose.subscribe((result: string) => {
+      if (result === 'confirm') {
+        mode === 'activate'
+          ? this.active(this.userId)
+          : this.deactive(this.userId);
+      }
+    });
+  }
 }

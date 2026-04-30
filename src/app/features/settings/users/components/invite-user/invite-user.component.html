@@ -6,7 +6,8 @@
       <div class="field">
         <label>User Type <span class="astrick">*</span></label>
         <select formControlName="userType">
-          <option value="" disabled selected>Select user type</option>
+          <option value="" disabled>Select user type</option>
+          <option *ngIf="userTypes.length === 0" disabled value="">No user types available</option>
           <option *ngFor="let u of userTypes" [value]="u?.id">{{ u?.name }}</option>
         </select>
         <div class="error" *ngIf="c('userType')?.touched">
@@ -41,11 +42,12 @@
       <!-- Employee ID -->
       <div class="field">
         <label>Employee ID <span class="astrick">*</span></label>
-        <input formControlName="employeeId" placeholder="Enter employee ID (eg . 0092)">
+        <input formControlName="employeeId" placeholder="Enter employee ID (eg. 0092)">
         <div class="error" *ngIf="c('employeeId')?.touched">
           <span *ngIf="c('employeeId')?.hasError('required')">Employee ID is required</span>
           <span *ngIf="c('employeeId')?.hasError('numericOnly')">Employee ID must be numeric</span>
-           <span *ngIf="c('employeeId')?.hasError('maxlength')">Employee ID must have exactly 4 </span>
+          <span *ngIf="c('employeeId')?.hasError('maxlength')">Employee ID must have exactly 4 digits</span>
+           <span *ngIf="c('employeeId')?.hasError('minlength')">Employee ID must have exactly 4 digits</span>
         </div>
       </div>
 
@@ -55,18 +57,17 @@
         <input formControlName="email" placeholder="Enter corporate email address">
         <div class="error" *ngIf="c('email')?.touched">
           <span *ngIf="c('email')?.hasError('required')">Email address is required</span>
-          <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email
-            address</span>
+          <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email address</span>
         </div>
       </div>
 
       <!-- Mobile -->
       <div class="field">
         <label>Mobile Number <span class="astrick">*</span></label>
-        <input formControlName="mobile" placeholder="Enter mobile with country code (e.g. +91 9876543210)">
+        <input formControlName="mobile" placeholder="Enter mobile with country code (e.g.9876543210)">
         <div class="error" *ngIf="c('mobile')?.touched">
           <span *ngIf="c('mobile')?.hasError('required')">Mobile number is required</span>
-          <span *ngIf="c('mobile')?.hasError('numericOnly')">Only numeric digits are allowed</span>
+          <span *ngIf="c('mobile')?.hasError('invalidMobile')">Enter a valid mobile number</span>
           <span *ngIf="c('mobile')?.hasError('minlength')">Enter a valid mobile number</span>
         </div>
       </div>
@@ -76,19 +77,18 @@
         <label>Alternate Contact</label>
         <input formControlName="altMobile" placeholder="Enter alternate contact (optional)">
         <div class="error" *ngIf="c('altMobile')?.touched">
-          <span *ngIf="c('altMobile')?.hasError('numericOnly')">Only numeric digits are allowed</span>
+          <span *ngIf="c('altMobile')?.hasError('invalidMobile')">Enter a valid contact number</span>
           <span *ngIf="c('altMobile')?.hasError('minlength')">Enter a valid contact number</span>
           <span *ngIf="c('altMobile')?.hasError('sameAsMobile')">Alternate contact must differ from mobile number</span>
         </div>
       </div>
 
-      <!-- Date of Birth -->
-     
       <!-- Employment Type -->
       <div class="field">
         <label>Employment Type <span class="astrick">*</span></label>
         <select formControlName="employmentType">
-          <option value="" disabled selected>Select employment type</option>
+          <option value="" disabled>Select employment type</option>
+          <option *ngIf="employmentTypes.length === 0" disabled value="">No employment types available</option>
           <option *ngFor="let e of employmentTypes" [value]="e?.id">{{ e?.name }}</option>
         </select>
         <div class="error" *ngIf="c('employmentType')?.touched">
@@ -100,7 +100,8 @@
       <div class="field">
         <label>Business Unit <span class="astrick">*</span></label>
         <select formControlName="businessUnit">
-          <option value="" disabled selected>Select business unit</option>
+          <option value="" disabled>Select business unit</option>
+          <option *ngIf="businessUnits.length === 0" disabled value="">No business units available</option>
           <option *ngFor="let b of businessUnits" [value]="b?.id">{{ b?.name }}</option>
         </select>
         <div class="error" *ngIf="c('businessUnit')?.touched">
@@ -111,9 +112,12 @@
       <!-- Department -->
       <div class="field">
         <label>Department / Team <span class="astrick">*</span></label>
-        <select formControlName="department" [attr.disabled]="!departments.length ? true : null">
-          <option value="" disabled selected>
+        <select formControlName="department">
+          <option value="" disabled>
             {{ departments.length ? 'Select department' : 'Select business unit first' }}
+          </option>
+          <option *ngIf="departments.length === 0 && c('businessUnit')?.value" disabled value="">
+            No departments available
           </option>
           <option *ngFor="let d of departments" [value]="d?.id">{{ d?.name }}</option>
         </select>
@@ -125,9 +129,12 @@
       <!-- Role -->
       <div class="field">
         <label>Designation / Role <span class="astrick">*</span></label>
-        <select formControlName="role" [attr.disabled]="!roles.length ? true : null">
-          <option value="" disabled selected>
+        <select formControlName="role">
+          <option value="" disabled>
             {{ roles.length ? 'Select role' : 'Select department first' }}
+          </option>
+          <option *ngIf="roles.length === 0 && c('department')?.value" disabled value="">
+            No roles available
           </option>
           <option *ngFor="let r of roles" [value]="r?.id">{{ r?.name }}</option>
         </select>
@@ -141,8 +148,9 @@
     <!-- Actions -->
     <div class="actions">
       <button type="button" class="btn cancel" (click)="close()">Cancel</button>
-      <button type="button" class="btn primary" (click)="submit()" [disabled]="form.invalid"><i
-          class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i> Submit</button>
+      <button *ngIf="!isView" type="button" class="btn primary" (click)="submit()" [disabled]="form.invalid">
+        <i class="fa-solid fa-spinner fa-spin" *ngIf="isloading()"></i> Submit
+      </button>
     </div>
 
   </form>

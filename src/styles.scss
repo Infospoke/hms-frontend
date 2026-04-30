@@ -28,9 +28,14 @@
   --badge-admin-bg: #fce4ec;
   --badge-admin-text: #d81b60;
 }
+
 @import 'ng-zorro-antd/ng-zorro-antd.min.css';
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -49,12 +54,15 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .form-group select {
   width: 100% !important;
 }
+
 .form-group.full {
   flex: 100%;
 }
+
 .form-container {
   max-width: 1100px;
   margin: auto;
@@ -62,6 +70,7 @@ body {
   background: #ffffff;
   border-radius: 10px;
 }
+
 .btn-new {
   background: var(--color-primary);
   color: #fff;
@@ -72,8 +81,11 @@ body {
   font-weight: 500;
   cursor: pointer;
 
-  &:hover { background: var(--brand-color); }
+  &:hover {
+    background: var(--brand-color);
+  }
 }
+
 body {
   font-family: Inter, sans-serif;
   background: var(--color-bg);
@@ -107,6 +119,7 @@ body {
   margin-bottom: 6px;
   display: block;
 }
+
 .back-icon {
   position: absolute;
   top: 16px;
@@ -126,6 +139,7 @@ body {
 .back-icon:hover {
   background: #e0e7ff;
 }
+
 .req {
   color: red;
 }
@@ -182,6 +196,7 @@ body {
   color: white;
   font-weight: 500;
 }
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -213,6 +228,7 @@ body {
   font-size: 20px;
   color: var(--brand-color);
 }
+
 .eye-icon {
   position: absolute;
   right: 12px;
@@ -268,20 +284,21 @@ select:invalid {
 }
 
 .step-form {
-  flex: 1;               
-  overflow-y: auto;  
+  flex: 1;
+  overflow-y: auto;
   margin-top: 15px;
   background-color: var(--color-card);
-  box-shadow: 0px 2px 1px rgba(0,0,0,0.05);
+  box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.05);
   padding: 15px 10px;
 }
 
-.btn-draft{
+.btn-draft {
   border: 2px solid var(--color-text-secondary);
 }
-.btn-draft:hover{
- background-color: var(--color-primary);
- color: var(--card-bg);
+
+.btn-draft:hover {
+  background-color: var(--color-primary);
+  color: var(--card-bg);
 }
 
 
@@ -334,7 +351,9 @@ textarea:focus {
   border-radius: 6px;
   cursor: pointer;
 }
-.required,.muted-text-error{
+
+.required,
+.muted-text-error {
   color: #fa282c;
   margin-left: 4px;
   font-weight: 600;
@@ -379,7 +398,8 @@ textarea:focus {
   font-weight: 500;
   cursor: pointer;
 }
-.container{
+
+.container {
   padding: 0px !important;
 }
 
@@ -393,10 +413,22 @@ textarea:focus {
   overflow-x: hidden;
 
   // Thin, styled scrollbar consistent with the rest of the app
-  &::-webkit-scrollbar        { width: 5px; }
-  &::-webkit-scrollbar-track  { background: transparent; }
-  &::-webkit-scrollbar-thumb  { background: #d1d5db; border-radius: 4px; }
-  &::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
 
   // Firefox
   scrollbar-width: thin;
@@ -413,12 +445,12 @@ textarea:focus {
 
 select {
   width: 100%;
-  padding: 10px 40px 10px 12px; 
+  padding: 10px 40px 10px 12px;
   border: 1px solid #d9d9d9;
   border-radius: 6px;
   appearance: none;
   background-color: #fff;
-  
+
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
@@ -428,4 +460,17 @@ select {
 .custom-edit-modal .ant-modal-content {
   border-radius: 10px;
   // overflow: hidden;
+}
+
+
+input:disabled,
+select:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 1;
+  -webkit-text-fill-color: #6b7280;
+  
+  appearance: none;
 }

@@ -75,6 +75,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   isSaving = false;
   srId: string | null = null;
   editMode = false;
+  loadCtc=false;
   routeType: string | null = null;
   private pendingDeptPrefill: any = null;
   private pendingManagerIds: number[] = [];
@@ -288,7 +289,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
   }
   loadStep2Data() {
-    if(this.routeType){
+    if(this.routeType && !this.loadCtc){
       return;
     }
     let payload = {
@@ -451,7 +452,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             return;
           }
 
-          if (status === 'YELLOW') {
+          
+          if (status === 'GREEN') {
 
 
             setTimeout(() => {
@@ -782,8 +784,10 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       const bc = d.budgetAndCompensationResponse ?? {};
       const rr = d.rolesAndRequirementsResponse ?? {};
       const ss = d.sourcingStrategyResponse ?? {};
+      if(bc?.minSalary==null || bc?.minSalary==undefined ||bc?.minSalary==''){
+        this.loadCtc=true;
+      }
 
-      // --- Step 0: Position Basics ---
       this.pendingDeptPrefill = p.departmentId ?? null;
       this.step0Form.patchValue({
         jobTitle: p.jobTitle ?? '',
@@ -826,7 +830,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         relocAmt: bc.relocationBudgetAmount ?? ''
       });
 
-      // --- Step 3: Role Requirements ---
       this.step3Form.patchValue({
         eduReq: rr.educationRequirement ?? '',
         travel: rr.travelRequirement ?? '',
@@ -841,7 +844,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.certs = this.splitCsv(rr.certificationsRequired);
       this.langs = this.splitCsv(rr.languages);
 
-      // --- Step 4: Sourcing Strategy ---
       this.step4Form.patchValue({
         internalFirst: !!ss.internalFirstPolicy,
         referralOn: !!ss.referralEnabled,
@@ -956,21 +958,21 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     const base = toLPA(Number(f.proposedComp));
 
-    let salary = 0;
-    if (f.salaryComp) {
-      const parts = String(f.salaryComp).split('-');
+    // let salary = 0;
+    // if (f.salaryComp) {
+    //   const parts = String(f.salaryComp).split('-');
 
-      const min = Number(parts[0]) || 0;
-      const max = Number(parts[1]) || 0;
+    //   const min = Number(parts[0]) || 0;
+    //   const max = Number(parts[1]) || 0;
 
-      salary = (min + max) / 2 / 100000;
-    }
+    //   salary = (min + max) / 2 / 100000;
+    // }
 
     const signing = f.signingBonus ? toLPA(Number(f.signingAmt)) : 0;
     const equity = f.equity ? toLPA(Number(f.equityAmt)) : 0;
     const relocation = f.relocation ? toLPA(Number(f.relocAmt)) : 0;
 
-    return +(base + salary + signing + equity + relocation).toFixed(2);
+    return +(base + signing + equity + relocation).toFixed(2);
   }
   getCompStatus(status: string) {
     switch (status) {

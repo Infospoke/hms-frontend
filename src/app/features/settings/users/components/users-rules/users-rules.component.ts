@@ -25,7 +25,7 @@ export class UsersRulesComponent implements OnInit {
   private router = inject(Router);
   private modal = inject(NzModalService);
   private userService = inject(UserService);
-  private notificationService=inject(NotificationService)
+  private notificationService = inject(NotificationService)
   showConfirmModal = false;
   modalType: 'activate' | 'deactivate' = 'deactivate';
   modalTitle = '';
@@ -100,19 +100,19 @@ export class UsersRulesComponent implements OnInit {
     this.router.navigateByUrl("/users/user-onboard-roles/invite-user");
 
   }
-  editUser(user:any) {
+  editUser(user: any) {
     forkJoin({
 
       user: this.userService.getUserById(user?.id),
     }).subscribe({
-      next:(res: any) => {
-        if(res?.user?.responsecode=='00'){
-          this.edit(user?.id,res?.user?.data);
+      next: (res: any) => {
+        if (res?.user?.responsecode == '00') {
+          this.edit(user?.id, res?.user?.data);
         }
-        else{
+        else {
           this.notificationService.error(res?.user?.message || res?.user?.responsemessage);
         }
-        
+
 
       },
       error: (error: any) => {
@@ -120,7 +120,7 @@ export class UsersRulesComponent implements OnInit {
       }
     });
   }
-  edit(userId: any,user:any) {
+  edit(userId: any, user: any) {
     const editUser = this.modal.create({
       nzTitle: '',
       nzContent: EditUserComponent,
@@ -138,7 +138,14 @@ export class UsersRulesComponent implements OnInit {
     const instance = editUser.getContentComponent();
 
     instance.userId = userId;
-    instance.user=user;
+    instance.user = user;
+    editUser.afterClose.subscribe((result) => {
+      if (result) {
+        if(result==='update'){
+          this.getCardCountAndList();
+        }
+      }
+    });
   }
 
 

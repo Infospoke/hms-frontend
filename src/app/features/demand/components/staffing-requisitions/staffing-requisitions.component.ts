@@ -100,7 +100,7 @@ export class StaffingRequisitionsComponent implements OnInit {
       const rr  = d.rolesAndRequirementsResponse    ?? {};
       const ss  = d.sourcingStrategyResponse        ?? {};
 
-      // ── Job boards ────────────────────────────────────────────────────────
+     
       const boardKeys: Record<string, string> = {
         internalBoard: 'Internal Board',
         naukri:        'Naukri',
@@ -113,10 +113,10 @@ export class StaffingRequisitionsComponent implements OnInit {
         .filter(([key]) => ss[key])
         .map(([, label]) => label);
 
-      // ── Diversity tags ────────────────────────────────────────────────────
+   
       const diversityBoards = this.splitCsv(ss.diversityTags);
 
-      // ── Open modal ────────────────────────────────────────────────────────
+   
       const modal = this.modal.create({
         nzTitle: `${p.jobTitle ?? sr.title} — ${sr.id}`,
         nzContent: SrReviewComponent,
@@ -133,16 +133,15 @@ export class StaffingRequisitionsComponent implements OnInit {
 
       const instance = modal.getContentComponent() as SrReviewComponent;
 
-      // ── Identity ──────────────────────────────────────────────────────────
+    
       instance.viewOnly  = true;
       instance.srId      = sr.id;
       instance.jobTitle  = p.jobTitle ?? sr.title;
 
-      // ── Step 0: Position Basics ───────────────────────────────────────────
       instance.step0 = {
         jobTitle:  p.jobTitle         ?? '',
-        dept:      p.departmentId     ?? '',
-        bu:        p.businessUnitId   ?? '',
+        dept:      p.departmentName     ?? '',
+        bu:        p.businessUnitName   ?? '',
         location:  p.location         ?? '',
         workMode:  p.workMode         ?? '',
         empType:   p.employmentType   ?? '',

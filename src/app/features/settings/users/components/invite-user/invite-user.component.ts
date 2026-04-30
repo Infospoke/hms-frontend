@@ -5,41 +5,8 @@ import { firstValueFrom, forkJoin } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { Router } from '@angular/router';
+import { alphabetsOnly, numericOnly, mobileValidator, notSameAsMobile } from '../../../../../shared/validations/validators';
 
-function alphabetsOnly(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) return null;
-    const regex = /^[A-Za-z]+$/;
-    return regex.test(value) ? null : { alphabetsOnly: true };
-  };
-}
-
-function numericOnly(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    return /^\d+$/.test(control.value) ? null : { numericOnly: true };
-  };
-}
-
-function notSameAsMobile(mobileField: string): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    const parent = control.parent;
-    if (!parent) return null;
-    const mobile = parent.get(mobileField)?.value;
-    return control.value === mobile ? { sameAsMobile: true } : null;
-  };
-}
-
-function mobileValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) return null;
-    const value = control.value.trim();
-    const regex = /^(\+\d{1,3}\s?)?\d{10}$/;
-    return regex.test(value) ? null : { invalidMobile: true };
-  };
-}
 
 @Component({
   selector: 'app-invite-user',
@@ -214,7 +181,7 @@ export class InviteUserComponent implements OnInit {
         employeeId: this.form.get('employeeId')?.value,
         email: this.form.get('email')?.value,
         mobileNumber: this.form.get('mobile')?.value,
-        alternateContact: this.form.get('altMobile')?.value,
+        alternateContact: this.form.get('altMobile')?.value ? this.form.get('altMobile')?.value :null,
         employmentTypeId: this.form.get('employmentType')?.value,
         businessUnitId: this.form.get('businessUnit')?.value,
         departmentId: this.form.get('department')?.value,
@@ -222,9 +189,10 @@ export class InviteUserComponent implements OnInit {
       };
       this.userService.inviteUser(obj)
         .then((res: any) => {
+           this.isloading.set(false);
           if (res?.responsecode == '00') {
             this.notificationService.success(res?.message);
-            this.isloading.set(false);
+           
             this.close();
           }
           else{

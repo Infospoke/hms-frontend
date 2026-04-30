@@ -176,9 +176,15 @@
 
             <div class="footer-btns">
                 <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
-                <button type="button" class="btn btn-primary" (click)="validateStep0('next')" [disabled]="isSaving">
-                    {{ isSaving ? 'Saving...' : 'Next: Business Justification →' }}
-                </button>
+
+                <div class='next-buttons'>
+                    <button type="button" class="btn btn-success " *ngIf="isDraftSuccess">
+                        {{srId }} Saved as draft
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="validateStep0('next')" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Next: Business Justification →' }}
+                    </button>
+                </div>
             </div>
         </div>
     </form>
@@ -347,9 +353,15 @@
                     <button type="button" class="btn btn-ghost" (click)="goTo(0)">← Back</button>
                     <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
                 </div>
-                <button type="button" class="btn btn-primary" (click)="validateStep1('next')" [disabled]="isSaving">
-                    {{ isSaving ? 'Saving...' : 'Next: Budget &amp; Compensation →' }}
-                </button>
+                <div class="next-buttons">
+                    <button type="button" class="btn btn-success " *ngIf="isDraftSuccess">
+                        {{srId }} Saved as draft
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="validateStep1('next')" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Next: Budget &amp; Compensation →' }}
+                    </button>
+                </div>
+
             </div>
         </div>
     </form>
@@ -450,7 +462,7 @@
                     </div>
 
                     <div class="ctc-amount">
-                        ₹{{ totalCompensation }}L
+                        ₹{{ totalCompensation }}
                     </div>
                 </div>
 
@@ -907,8 +919,8 @@
             </div>
             <div class="coll-body" *ngIf="reviewSectionOpen[2]">
                 <div class="review-grid">
-                    
-                    
+
+
                     <div class="review-row">
                         <span class="review-label">HC Slot Confirmed</span>
                         <span class="review-val">
@@ -927,7 +939,8 @@
                     <div class="review-row">
                         <span class="review-label">Proposed CTC</span>
                         <span class="review-val">
-                            {{ step2Form.get('proposedComp')?.value ? ('₹' + step2Form.get('proposedComp')?.value ) : '—' }}
+                            {{ step2Form.get('proposedComp')?.value ? ('₹' + step2Form.get('proposedComp')?.value ) :
+                            '—' }}
                         </span>
                     </div>
                     <div class="review-row">
@@ -1094,7 +1107,7 @@
         <div class="footer-btns">
             <div class="flex-gap">
                 <button class="btn btn-ghost" (click)="goTo(4)">← Back</button>
-                <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
+                <!-- <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button> -->
             </div>
             <button class="btn btn-primary" (click)="validateStep5('next')" [disabled]="isSaving">
                 {{ isSaving ? 'Submitting…' : 'Submit SR for Approval →' }}

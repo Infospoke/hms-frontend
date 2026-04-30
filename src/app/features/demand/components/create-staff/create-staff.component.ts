@@ -88,7 +88,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     { label: 'Role Requirements', icon: '🎯' },
     { label: 'Sourcing Strategy', icon: '🔍' },
     { label: 'Review', icon: '👁' },
-    { label: 'Approval', icon: '✅' }
+    // { label: 'Approval', icon: '✅' }
   ];
 
   errorMsg: any;
@@ -106,7 +106,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   seniorityIC: any[] = [];
   deptKeys: any[] = [];
   bussiness: any[] = [];
-
+  managaersListOfApi=[];
   readonly requisitionTypes = ['New Headcount', 'Backfill', 'Replacement', 'Contract to Perm'];
   readonly workModes = ['Remote', 'Hybrid', 'On-site'];
   readonly empTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
@@ -159,7 +159,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   certInput = '';
   langInput = '';
 
-
+  isDraftSuccess:boolean=false;
   jobBoards: string[] = [];
   diversityBoards: string[] = [];
   assessmentTypes: string[] = [];
@@ -329,8 +329,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             this.srId = res.data;
           }
 
-          if (type !== 'draft') this.goTo(1);
+          if (type !== 'draft'){
+             this.goTo(1);
+             this.isDraftSuccess=false;
+          };
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -385,8 +389,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          if (type !== 'draft') this.goTo(2);
+          if (type !== 'draft') {
+            this.goTo(2);
+            this.isDraftSuccess=false;
+          };
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -464,8 +472,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
           }
 
 
-          if (type !== 'draft') this.goTo(3);
+          if (type !== 'draft') {
+            this.goTo(3);
+            this.isDraftSuccess=false;
+          };
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -518,8 +530,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          if (type !== 'draft') this.goTo(4);
+          if (type !== 'draft') {
+            this.goTo(4);
+            this.isDraftSuccess=false;
+          };
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -569,8 +585,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       .then((res: any) => {
         this.isSaving = false;
         if (res?.responsecode === '00') {
-          if (type !== 'draft') this.goTo(5);
+          if (type !== 'draft') {
+            this.goTo(5);
+            this.isDraftSuccess=false;
+          }
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -625,8 +645,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
             this.showBanner(`Notice: ${res?.data?.message}`, 'ok');
           }
-          if (type !== 'draft') this.goTo(6);
+          if (type !== 'draft') {
+            this.goTo(6);
+            this.isDraftSuccess=false;
+          }
           if (type === 'draft') {
+            this.isDraftSuccess=true;
             this.notificationService.success(
               'Success',
               'Draft saved successfully!'
@@ -787,11 +811,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       if(bc?.minSalary==null || bc?.minSalary==undefined ||bc?.minSalary==''){
         this.loadCtc=true;
       }
-
-      this.pendingDeptPrefill = p.departmentId ?? null;
+      const buss=this.bussiness.find(b=>b.name==p.businessUnitName)
+      this.pendingDeptPrefill =p.departmentName;
       this.step0Form.patchValue({
         jobTitle: p.jobTitle ?? '',
-        bu: p.businessUnitId ?? '',
+        bu: buss?.id?? '',
+
         location: p.location ?? '',
         workMode: p.workMode ?? '',
         empType: p.employmentType ?? '',
@@ -801,12 +826,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         startDate: p.targetStartDate ?? ''
       });
 
-      // Reporting managers
+     
       this.selectedManagers = [];
       this.step0Form.get('manager')?.setValue([]);
-      const managerIds: number[] = Array.isArray(p.reportingManagerInfo) ? p.reportingManagerInfo : [];
-      managerIds.forEach((id: number) => {
-        const mgr = this.managersList.find(m => m.id === id);
+      const managerIds: any[] = Array.isArray(p.reportingManagerName) ? p.reportingManagerName : [];
+      managerIds.forEach((id: any) => {
+        const mgr = this.managersList.find(m => m.id == id);
         if (mgr) this.selectManager(mgr);
       });
 
@@ -956,7 +981,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     const toLPA = (val: number) => (val || 0) / 100000;
 
 
-    const base = toLPA(Number(f.proposedComp));
+    const base = (Number(f.proposedComp));
 
     // let salary = 0;
     // if (f.salaryComp) {
@@ -968,9 +993,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     //   salary = (min + max) / 2 / 100000;
     // }
 
-    const signing = f.signingBonus ? toLPA(Number(f.signingAmt)) : 0;
-    const equity = f.equity ? toLPA(Number(f.equityAmt)) : 0;
-    const relocation = f.relocation ? toLPA(Number(f.relocAmt)) : 0;
+    const signing = f.signingBonus ? (Number(f.signingAmt)) : 0;
+    const equity = f.equity ? (Number(f.equityAmt)) : 0;
+    const relocation = f.relocation ? (Number(f.relocAmt)) : 0;
 
     return +(base + signing + equity + relocation).toFixed(2);
   }
@@ -1119,8 +1144,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.userService.getDepartments(value)
       .then((res: any) => {
         this.deptKeys = res?.data;
+        const dept=this.deptKeys.find(d=>d.name==this.pendingDeptPrefill);
         if (this.pendingDeptPrefill != null) {
-          this.step0Form.patchValue({ dept: this.pendingDeptPrefill });
+          this.step0Form.patchValue({ dept: dept?.id });
           this.pendingDeptPrefill = null;
         }
       })

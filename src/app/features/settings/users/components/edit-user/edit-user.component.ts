@@ -18,7 +18,7 @@ export class EditUserComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Input() userId: any = null;
 
-  @Input() user:any=null;
+  @Input() user: any = null;
 
   roles: any[] = [];
   businessUnits: any[] = [];
@@ -43,12 +43,15 @@ export class EditUserComponent implements OnInit {
       if (!unit) return;
       this.departments = [];
       this.roles = [];
+      this.form.get('department')?.setValue('');
+      this.form.get('role')?.setValue('');
       this.getDeparmentData(unit);
     });
 
     this.form.get('department')?.valueChanges.subscribe(dept => {
       if (!dept) return;
       this.roles = [];
+      this.form.get('role')?.setValue('');
       this.getRoleData(dept);
     });
   }
@@ -81,14 +84,14 @@ export class EditUserComponent implements OnInit {
     this.openConfirmModal('activate');
   }
   active(userId: any) {
-    console.log(this.userId,this.user);
+    console.log(this.userId, this.user);
     let obj = {
       "activate": true
     }
     this.userService.update(userId, obj)
       .then((res: any) => {
         this.notificationService.success(res?.message);
-        this.reset()
+        this.reset('update')
       })
       .catch((error: any) => {
         this.notificationService.error(error?.error?.message);
@@ -106,7 +109,7 @@ export class EditUserComponent implements OnInit {
     this.userService.update(userId, obj)
       .then((res: any) => {
         this.notificationService.success(res?.message);
-        this.reset()
+        this.reset('update')
       })
       .catch((error: any) => {
         this.notificationService.error(error?.error?.message);
@@ -120,7 +123,7 @@ export class EditUserComponent implements OnInit {
     }).subscribe({
       next: async (res: any) => {
         this.businessUnits = res.bussinessUnit?.data;
-  
+
         this.form.patchValue({
           businessUnit: this.user?.businessUnitId
         });
@@ -149,16 +152,16 @@ export class EditUserComponent implements OnInit {
       const role = this.roles.find(item => item.id == roleId);
       this.isloading.set(true);
       let obj = {
-        employmentTypeId: this.form.get('employmentType')?.value,
-        businessUnitId: this.form.get('businessUnit')?.value,
-        departmentId: this.form.get('department')?.value,
+        employmentTypeId: Number(this.form.get('employmentType')?.value),
+        businessUnitId: Number(this.form.get('businessUnit')?.value),
+        departmentId: Number(this.form.get('department')?.value),
         roleId: role?.id,
       }
       this.userService.update(this.userId, obj)
         .then((res: any) => {
           this.isloading.set(false);
           this.notificationService.success(res?.message);
-          this.reset();
+          this.reset('update');
 
         })
         .catch((error: any) => {
@@ -171,9 +174,9 @@ export class EditUserComponent implements OnInit {
     }
   }
 
-  reset() {
+  reset(type: any) {
     this.form.reset();
-    this.modalRef.close();
+    this.modalRef.close(type);
   }
   c(name: string) {
     return this.form.get(name);

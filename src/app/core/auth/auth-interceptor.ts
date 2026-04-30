@@ -30,7 +30,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   });
   return next(authReq).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status !== 400) return throwError(() => err);
+      if (err.status !== 401) return throwError(() => err);
 
       if (!isRefreshing) {
         isRefreshing = true;

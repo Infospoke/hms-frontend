@@ -101,7 +101,7 @@
 
     <!-- Actions -->
     <div class="actions">
-      <button class="cancel" (click)="reset()">Cancel</button>
+      <button class="cancel" (click)="reset('chancel')">Cancel</button>
       <button [ngClass]="user.active ? 'deactivate-btn' : 'activate-btn'"
         (click)="user.active ? deactivateUser() : activateUser()">
         {{ user.active ? 'Deactivate' : 'Activate' }}

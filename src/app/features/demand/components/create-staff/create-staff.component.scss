@@ -969,12 +969,22 @@ input[type="range"] {
 .btn-ghost {
   background: transparent;
   color: var(--color-text-secondary);
+  border-color: #cbd5e1;
 }
 
 .btn-ghost:hover {
   background: var(--color-background-secondary);
 }
-
+.flex-gap{
+  display:flex;
+  gap:10px;
+}
+.btn-success{
+  width:250px;
+  background: #25eb43;
+  color: #fff;
+  border-color: #25eb43;
+}
 .btn-primary {
   background: #2563eb;
   color: #fff;

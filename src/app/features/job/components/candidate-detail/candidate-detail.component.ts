@@ -17,6 +17,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 })
 export class CandidateDetailComponent implements OnChanges {
   @Input() candidate: any = null;
+  @Input() pipelineStatus: string = 'APPLIED';
   @Output() action = new EventEmitter<{ type: string; candidate: any; reason?:any,payload?: any }>();
   private job = inject(JobService);
   isExporting = false;
@@ -78,9 +79,9 @@ export class CandidateDetailComponent implements OnChanges {
   ngOnChanges(): void {
     this.expandedQuestion = null;
     if (!this.candidate) { this.viewMode = 'default'; this.activeTab = 'default'; return; }
-    const s = this.candidate.status?.toLowerCase();
+    const s = this.pipelineStatus?.toLowerCase();
     if (s === 'screened') { this.viewMode = 'screening'; this.activeTab = 'screened'; }
-    else if (s === 'interview') { this.viewMode = 'interview'; this.activeTab = 'interview'; }
+    else if (s === 'interview' || s === 'offer' || s === 'hired') { this.viewMode = 'interview'; this.activeTab = 'interview'; }
     else { this.viewMode = 'default'; this.activeTab = 'default'; }
   }
 

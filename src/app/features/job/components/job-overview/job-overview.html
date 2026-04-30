@@ -42,7 +42,7 @@
             (candidateSelected)="onCandidateSelected($event)" />
         </div>
         <div class="applicants-detail-sticky">
-          <app-candidate-detail [candidate]="selectedCandidateForDetail" (action)="handleCandidateAction($event)" />
+          <app-candidate-detail [candidate]="selectedCandidateForDetail" [pipelineStatus]="selectedApplicantStatus" (action)="handleCandidateAction($event)" />
         </div>
       </div>
     </div>

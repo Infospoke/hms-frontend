@@ -44,8 +44,8 @@
         </div>
       </ng-container>
 
-      <!-- INTERVIEW: always show interview scores -->
-      <ng-container *ngIf="candidate.status?.toUpperCase() === 'INTERVIEW'">
+      <!-- INTERVIEW / OFFER / HIRED: always show interview scores -->
+      <ng-container *ngIf="['INTERVIEW','OFFER','HIRED'].includes(candidate.status?.toUpperCase())">
         <div class="score-row">
           <div class="score-box"><span class="score-value">{{ interviewData.finalScore }}</span><span class="score-label">Final Score</span></div>
           <div class="score-box"><span class="score-value">{{ interviewData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
@@ -58,8 +58,8 @@
         </div>
       </ng-container>
 
-      <!-- All other statuses (APPLIED, OFFER, HIRED): show basic 3-box scores -->
-      <ng-container *ngIf="candidate.status?.toUpperCase() !== 'SCREENED' && candidate.status?.toUpperCase() !== 'INTERVIEW'">
+      <!-- APPLIED (and any unknown): show basic 3-box scores -->
+      <ng-container *ngIf="!['SCREENED','INTERVIEW','OFFER','HIRED'].includes(candidate.status?.toUpperCase())">
         <div class="score-row">
           <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span class="score-label">Skill</span></div>
           <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span class="score-label">Experience</span></div>
@@ -68,14 +68,14 @@
       </ng-container>
     </div>
 
-    <!-- ── Tab Nav: 2 tabs for SCREENED ── -->
-    <div class="iv-tabs" *ngIf="candidate.status?.toUpperCase() === 'SCREENED'">
+    <!-- ── Tab Nav: 2 tabs for SCREENED pipeline ── -->
+    <div class="iv-tabs" *ngIf="pipelineStatus.toUpperCase() === 'SCREENED'">
       <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Applied</button>
       <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screened</button>
     </div>
 
-    <!-- ── Tab Nav: 3 tabs for INTERVIEW ── -->
-    <div class="iv-tabs" *ngIf="candidate.status?.toUpperCase() === 'INTERVIEW'">
+    <!-- ── Tab Nav: 3 tabs for INTERVIEW / OFFER / HIRED pipeline ── -->
+    <div class="iv-tabs" *ngIf="['INTERVIEW','OFFER','HIRED'].includes(pipelineStatus.toUpperCase())">
       <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Candidate Details</button>
       <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screening Details</button>
       <button class="iv-tab" [class.active]="activeTab === 'interview'" (click)="setTab('interview')">Interview Analysis</button>

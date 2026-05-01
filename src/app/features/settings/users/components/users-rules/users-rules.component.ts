@@ -11,6 +11,7 @@ import { UserService } from '../../servics/user-service';
 import { PaginationComponent } from "../../../../../shared/components/pagination/pagination.component";
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 import { NotificationService } from '../../../../../core/services/notification.service';
+import { ConfirmModalComponent } from '../../../../../shared/components/modal-component/confirm-modal.component';
 
 @Component({
   selector: 'app-users-rules',
@@ -48,7 +49,9 @@ export class UsersRulesComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+
     this.getCardCountAndList();
+
   }
 
   getCardCountAndList() {
@@ -141,8 +144,12 @@ export class UsersRulesComponent implements OnInit {
     instance.user = user;
     editUser.afterClose.subscribe((result) => {
       if (result) {
+        console.log(result);
         if(result==='update'){
           this.getCardCountAndList();
+        }
+        else if(result=='activate' || result==='deactivate'){
+          this.openConfirmModal(result,userId);
         }
       }
     });
@@ -250,5 +257,53 @@ export class UsersRulesComponent implements OnInit {
 
     this.showConfirmModal = true;
   }
+  private openConfirmModal(mode: 'activate' | 'deactivate',userId:any): void {
+     
+      const modal = this.modal.create<ConfirmModalComponent>({
+        nzContent: ConfirmModalComponent,
+        nzData: { mode },
+        nzClassName: 'custom-confirm-modal custom-edit-modal',
+        nzFooter: null,
+        nzCentered: true,
+        nzWidth: 360,
+        nzClosable: false,
+      });
+  
+      modal.afterClose.subscribe((result: string) => {
+        if (result === 'confirm') {
+          mode === 'activate'
+            ? this.active(userId)
+            : this.deactive(userId);
+        }
+      });
+    }
+     deactive(userId: any) {
+    let obj = {
+      "deactivate": true
+    }
+    this.userService.update(userId, obj)
+      .then((res: any) => {
+        this.notificationService.success(res?.message);
+         this.getCardCountAndList();
+       
+      })
+      .catch((error: any) => {
+        this.notificationService.error(error?.error?.message);
+      });
+  }
+  active(userId: any) {
 
+    let obj = {
+      "activate": true
+    }
+    this.userService.update(userId, obj)
+      .then((res: any) => {
+        this.notificationService.success(res?.message);
+         this.getCardCountAndList();
+       
+      })
+      .catch((error: any) => {
+        this.notificationService.error(error?.error?.message);
+      });
+  }
 }

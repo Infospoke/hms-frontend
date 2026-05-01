@@ -39,6 +39,7 @@ export class EditUserComponent implements OnInit {
       role: ['', Validators.required],
     })
     this.getIntialData();
+    
     this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
       if (!unit) return;
       this.departments = [];
@@ -80,8 +81,8 @@ export class EditUserComponent implements OnInit {
     }
   }
   activateUser() {
-    this.modalRef?.close();
-    this.openConfirmModal('activate');
+    this.modalRef?.close('activate');
+    // this.openConfirmModal('activate');
   }
   active(userId: any) {
     console.log(this.userId, this.user);
@@ -91,6 +92,7 @@ export class EditUserComponent implements OnInit {
     this.userService.update(userId, obj)
       .then((res: any) => {
         this.notificationService.success(res?.message);
+        localStorage.setItem('update','update');
         this.reset('update')
       })
       .catch((error: any) => {
@@ -98,23 +100,11 @@ export class EditUserComponent implements OnInit {
       });
   }
   deactivateUser() {
-    this.modalRef.close();
-    this.openConfirmModal('deactivate');
+    this.modalRef.close('deactivate');
+    // this.openConfirmModal('deactivate');
   }
 
-  deactive(userId: any) {
-    let obj = {
-      "deactivate": true
-    }
-    this.userService.update(userId, obj)
-      .then((res: any) => {
-        this.notificationService.success(res?.message);
-        this.reset('update')
-      })
-      .catch((error: any) => {
-        this.notificationService.error(error?.error?.message);
-      });
-  }
+ 
   getIntialData() {
     console.log(this.userId);
     forkJoin({
@@ -181,24 +171,5 @@ export class EditUserComponent implements OnInit {
   c(name: string) {
     return this.form.get(name);
   }
-  private openConfirmModal(mode: 'activate' | 'deactivate'): void {
-    console.log(mode);
-    const modal = this.modal.create<ConfirmModalComponent>({
-      nzContent: ConfirmModalComponent,
-      nzData: { mode },
-      nzClassName: 'custom-confirm-modal custom-edit-modal',
-      nzFooter: null,
-      nzCentered: true,
-      nzWidth: 360,
-      nzClosable: false,
-    });
-
-    modal.afterClose.subscribe((result: string) => {
-      if (result === 'confirm') {
-        mode === 'activate'
-          ? this.active(this.userId)
-          : this.deactive(this.userId);
-      }
-    });
-  }
+  
 }

@@ -481,18 +481,14 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         this.isSaving = false;
 
         if (res?.responsecode === '00') {
-          this.hideNext=false;
+          
           const status = res?.data?.status;
           this.compValidationStatus = res?.data;
-          // if (status === 'RED') {
-
-
-          //   setTimeout(() => {
-
-          //   }, 2000);
-
-          //   return;
-          // }
+          if (status === 'RED') {
+            this.hideNext=true;
+            return;
+          }
+          this.hideNext=false;
 
 
           // if (status === 'GREEN') {

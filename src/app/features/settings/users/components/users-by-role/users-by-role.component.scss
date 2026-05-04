@@ -1,0 +1,99 @@
+// ── Page wrapper ──────────────────────────────────────────────────────────────
+.ubr-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.ubr-table-wrap { flex: 1; }
+
+// ── User cell ─────────────────────────────────────────────────────────────────
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  &[data-color="blue"]   { background: #dbeafe; color: #1d4ed8; }
+  &[data-color="green"]  { background: #dcfce7; color: #16a34a; }
+  &[data-color="teal"]   { background: #ccfbf1; color: #0d9488; }
+  &[data-color="yellow"] { background: #fef9c3; color: #ca8a04; }
+  &[data-color="pink"]   { background: #fce7f3; color: #be185d; }
+  &[data-color="orange"] { background: #ffedd5; color: #ea580c; }
+  &[data-color="purple"] { background: #f3e8ff; color: #9333ea; }
+  &[data-color="red"]    { background: #fee2e2; color: #dc2626; }
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+// ── Email cell ────────────────────────────────────────────────────────────────
+.user-email {
+  font-size: 13px;
+  color: #475569;
+}
+
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+.ubr-skeleton {
+  padding: 8px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.sk-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+
+  &--circle { border-radius: 50%; }
+}
+
+.sk-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.sk-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+
+  &--wide   { width: 35%; }
+  &--narrow { width: 55%; }
+}

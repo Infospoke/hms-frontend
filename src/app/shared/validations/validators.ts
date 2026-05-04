@@ -35,3 +35,21 @@ export function mobileValidator(): ValidatorFn {
     return regex.test(value) ? null : { invalidMobile: true };
   };
 }
+
+
+
+export function getInitials(name: string): string {
+  const words = name.trim().split(/\s+/);
+
+  if (words.length === 1) {
+
+    return words[0].substring(0, 2).toUpperCase();
+  }
+
+
+  return words
+    .slice(0, 2)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase();
+}

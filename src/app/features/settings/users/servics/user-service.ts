@@ -103,9 +103,23 @@ export class UserService {
     )
   }
 
-
+    async getRolePermissionMatrix(payload: { page: number; size: number; sortBy: string; direction: string }) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.ROLES.GET_ROLES_MATRIX, payload)
+    );
+  }
   
+  async getUsersByRoleId(roleId: number, payload: { page: number; size: number; sortBy: string; direction: string }) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.ROLES.USERS_BY_ROLE_ID(roleId), payload)
+    );
+  }
 
+  async getPermissionsByRoleId(roleId:any){
+    return await firstValueFrom(
+      this.api.hrmsget(API.ROLES.GET_PERMISSIONS_BY_ROLE(roleId))
+    )
+  }
 
 
 }

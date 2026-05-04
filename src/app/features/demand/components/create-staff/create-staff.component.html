@@ -11,7 +11,7 @@
     </div>
 
     <div class="stepper">
-        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)" (click)="goTo(i)">
+        <div *ngFor="let step of STEPS; let i = index" class="stp" [ngClass]="stepClass(i)">
             <div class="ci">
                 <span *ngIf="i < currentStep" class="check-icon">✓</span>
                 <span *ngIf="i >= currentStep">{{ i + 1 }}</span>

@@ -69,6 +69,7 @@ export class StaffingRequisitionsComponent implements OnInit {
       const response = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
       if (response?.responsecode === '00' && response.data) {
         const { content, totalPages, totalElements } = response.data;
+
         this.totalPages = totalPages;
         this.totalElements = totalElements;
         this.requisitions = content.map(item => this.mapToRequisition(item));
@@ -387,6 +388,7 @@ export class StaffingRequisitionsComponent implements OnInit {
       APPROVED:  'Approved',
       REJECTED:  'Rejected',
     };
+    
     return {
       id:     item.srId ?? 'Draft – Pending ID',
       title:  item.jobTitle,

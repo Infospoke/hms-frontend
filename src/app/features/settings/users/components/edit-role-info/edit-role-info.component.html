@@ -1,0 +1,214 @@
+<!-- ─────────────────────────────────────────────────────────────────────────
+  FONT AWESOME — add to index.html <head>:
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+  NAVIGATION:
+    // view (read-only)
+    this.router.navigate(['/role/edit'], { state: { roleId: 5, type: 'view' } });
+    // edit (interactive)
+    this.router.navigate(['/role/edit'], { state: { roleId: 5, type: 'edit' } });
+───────────────────────────────────────────────────────────────────────── -->
+<div class="erp-container" [class.erp-container--view]="isViewMode">
+
+  <!-- ══ PAGE HEADER ══ -->
+  <div class="erp-page-header">
+    <div class="erp-header-left">
+      <span class="erp-view-pill" *ngIf="isViewMode">
+        <i class="fa-solid fa-eye"></i>&nbsp;View Only
+      </span>
+      <h1 class="erp-page-title">{{ pageTitle }}</h1>
+    </div>
+    <span class="erp-perm-badge" *ngIf="!loading">
+      {{ activePermissions }} permissions active
+    </span>
+  </div>
+
+  <!-- ══ BODY ══ -->
+  <div class="erp-body">
+
+    <!-- ── Sidebar ── -->
+    <aside class="erp-sidebar">
+
+      <!-- All Modules row -->
+      <div
+        class="erp-all-row"
+        [class.erp-all-row--active]="selectedModuleId === 'all'"
+        (click)="selectModule('all')"
+      >
+        <div class="erp-icon-circle erp-all-icon">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.8"/>
+            <rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.8"/>
+          </svg>
+        </div>
+        <span class="erp-all-label">All Modules</span>
+        <span class="erp-mod-badge">{{ totalSubModules }}</span>
+      </div>
+
+      <div class="erp-sidebar-section-label">Modules</div>
+
+      <!-- Per-module rows — each gets its own palette colour + icon -->
+      <ng-container *ngFor="let mod of filteredModules">
+        <div
+          class="erp-mod-item"
+          [class.erp-mod-item--active]="selectedModuleId === mod.moduleId"
+          (click)="selectModule(mod.moduleId)"
+        >
+          <!-- Circle icon: bg + color come from getPalette(moduleId) -->
+          <div
+            class="erp-icon-circle"
+            [style.background]="getPalette(mod.moduleId).bg"
+            [style.color]="getPalette(mod.moduleId).color"
+          >
+            <i [class]="getModuleIcon(mod.moduleName, mod.moduleId)"></i>
+          </div>
+          <span class="erp-mod-name">{{ mod.moduleName }}</span>
+          <span class="erp-mod-badge">{{ mod.subModules.length }}</span>
+        </div>
+      </ng-container>
+
+      <div class="erp-sidebar-empty" *ngIf="filteredModules.length === 0 && searchQuery">
+        No modules match "{{ searchQuery }}"
+      </div>
+
+    </aside>
+
+    <!-- ── Main content ── -->
+    <main class="erp-content">
+
+      <!-- Loading skeleton -->
+      <div class="erp-loading" *ngIf="loading">
+        <div class="erp-skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
+      </div>
+
+      <ng-container *ngIf="!loading">
+
+        <!-- Sticky column headings -->
+        <div class="erp-table-header">
+          <div class="erp-th erp-th--module">Module / Sub-module</div>
+          <div class="erp-th erp-th--perm">Create</div>
+          <div class="erp-th erp-th--perm">View</div>
+          <div class="erp-th erp-th--perm">Edit</div>
+          <div class="erp-th erp-th--perm">Delete</div>
+          <div class="erp-th erp-th--perm">Export</div>
+        </div>
+
+        <!-- Scrollable rows -->
+        <div class="erp-rows-scroll">
+
+          <div class="erp-empty" *ngIf="tableRows.length === 0">
+            No sub-modules found for this selection.
+          </div>
+
+          <div class="erp-row" *ngFor="let row of tableRows">
+
+            <!-- Module cell: circle icon + name + desc -->
+            <div class="erp-td erp-td--module">
+              <div class="erp-cell-module">
+                <!--
+                  Row icon colour = parent module's palette slot.
+                  getParentModuleId maps sub-module → parent moduleId.
+                -->
+                <div
+                  class="erp-icon-circle"
+                  [style.background]="getPalette(getParentModuleId(row.moduleId)).bg"
+                  [style.color]="getPalette(getParentModuleId(row.moduleId)).color"
+                >
+                  <i [class]="getModuleIcon(row.moduleName, getParentModuleId(row.moduleId))"></i>
+                </div>
+                <div>
+                  <div class="erp-cell-name">{{ row.moduleName }}</div>
+                  <div class="erp-cell-desc" *ngIf="row.description">{{ row.description }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Create -->
+            <div class="erp-td erp-td--perm">
+              <div class="erp-cb-wrap">
+                <input type="checkbox" class="erp-checkbox"
+                  [checked]="row.create"
+                  [disabled]="isViewMode"
+                  (change)="togglePermission(row, 'create', $any($event.target).checked)"
+                  [attr.aria-label]="'Create for ' + row.moduleName"/>
+              </div>
+            </div>
+
+            <!-- View -->
+            <div class="erp-td erp-td--perm">
+              <div class="erp-cb-wrap">
+                <input type="checkbox" class="erp-checkbox"
+                  [checked]="row.view"
+                  [disabled]="isViewMode"
+                  (change)="togglePermission(row, 'view', $any($event.target).checked)"
+                  [attr.aria-label]="'View for ' + row.moduleName"/>
+              </div>
+            </div>
+
+            <!-- Edit -->
+            <div class="erp-td erp-td--perm">
+              <div class="erp-cb-wrap">
+                <input type="checkbox" class="erp-checkbox"
+                  [checked]="row.edit"
+                  [disabled]="isViewMode"
+                  (change)="togglePermission(row, 'edit', $any($event.target).checked)"
+                  [attr.aria-label]="'Edit for ' + row.moduleName"/>
+              </div>
+            </div>
+
+            <!-- Delete -->
+            <div class="erp-td erp-td--perm">
+              <div class="erp-cb-wrap">
+                <input type="checkbox" class="erp-checkbox"
+                  [checked]="row.delete"
+                  [disabled]="isViewMode"
+                  (change)="togglePermission(row, 'delete', $any($event.target).checked)"
+                  [attr.aria-label]="'Delete for ' + row.moduleName"/>
+              </div>
+            </div>
+
+            <!-- Export — null = N/A -->
+            <div class="erp-td erp-td--perm">
+              <ng-container *ngIf="row.export === null; else exportCb">
+                <span class="erp-na-badge">N/A</span>
+              </ng-container>
+              <ng-template #exportCb>
+                <div class="erp-cb-wrap">
+                  <input type="checkbox" class="erp-checkbox"
+                    [checked]="row.export"
+                    [disabled]="isViewMode"
+                    (change)="togglePermission(row, 'export', $any($event.target).checked)"
+                    [attr.aria-label]="'Export for ' + row.moduleName"/>
+                </div>
+              </ng-template>
+            </div>
+
+          </div><!-- /erp-row -->
+        </div><!-- /erp-rows-scroll -->
+      </ng-container>
+
+    </main>
+  </div>
+
+  <!-- ══ EDIT FOOTER ══ -->
+  <div class="erp-footer" *ngIf="!isViewMode">
+    <button class="erp-btn erp-btn--cancel" type="button" (click)="onCancel()">
+      Cancel
+    </button>
+    <button class="erp-btn erp-btn--update" type="button"
+      [disabled]="saving" (click)="onUpdate()">
+      <span *ngIf="!saving">Update</span>
+      <span *ngIf="saving" class="erp-spinner"></span>
+    </button>
+  </div>
+
+  <!-- ══ VIEW FOOTER (Back only) ══ -->
+  <div class="erp-footer erp-footer--view" *ngIf="isViewMode">
+    <button class="erp-btn erp-btn--back" type="button" (click)="onCancel()">
+      <i class="fa-solid fa-arrow-left"></i>&nbsp; Back
+    </button>
+  </div>
+
+</div>

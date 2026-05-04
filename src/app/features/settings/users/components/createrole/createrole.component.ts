@@ -30,7 +30,7 @@ export class CreateRoleComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
-  private modalRef = inject(NzModalRef);
+
 
   form!: FormGroup;
   isSubmitting = false;
@@ -77,7 +77,7 @@ export class CreateRoleComponent implements OnInit {
       roleName: ['', Validators.required],
       description: [
         '',
-        this.type === 'create' ? Validators.required : []
+      Validators.required
       ],
     });
   }
@@ -85,7 +85,7 @@ export class CreateRoleComponent implements OnInit {
 
   private buildPermissions(): void {
     const result: Record<string, PermissionCell> = {};
-    this.modules.forEach(m => {
+    this.modules?.forEach(m => {
       result[m.key] = { create: false, view: false, edit: false, delete: false };
     });
     this.permissions = result;
@@ -110,7 +110,7 @@ export class CreateRoleComponent implements OnInit {
   }
 
   hasAtLeastOnePermission(): boolean {
-    return this.modules.some(m =>
+    return this.modules?.some(m =>
       Object.values(this.permissions[m.key] ?? {}).some(v => v === true)
     );
   }
@@ -126,7 +126,7 @@ export class CreateRoleComponent implements OnInit {
   }
 
   isColumnAllChecked(permKey: keyof PermissionCell): boolean {
-    return this.modules.every(m => this.permissions[m.key]?.[permKey]);
+    return this.modules?.every(m => this.permissions[m.key]?.[permKey]);
   }
 
 
@@ -152,7 +152,7 @@ export class CreateRoleComponent implements OnInit {
 
     if (this.type === 'assign') {
 
-      const matched = this.roles.find(
+      const matched = this.roles?.find(
         r => String(r.roleId ?? r.id) === String(roleName)
       );
 
@@ -171,7 +171,7 @@ export class CreateRoleComponent implements OnInit {
       };
 
       this.userService.updatePermission(updatePayload)
-        .then(() => { this.modalRef.close(updatePayload); })
+        .then(() => {  })
         .catch((err: any) => console.error('Assign permissions error:', err))
         .finally(() => { this.isSubmitting = false; });
 
@@ -194,13 +194,13 @@ export class CreateRoleComponent implements OnInit {
       };
 
       this.userService.addRole(createPayload)
-        .then(() => { this.modalRef.close(createPayload); })
+        .then(() => { })
         .catch((err: any) => console.error('Create role error:', err))
         .finally(() => { this.isSubmitting = false; });
     }
   }
 
   cancel(): void {
-    this.modalRef.close(null);
+  
   }
 }

@@ -1,61 +1,92 @@
-<div class="rpm-page">
-  <div class="rpm-header">
-    <h2 class="rpm-title">Role Permissions Matrix</h2>
-    <div class="rpm-actions">
-      <button class="btn btn-outline" (click)="openCreateRole('assign')">Assign Permissions</button>
-      <button class="btn-new" (click)="openCreateRole('create')">Create Role</button>
-    </div>
+<div class="rp-page">
+  <div class="rp-header">
+    <h2 class="rp-title">Role Permissions</h2>
+    <button class="btn-create" (click)="addRole()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Create Role
+    </button>
   </div>
 
-
-  
-
-  <div class="rpm-table-wrap" >
-    <table class="rpm-table">
-      <thead>
-        <tr>
-          <th class="th-role">Role</th>
-          <th *ngFor="let mod of modules" class="th-module">{{ mod.label }}</th>
-          <th class="th-actions">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let role of roles; let ri = index" class="rpm-row" [class.editing]="isRowEditing(ri)">
-          <td class="td-role">{{ role.roleName }}</td>
-          <td *ngFor="let mod of modules" class="td-cell">
-            <app-permission-cell
-              [cell]="role.permissions[mod.key]"
-              [editable]="isRowEditing(ri)"
-              (cellChange)="onCellChange(ri, mod.key, $event)" />
-          </td>
-          <td class="td-actions">
-            <ng-container *ngIf="!isRowEditing(ri)">
-              <div class="action-row view-actions">
-                <button class="action-btn edit-btn" title="Edit row" (click)="startRowEdit(ri)">
-                  <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <button class="action-btn del-btn" title="Delete role"
-                  (click)="startRowEdit(ri); deleteRole(role.roleId, ri)">
-                  <i class="fa-regular fa-trash-can"></i>
-                </button>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="isRowEditing(ri)">
-              <div class="action-row edit-actions">
-                <button class="action-btn save-btn" title="Save" [class.saving]="isSaving" (click)="saveRowEdit()">
-                  <i class="fa-solid fa-check"></i>
-                </button>
-                <button class="action-btn cancel-btn" title="Cancel" (click)="cancelRowEdit()">
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-                <button class="action-btn del-btn" title="Delete role" (click)="deleteRole(role.roleId, ri)">
-                  <i class="fa-regular fa-trash-can"></i>
-                </button>
-              </div>
-            </ng-container>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="rp-table-wrap" >
+    <app-reusable-table
+      [columns]="columns"
+      [data]="data"
+      [totalItems]="totalPages"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [cellTemplate]="cellTpl"
+      (pageChange)="onPageChange($event)"
+    ></app-reusable-table>
   </div>
+
 </div>
+
+
+
+<ng-template #cellTpl let-ctx>
+  <ng-container *ngIf="ctx.col.key === 'role'">
+    <div class="role-cell">
+      <span class="role-avatar" [attr.data-color]="ctx.row['abbrColor']">
+        {{ ctx.row['abbr'] }}
+      </span>
+      <div class="role-info">
+        <span class="role-name">{{ ctx.row['roleName'] }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Users count -->
+  <ng-container *ngIf="ctx.col.key === 'users'">
+    <div class="users-cell">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M11 14v-1.5A2.5 2.5 0 008.5 10h-5A2.5 2.5 0 001 12.5V14"
+              stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="6" cy="5.5" r="2.5" stroke="#64748b" stroke-width="1.5"/>
+        <path d="M15 14v-1.5a2.5 2.5 0 00-2-2.45" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M11 3.05a2.5 2.5 0 010 4.9" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="users-link" (click)="viewUser(ctx.row)">{{ ctx.row['userCount'] }} Users</span>
+    </div>
+  </ng-container>
+
+  <!-- Description -->
+  <ng-container *ngIf="ctx.col.key === 'description'">
+    <span class="desc-text">{{ ctx.row['description'] }}</span>
+  </ng-container>
+
+  <!-- Actions -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <div class="actions-cell">
+
+      <!-- View users -->
+      <button class="action-btn" title="View users" (click)="onView(ctx.row)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/>
+        </svg>
+      </button>
+
+
+      <!-- <button class="action-btn" title="Add user" (click)="viewUser(ctx.row)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M10.5 14v-1.5A2.5 2.5 0 008 10H4.5A2.5 2.5 0 002 12.5V14"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="6.25" cy="5.5" r="2.25" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M13 6v4M11 8h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button> -->
+
+      <!-- Edit -->
+      <button class="action-btn" title="Edit role" (click)="onEdit(ctx.row)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M11.5 2.5l2 2-9 9H2.5v-2l9-9z"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+    </div>
+  </ng-container>
+
+</ng-template>

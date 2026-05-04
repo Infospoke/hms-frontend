@@ -55,7 +55,10 @@ export const API = {
         ADD_ROLE:`/hms/role/add-role`,
         UPDATE:`/hms/role/update-role-permissions`,
         GET_ALL_PERMISSIONS:`/hms/role/get-all-role-permissions`,
-        GET_ALL_MODULES:`/hms/configurations/get-all-modules`
+        GET_ALL_MODULES:`/hms/configurations/get-all-modules`,
+        GET_ROLES_MATRIX:`/hms/role/get-role-permission-matrix`,
+        USERS_BY_ROLE_ID:(id:any)=>`/hms/role/usernames-by-roleid/${id}`,
+        GET_PERMISSIONS_BY_ROLE:(id:any)=>`/hms/role/get-permissions-by-role/${id}`
     },
     ROLE_AND_REQUIREMENTS:{
         MUST_HAVE_SKILLS:`/api/admin/ai-suggest-must-have-skills`,
@@ -72,5 +75,8 @@ export const API = {
         TRAVEL:`/hms/configurations/travel-requirements`,
         ALL_SRS:`/hms/staffing-requisition/sr-list`,
         BY_SR_ID:`/hms/staffing-requisition/by-sr-id`
+    },
+    SUPPLY:{
+        KANBAN:`/hms/kanban/filter`
     }
 }

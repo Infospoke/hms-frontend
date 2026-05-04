@@ -1,0 +1,40 @@
+<div class="ubr-page">
+  <div class="rp-header">
+    <h2 class="rp-title">Users</h2>
+  </div>
+ 
+  <!-- Table -->
+  <div class="ubr-table-wrap" >
+    <app-reusable-table
+      title=""
+      [columns]="columns"
+      [data]="allRows"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [cellTemplate]="userCellTpl"
+      (pageChange)="onPageChange($event)"
+    ></app-reusable-table>
+  </div>
+
+</div>
+
+
+<ng-template #userCellTpl let-ctx>
+
+  <!-- User Name -->
+  <ng-container *ngIf="ctx.col.key === 'name'">
+    <div class="user-cell">
+      <span class="user-avatar" [attr.data-color]="ctx.row['avatarColor']">
+        {{ ctx.row['initials'] }}
+      </span>
+      <span class="user-name">{{ ctx.row['name'] }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Email -->
+  <ng-container *ngIf="ctx.col.key === 'email'">
+    <span class="user-email">{{ ctx.row['email'] }}</span>
+  </ng-container>
+
+</ng-template>

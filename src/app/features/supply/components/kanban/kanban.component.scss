@@ -92,9 +92,7 @@
 }
 
 // ─── JR DROPDOWN ─────────────────────────────────────────
-.jr-dropdown-wrap {
-  position: relative;
-}
+.jr-dropdown-wrap { position: relative; }
 
 .btn-jr {
   min-width: 140px;
@@ -131,7 +129,7 @@
 }
 
 .jr-dropdown-list {
-  max-height: 195px;  // ~5 items visible (each ~39px)
+  max-height: 195px;
   overflow-y: auto;
 
   &::-webkit-scrollbar { width: 5px; }
@@ -149,9 +147,7 @@
   user-select: none;
 
   &:hover { background: #F8FAFC; }
-
   &.selected { background: #EFF6FF; }
-
   input[type="checkbox"] { display: none; }
 }
 
@@ -167,10 +163,7 @@
   flex-shrink: 0;
   transition: all 0.15s;
 
-  &.checked {
-    background: #2563EB;
-    border-color: #2563EB;
-  }
+  &.checked { background: #2563EB; border-color: #2563EB; }
 }
 
 .jr-code {
@@ -230,7 +223,7 @@
   border-radius: 14px;
   width: 660px;
   max-width: 96vw;
-  height:100vh;
+  height: 100vh;
   max-height: 60vh;
   box-shadow: 0 24px 64px rgba(0,0,0,0.2);
   display: flex;
@@ -329,6 +322,14 @@
   input[type="checkbox"] { display: none; }
 }
 
+// ── Source "All" row gets a subtle separator below it ──
+.source-all-row {
+  padding-bottom: 10px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+// ── Radio button — solid blue fill when selected ─────────
 .radio-circle {
   width: 16px;
   height: 16px;
@@ -339,15 +340,20 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 
   .radio-inner {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
+    background: #fff;   // white dot inside solid blue circle
   }
 
-  &.checked { border-color: #2563EB; }
+  // Selected → completely filled blue, white dot inside
+  &.checked {
+    border-color: #2563EB;
+    background: #2563EB;
+  }
 }
 
 .check-box {
@@ -371,11 +377,10 @@
   font-weight: 500;
 }
 
-.sla-dot-filter {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex-shrink: 0;
+// "All" label slightly bolder
+.check-label-all {
+  font-weight: 700;
+  color: #1E293B;
 }
 
 // Right: chips
@@ -392,11 +397,7 @@
   &::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 3px; }
 }
 
-.chips-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.chips-summary { display: flex; flex-direction: column; gap: 10px; }
 
 .chips-count-label {
   font-size: 11px;
@@ -406,11 +407,7 @@
   text-transform: uppercase;
 }
 
-.chips-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.chips-grid { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .filter-chip {
   display: inline-flex;
@@ -448,7 +445,6 @@
   text-align: center;
   padding-top: 20px;
 }
-
 
 .filter-modal-footer {
   display: flex;
@@ -592,10 +588,10 @@
   padding: 9px 12px;
   border-bottom: 1px solid rgba(0,0,0,0.06);
 
-  .col-title    { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
+  .col-title      { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; }
   .col-count-wrap { display: flex; align-items: center; gap: 5px; }
-  .col-count    { font-size: 13px; font-weight: 700; }
-  .stage-dot    { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+  .col-count      { font-size: 13px; font-weight: 700; }
+  .stage-dot      { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
 }
 
 // ─── CARDS AREA ──────────────────────────────────────────
@@ -624,6 +620,7 @@
     border-color: #CBD5E1;
   }
 
+  // Left border accent by SLA
   &.sla-breach-card { border-left: 3.5px solid #EF4444; }
   &.sla-warn-card   { border-left: 3.5px solid #F59E0B; }
   &.sla-ok-card     { border-left: 3.5px solid #22C55E; }
@@ -649,7 +646,7 @@
   z-index: 2;
 }
 
-// ─── SLA COLOR STRIP ─────────────────────────────────────
+// ─── SLA COLOUR STRIP (top of card) ──────────────────────
 .sla-strip {
   height: 3px;
   width: 100%;
@@ -672,6 +669,7 @@
   gap: 8px;
 }
 
+// Initials Avatar
 .avatar {
   width: 30px;
   height: 30px;
@@ -693,6 +691,7 @@
   min-width: 0;
 }
 
+// Candidate Full Name
 .cand-name {
   font-size: 12.5px;
   font-weight: 600;
@@ -704,6 +703,7 @@
   white-space: nowrap;
 }
 
+// REF badge
 .ref-badge {
   background: #F3E8FF;
   color: #6D28D9;
@@ -732,10 +732,12 @@
   flex-wrap: wrap;
 }
 
-.meta-item { display: flex; align-items: center; gap: 3px; }
+// Days in stage
+.meta-item  { display: flex; align-items: center; gap: 3px; }
 .meta-label { font-size: 10px; color: #94A3B8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
 .meta-value { font-size: 11px; font-weight: 700; color: #475569; }
 
+// JR badge
 .jr-badge {
   background: #EFF6FF;
   color: #2563EB;
@@ -748,6 +750,7 @@
   white-space: nowrap;
 }
 
+// SLA status pill — Green / Orange / Red
 .sla-pill {
   margin-left: auto;
   display: inline-flex;
@@ -779,7 +782,7 @@
   border-radius: 7px;
 }
 
-// ─── NOTIFICATIONS ────────────────────────────────────────
+// ─── NOTIFICATIONS ───────────────────────────────────────
 .notifications {
   width: 235px;
   flex-shrink: 0;
@@ -841,4 +844,108 @@
   &.dot-red    { background: #EF4444; }
   &.dot-orange { background: #F59E0B; }
   &.dot-green  { background: #22C55E; }
+}
+
+// ─── SLA CHIPS (filter panel) ────────────────────────────
+// Selected state uses consistent blue, not colour-coded
+.sla-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.sla-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+
+  &:hover {
+    border-color: #CBD5E1;
+    background: #F1F5F9;
+  }
+
+  // All SLA chips use same blue when selected
+  &.selected {
+    border-color: #2563EB;
+    background: #EFF6FF;
+    color: #2563EB;
+    font-weight: 600;
+  }
+}
+
+.sla-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+// ─── CUSTOM DATE ─────────────────────────────────────────
+.custom-date-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 12px;
+  background: #F8FAFC;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.date-field { display: flex; flex-direction: column; gap: 4px; }
+
+.date-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.date-input {
+  padding: 7px 10px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #1E293B;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  background: #fff;
+
+  &:focus { border-color: #2563EB; }
+}
+// ─── BOARD LOADING ───────────────────────────────────────
+.board-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563EB;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+
+.column-rejected {
+  border-color: #FECACA !important;
+
+  .cand-name { color: #DC2626 !important; }
+  .meta-value { color: #DC2626 !important; }
 }

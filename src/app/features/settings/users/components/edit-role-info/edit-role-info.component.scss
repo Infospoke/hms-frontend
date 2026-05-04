@@ -1,0 +1,448 @@
+// ─── Variables ────────────────────────────────────────────────────────────────
+$border     : #e2e8f0;
+$text-dark  : #1e293b;
+$text-mid   : #64748b;
+$text-light : #94a3b8;
+$bg-white   : #ffffff;
+$bg-header  : #f4f6f8;
+$bg-hover   : #f8fafc;
+$accent     : #2563eb;
+$accent-dk  : #1d4ed8;
+$accent-lt  : #eff6ff;
+$accent-mid : #bfdbfe;
+$r-sm       : 6px;
+$r-lg       : 12px;
+$xs         : 11px;
+$sm         : 12px;
+$md         : 13px;
+
+$col-mod  : 270px;
+$col-perm : 90px;
+
+// ─── Host — fills parent, 98 vh cap ──────────────────────────────────────────
+:host {
+  display        : flex;
+  flex-direction : column;
+  height         : 98vh;
+  overflow       : hidden;
+}
+
+// ─── Container ────────────────────────────────────────────────────────────────
+.erp-container {
+  display        : flex;
+  flex-direction : column;
+  flex           : 1;
+  height         : 98vh;
+  overflow       : hidden;
+  background     : $bg-white;
+  border         : 1px solid $border;
+  border-radius  : $r-lg;
+  box-shadow     : 0 1px 6px rgba(0,0,0,.06);
+
+  &--view {
+    border-color : #cbd5e1;
+  }
+}
+
+// ─── Page header ──────────────────────────────────────────────────────────────
+.erp-page-header {
+  display         : flex;
+  align-items     : center;
+  justify-content : space-between;
+  padding         : 16px 24px;
+  border-bottom   : 1px solid $border;
+  flex-shrink     : 0;
+  background      : $bg-white;
+  z-index         : 10;
+}
+
+.erp-header-left {
+  display     : flex;
+  align-items : center;
+  gap         : 10px;
+}
+
+.erp-page-title {
+  margin         : 0;
+  font-size      : 16px;
+  font-weight    : 600;
+  color          : $text-dark;
+  letter-spacing : -0.01em;
+}
+
+.erp-view-pill {
+  display       : inline-flex;
+  align-items   : center;
+  font-size     : $xs;
+  font-weight   : 600;
+  color         : #92400e;
+  background    : #fef9c3;
+  border        : 1px solid #fde68a;
+  padding       : 3px 10px;
+  border-radius : 20px;
+  white-space   : nowrap;
+}
+
+.erp-perm-badge {
+  font-size     : $xs;
+  font-weight   : 600;
+  color         : #1d4ed8;
+  background    : #eff6ff;
+  border        : 1px solid #bfdbfe;
+  padding       : 3px 10px;
+  border-radius : 20px;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+.erp-body {
+  display    : flex;
+  flex       : 1;
+  min-height : 0;
+  overflow   : hidden;
+}
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+.erp-sidebar {
+  width          : 224px;
+  flex-shrink    : 0;
+  border-right   : 1px solid $border;
+  background     : $bg-white;
+  display        : flex;
+  flex-direction : column;
+  overflow-y     : auto;
+  overflow-x     : hidden;
+}
+
+.erp-sidebar-section-label {
+  padding        : 10px 16px 5px;
+  font-size      : $xs;
+  font-weight    : 700;
+  color          : $text-light;
+  text-transform : uppercase;
+  letter-spacing : 0.08em;
+  flex-shrink    : 0;
+}
+
+.erp-sidebar-empty {
+  padding    : 16px;
+  font-size  : $sm;
+  color      : $text-light;
+  text-align : center;
+}
+
+// ── ★ Universal circle icon ───────────────────────────────────────────────────
+// Applied to EVERY icon in sidebar AND table rows.
+// background + color are set inline via [style.background] / [style.color]
+// so each module gets its own unique palette colour from ICON_PALETTE.
+.erp-icon-circle {
+  width           : 32px;
+  height          : 32px;
+  border-radius   : 50%;          // ← the key change — perfect circle
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  flex-shrink     : 0;
+
+  i {
+    font-size   : 13px;
+    line-height : 1;
+  }
+
+  svg {
+    width  : 13px;
+    height : 13px;
+  }
+}
+
+// ── "All Modules" row ─────────────────────────────────────────────────────────
+.erp-all-row {
+  display       : flex;
+  align-items   : center;
+  gap           : 10px;
+  padding       : 9px 12px;
+  cursor        : pointer;
+  border-left   : 3px solid transparent;
+  border-bottom : 1px solid $border;
+  flex-shrink   : 0;
+  transition    : background .12s;
+
+  &:hover { background: $bg-hover; }
+
+  &--active {
+    background        : $accent-lt;
+    border-left-color : $accent;
+
+    .erp-all-label  { color: $accent-dk; font-weight: 600; }
+    .erp-mod-badge  { background: $accent-lt; color: $accent-dk; border-color: $accent-mid; }
+  }
+}
+
+// Fixed "All Modules" circle style (always blue)
+.erp-all-icon {
+  background : #eff6ff;
+  color      : #2563eb;
+  border     : 1px solid #bfdbfe;
+}
+
+.erp-all-label {
+  flex      : 1;
+  font-size : $md;
+  color     : $text-dark;
+}
+
+// ── Module list items ─────────────────────────────────────────────────────────
+.erp-mod-item {
+  display       : flex;
+  align-items   : center;
+  gap           : 10px;
+  padding       : 8px 12px;
+  cursor        : pointer;
+  border-left   : 3px solid transparent;
+  transition    : background .12s;
+
+  &:hover { background: $bg-hover; }
+
+  &--active {
+    background        : $accent-lt;
+    border-left-color : $accent;
+
+    .erp-mod-name   { color: $accent-dk; font-weight: 600; }
+    .erp-mod-badge  { background: $accent-lt; color: $accent-dk; border-color: $accent-mid; }
+  }
+}
+
+.erp-mod-name {
+  flex          : 1;
+  font-size     : $md;
+  color         : $text-dark;
+  white-space   : nowrap;
+  overflow      : hidden;
+  text-overflow : ellipsis;
+}
+
+.erp-mod-badge {
+  font-size     : $xs;
+  font-weight   : 500;
+  color         : $text-mid;
+  background    : #f1f5f9;
+  border        : 1px solid $border;
+  padding       : 1px 7px;
+  border-radius : 10px;
+  min-width     : 22px;
+  text-align    : center;
+}
+
+// ─── Right content ────────────────────────────────────────────────────────────
+.erp-content {
+  flex           : 1;
+  min-width      : 0;
+  display        : flex;
+  flex-direction : column;
+  overflow       : hidden;
+}
+
+// ── Table header ──────────────────────────────────────────────────────────────
+.erp-table-header {
+  display       : flex;
+  align-items   : center;
+  flex-shrink   : 0;
+  border-bottom : 1px solid $border;
+  background    : $bg-header;
+  min-width     : $col-mod + $col-perm * 5;
+}
+
+.erp-th {
+  font-size      : $xs;
+  font-weight    : 700;
+  text-transform : uppercase;
+  letter-spacing : 0.06em;
+  color          : $text-mid;
+  padding        : 11px 16px;
+  white-space    : nowrap;
+
+  &--module { width: $col-mod;  flex-shrink: 0; }
+  &--perm   { width: $col-perm; flex-shrink: 0; text-align: center; }
+}
+
+// ── Rows scroll ───────────────────────────────────────────────────────────────
+.erp-rows-scroll {
+  flex       : 1;
+  overflow-y : auto;
+  overflow-x : auto;
+  min-height : 0;
+}
+
+.erp-row {
+  display       : flex;
+  align-items   : center;
+  border-bottom : 1px solid $border;
+  transition    : background .1s;
+  min-width     : $col-mod + $col-perm * 5;
+
+  &:last-child { border-bottom: none; }
+  &:hover      { background: $bg-hover; }
+}
+
+.erp-td {
+  padding     : 12px 16px;
+  display     : flex;
+  align-items : center;
+
+  &--module { width: $col-mod;  flex-shrink: 0; }
+  &--perm   { width: $col-perm; flex-shrink: 0; justify-content: center; }
+}
+
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
+.erp-loading {
+  padding        : 16px;
+  display        : flex;
+  flex-direction : column;
+  gap            : 10px;
+}
+
+.erp-skeleton-row {
+  height          : 44px;
+  border-radius   : $r-sm;
+  background      : linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size : 400% 100%;
+  animation       : shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ─── Cell content ─────────────────────────────────────────────────────────────
+.erp-cell-module {
+  display     : flex;
+  align-items : center;
+  gap         : 10px;
+}
+
+.erp-cell-name {
+  font-size   : $md;
+  color       : $text-dark;
+  font-weight : 500;
+  line-height : 1.3;
+}
+
+.erp-cell-desc {
+  font-size   : $xs;
+  color       : $text-mid;
+  margin-top  : 1px;
+  line-height : 1.3;
+}
+
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
+.erp-cb-wrap {
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+}
+
+.erp-checkbox {
+  width        : 16px;
+  height       : 16px;
+  cursor       : pointer;
+  accent-color : $accent;
+
+  // View mode: greyed out, not interactive
+  &:disabled {
+    cursor       : not-allowed;
+    opacity      : 0.5;
+    accent-color : #94a3b8;
+  }
+}
+
+.erp-na-badge {
+  display       : inline-block;
+  font-size     : $xs;
+  color         : $text-light;
+  background    : #f8fafc;
+  border        : 1px solid $border;
+  padding       : 2px 6px;
+  border-radius : 4px;
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+.erp-empty {
+  padding    : 40px 16px;
+  text-align : center;
+  font-size  : $sm;
+  color      : $text-light;
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.erp-footer {
+  display         : flex;
+  justify-content : flex-end;
+  gap             : 10px;
+  padding         : 14px 24px;
+  border-top      : 1px solid $border;
+  background      : $bg-white;
+  flex-shrink     : 0;
+
+  &--view { justify-content: flex-start; }
+}
+
+.erp-btn {
+  padding       : 8px 22px;
+  border-radius : $r-sm;
+  font-size     : $md;
+  font-weight   : 500;
+  cursor        : pointer;
+  border        : none;
+  transition    : background .12s, transform .08s;
+
+  &:active { transform: scale(0.98); }
+
+  &--cancel {
+    background : transparent;
+    border     : 1px solid $border;
+    color      : $text-mid;
+    &:hover { background: $bg-hover; }
+  }
+
+  &--update {
+    background      : $accent;
+    border          : 1px solid $accent-dk;
+    color           : #fff;
+    min-width       : 80px;
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+
+    &:hover:not(:disabled) { background: $accent-dk; }
+    &:disabled { opacity: .65; cursor: not-allowed; }
+  }
+
+  &--back {
+    display     : inline-flex;
+    align-items : center;
+    gap         : 6px;
+    background  : transparent;
+    border      : 1px solid $border;
+    color       : $text-mid;
+    &:hover { background: $bg-hover; }
+    i { font-size: 12px; }
+  }
+}
+
+.erp-spinner {
+  display          : inline-block;
+  width            : 14px;
+  height           : 14px;
+  border           : 2px solid rgba(255,255,255,.3);
+  border-top-color : #fff;
+  border-radius    : 50%;
+  animation        : spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .erp-body    { flex-direction: column; }
+  .erp-sidebar { width: 100%; border-right: none; border-bottom: 1px solid $border; max-height: 180px; }
+}

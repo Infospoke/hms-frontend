@@ -1,11 +1,9 @@
 <div class="cr-page">
   <div class="cr-card">
     <form [formGroup]="form">
-
-      <!-- ── Row 1: Business Unit / Department / Role Name ── -->
       <div class="form-row three-col">
 
-        <!-- Business Unit -->
+
         <div class="form-group">
           <label class="form-label">
             Business Unit <span class="astrick">*</span>
@@ -45,17 +43,11 @@
           </label>
 
 
-          <input *ngIf="type === 'create'" class="form-control" type="text" placeholder="Enter role name"
-            formControlName="roleName" [class.is-invalid]="isFieldInvalid('roleName')" />
+          <input class="form-control" type="text" placeholder="Enter role name" formControlName="roleName"
+            [class.is-invalid]="isFieldInvalid('roleName')" />
 
 
-          <select *ngIf="type === 'assign'" class="form-control" formControlName="roleName"
-            [class.is-invalid]="isFieldInvalid('roleName')">
-            <option value="" disabled>Select Role</option>
-            <option *ngFor="let r of roles" [value]="r.roleId ?? r.id ?? r">
-              {{ r.roleName ?? r.name ?? r }}
-            </option>
-          </select>
+
 
           <small class="err-msg" *ngIf="isFieldInvalid('roleName')">
             Role Name is required.
@@ -64,8 +56,8 @@
 
       </div>
 
-      <!-- ── Description (create only) ── -->
-      <div class="form-group" *ngIf="type === 'create'">
+
+      <div class="form-group">
         <label class="form-label">
           Description <span class="astrick">*</span>
         </label>

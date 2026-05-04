@@ -1,94 +1,110 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit }                              from '@angular/core';
+import { CommonModule }                                            from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
-import { UserService } from '../../servics/user-service';
-import { PermissionCell, PermissionModule } from '../../../../../shared/constants/permissions.modal';
+import { from }                                                    from 'rxjs';
+import { map }                                                     from 'rxjs/operators';
 
-export interface CreateRolePayload {
-  roleName: string;
-  businessUnitId: string;
-  departmentId: string;
-  description: string;
-  permission: {
-    createdBy: string;
-    modules: { moduleId: number; create: boolean; view: boolean; edit: boolean; delete: boolean }[];
-  };
-}
+import { UserService }  from '../../servics/user-service';
+import { AuthService }  from '../../../../../core/auth/auth.service';
+
+import { PermissionsPanelComponent }           from '../permissions-panel/permissions-panel.component';
+import { PermissionRow, ApiModule, ApiSubModule } from '../permissions-panel/permissions-panel.component';
+
+const SUB_DESC: Record<string, string> = {
+  'My Jrs':              'Manage job requisitions',
+  'Kanban':              'View kanban pipeline',
+  'Hiring Dashboard':    'Hiring overview dashboard',
+  'Job Details':         'Detailed job postings',
+  'Users':               'Manage system users',
+  'Roles & Permissions': 'Roles & permission settings',
+};
 
 @Component({
-  selector: 'app-create-role',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  selector:    'app-create-role',
+  standalone:  true,
+  imports:     [CommonModule, ReactiveFormsModule, PermissionsPanelComponent],
   templateUrl: './createrole.component.html',
-  styleUrls: ['./createrole.component.scss'],
+  styleUrls:   ['./createrole.component.scss'],
 })
 export class CreateRoleComponent implements OnInit {
 
-  @Input() type: 'create' | 'assign' = 'create';
-  @Input() modules: PermissionModule[] = [];
-
-  private fb = inject(FormBuilder);
+  private fb          = inject(FormBuilder);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
 
-
-  form!: FormGroup;
+  form!:         FormGroup;
   isSubmitting = false;
-  permTouched = false;
 
   businessUnits: any[] = [];
-  departments: any[] = [];
-  roles: any[] = [];
+  departments:   any[] = [];
 
-  permColumns: { key: keyof PermissionCell; label: string }[] = [
-    { key: 'create', label: 'Create' },
-    { key: 'view', label: 'View' },
-    { key: 'edit', label: 'Edit' },
-    { key: 'delete', label: 'Delete' },
-  ];
+  allModules:  ApiModule[]               = [];
+  permMap    = new Map<number, PermissionRow>();
+  loading    = true;
+  permTouched = false;
 
-  permissions: Record<string, PermissionCell> = {};
-
+  // ── Lifecycle ───────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     this.buildForm();
-    this.buildPermissions();
+    this.loadModules();
     this.loadBusinessUnits();
 
     this.form.get('businessUnit')!.valueChanges.subscribe(unitId => {
       this.departments = [];
-      this.roles = [];
-      this.form.patchValue({ department: '', roleName: '' }, { emitEvent: false });
+      this.form.patchValue({ department: '' }, { emitEvent: false });
       if (unitId) this.loadDepartments(unitId);
-    });
-
-    this.form.get('department')!.valueChanges.subscribe(deptId => {
-      this.roles = [];
-      this.form.patchValue({ roleName: '' }, { emitEvent: false });
-      if (deptId && this.type === 'assign') this.loadRoles(deptId);
     });
   }
 
+  // ── Form ────────────────────────────────────────────────────────────────────
 
   private buildForm(): void {
     this.form = this.fb.group({
       businessUnit: ['', Validators.required],
-      department: ['', Validators.required],
-      roleName: ['', Validators.required],
-      description: [
-        '',
-      Validators.required
-      ],
+      department:   ['', Validators.required],
+      roleName:     ['', Validators.required],
+      description:  ['', Validators.required],
     });
   }
 
+  isFieldInvalid(field: string): boolean {
+    const ctrl = this.form.get(field);
+    return !!(ctrl?.invalid && ctrl?.touched);
+  }
 
-  private buildPermissions(): void {
-    const result: Record<string, PermissionCell> = {};
-    this.modules?.forEach(m => {
-      result[m.key] = { create: false, view: false, edit: false, delete: false };
-    });
-    this.permissions = result;
+  // ── Data loading ────────────────────────────────────────────────────────────
+
+  loadModules(): void {
+    this.loading = true;
+    from(this.userService.getAllModules())
+      .pipe(map((res: any) => res.data as ApiModule[]))
+      .subscribe({
+        next: modules => {
+          this.allModules = modules;
+          this.buildPermMap(modules);
+          this.loading = false;
+        },
+        error: () => { this.loading = false; },
+      });
+  }
+
+  private buildPermMap(modules: ApiModule[]): void {
+    this.permMap.clear();
+    modules.forEach(parent =>
+      parent.subModules.forEach((sub: ApiSubModule) => {
+        this.permMap.set(sub.moduleId, {
+          moduleId:    sub.moduleId,
+          moduleName:  sub.moduleName,
+          description: SUB_DESC[sub.moduleName] ?? '',
+          create: false,
+          view:   false,
+          edit:   false,
+          delete: false,
+          export: false,
+        });
+      }),
+    );
   }
 
   private loadBusinessUnits(): void {
@@ -103,104 +119,53 @@ export class CreateRoleComponent implements OnInit {
       .catch(console.error);
   }
 
-  private loadRoles(deptId: string): void {
-    this.userService.getRoles(deptId)
-      .then((res: any) => { this.roles = res?.data ?? []; })
-      .catch(console.error);
+  onPermChange(updated: Map<number, PermissionRow>): void {
+    this.permMap = updated;
   }
 
-  hasAtLeastOnePermission(): boolean {
-    return this.modules?.some(m =>
-      Object.values(this.permissions[m.key] ?? {}).some(v => v === true)
-    );
-  }
+  /** Convenience getter so the template can pass the flag down */
+  get permTouchedFlag(): boolean { return this.permTouched; }
 
-  togglePerm(moduleKey: string, permKey: keyof PermissionCell): void {
-    this.permissions = {
-      ...this.permissions,
-      [moduleKey]: {
-        ...this.permissions[moduleKey],
-        [permKey]: !this.permissions[moduleKey][permKey],
-      },
-    };
-  }
-
-  isColumnAllChecked(permKey: keyof PermissionCell): boolean {
-    return this.modules?.every(m => this.permissions[m.key]?.[permKey]);
-  }
-
-
-
-
-  isFieldInvalid(field: string): boolean {
-    const ctrl = this.form.get(field);
-    return !!(ctrl?.invalid && ctrl?.touched);
-  }
-
+  // ── Submit / Cancel ─────────────────────────────────────────────────────────
 
   submit(): void {
     this.form.markAllAsTouched();
     this.permTouched = true;
 
-    if (this.form.invalid) return;
-    if (!this.hasAtLeastOnePermission()) return;
-    if (this.isSubmitting) return;
+    const hasPerms = Array.from(this.permMap.values()).some(
+      p => p.create || p.view || p.edit || p.delete || !!p.export,
+    );
+
+    if (this.form.invalid || !hasPerms || this.isSubmitting) return;
 
     this.isSubmitting = true;
-
     const { businessUnit, department, roleName, description } = this.form.value;
 
-    if (this.type === 'assign') {
+    const payload = {
+      roleName:       roleName.trim(),
+      businessUnitId: businessUnit,
+      departmentId:   department,
+      description:    description ?? '',
+      permission: {
+        createdBy: this.authService.getUserNameByToken(),
+        modules: Array.from(this.permMap.values()).map(p => ({
+          moduleId: p.moduleId,
+          create:   p.create,
+          view:     p.view,
+          edit:     p.edit,
+          delete:   p.delete,
+          export:   p.export,
+        })),
+      },
+    };
 
-      const matched = this.roles?.find(
-        r => String(r.roleId ?? r.id) === String(roleName)
-      );
-
-      const updatePayload = {
-        roleId: matched?.roleId ?? matched?.id,
-        permission: {
-          updatedBy: 'admin',
-          modules: this.modules.map(m => ({
-            moduleId: m.moduleId!,
-            create: this.permissions[m.key]?.create ?? false,
-            view: this.permissions[m.key]?.view ?? false,
-            edit: this.permissions[m.key]?.edit ?? false,
-            delete: this.permissions[m.key]?.delete ?? false,
-          })),
-        },
-      };
-
-      this.userService.updatePermission(updatePayload)
-        .then(() => {  })
-        .catch((err: any) => console.error('Assign permissions error:', err))
-        .finally(() => { this.isSubmitting = false; });
-
-    } else {
-      const createPayload: CreateRolePayload = {
-        roleName: roleName.trim(),
-        businessUnitId: businessUnit,
-        departmentId: department,
-        description: description ?? '',
-        permission: {
-          createdBy: 'admin',
-          modules: this.modules.map(m => ({
-            moduleId: m.moduleId!,
-            create: this.permissions[m.key]?.create ?? false,
-            view: this.permissions[m.key]?.view ?? false,
-            edit: this.permissions[m.key]?.edit ?? false,
-            delete: this.permissions[m.key]?.delete ?? false,
-          })),
-        },
-      };
-
-      this.userService.addRole(createPayload)
-        .then(() => { })
-        .catch((err: any) => console.error('Create role error:', err))
-        .finally(() => { this.isSubmitting = false; });
-    }
+    this.userService.addRole(payload)
+      .then(() => { this.isSubmitting = false; })
+      .catch((err: any) => {
+        console.error('Create role error:', err);
+        this.isSubmitting = false;
+      });
   }
 
-  cancel(): void {
-  
-  }
+  cancel(): void { history.back(); }
 }

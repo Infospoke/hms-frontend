@@ -125,6 +125,12 @@ export class AuthService {
     return JSON.parse(atob(t.split('.')[1]))?.sub;
   }
 
+  getUserNameByToken() {
+    const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1]))?.username;
+  }
+
   getIsFirstTimeUser() {
     const t = this.tokenService.getAccessToken();
     if (!t) return null;

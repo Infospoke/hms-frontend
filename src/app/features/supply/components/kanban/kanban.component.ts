@@ -251,6 +251,7 @@ export class KanbanComponent implements OnInit {
   toggleJrSelection(jobId: string | number, event: Event): void {
     event.stopPropagation();
     this.selectedJrIds = jobId;
+    this.toggleJrDropdown();
     // if (this.selectedJrIds.has(jobId)) {
     //   this.selectedJrIds.delete(jobId);
     // } else {

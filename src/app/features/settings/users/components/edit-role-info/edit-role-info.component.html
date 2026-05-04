@@ -1,29 +1,20 @@
-<!-- ─────────────────────────────────────────────────────────────────────────
-  FONT AWESOME — add to index.html <head>:
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-  NAVIGATION:
-    // view (read-only)
-    this.router.navigate(['/role/edit'], { state: { roleId: 5, type: 'view' } });
-    // edit (interactive)
-    this.router.navigate(['/role/edit'], { state: { roleId: 5, type: 'edit' } });
-───────────────────────────────────────────────────────────────────────── -->
-<div class="erp-container" [class.erp-container--view]="isViewMode">
-
-  <!-- ══ PAGE HEADER ══ -->
-  <div class="erp-page-header">
-    <div class="erp-header-left">
-      <span class="erp-view-pill" *ngIf="isViewMode">
-        <i class="fa-solid fa-eye"></i>&nbsp;View Only
-      </span>
-      <h1 class="erp-page-title">{{ pageTitle }}</h1>
-    </div>
-    <span class="erp-perm-badge" *ngIf="!loading">
-      {{ activePermissions }} permissions active
-    </span>
+<div class="rp-header">
+    <h2 class="rp-title">{{ pageTitle }}</h2>
+   
   </div>
 
-  <!-- ══ BODY ══ -->
+<div class="erp-container" [class.erp-container--view]="isViewMode">
+
+ 
+  <div class="erp-page-header">
+    <div class="erp-header-left">
+      
+      <h1 class="erp-page-title">Modules</h1>
+    </div>
+   
+  </div>
+
+
   <div class="erp-body">
 
     <!-- ── Sidebar ── -->
@@ -75,17 +66,13 @@
 
     </aside>
 
-    <!-- ── Main content ── -->
+
     <main class="erp-content">
 
-      <!-- Loading skeleton -->
-      <div class="erp-loading" *ngIf="loading">
-        <div class="erp-skeleton-row" *ngFor="let i of [1,2,3,4,5]"></div>
-      </div>
+   
 
       <ng-container *ngIf="!loading">
 
-        <!-- Sticky column headings -->
         <div class="erp-table-header">
           <div class="erp-th erp-th--module">Module / Sub-module</div>
           <div class="erp-th erp-th--perm">Create</div>
@@ -129,6 +116,7 @@
             <div class="erp-td erp-td--perm">
               <div class="erp-cb-wrap">
                 <input type="checkbox" class="erp-checkbox"
+                  [class.erp-checkbox--view]="isViewMode"
                   [checked]="row.create"
                   [disabled]="isViewMode"
                   (change)="togglePermission(row, 'create', $any($event.target).checked)"
@@ -140,6 +128,7 @@
             <div class="erp-td erp-td--perm">
               <div class="erp-cb-wrap">
                 <input type="checkbox" class="erp-checkbox"
+                  [class.erp-checkbox--view]="isViewMode"
                   [checked]="row.view"
                   [disabled]="isViewMode"
                   (change)="togglePermission(row, 'view', $any($event.target).checked)"
@@ -151,6 +140,7 @@
             <div class="erp-td erp-td--perm">
               <div class="erp-cb-wrap">
                 <input type="checkbox" class="erp-checkbox"
+                  [class.erp-checkbox--view]="isViewMode"
                   [checked]="row.edit"
                   [disabled]="isViewMode"
                   (change)="togglePermission(row, 'edit', $any($event.target).checked)"
@@ -162,6 +152,7 @@
             <div class="erp-td erp-td--perm">
               <div class="erp-cb-wrap">
                 <input type="checkbox" class="erp-checkbox"
+                  [class.erp-checkbox--view]="isViewMode"
                   [checked]="row.delete"
                   [disabled]="isViewMode"
                   (change)="togglePermission(row, 'delete', $any($event.target).checked)"
@@ -177,6 +168,7 @@
               <ng-template #exportCb>
                 <div class="erp-cb-wrap">
                   <input type="checkbox" class="erp-checkbox"
+                    [class.erp-checkbox--view]="isViewMode"
                     [checked]="row.export"
                     [disabled]="isViewMode"
                     (change)="togglePermission(row, 'export', $any($event.target).checked)"

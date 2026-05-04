@@ -1,291 +1,157 @@
+// ─── Variables ────────────────────────────────────────────────────────────────
+$blue:        #2563eb;
+$blue-dark:   #1d4ed8;
+$text:        #0f172a;
+$text-muted:  #64748b;
+$border:      #e2e8f0;
+$bg:          #f8fafc;
+$white:       #ffffff;
+$radius:      8px;
 
-$blue:       #2563eb;
-$blue-dark:  #1d4ed8;
-$blue-light: #eff6ff;
-$text:       #0f172a;
-$text-muted: #64748b;
-$border:     #e2e8f0;
-$bg:         #f8fafc;
-$white:      #ffffff;
-$radius:     8px;
-
-
-.cr-page {
-  display: flex;
+// ─── Host ─────────────────────────────────────────────────────────────────────
+:host {
+  display:        flex;
   flex-direction: column;
- gap: 16px;
+  height:         100%;
+  overflow:       hidden;
+  font-size:      13px;
+  color:          $text;
 }
 
-
-.cr-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+// ─── Page shell ───────────────────────────────────────────────────────────────
+.cr-page {
+  display:        flex;
+  flex-direction: column;
+  flex:           1;
+  height:         100%;
+  overflow:       hidden;
+  background:     $white;
+  border:         1px solid $border;
+  border-radius:  12px;
+  box-shadow:     0 1px 6px rgba(0, 0, 0, 0.04);
 }
 
-.cr-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+// ─── Page heading ─────────────────────────────────────────────────────────────
+.cr-heading {
+  padding:       18px 24px 14px;
+  border-bottom: 1px solid $border;
+  flex-shrink:   0;
+}
+
+.cr-heading-title {
+  margin:         0 0 2px;
+  font-size:      17px;
+  font-weight:    600;
+  color:          $text;
+  letter-spacing: -0.01em;
+}
+
+.cr-heading-sub {
+  margin:    0;
   font-size: 12px;
-  flex-wrap: wrap;
+  color:     $text-muted;
 }
 
-.crumb {
-  color: $text-muted;
-
-  &.link {
-    cursor: pointer;
-    &:hover { color: $blue; text-decoration: underline; }
-  }
-
-  &.active {
-    color: $text;
-    font-weight: 600;
-  }
+// ─── Section title ────────────────────────────────────────────────────────────
+.cr-section-title {
+  margin:      0 0 14px;
+  font-size:   13px;
+  font-weight: 600;
+  color:       $text;
 }
 
-.crumb-sep {
-  font-size: 9px;
-  color: #cbd5e1;
+// ─── Info card ────────────────────────────────────────────────────────────────
+.cr-info-card {
+  padding:       16px 24px 14px;
+  border-bottom: 1px solid $border;
+  flex-shrink:   0;
 }
 
-.more-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  border: 1px solid $border;
-  background: $white;
-  cursor: pointer;
-  color: $text-muted;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.12s;
-  &:hover { background: $bg; }
-}
+// ─── Form layout ──────────────────────────────────────────────────────────────
+.form-row.two-col {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   16px;
+  margin-bottom:         14px;
 
+  &:last-child { margin-bottom: 0; }
 
-// .cr-card {
-//   background: $white;
-//   border: 1px solid $border;
-//   border-radius: $radius;
-//   padding: 20px 24px;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 20px;
-// }
-
-// ── Form layout ───────────────────────────────────────────────────────────────
-.form-row.three-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
 .form-group {
-  display: flex;
+  display:        flex;
   flex-direction: column;
-  gap: 6px;
+  gap:            5px;
 }
 
 .form-label {
-  font-size: 12px;
+  font-size:   12px;
   font-weight: 500;
-  color: $text-muted;
+  color:       $text-muted;
 }
 
-.form-control {
-  padding: 9px 12px;
-  border: 1px solid $border;
-  border-radius: $radius;
-  font-size: 13px;
-  color: $text;
-  background: $white;
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  width: 100%;
-
-  &:focus {
-    border-color: #93c5fd;
-    box-shadow: 0 0 0 3px rgba($blue, 0.1);
-  }
-
-  &::placeholder {
-    color: #94a3b8;
-  }
-
-  // Select arrow styling
-  &select {
-    appearance: none;
-    cursor: pointer;
-  }
-}
-
-select.form-control {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
-  cursor: pointer;
-}
-
-textarea.form-control.description {
-  resize: vertical;
-  min-height: 30px;
-  line-height: 1.5;
-}
+.astrick { color: #ef4444; margin-left: 1px; }
+.err-msg { font-size: 11px; color: #ef4444; }
 
 
-.perm-section {
-    margin-top: 5px;
-  display: flex;
+.cr-perm-card {
+  display:        flex;
   flex-direction: column;
-  gap: 10px;
+  flex:           1;
+  min-height:     0;
+  overflow:       hidden;
+  padding:        14px 24px 0;
+
+  app-permissions-panel {
+    display:        flex;
+    flex-direction: column;
+    flex:           1;
+    min-height:     0;
+    overflow:       hidden;
+  }
 }
 
-.perm-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: $text;
-}
-
-.perm-table-wrap {
-  border: 1px solid $border;
-  border-radius: $radius;
-  overflow: hidden;
-}
-
-.perm-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-// Table head
-thead tr {
-  background: $bg;
-  border-bottom: 1px solid $border;
-}
-
-th {
-  padding: 10px 16px;
-  font-size: 11px;
-  font-weight: 600;
-  color: $text-muted;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.th-module {
-  text-align: left;
-  width: 200px;
-}
-
-.th-perm {
-  cursor: pointer;
-  user-select: none;
-  transition: background 0.12s;
-
-  &:hover { background: darken($bg, 2%); }
-}
-
-.th-perm-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  i { font-size: 12px; }
-}
-
-// Column select-all checkbox in header
-.col-check {
-  width: 13px;
-  height: 13px;
-  cursor: pointer;
-  accent-color: $blue;
-  margin: 0;
-}
-
-// Table body
-.perm-row {
-  border-bottom: 1px solid $border;
-  transition: background 0.1s;
-
-  &:last-child { border-bottom: none; }
-  &:hover { background: #fafbff; }
-}
-
-td {
-  padding: 10px 16px;
-  vertical-align: middle;
-}
-
-.td-module {
-  font-size: 12px;
-  font-weight: 500;
-  color: $text;
-  text-align: left;
-}
-
-.td-check {
-  text-align: center;
-}
-
-.perm-check {
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-  accent-color: $blue;
-  margin: 0;
-}
-
-// ── Footer ────────────────────────────────────────────────────────────────────
+// ─── Footer ───────────────────────────────────────────────────────────────────
 .cr-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid $border;
+  display:         flex;
+  justify-content: space-between;
+  gap:             8px;
+  padding:         12px 24px;
+  border-top:      1px solid $border;
+  background:      $white;
+  flex-shrink:     0;
 }
+
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 20px;
+  display:       inline-flex;
+  align-items:   center;
+  gap:           6px;
+  padding:       7px 20px;
   border-radius: $radius;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, opacity 0.15s;
-  border: none;
+  font-size:     13px;
+  font-weight:   500;
+  cursor:        pointer;
+  border:        none;
+  transition:    background 0.12s, transform 0.08s;
+
+  &:active { transform: scale(0.98); }
 }
 
-.btn-ghost-primary {
+.btn-primary-2 {
   background: $blue;
-  color: $white;
-  border: 1px solid $blue;
+  color:      #fff;
+  border:     1px solid $blue-dark;
 
-  &:hover:not(:disabled)  { background: $blue-dark; }
-  &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
+  &:hover:not(:disabled) { background: $blue-dark; }
+  &:disabled             { opacity: 0.5; cursor: not-allowed; }
 }
 
 .btn-ghost {
   background: transparent;
-  color: $text-muted;
-  border: 1px solid $border;
+  color:      $text-muted;
+  border:     1px solid $border;
+
   &:hover { background: $bg; }
 }

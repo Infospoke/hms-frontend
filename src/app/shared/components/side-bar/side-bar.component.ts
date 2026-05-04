@@ -53,8 +53,8 @@ export class SideBarComponent implements OnInit {
       ],
     },
     {
-      id: 'Setting & Admin',
-      label: 'Setting & Admin',
+      id: 'System & Admins',
+      label: 'System & Admins',
       icon: 'fa-solid fa-gear',
       children: [
         { label: 'Users',             icon: 'fa-solid fa-users',    path: '/users/user-onboard-roles' },
@@ -65,7 +65,7 @@ export class SideBarComponent implements OnInit {
   ];
 
   ngOnInit() {
-    // Sync active path with router on every navigation
+    
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: any) => {
@@ -77,12 +77,10 @@ export class SideBarComponent implements OnInit {
     this.syncOpenMenu();
   }
 
-  /** Auto-expand the section that owns the current URL */
   private syncOpenMenu() {
     for (const item of this.navItems) {
       if (item.children && this.isChildActive(item.children)) {
         this.openMenu = item.id;
-        // check nested
         for (const child of item.children) {
           if (child.children && this.isChildActive(child.children)) {
             this.openNested = child.label;

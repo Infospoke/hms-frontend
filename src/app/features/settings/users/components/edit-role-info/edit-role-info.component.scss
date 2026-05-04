@@ -347,11 +347,41 @@ $col-perm : 90px;
   cursor       : pointer;
   accent-color : $accent;
 
-  // View mode: greyed out, not interactive
-  &:disabled {
-    cursor       : not-allowed;
-    opacity      : 0.5;
-    accent-color : #94a3b8;
+  // ── View mode: fully custom-rendered, non-interactive ──
+  &--view {
+    cursor             : default;
+    pointer-events     : none;
+    appearance         : none;
+    -webkit-appearance : none;
+    width              : 16px;
+    height             : 16px;
+    border-radius      : 3px;
+    border             : 2px solid #cbd5e1;
+    background         : #f1f5f9;
+    position           : relative;
+    flex-shrink        : 0;
+    display            : inline-block;
+    vertical-align     : middle;
+
+   
+    &:checked {
+      background   : #94a3b8;
+      border-color : #94a3b8;
+
+      &::after {
+        content      : '';
+        position     : absolute;
+        left         : 50%;
+        top          : 50%;
+        width        : 5px;
+        height       : 11px;
+        border       : 2px solid #fff;
+        border-top   : none;
+        border-left  : none;
+        transform    : translate(-50%, -60%) rotate(45deg);
+        display      : block;
+      }
+    }
   }
 }
 
@@ -365,7 +395,7 @@ $col-perm : 90px;
   border-radius : 4px;
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
+
 .erp-empty {
   padding    : 40px 16px;
   text-align : center;
@@ -373,7 +403,6 @@ $col-perm : 90px;
   color      : $text-light;
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
 .erp-footer {
   display         : flex;
   justify-content : flex-end;
@@ -441,7 +470,7 @@ $col-perm : 90px;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ─── Responsive ───────────────────────────────────────────────────────────────
+
 @media (max-width: 640px) {
   .erp-body    { flex-direction: column; }
   .erp-sidebar { width: 100%; border-right: none; border-bottom: 1px solid $border; max-height: 180px; }

@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.prod';
 import { Observable } from 'rxjs';
@@ -11,7 +11,7 @@ export class ApiService {
   private baseUrl = environment.apiUrl;
   private websiteURL = environment.websiteURL;
   private aiBaseUrl = environment.atsUrl;
-  private hrmsUrl=environment.hrmsApiUrl;
+  private hrmsUrl = environment.hrmsApiUrl;
   get<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
   }
@@ -89,8 +89,8 @@ export class ApiService {
     return this.http.get<T>(`${this.hrmsUrl}${endpoint}`, { params });
   }
 
-  hrmspost<T>(endpoint: string, body: any,options?: { params?: HttpParams }): Observable<T> {
-    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body,options);
+  hrmspost<T>(endpoint: string, body: any, options?: { params?: HttpParams }): Observable<T> {
+    return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body, options);
   }
 
   hrmsput<T>(endpoint: string, body: any): Observable<T> {
@@ -115,11 +115,12 @@ export class ApiService {
     return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body, { headers });
   }
 
-  
-  aiGetBlob(endpoint: string, params?: any): Observable<Blob> {
+
+  aiGetBlob(endpoint: string, params?: any): Observable<HttpResponse<Blob>> {
     return this.http.get(`${this.aiBaseUrl}${endpoint}`, {
       params,
-      responseType: 'blob'
+      responseType: 'blob',
+      observe: 'response'
     });
   }
 }

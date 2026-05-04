@@ -81,7 +81,7 @@ export class RolePermissionsComponent implements OnInit {
   }
 
   onView(row: RoleRow): void {
-    console.log('View', row);
+    this.router.navigateByUrl('/users/role-permissions/by-role-information',{state:{roleId:row?.roleId,type:'view'}})
   }
 
   addRole(): void {
@@ -89,9 +89,9 @@ export class RolePermissionsComponent implements OnInit {
   }
 
   onEdit(row: RoleRow): void {
-   this.router.navigateByUrl('/users/role-permissions/by-role-information',{state:{roleId:row?.roleId}})
+   this.router.navigateByUrl('/users/role-permissions/by-role-information',{state:{roleId:row?.roleId,type:'edit'}})
   }
   viewUser(row:RoleRow):void{
-    this.router.navigateByUrl('/users/role-permissions/by-role',{state:{roleId:row?.roleId}})
+    this.router.navigateByUrl('/users/role-permissions/by-role',{state:{roleId:row?.roleId,}})
   }
 }

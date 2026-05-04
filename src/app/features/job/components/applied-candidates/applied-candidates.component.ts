@@ -28,7 +28,7 @@ export class AppliedCandidatesComponent implements OnChanges {
   @Output() statusSelected = new EventEmitter<any>();
 
   private job = inject(JobService);
-  private router=inject(Router);
+  private router = inject(Router);
   tabs = [
     { label: 'Applied', key: 'applied', value: 'APPLIED' },
     { label: 'Screening', key: 'screening', value: 'SCREENED' },
@@ -48,9 +48,9 @@ export class AppliedCandidatesComponent implements OnChanges {
 
   candidates = computed(() => {
     const applicants = this.allApplicants();
-   
+
     const analysisList = this.allAnalysis();
-    
+
     if (!applicants?.length) return [];
 
     return applicants.map((app: any) => {
@@ -253,20 +253,35 @@ export class AppliedCandidatesComponent implements OnChanges {
   onAddApplicant(): void {
     this.router.navigate(['/supply/jobs/add-applicant']);
   }
-  onExportAll(){
-    this.job.exportByJobId(this.jobId).then((res:any)=>{
-      const blob = new Blob([res], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
+  onExportAll() {
+    this.job.exportByJobId(this.jobId)
+      .then((res: any) => {
 
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'candidate.pdf';
-      a.click();
+        const blob = new Blob([res.body], { type: 'application/pdf' });
 
-      URL.revokeObjectURL(url);
-    })
-    .catch((error:any)=>{
-      
-    })
+
+        const contentDisposition = res.headers.get('content-disposition');
+        let fileName = 'download.pdf';
+        console.log(contentDisposition)
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?(.+?)"?$/);
+          console.log(match);
+          if (match?.[1]) {
+            fileName = match[1];
+          }
+        }
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName; 
+        a.click();
+
+        URL.revokeObjectURL(url);
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
   }
 }

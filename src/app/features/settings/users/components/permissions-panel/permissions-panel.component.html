@@ -1,0 +1,194 @@
+<div class="pp-wrap" [class.pp-invalid]="showPermError">
+
+
+  <div class="pp-heading" *ngIf="showTitle">
+    <div>
+      <h3 class="pp-title">Assign Permissions</h3>
+      <p class="pp-sub">Select the modules and set permissions for this role.</p>
+    </div>
+    <small class="pp-err" *ngIf="showPermError">
+      Please select at least one permission.
+    </small>
+  </div>
+
+  <div class="pp-body">
+
+    <!-- Sidebar -->
+    <aside class="pp-sidebar">
+
+      <!-- All Modules row -->
+      <div
+        class="pp-all-row"
+        [class.pp-all-row--active]="selectedModuleId === 'all'"
+        (click)="selectModule('all')"
+      >
+        <div class="pp-icon-circle pp-all-icon">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.8"/>
+            <rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.8"/>
+          </svg>
+        </div>
+        <span class="pp-all-label">All Modules</span>
+        <span class="pp-badge">{{ totalSubModules }}</span>
+      </div>
+
+      <div class="pp-sidebar-label">Modules</div>
+
+      <!-- Per-module rows -->
+      <div
+        class="pp-mod-item"
+        *ngFor="let mod of allModules"
+        [class.pp-mod-item--active]="selectedModuleId === mod.moduleId"
+        (click)="selectModule(mod.moduleId)"
+      >
+        <div
+          class="pp-icon-circle"
+          [style.background]="getPalette(mod.moduleId).bg"
+          [style.color]="getPalette(mod.moduleId).color"
+        >
+          <i [class]="getModuleIcon(mod.moduleName, mod.moduleId)"></i>
+        </div>
+        <span class="pp-mod-name">{{ mod.moduleName }}</span>
+        <span class="pp-badge">{{ mod.subModules.length }}</span>
+      </div>
+
+    </aside>
+
+    <!-- Main content -->
+    <main class="pp-content">
+
+      <!-- Skeleton loader -->
+      <ng-container *ngIf="loading">
+        <div class="pp-skeleton-wrap">
+          <div class="pp-skeleton-row" *ngFor="let i of skeletonRows"></div>
+        </div>
+      </ng-container>
+
+      <!-- Table -->
+      <ng-container *ngIf="!loading">
+
+        <!-- Sticky header -->
+        <div class="pp-table-header">
+          <div class="pp-th pp-th--module">Module / Sub-module</div>
+          <div class="pp-th pp-th--perm">Create</div>
+          <div class="pp-th pp-th--perm">View</div>
+          <div class="pp-th pp-th--perm">Edit</div>
+          <div class="pp-th pp-th--perm">Delete</div>
+          <div class="pp-th pp-th--perm">Export</div>
+        </div>
+
+        <!-- Scrollable rows -->
+        <div class="pp-rows-scroll">
+
+          <div class="pp-empty" *ngIf="tableRows.length === 0">
+            No sub-modules found for this selection.
+          </div>
+
+          <div class="pp-row" *ngFor="let row of tableRows">
+
+            <!-- Module cell -->
+            <div class="pp-td pp-td--module">
+              <div class="pp-cell-module">
+                <div
+                  class="pp-icon-circle"
+                  [style.background]="getPalette(getParentModuleId(row.moduleId)).bg"
+                  [style.color]="getPalette(getParentModuleId(row.moduleId)).color"
+                >
+                  <i [class]="getModuleIcon(row.moduleName, getParentModuleId(row.moduleId))"></i>
+                </div>
+                <div>
+                  <div class="pp-cell-name">{{ row.moduleName }}</div>
+                  <div class="pp-cell-desc" *ngIf="row.description">{{ row.description }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Create -->
+            <div class="pp-td pp-td--perm">
+              <div class="pp-cb-wrap">
+                <input
+                  type="checkbox"
+                  class="pp-checkbox"
+                  [class.pp-checkbox--view]="viewMode"
+                  [checked]="row.create"
+                  [disabled]="viewMode"
+                  (change)="togglePermission(row, 'create', $any($event.target).checked)"
+                  [attr.aria-label]="'Create for ' + row.moduleName"
+                />
+              </div>
+            </div>
+
+            <!-- View -->
+            <div class="pp-td pp-td--perm">
+              <div class="pp-cb-wrap">
+                <input
+                  type="checkbox"
+                  class="pp-checkbox"
+                  [class.pp-checkbox--view]="viewMode"
+                  [checked]="row.view"
+                  [disabled]="viewMode"
+                  (change)="togglePermission(row, 'view', $any($event.target).checked)"
+                  [attr.aria-label]="'View for ' + row.moduleName"
+                />
+              </div>
+            </div>
+
+            <!-- Edit -->
+            <div class="pp-td pp-td--perm">
+              <div class="pp-cb-wrap">
+                <input
+                  type="checkbox"
+                  class="pp-checkbox"
+                  [class.pp-checkbox--view]="viewMode"
+                  [checked]="row.edit"
+                  [disabled]="viewMode"
+                  (change)="togglePermission(row, 'edit', $any($event.target).checked)"
+                  [attr.aria-label]="'Edit for ' + row.moduleName"
+                />
+              </div>
+            </div>
+
+            <!-- Delete -->
+            <div class="pp-td pp-td--perm">
+              <div class="pp-cb-wrap">
+                <input
+                  type="checkbox"
+                  class="pp-checkbox"
+                  [class.pp-checkbox--view]="viewMode"
+                  [checked]="row.delete"
+                  [disabled]="viewMode"
+                  (change)="togglePermission(row, 'delete', $any($event.target).checked)"
+                  [attr.aria-label]="'Delete for ' + row.moduleName"
+                />
+              </div>
+            </div>
+
+            <!-- Export — null = N/A -->
+            <div class="pp-td pp-td--perm">
+              <ng-container *ngIf="row.export === null; else exportCb">
+                <span class="pp-na-badge">N/A</span>
+              </ng-container>
+              <ng-template #exportCb>
+                <div class="pp-cb-wrap">
+                  <input
+                    type="checkbox"
+                    class="pp-checkbox"
+                    [class.pp-checkbox--view]="viewMode"
+                    [checked]="!!row.export"
+                    [disabled]="viewMode"
+                    (change)="togglePermission(row, 'export', $any($event.target).checked)"
+                    [attr.aria-label]="'Export for ' + row.moduleName"
+                  />
+                </div>
+              </ng-template>
+            </div>
+
+          </div><!-- /pp-row -->
+        </div><!-- /pp-rows-scroll -->
+
+      </ng-container>
+    </main>
+  </div><!-- /pp-body -->
+</div>

@@ -9,6 +9,8 @@ import { AuthService }  from '../../../../../core/auth/auth.service';
 
 import { PermissionsPanelComponent }           from '../permissions-panel/permissions-panel.component';
 import { PermissionRow, ApiModule, ApiSubModule } from '../permissions-panel/permissions-panel.component';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { Router } from '@angular/router';
 
 const SUB_DESC: Record<string, string> = {
   'My Jrs':              'Manage job requisitions',
@@ -31,7 +33,8 @@ export class CreateRoleComponent implements OnInit {
   private fb          = inject(FormBuilder);
   private userService = inject(UserService);
   private authService = inject(AuthService);
-
+  private notificationService=inject(NotificationService);
+  private router=inject(Router);
   form!:         FormGroup;
   isSubmitting = false;
 
@@ -43,7 +46,6 @@ export class CreateRoleComponent implements OnInit {
   loading    = true;
   permTouched = false;
 
-  // ── Lifecycle ───────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     this.buildForm();
@@ -123,10 +125,8 @@ export class CreateRoleComponent implements OnInit {
     this.permMap = updated;
   }
 
-  /** Convenience getter so the template can pass the flag down */
-  get permTouchedFlag(): boolean { return this.permTouched; }
 
-  // ── Submit / Cancel ─────────────────────────────────────────────────────────
+  get permTouchedFlag(): boolean { return this.permTouched; }
 
   submit(): void {
     this.form.markAllAsTouched();
@@ -160,7 +160,17 @@ export class CreateRoleComponent implements OnInit {
     };
 
     this.userService.addRole(payload)
-      .then(() => { this.isSubmitting = false; })
+      .then((res:any) => { 
+        this.isSubmitting = false;
+          if(res?.responsecode=='00'){
+            this.notificationService.success(res?.responsemessage || res?.responseMessage || res?.message
+);
+            this.router.navigateByUrl("/users/role-permissions")
+          }
+          else{
+             this.notificationService.error(res?.responsemessage || res?.responseMessage);
+          }
+       })
       .catch((err: any) => {
         console.error('Create role error:', err);
         this.isSubmitting = false;

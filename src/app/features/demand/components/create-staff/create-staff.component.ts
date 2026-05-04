@@ -260,8 +260,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       eduReq: ['', Validators.required],
       expMin: [0],
       expMax: [5],
-      interviewMin: [0],
-      interviewMax: [0],
+      interviewMin: [1],
+      interviewMax: [2],
       assessmentOn: [false],
       travel: ['']
     });

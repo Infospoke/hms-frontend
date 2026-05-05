@@ -8,6 +8,7 @@ import { StaffingServiceService } from '../../services/staffing-service.service'
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SrReviewComponent } from '../sr-review/sr-review';
 import { firstValueFrom, forkJoin } from 'rxjs';
+import { CanDirective } from '../../../../shared/directives/can.directive';
 
 export interface StaffingRequisition {
   id: string;
@@ -37,7 +38,7 @@ interface SrListResponse {
 @Component({
   selector: 'app-staffing-requisitions',
   standalone: true,
-  imports: [CommonModule, PaginationComponent, NzModalModule],
+  imports: [CommonModule, PaginationComponent, NzModalModule,CanDirective],
   templateUrl: './staffing-requisitions.component.html',
   styleUrl: './staffing-requisitions.component.scss',
 })
@@ -429,6 +430,6 @@ export class StaffingRequisitionsComponent implements OnInit {
   }
 
   canEdit(sr: StaffingRequisition): boolean {
-    return sr.status === 'Draft' || sr.status === 'Submitted';
+    return sr.status === 'Draft' || sr.status === 'Submitted' ;
   }
 }

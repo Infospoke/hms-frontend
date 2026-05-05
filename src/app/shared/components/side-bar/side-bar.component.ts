@@ -2,11 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../core/auth/auth.service';
+import { PermissionService } from '../../../core/services/permission.service';
 
 export interface NavChild {
   label: string;
   icon: string;
   path: string;
+  permissionName?: string;
   children?: NavChild[];
 }
 
@@ -14,7 +17,8 @@ export interface NavItem {
   id: string;
   label: string;
   icon: string;
-  path?: string;          // if set → direct navigate, no accordion
+  path?: string;
+  permissionName?: string;
   children?: NavChild[];
 }
 
@@ -27,45 +31,90 @@ export interface NavItem {
 })
 export class SideBarComponent implements OnInit {
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private permissionService = inject(PermissionService);
 
-  openMenu: string | null = null;     // only ONE top-level open at a time
-  openNested: string | null = null;   // only ONE nested group open at a time
+  openMenu: string | null = null;
+  openNested: string | null = null;
   activePath: string = '';
 
-  navItems: NavItem[] = [
+  private permissions: string[] = [];
+  private permissionMap = new Map<string, Set<string>>();
 
+  navItems: NavItem[] = [
     {
       id: 'demand',
+      permissionName: 'DEMAND',
       label: 'Demand',
       icon: 'fa-solid fa-briefcase',
       children: [
-        { label: "My SR's", icon: 'fa-solid fa-file-contract', path: '/demand/my-jds' },
+        {
+          label: "My SR's",
+          icon: 'fa-solid fa-file-contract',
+          path: '/demand/my-jds',
+          permissionName: 'MYJRS',
+        },
       ],
     },
     {
       id: 'supply',
       label: 'Supply',
+      permissionName: 'SUPPLY',
       icon: 'fa-solid fa-layer-group',
       children: [
-        { label: 'Hiring Dashboard', icon: 'fa-solid fa-chart-pie', path: '/supply/jobs/dashboard' },
-        { label: 'Jobs Details',     icon: 'fa-solid fa-file-lines',    path: '/supply/jobs/job-details' },
-        { label: 'Kanban',           icon: 'fa-solid fa-table-columns', path: '/supply/kanban' },
+        {
+          label: 'Hiring Dashboard',
+          icon: 'fa-solid fa-chart-pie',
+          path: '/supply/jobs/dashboard',
+          permissionName: 'HIRINGDASHBOARD',
+        },
+        {
+          label: 'Jobs Details',
+          icon: 'fa-solid fa-file-lines',
+          path: '/supply/jobs/job-details',
+          permissionName: 'JOBDETAILS',
+        },
+        {
+          label: 'Kanban',
+          icon: 'fa-solid fa-table-columns',
+          path: '/supply/kanban',
+          permissionName: 'KANBAN',
+        },
       ],
     },
     {
       id: 'System & Admins',
+      permissionName: 'SYSTEM&ADMINS',
       label: 'System & Admins',
       icon: 'fa-solid fa-gear',
       children: [
-        { label: 'Users',             icon: 'fa-solid fa-users',    path: '/users/user-onboard-roles' },
-        { label: 'Role & Permissions', icon: 'fa-solid fa-shield-halved', path: '/users/role-permissions' },
+        {
+          label: 'Users',
+          icon: 'fa-solid fa-users',
+          path: '/users/user-onboard-roles',
+          permissionName: 'USERS',
+        },
+        {
+          label: 'Role & Permissions',
+          icon: 'fa-solid fa-shield-halved',
+          path: '/users/role-permissions',
+          permissionName: 'ROLES&PERMISSIONS',
+        },
       ],
     },
-
   ];
-
+  
   ngOnInit() {
-    
+    // Ensure PermissionService is in sync with the current token before
+    // building the sidebar map (guards against race with APP_INITIALIZER)
+    this.permissionService.load();
+
+    // BUG FIX: getPermissions() can return null when token is absent;
+    // fall back to [] so buildPermissionMap() never crashes on null.forEach
+    this.permissions = this.authService.getPermissions() ?? [];
+    this.buildPermissionMap();
+    this.filterNavItems();
+
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: any) => {
@@ -75,6 +124,33 @@ export class SideBarComponent implements OnInit {
 
     this.activePath = this.router.url;
     this.syncOpenMenu();
+  }
+
+  private buildPermissionMap() {
+    this.permissionMap.clear();
+    this.permissions.forEach(p => {
+      const [parent, child] = p.split('_');
+      if (!this.permissionMap.has(parent)) {
+        this.permissionMap.set(parent, new Set());
+      }
+      if (child) {
+        this.permissionMap.get(parent)!.add(child);
+      }
+    });
+  }
+
+  private filterNavItems() {
+    this.navItems = this.navItems
+      .filter(item => this.permissionMap.has(item.permissionName!))
+      .map(item => ({
+        ...item,
+        children: item.children?.filter(child =>
+          this.permissionMap
+            .get(item.permissionName!)!
+            .has(child.permissionName!)
+        ),
+      }))
+      .filter(item => item.children && item.children.length > 0);
   }
 
   private syncOpenMenu() {
@@ -122,7 +198,7 @@ export class SideBarComponent implements OnInit {
   }
 
   isActive(path: string): boolean {
-    if(path==='/demand/my-jds' && this.activePath==='/demand/create?step=0')return true;
+    if (path === '/demand/my-jds' && this.activePath === '/demand/create?step=0') return true;
     return !!path && this.activePath.startsWith(path);
   }
 }

@@ -375,6 +375,20 @@
   text-transform: uppercase;
 }
 
+// .meta-value {
+//   font-size: 12px;
+//   font-weight: 500;
+//   color: #3b82f6;
+
+//   &.status {
+//     color: #10b981;
+//   }
+//   &.match-score {
+//     color: #f59e0b;
+//   }
+// }
+// ── STATUS META-VALUE BADGES ─────────────────────────────────────
+
 .meta-value {
   font-size: 12px;
   font-weight: 500;
@@ -383,9 +397,129 @@
   &.status {
     color: #10b981;
   }
+
   &.match-score {
     color: #f59e0b;
   }
+}
+
+// Interview Statuses
+.status-scheduled {
+  // background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-upcoming {
+  // background: #f3e8ff;
+  color: #7e22ce;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-completed {
+  // background: #dcfce7;
+  color: #15803d;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-did_not_attend {
+  // background: #fee2e2;
+  color: #b91c1c;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+// Pipeline / Stage Statuses
+.status-applied {
+  background: #f0f4f8;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-screened {
+  // background: #ecfdf5;
+  color: #059669;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-shortlisted {
+  // background: #f1fee8;
+  color: #06ca33;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-interview {
+  // background: #eef2ff;
+  color: #6366f1;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-offer {
+  // background: #fff7ed;
+  color: #ea580c;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-hired {
+  // background: #dbeafe;
+  color: #2563eb;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-rejected {
+  // background: #fce7f3;
+  color: #be185d;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-on_hold {
+  // background: #fef3c7;
+  color: #b45309;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-withdrawn {
+  // background: #f1f5f9;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .empty-state {

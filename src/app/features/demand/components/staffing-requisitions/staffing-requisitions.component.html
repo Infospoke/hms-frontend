@@ -2,7 +2,7 @@
 
   <div class="sr-header">
     <h2 class="sr-title">My Staffing Requisitions</h2>
-    <button class="btn-new" (click)="newSR()">+ New SR</button>
+    <button class="btn-new" (click)="newSR()" *appCan="'DEMAND:MYJRS:CREATE'">+ New SR</button>
   </div>
 
   <div class="banner" *ngIf="draftSR">
@@ -33,37 +33,28 @@
         <span class="sr-id">{{ sr.id }}</span>
         <div class="sr-info">
           <p class="sr-name">{{ sr.title }}</p>
-          <p class="sr-meta">{{ sr.meta  }}</p>
+          <p class="sr-meta">{{ sr.meta }}</p>
         </div>
       </div>
 
       <div class="sr-right" (click)="$event.stopPropagation()">
         <span class="badge" [ngClass]="badgeClass(sr.status)">{{ sr.status }}</span>
         <div class="sr-actions">
-          <i
-            class="fa fa-eye action-icon"
-            title="View"
-            [class.spinning]="viewLoading"
-            (click)="viewSR(sr)">
+          <i class="fa fa-eye action-icon" title="View" [class.spinning]="viewLoading" (click)="viewSR(sr)"
+            *appCan="'DEMAND:MYJRS:VIEW'">
           </i>
-          <i
-            class="fa fa-pencil action-icon edit"
-            title="Edit"
-            *ngIf="canEdit(sr)"
-            (click)="editSR(sr)">
-          </i>
+          <ng-container *appCan="'DEMAND:MYJRS:EDIT'">
+            <i class="fa fa-pencil action-icon edit" title="Edit" *ngIf="canEdit(sr)" (click)="editSR(sr)">
+            </i>
+          </ng-container>
         </div>
       </div>
 
     </div>
   </div>
 
-  <app-pagination
-    *ngIf="!isLoading && !errorMessage && totalElements > 0"
-    [totalItems]="totalElements"
-    [pageSize]="pageSize"
-    [currentPage]="currentPage"
-    (pageChange)="onPageChange($event)">
+  <app-pagination *ngIf="!isLoading && !errorMessage && totalElements > 0" [totalItems]="totalElements"
+    [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)">
   </app-pagination>
 
 </div>

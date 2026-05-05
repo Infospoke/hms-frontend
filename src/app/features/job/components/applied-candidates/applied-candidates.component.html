@@ -5,7 +5,7 @@
       {{ tab.label }}
     </button>
   </div>
- 
+
   <div class="intake-header">
     <div class="intake-title-section">
       <h2 class="intake-title">Application Intake</h2>
@@ -69,7 +69,10 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">STATUS</span>
-          <span class="meta-value status" [ngClass]="">{{ candidate.displayStatus }}</span>
+          <!-- <span class="meta-value status" [ngClass]="">{{ candidate.displayStatus }}</span> -->
+          <span class="meta-value" [ngClass]="'status-' + (candidate?.displayStatus?.toLowerCase()?.replace(/ /g, '_'))">
+            {{ candidate.displayStatus }}
+          </span>
         </div>
         <div class="meta-item">
           <span class="meta-label">MATCH SCORE</span>

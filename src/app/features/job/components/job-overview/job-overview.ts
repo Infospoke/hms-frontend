@@ -123,7 +123,7 @@ export class JobOverview {
 
   async onCandidateSelected(candidate: any) {
     let data:any;
-    if(candidate.status==='INTERVIEW'){
+    if(candidate.status==='INTERVIEW' || candidate?.status==='OFFER' || candidate?.this.status==='HIRED'){
       let payload={
         application_id:candidate?.id
       }

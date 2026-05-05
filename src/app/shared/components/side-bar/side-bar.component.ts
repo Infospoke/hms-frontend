@@ -4,23 +4,10 @@ import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/auth/auth.service';
 import { PermissionService } from '../../../core/services/permission.service';
+import { NAV_ITEMS, NavItem, NavChild } from '../../constants/nav-config';
 
-export interface NavChild {
-  label: string;
-  icon: string;
-  path: string;
-  permissionName?: string;
-  children?: NavChild[];
-}
-
-export interface NavItem {
-  id: string;
-  label: string;
-  icon: string;
-  path?: string;
-  permissionName?: string;
-  children?: NavChild[];
-}
+// Re-export so any component that imported these from the sidebar still works
+export type { NavItem, NavChild };
 
 @Component({
   selector: 'app-side-bar',
@@ -41,76 +28,11 @@ export class SideBarComponent implements OnInit {
   private permissions: string[] = [];
   private permissionMap = new Map<string, Set<string>>();
 
-  navItems: NavItem[] = [
-    {
-      id: 'demand',
-      permissionName: 'DEMAND',
-      label: 'Demand',
-      icon: 'fa-solid fa-briefcase',
-      children: [
-        {
-          label: "My SR's",
-          icon: 'fa-solid fa-file-contract',
-          path: '/demand/my-jds',
-          permissionName: 'MYJRS',
-        },
-      ],
-    },
-    {
-      id: 'supply',
-      label: 'Supply',
-      permissionName: 'SUPPLY',
-      icon: 'fa-solid fa-layer-group',
-      children: [
-        {
-          label: 'Hiring Dashboard',
-          icon: 'fa-solid fa-chart-pie',
-          path: '/supply/jobs/dashboard',
-          permissionName: 'HIRINGDASHBOARD',
-        },
-        {
-          label: 'Jobs Details',
-          icon: 'fa-solid fa-file-lines',
-          path: '/supply/jobs/job-details',
-          permissionName: 'JOBDETAILS',
-        },
-        {
-          label: 'Kanban',
-          icon: 'fa-solid fa-table-columns',
-          path: '/supply/kanban',
-          permissionName: 'KANBAN',
-        },
-      ],
-    },
-    {
-      id: 'System & Admins',
-      permissionName: 'SYSTEM&ADMINS',
-      label: 'System & Admins',
-      icon: 'fa-solid fa-gear',
-      children: [
-        {
-          label: 'Users',
-          icon: 'fa-solid fa-users',
-          path: '/users/user-onboard-roles',
-          permissionName: 'USERS',
-        },
-        {
-          label: 'Role & Permissions',
-          icon: 'fa-solid fa-shield-halved',
-          path: '/users/role-permissions',
-          permissionName: 'ROLES&PERMISSIONS',
-        },
-      ],
-    },
-  ];
-  
-  ngOnInit() {
-    // Ensure PermissionService is in sync with the current token before
-    // building the sidebar map (guards against race with APP_INITIALIZER)
-    this.permissionService.load();
+  // Seeded from the shared nav config; filterNavItems() will trim it down
+  navItems: NavItem[] = NAV_ITEMS.map(item => ({ ...item }));
 
-    // BUG FIX: getPermissions() can return null when token is absent;
-    // fall back to [] so buildPermissionMap() never crashes on null.forEach
+  ngOnInit() {
+    this.permissionService.load();
     this.permissions = this.authService.getPermissions() ?? [];
     this.buildPermissionMap();
     this.filterNavItems();

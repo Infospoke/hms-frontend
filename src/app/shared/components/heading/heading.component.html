@@ -1,4 +1,4 @@
-<div class="heading-component" [style.text-align]="isCenter ? 'center' : 'left'">
+<div class="heading-component" [ngClass]="{ 'center': isCenter }">
 
     <div class="heading-wrapper" *ngIf="heading">
         <h4 class="heading-h4" [style.font-size]="headingFontSize" [style.color]="headingColor">

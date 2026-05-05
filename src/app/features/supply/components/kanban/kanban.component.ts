@@ -6,7 +6,7 @@ import { SupplyService } from '../../services/supply-service';
 import { JobService } from '../../../job/services/job.service';
 
 type Stage = 'Shortlisted' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
-type SlaStatus = 'BREACHED' | 'WARNING' | 'OK';
+type SlaStatus = 'BREACHED' | 'WARNING' | 'OK' | '';
 type ApplicantFilter = 'all' | 'referrals' | 'non-referrals';
 type SlaFilter = 'green' | 'orange' | 'red';
 type DateFilter = 'today' | 'last week' | 'last month' | 'custom' | 'this month';
@@ -40,6 +40,7 @@ interface ApiCandidate {
   jobId: number;
   source: string;
   [key: string]: any;
+  slaPercentage: any;
 }
 
 interface ApiResponse {
@@ -63,12 +64,12 @@ const STAGE_MAP: Record<string, Stage> = {
 };
 
 function mapSlaColor(color: string | null): SlaStatus {
-  if (!color) return 'OK';
+  if (!color) return '';
   switch (color.toUpperCase()) {
     case 'RED': return 'BREACHED';
     case 'ORANGE': return 'WARNING';
     case 'GREEN': return 'OK';
-    default: return 'OK';
+    default: return '';
   }
 }
 
@@ -115,7 +116,7 @@ export class KanbanComponent implements OnInit {
   candidatesLoading = false;
 
   jobsList: any[] = [];
-  selectedJrIds: any;
+  selectedJrIds: any = [];
   showJrDropdown = false;
   jobsLoading = false;
 
@@ -207,9 +208,9 @@ export class KanbanComponent implements OnInit {
       const candidate: Candidate = {
         id: apiC.id,
         name: `${apiC.firstName} ${apiC.lastName}`.trim(),
-        sla: mapSlaColor(apiC.slaColor),
+        sla: (stage === 'Hired' || stage === 'Offer') ? 'OK' : mapSlaColor(apiC.slaColor),
         days: apiC.daysInStage ?? 0,
-        percent: mapSlaPercent(apiC.slaColor),
+        percent: apiC?.slaPercentage,
         ref: apiC.referral,
         jr: apiC.jobId ? `JR-${apiC.jobId}` : undefined,
         selected: false,
@@ -220,9 +221,9 @@ export class KanbanComponent implements OnInit {
   }
 
   getStageCount(stage: string): number {
-    
+
     const key = stage?.toLowerCase();
-    return this.stageCounts?.[key]?? 0;
+    return this.stageCounts?.[key] ?? 0;
   }
   async loadJobs() {
     this.jobsLoading = true;
@@ -232,7 +233,7 @@ export class KanbanComponent implements OnInit {
       if (res?.responsecode == '00') {
         this.jobsList = res?.data;
         if (this.jobsList.length > 0) {
-          this.selectedJrIds = this.jobsList[0].jobId;
+          this.selectedJrIds.push(this.jobsList[0].jobId);
           this.onJrSelectionChange();
         }
       }
@@ -248,15 +249,17 @@ export class KanbanComponent implements OnInit {
   toggleJrDropdown(): void { this.showJrDropdown = !this.showJrDropdown; }
   closeJrDropdown(): void { this.showJrDropdown = false; }
 
-  toggleJrSelection(jobId: string | number, event: Event): void {
+  toggleJrSelection(jobId: any, event: Event): void {
     event.stopPropagation();
-    this.selectedJrIds = jobId;
-    this.toggleJrDropdown();
-    // if (this.selectedJrIds.has(jobId)) {
-    //   this.selectedJrIds.delete(jobId);
-    // } else {
-    //   this.selectedJrIds.add(jobId);
-    // }
+
+    if (this.selectedJrIds.includes(jobId)) {
+
+      this.selectedJrIds = this.selectedJrIds.filter((id: any) => id !== jobId);
+    } else {
+      // add
+      this.selectedJrIds.push(jobId);
+    }
+    this.closeJrDropdown();
     this.onJrSelectionChange();
   }
 
@@ -264,26 +267,26 @@ export class KanbanComponent implements OnInit {
     this.fetchFilteredCandidates();
   }
 
-  // getSelectedJrLabel(): string {
-  //   if (this.selectedJrIds.size === 0) return 'Select JR';
-  //   if (this.selectedJrIds.size === 1) {
-  //     const id = Array.from(this.selectedJrIds)[0];
-  //     const job = this.jobsList.find(j => j.id === id);
-  //     return `JR: ${job?.code ?? id}`;
-  //   }
-  //   return `JR: ${this.selectedJrIds.size} selected`;
-  // }
   getSelectedJrLabel(): string {
-    if (this.selectedJrIds === null || this.selectedJrIds == undefined) return 'Select JR';
-
-    const id = Number(this.selectedJrIds);
-    const job = this.jobsList.find(j => j.jobId === id);
-    return `JR: ${job?.jobCode ?? id}`;
-
-    // return `JR: ${this.selectedJrIds} selected`;
+    if (this.selectedJrIds.length === 0) return 'Select JR';
+    if (this.selectedJrIds.length === 1) {
+      const id = Array.from(this.selectedJrIds)[0];
+      const job = this.jobsList.find(j => j.jobId === id);
+      return `JR: ${job?.jobCode ?? id}`;
+    }
+    return `JR: ${this.selectedJrIds.length} selected`;
   }
-  // isJrSelected(jobId: string | number): boolean { return this.selectedJrIds.has(jobId); }
-  isJrSelected(jobId: string | number): boolean { return this.selectedJrIds === jobId; }
+  // getSelectedJrLabel(): string {
+  //   if (this.selectedJrIds === null || this.selectedJrIds == undefined) return 'Select JR';
+
+  //   const id = Number(this.selectedJrIds);
+  //   const job = this.jobsList.find(j => j.jobId === id);
+  //   return `JR: ${job?.jobCode ?? id}`;
+
+  //   // return `JR: ${this.selectedJrIds} selected`;
+  // }
+  isJrSelected(jobId: string | number): boolean { return this.selectedJrIds.includes(jobId); }
+  // isJrSelected(jobId: string | number): boolean { return this.selectedJrIds === jobId; }
   openFilterPanel(): void {
     this.tempApplicantType = this.filterApplicantType;
     this.tempDateType = this.filterDateType;
@@ -321,9 +324,9 @@ export class KanbanComponent implements OnInit {
     const filters: Record<string, any> = {};
 
     filters['applicants'] = this.filterApplicantType;
-    filters['jobId'] = this.selectedJrIds;
+    filters['jobIds'] = this.selectedJrIds;
 
-    if (this.filterDateType && this.filterDateType !== 'last month') {
+    if (this.filterDateType) {
       if (this.filterDateType === 'custom') {
         filters['dateFilter'] = 'custom';
         if (this.filterStartDate) filters['startDate'] = this.filterStartDate;
@@ -532,6 +535,7 @@ export class KanbanComponent implements OnInit {
   }
 
   getStageColor(stage: Stage): string {
+    if (stage === 'Hired' || stage === 'Offer') return '#22C55E';
     const map: Record<Stage, string> = {
       Shortlisted: '#D97706',
       Interview: '#7C3AED',

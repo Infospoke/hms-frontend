@@ -251,14 +251,15 @@
                 <div class="meta-item" *ngIf="c.jr">
                   <span class="jr-badge">{{ c.jr }}</span>
                 </div>
-                <div class="sla-pill"
+                <div class="sla-pill" *ngIf="c?.percent !==null"
                   [class.pill-breach]="c.sla === 'BREACHED'"
                   [class.pill-warn]="c.sla === 'WARNING'"
                   [class.pill-ok]="c.sla === 'OK'">
                   <span class="sla-dot-sm"></span>
                   <ng-container *ngIf="c.sla === 'BREACHED'">{{ c.percent }}%+ SLA</ng-container>
                   <ng-container *ngIf="c.sla === 'WARNING'">{{ c.percent }}% SLA</ng-container>
-                  <ng-container *ngIf="c.sla === 'OK'">On Track</ng-container>
+                  <!-- <ng-container *ngIf="c.sla === 'OK'">On Track</ng-container> -->
+                   <ng-container *ngIf="c.sla === 'OK' && c?.percent !==null">{{ c.percent }}% SLA</ng-container>
                 </div>
               </div>
 

@@ -6,6 +6,8 @@ import { ReusableTableComponent, TableColumn } from '../../../../../shared/compo
 import { UserService } from '../../servics/user-service';
 import { getInitials } from '../../../../../shared/validations/validators';
 import { Router } from '@angular/router';
+import { CanDirective } from '../../../../../shared/directives/can.directive';
+import { CommonTableActionsComponent } from "../../../../../shared/components/common-table-actions/common-table-actions.component";
 
 
 const AVATAR_COLORS = ['blue', 'green', 'teal', 'yellow', 'pink', 'orange', 'purple', 'red'];
@@ -22,7 +24,7 @@ export interface RoleRow {
 @Component({
   selector: 'app-role-permissions',
   standalone: true,
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent, CanDirective, CommonTableActionsComponent],
   templateUrl: './role-permissions.component.html',
   styleUrls: ['./role-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

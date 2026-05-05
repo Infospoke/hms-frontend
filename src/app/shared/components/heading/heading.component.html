@@ -1,4 +1,18 @@
-<div class="heading-component" [style.text-align]="isCenter ? 'center' : 'left'" >
-    <h4 class="heading-h4" *ngIf="heading" [style.font-size]="headingFontSize" [style.color]="headingColor">{{heading}}</h4>
-    <p class="sub-heading" *ngIf="subHeading" [style.font-size]="subHeadingFontSize" [style.color]="subHeadingColor">{{subHeading}}</p>
+<div class="heading-component" [style.text-align]="isCenter ? 'center' : 'left'">
+
+    <div class="heading-wrapper" *ngIf="heading">
+        <h4 class="heading-h4" [style.font-size]="headingFontSize" [style.color]="headingColor">
+            {{ heading }}
+        </h4>
+
+
+        <span *ngIf="showInfo" class="info-icon" [title]="infoTooltip">
+            &#9432;
+        </span>
+    </div>
+
+    <p class="sub-heading" *ngIf="subHeading" [style.font-size]="subHeadingFontSize" [style.color]="subHeadingColor">
+        {{ subHeading }}
+    </p>
+
 </div>

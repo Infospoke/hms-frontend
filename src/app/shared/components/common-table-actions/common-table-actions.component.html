@@ -1,0 +1,19 @@
+<div class="actions-cell">
+
+  <button
+    class="action-btn view-btn"
+    title="View"
+    (click)="view.emit()"
+    *appCan="viewPermission">
+    <i class="fa-regular fa-eye"></i>
+  </button>
+
+  <button
+    class="action-btn edit-btn"
+    title="Edit"
+    (click)="edit.emit()"
+    *appCan="editPermission">
+    <i class="fa-solid fa-pencil"></i>
+  </button>
+
+</div>

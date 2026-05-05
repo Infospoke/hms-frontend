@@ -1,0 +1,35 @@
+.heading-component {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .heading-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .heading-h4 {
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1a1a2e;
+  }
+
+  .sub-heading {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  .info-icon {
+    font-size: 1rem;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #3b82f6;
+    }
+  }
+}

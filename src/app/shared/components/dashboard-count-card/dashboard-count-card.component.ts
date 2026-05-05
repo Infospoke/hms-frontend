@@ -1,20 +1,24 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-count-card',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './dashboard-count-card.component.html',
   styleUrl: './dashboard-count-card.component.scss',
 })
 export class DashboardCountCardComponent {
 
-  @Input() value: number | string = '';
-  @Input() label: string = '';
+  @Input() value: any = '';
+  @Input() label: any = '';
+  @Input() valueColor: any = '#111827';
+  @Input() labelColor: any = '#6b7280';
+  @Input () borderColor:any='';
 
-  @Input() valueColor: string = '#2563eb';
-  @Input() labelColor: string = '#64748b';
-  @Input() borderColor: string = '#e2e8f0';
+  @Input() iconClass: any = '';          
+  @Input() iconColor: any = '#6366f1';
+  @Input() iconBgColor: any = '#eef2ff';
 
-
-  
+  @Output() cardClick = new EventEmitter<void>();
 }

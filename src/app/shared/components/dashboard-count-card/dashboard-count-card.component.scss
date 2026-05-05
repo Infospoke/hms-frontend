@@ -1,4 +1,4 @@
-.card {
+.card-main {
     background: var(--color-card);
     border: 1px solid;
     border-radius: 10px;
@@ -33,4 +33,63 @@
 .label {
     font-size: 14px;
     font-weight: 500;
+}
+
+
+
+.card {
+  background: var(--color-card, #ffffff);
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  padding: 18px 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 2px rgba(15, 23, 42, 0.06),
+              0 1px 3px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .icon-bubble {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;         
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i {
+      font-size: 1.6rem;
+    }
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7280;
+      white-space: nowrap;
+    }
+
+    .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #111827;
+    }
+  }
+  
 }

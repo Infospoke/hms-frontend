@@ -7,9 +7,9 @@ import { JobService } from '../../../job/services/job.service';
 
 type Stage = 'Shortlisted' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
 type SlaStatus = 'BREACHED' | 'WARNING' | 'OK' | '';
-type ApplicantFilter = 'all' | 'referrals' | 'non-referrals';
+type ApplicantFilter = 'all' | 'referral' | 'non-referral';
 type SlaFilter = 'green' | 'orange' | 'red';
-type DateFilter = 'today' | 'last week' | 'last month' | 'custom' | 'this month';
+type DateFilter = 'today' | 'last week' | 'last month' | 'custom';
 
 
 interface Candidate {
@@ -126,8 +126,8 @@ export class KanbanComponent implements OnInit {
 
   applicantOptions: { val: ApplicantFilter; lbl: string }[] = [
     { val: 'all', lbl: 'All' },
-    { val: 'referrals', lbl: 'Referrals' },
-    { val: 'non-referrals', lbl: 'Non Referrals' },
+    { val: 'referral', lbl: 'Referrals' },
+    { val: 'non-referral', lbl: 'Non Referrals' },
   ];
 
   dateOptions: { val: DateFilter; lbl: string }[] = [
@@ -135,7 +135,6 @@ export class KanbanComponent implements OnInit {
     { val: 'last week', lbl: 'Last week' },
     { val: 'last month', lbl: 'Last month' },
     { val: 'custom', lbl: 'Custom' },
-    { val: 'this month', lbl: 'This Month' }
   ];
 
   sourceOptions: string[] = ['All', 'Naukri', 'LinkedIn', 'Website', 'Agency / Rpo'];

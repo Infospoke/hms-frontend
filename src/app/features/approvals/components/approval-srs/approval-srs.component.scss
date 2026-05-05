@@ -1,0 +1,230 @@
+// ── Page ──────────────────────────────────────────────────────────────────────
+.asr-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px 0;
+}
+
+// ── Heading ───────────────────────────────────────────────────────────────────
+.asr-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.asr-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+}
+
+.asr-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin: 3px 0 0;
+}
+
+// ── Summary cards ─────────────────────────────────────────────────────────────
+.asr-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.asr-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+}
+
+.asr-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+.asr-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.asr-card-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.asr-card-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+// ── Filters bar ───────────────────────────────────────────────────────────────
+.asr-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+// Search
+.asr-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.asr-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.asr-search {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px 0 34px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    background: #ffffff;
+    font-size: 13px;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &::placeholder {
+        color: #94a3b8;
+    }
+
+    &:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+}
+
+// Selects
+.asr-select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.asr-select-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 12px;
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.asr-select-caret {
+    position: absolute;
+    right: 10px;
+    font-size: 10px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.asr-select {
+    height: 36px;
+    padding: 0 30px 0 30px;
+    border: 1px solid #e2e8f0;
+    border-radius: 7px;
+    background: #ffffff;
+    font-size: 13px;
+    color: #374151;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+    min-width: 130px;
+
+    &:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+}
+
+
+.sr-id-link {
+    font-size: 13px;
+    font-weight: 500 !important;
+    color: #2563eb !important;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
+.stage-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.stage-main {
+    font-size: 13px;
+    color: #0f172a;
+    font-weight: 500;
+}
+
+.stage-person {
+    font-size: 11px;
+    color: #64748b;
+}
+
+
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.asr-card-value {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    &.approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    &.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    &.in-progress {
+        background: #fef3c7;
+        color: #92400e;
+    }
+}

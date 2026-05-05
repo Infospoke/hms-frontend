@@ -9,17 +9,19 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class HeadingComponent implements OnInit {
 
-  @Input() heading!:any;
-  @Input() subHeading!:any;
+  @Input() heading!: any;
+  @Input() subHeading!: any;
 
-  @Input() headingFontSize!:any;
-  @Input() subHeadingFontSize!:any;
+  @Input() headingFontSize!: any;
+  @Input() subHeadingFontSize!: any;
 
-  @Input() headingColor!:any;
-  @Input() subHeadingColor!:any;
+  @Input() headingColor!: any;
+  @Input() subHeadingColor!: any;
   @Input() isCenter = false;
-  constructor(){}
+  @Input() showInfo: boolean = false; // for the ⓘ icon
+  @Input() infoTooltip: string = '';
+  constructor() { }
   ngOnInit(): void {
-    
+
   }
 }

@@ -1,0 +1,68 @@
+<div class="filter-bar">
+
+  <!-- Search Box -->
+  <div class="search-box">
+    <svg class="search-icon" viewBox="0 0 16 16" fill="none">
+      <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10 10L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <input
+      type="text"
+      class="search-input"
+      [placeholder]="searchPlaceholder"
+      [value]="searchTerm"
+      (input)="onSearchInput($any($event.target).value)"
+    />
+    <button
+      class="clear-btn"
+      *ngIf="searchTerm"
+      (click)="clearSearch()"
+      aria-label="Clear search"
+    >
+      <svg viewBox="0 0 12 12" fill="none">
+        <path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+
+  <div class="dropdown-wrapper">
+    <div
+      class="dropdown-box"
+      *ngFor="let dropdown of dropdowns"
+      [class.is-open]="isOpen(dropdown.key)"
+      (click)="toggleDropdown(dropdown.key, $event)"
+    >
+      <span class="dropdown-label">{{ dropdown.label }}:</span>
+      <span class="dropdown-value">{{ getSelectedLabel(dropdown) }}</span>
+      <svg class="chevron-icon" viewBox="0 0 10 10" fill="none">
+        <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+
+      <div class="dropdown-panel" *ngIf="isOpen(dropdown.key)" (click)="$event.stopPropagation()">
+        <ul class="option-list" role="listbox">
+          <li
+            *ngFor="let option of dropdown.options"
+            class="option-item"
+            [class.is-selected]="selectedFilters[dropdown.key] === option.value"
+            (click)="selectOption(dropdown.key, option.value)"
+            role="option"
+            [attr.aria-selected]="selectedFilters[dropdown.key] === option.value"
+          >
+            <svg
+              class="check-icon"
+              *ngIf="selectedFilters[dropdown.key] === option.value"
+              viewBox="0 0 12 12" fill="none"
+            >
+              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="option-placeholder" *ngIf="selectedFilters[dropdown.key] !== option.value"></span>
+            {{ option.label }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>

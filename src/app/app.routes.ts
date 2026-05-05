@@ -17,6 +17,7 @@ export const routes: Routes = [
       {path:'users',loadChildren:()=>import("./features/settings/users/routes/user.route").then(r=>r.USER_ROUTES)},
       {path:'demand',loadChildren:()=>import("./features/demand/routes/demand.routes").then(r=>r.DEMAND_ROUTES)},
       {path:'supply',loadChildren:()=>import("./features/supply/routes/supply.routes").then(r=>r.SUPPLY_ROUTES)},
+      {path:'approval',loadChildren:()=>import("./features/approvals/routes/approval-routes").then(r=>r.APPROVAL_ROUTES)},
     //   { path: 'candidates', loadChildren: () => import('./features/candidates/candidates.routes').then(r => r.CANDIDATES_ROUTES) },
     //   { path: 'interviews', loadChildren: () => import('./features/interviews/interviews.routes').then(r => r.INTERVIEWS_ROUTES) },
     //   { path: 'offers', loadChildren: () => import('./features/offers/offers.routes').then(r => r.OFFERS_ROUTES) },

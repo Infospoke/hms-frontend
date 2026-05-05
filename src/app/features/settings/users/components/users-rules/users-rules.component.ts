@@ -12,10 +12,11 @@ import { PaginationComponent } from "../../../../../shared/components/pagination
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { ConfirmModalComponent } from '../../../../../shared/components/modal-component/confirm-modal.component';
+import { CanDirective } from '../../../../../shared/directives/can.directive';
 
 @Component({
   selector: 'app-users-rules',
-  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent, ProfilePipe],
+  imports: [CommonModule, NzModalModule, DashboardCountCardComponent, CardComponent, PaginationComponent, ProfilePipe,CanDirective],
   templateUrl: './users-rules.component.html',
   styleUrl: './users-rules.component.scss',
 })

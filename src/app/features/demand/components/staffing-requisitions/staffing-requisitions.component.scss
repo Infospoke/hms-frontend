@@ -76,12 +76,18 @@
   color: #A32D2D;
   cursor: pointer;
 
-  &:hover { background: #f9d5d5; }
+  &:hover {
+    background: #f9d5d5;
+  }
 }
 
 // ── SR List ───────────────────────────────────────────────────────────────────
 
-.sr-list { display: flex; flex-direction: column; gap: 8px; }
+.sr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
 .sr-row {
   background: #fff;
@@ -115,7 +121,10 @@
   min-width: 140px;
 }
 
-.sr-info { display: flex; flex-direction: column; }
+.sr-info {
+  display: flex;
+  flex-direction: column;
+}
 
 .sr-name {
   font-size: 14px;
@@ -147,13 +156,37 @@
   min-width: 90px;
   text-align: center;
 
-  &.badge-draft     { background: #F1EFE8; color: #5F5E5A; border: 0.5px solid #B4B2A9; }
-  &.badge-submitted { background: #E6F1FB; color: #185FA5; border: 0.5px solid #85B7EB; }
-  &.badge-approved  { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #97C459; }
-  &.badge-rejected  { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F09595; }
+  &.badge-draft {
+    background: #F1EFE8;
+    color: #5F5E5A;
+    border: 0.5px solid #B4B2A9;
+  }
+
+  &.badge-submitted {
+    background: #E6F1FB;
+    color: #185FA5;
+    border: 0.5px solid #85B7EB;
+  }
+
+  &.badge-approved {
+    background: #EAF3DE;
+    color: #3B6D11;
+    border: 0.5px solid #97C459;
+  }
+
+  &.badge-rejected {
+    background: #FCEBEB;
+    color: #A32D2D;
+    border: 0.5px solid #F09595;
+  }
+
+  &.badge-pending {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 0.5px solid #FCD34D;
+  }
 }
 
-// ── Actions ───────────────────────────────────────────────────────────────────
 
 .sr-actions {
   display: flex;
@@ -174,5 +207,7 @@
     color: var(--brand-color);
   }
 
-  &.edit:hover { color: #2563eb; }
+  &.edit:hover {
+    color: #2563eb;
+  }
 }

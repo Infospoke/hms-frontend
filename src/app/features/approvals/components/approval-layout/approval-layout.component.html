@@ -1,0 +1,16 @@
+<div class="approval-component">
+    <app-heading [heading]="heading" [subHeading]="subHeading"
+        [showInfo]="showInfo" [infoTooltip]="infoTooltip" />
+    <div class="stats-grid">
+
+        <div class="card-dd" *ngFor="let item of cards">
+            <app-dashboard-count-card [label]="item?.label" [value]="item?.value" [iconClass]="item?.iconClass"
+                [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" />
+        </div>
+
+    </div>
+    <div class="card-dd">
+        <app-common-filter [dropdowns]="dropDownData" [searchPlaceholder]="searchPlaceholder" />
+    </div>
+   
+</div>

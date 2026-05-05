@@ -8,6 +8,7 @@ import { TokenService } from '../../core/auth/token.service';
 import { ApiService } from '../../core/services/api.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { PermissionService } from '../../core/services/permission.service';
+import { NavigationService } from '../../core/services/navigation.service';
 import { API } from '../../shared/constants/api-endpoints';
 import { CommonModule } from '@angular/common';
 import { HeadingComponent } from "../../shared/components/heading/heading.component";
@@ -25,6 +26,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
   private permissionService = inject(PermissionService);
+  private navigationService = inject(NavigationService);
   private notification = inject(NotificationService);
   private api = inject(ApiService);
   private modal = inject(NzModalService);
@@ -68,9 +70,11 @@ export class LoginComponent {
           return;
         }
         this.userId = data.userId;
-        this.authService.getPermissions();
-        this.authService.getRole();
-        this.router.navigate(['/users/user-onboard-roles']);
+        // Load permissions from the fresh token, then navigate to the
+        // first route the user actually has access to
+        this.permissionService.load();
+        const firstRoute = this.navigationService.getFirstRoute();
+        this.router.navigateByUrl(firstRoute);
         // this.loadUserAndNavigate();
       }
       else if (data?.responsecode == '01' && data?.message=="Please reset your password") {

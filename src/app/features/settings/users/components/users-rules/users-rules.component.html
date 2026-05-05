@@ -1,8 +1,8 @@
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
   <div class="pg">Users & Roles</div>
   <div class="right">
-    <div class="btn">Export </div>
-    <div class="btn bp" (click)="openInvite()">+ Invite User</div>
+    <div class="btn" *appCan="'SYSTEM&ADMINS:USERS:EXPORT'">Export </div>
+    <div class="btn bp" *appCan="'SYSTEM&ADMINS:USERS:CREATE'" (click)="openInvite()">+ Invite User</div>
   </div>
 </div>
 <div class="card-wrap">
@@ -28,8 +28,8 @@
     </div>
     <span class="rbadge rRec">{{u?.roleName}}</span>
     <div class="usr-s" [ngClass]="u.active?'active-s':'inactive-s'">{{u?.active?'Active':'Deactivated'}}</div>
-    <div class="btn" (click)="editUser(u)">Edit</div>
-    <div class="btn btn-view" (click)="view(u)">View</div>
+    <div class="btn" (click)="editUser(u)" *appCan="'SYSTEM&ADMINS:USERS:EDIT'">Edit</div>
+    <div class="btn btn-view" (click)="view(u)" *appCan="'SYSTEM&ADMINS:USERS:VIEW'">View</div>
   </div>
 </div>
 

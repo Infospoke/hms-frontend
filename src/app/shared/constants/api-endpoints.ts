@@ -48,8 +48,8 @@ export const API = {
         ROLES_BY_DEPT:(departmentId:any)=>`/hms/configurations/roles/${departmentId}`,
         EMP_TYPES:`/hms/configurations/employment-types`,
         USER_TYPES:`/hms/configurations/user-types`,
-        JOB_BY_EXPORT:(jobId:any)=>`/api/admin/generate-applicants-report/${jobId}`,
-        EXPORT_BY_APPLICANT:(id:any)=>`/api/admin/report/${id}`
+        JOB_BY_EXPORT:(jobId:any)=>`/api/report/generate-applicants-report/${jobId}`,
+        EXPORT_BY_APPLICANT:(id:any)=>`/api/report/generate-candidate-report/${id}`
     },
     ROLES:{
         ADD_ROLE:`/hms/role/add-role`,

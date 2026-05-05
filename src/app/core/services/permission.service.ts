@@ -1,118 +1,76 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { TokenService } from '../auth/token.service';
 
-export interface SuperSubMenu {
-  title: string;
-  path: string;
-  create: boolean;
-  edit: boolean;
-  delete: boolean;
-  view: boolean;
-}
+const ACTIONS = new Set(['CREATE', 'VIEW', 'EDIT', 'DELETE', 'EXPORT']);
+const SELF = '__SELF__';
 
-export interface SubMenu {
-  title: string;
-  path: string;
-  create: boolean;
-  edit: boolean;
-  delete: boolean;
-  view: boolean;
-  supersubmenus: SuperSubMenu[];
-}
-
-export interface AppModule {
-  title: string;
-  image: string | null;
-  submenus: SubMenu[];
-}
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
-  private modules = signal<AppModule[]>([]);
+  private tokenService = inject(TokenService);
 
-  private permissionMap = computed(() => {
-    const map: Record<string, SubMenu | SuperSubMenu> = {};
-    this.modules().forEach(mod => {
-      mod.submenus.forEach(sub => {
-        map[sub.path] = sub;
-        // Flatten supersubmenus into the same map
-        sub.supersubmenus?.forEach(superSub => {
-          map[superSub.path] = superSub;
-        });
-      });
-    });
+  private _rawPerms = signal<string[]>([]);
+
+  private _map = computed<Map<string, Map<string, Set<string>>>>(() => {
+    const map = new Map<string, Map<string, Set<string>>>();
+
+    for (const perm of this._rawPerms()) {
+      const parts  = perm.split('_');
+      const action = parts[parts.length - 1].toUpperCase();
+      if (!ACTIONS.has(action)) continue;      
+      const module    = parts[0].toUpperCase();
+      const subModule = parts.length >= 3
+        ? parts.slice(1, -1).join('_').toUpperCase()
+        : SELF;
+
+      if (!map.has(module)) map.set(module, new Map());
+      const modMap = map.get(module)!;
+      if (!modMap.has(subModule)) modMap.set(subModule, new Set());
+      modMap.get(subModule)!.add(action);
+    }
+
     return map;
   });
 
-  setModules(modules: AppModule[]) {
-    this.modules.set(modules);
-    localStorage.setItem('modules', JSON.stringify(modules));
+  constructor() {
+    this.load();
   }
 
-  loadFromStorage() {
-    const stored = localStorage.getItem('modules');
-    if (stored) {
-      try { this.modules.set(JSON.parse(stored)); } catch { }
-    }
+  load(): void {
+    this._rawPerms.set(this.tokenService.getPermissions());
   }
 
-  getModules(): AppModule[] {
-    return this.modules();
+
+  loadFromStorage(): void {
+    this.load();
   }
 
-  canView(path: string): boolean {
-    return this.permissionMap()[path]?.view ?? false;
+  clear(): void {
+    this._rawPerms.set([]);
   }
 
-  canCreate(path: string): boolean {
-    return this.permissionMap()[path]?.create ?? false;
+
+  can(module: string, subModule: string, action: string): boolean {
+    return (
+      this._map()
+        .get(module.toUpperCase())
+        ?.get(subModule.toUpperCase())
+        ?.has(action.toUpperCase()) ?? false
+    );
   }
 
-  canEdit(path: string): boolean {
-    return this.permissionMap()[path]?.edit ?? false;
+ 
+  canModule(module: string, action: string): boolean {
+    return this.can(module, SELF, action);
   }
 
-  canDelete(path: string): boolean {
-    return this.permissionMap()[path]?.delete ?? false;
+  hasModule(module: string): boolean {
+    return this._map().has(module.toUpperCase());
   }
 
-  hasAccess(path: string): boolean {
-    return !!this.permissionMap()[path];
-  }
-
-  hasModule(title: string): boolean {
-    return this.modules().some(m => m.title === title);
-  }
-
-  getSubmenus(moduleTitle: string): SubMenu[] {
-    return this.modules().find(m => m.title === moduleTitle)?.submenus || [];
-  }
-
-  getPermissions(path: string): { create: boolean; edit: boolean; delete: boolean; view: boolean } {
-    const entry = this.permissionMap()[path];
-    return entry
-      ? { create: entry.create, edit: entry.edit, delete: entry.delete, view: entry.view }
-      : { create: false, edit: false, delete: false, view: false };
-  }
-
-  // Check if a submenu has supersubmenus
-  hasSuperSubmenus(path: string): boolean {
-    for (const mod of this.modules()) {
-      const sub = mod.submenus.find(s => s.path === path);
-      if (sub) return sub.supersubmenus?.length > 0;
-    }
-    return false;
-  }
-
-  getSuperSubmenus(path: string): SuperSubMenu[] {
-    for (const mod of this.modules()) {
-      const sub = mod.submenus.find(s => s.path === path);
-      if (sub) return sub.supersubmenus || [];
-    }
-    return [];
-  }
-
-  clear() {
-    this.modules.set([]);
-    localStorage.removeItem('modules');
+  hasSubModule(module: string, subModule: string): boolean {
+    return (
+      this._map().get(module.toUpperCase())?.has(subModule.toUpperCase()) ?? false
+    );
   }
 }

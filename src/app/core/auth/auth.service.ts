@@ -26,7 +26,8 @@ export class AuthService {
       tap((res: any) => {
         this.tokenService.setTokens(res.accessToken, res.refreshToken);
         this.tokenService.setUser(res.user);
-        this.permissionService.setModules(res.modules);
+        // Token is now in sessionStorage; decode and load permissions from it
+        this.permissionService.load();
         this.startTokenRefreshTimer();
       }),
       catchError((err: any) => {
@@ -85,7 +86,11 @@ export class AuthService {
     this.refreshTimerSub = timer(interval, interval).pipe(
       switchMap(() => this.refreshToken())
     ).subscribe({
-      next: (res: any) => this.tokenService.setTokens(res.accessToken, res.refreshToken),
+      next: (res: any) => {
+        this.tokenService.setTokens(res.accessToken, res.refreshToken);
+        // Reload permissions from the refreshed token
+        this.permissionService.load();
+      },
       error: () => this.logout()
     });
   }
@@ -97,7 +102,8 @@ export class AuthService {
       tap((res: any) => {
         this.tokenService.setTokens(res.accessToken, res.refreshToken);
         this.tokenService.setUser(res.user);
-        this.permissionService.setModules(res.modules);
+        // Token is refreshed; reload permissions from the new token
+        this.permissionService.load();
         this.startTokenRefreshTimer();
       }),
       catchError((err: any) => {
@@ -117,7 +123,9 @@ export class AuthService {
   getPermissions() {
     const t = this.tokenService.getAccessToken();
     if (!t) return null;
-    return JSON.parse(atob(t.split('.')[1]))?.modules;
+    const modules = JSON.parse(atob(t.split('.')[1]))?.permissions;
+    console.log('Decoded token permissions:', modules);
+    return modules || [];
   }
   getUserName() {
     const t = this.tokenService.getAccessToken();

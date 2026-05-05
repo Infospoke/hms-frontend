@@ -103,7 +103,6 @@ export class LoginComponent {
         const firstModule = data.modules[0];
         if (firstModule.submenus?.length > 0) {
           sessionStorage.setItem('userId', this.userId);
-          this.permissionService.setModules(data.modules);
           this.router.navigate(['/users/user-onboard-roles']);
         } else {
           this.router.navigate(['/no-modules-found']);

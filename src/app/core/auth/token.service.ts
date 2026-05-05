@@ -45,6 +45,25 @@ export class TokenService {
     return userJson ? JSON.parse(userJson) : null;
   }
 
+  /**
+   * Decodes the JWT access-token and returns the raw permissions string array
+   * stored in the payload (e.g. ["DEMAND_MYJRS_CREATE", ...]).
+   * Returns [] when no token exists or the token is malformed.
+   *
+   * Lives here (not in AuthService) so that PermissionService can inject
+   * TokenService without creating a circular dependency.
+   */
+  getPermissions(): string[] {
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) return [];
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return Array.isArray(payload?.permissions) ? payload.permissions : [];
+    } catch {
+      return [];
+    }
+  }
+
   clearTokens(): void {
     this.accessToken.set(null);
     localStorage.removeItem('refreshToken');

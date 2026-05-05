@@ -9,19 +9,17 @@
         <span>{{ item.label }}</span>
         <i *ngIf="item.children?.length"
            class="fa-solid fa-chevron-right chevron"
-    [class.open]="openMenu === item.id">
+           [class.open]="openMenu === item.id">
         </i>
       </div>
 
-      <!-- FIRST-LEVEL CHILDREN -->
       <div *ngIf="item.children?.length && openMenu === item.id" class="sub-group">
         <ng-container *ngFor="let child of item.children">
 
-          <!-- Child with nested children (acts as accordion) -->
           <div *ngIf="child.children?.length; else leafChild"
                class="sub sub-parent"
                [class.active-sub]="openNested === child.label"
-               (click)="toggleNested(child)">
+               (click)="toggleNested(child); $event.stopPropagation()">
             <i [class]="child.icon + ' sub-icon'"></i>
             <span>{{ child.label }}</span>
             <i class="fa-solid fa-chevron-right chevron-sm"
@@ -29,22 +27,20 @@
             </i>
           </div>
 
-          <!-- Nested grandchildren -->
           <div *ngIf="child.children?.length && openNested === child.label" class="sub-group nested">
             <div *ngFor="let grand of child.children"
                  class="sub nested-sub"
-                 [class.active-sub]="isActive(grand.path)"
-                 (click)="navigate(grand.path)">
+                 [class.active-sub]="grand.path && isActive(grand.path)"
+                 (click)="grand.path && navigate(grand.path); $event.stopPropagation()">
               <i [class]="grand.icon + ' sub-icon sm'"></i>
               <span>{{ grand.label }}</span>
             </div>
           </div>
 
-          <!-- Plain leaf child -->
           <ng-template #leafChild>
             <div class="sub"
-                 [class.active-sub]="isActive(child.path)"
-                 (click)="navigate(child.path)">
+                 [class.active-sub]="child.path && isActive(child.path)"
+                 (click)="child.path && navigate(child.path); $event.stopPropagation()">
               <i [class]="child.icon + ' sub-icon'"></i>
               <span>{{ child.label }}</span>
             </div>

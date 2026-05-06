@@ -43,7 +43,7 @@ export class JobOverview {
   selectedJob: any = null;
   stages: any[] = [];
   activeTab: any = 'all-jobs';
-  selectedCandidateForDetail: any = null;
+  selectedCandidateForDetail: any;
   selectedApplicantStatus: any = 'APPLIED';
   pdfSrc: any;
   filtersData: any = {};

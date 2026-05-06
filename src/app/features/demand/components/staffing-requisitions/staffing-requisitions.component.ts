@@ -67,16 +67,16 @@ export class StaffingRequisitionsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     try {
-      const response = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
+      const response:any = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
       if (response?.responsecode === '00' && response.data) {
         const { content, totalPages, totalElements } = response.data;
 
         this.totalPages = totalPages;
         this.totalElements = totalElements;
-        this.requisitions = content.map(item => this.mapToRequisition(item));
+        this.requisitions = content.map((item:any )=> this.mapToRequisition(item));
         this.draftSR = this.requisitions.find(r => r.status === 'Draft') ?? null;
       } else {
-        this.errorMessage = response?.message ?? 'Failed to load requisitions.';
+        this.errorMessage = response?.errors?.[0] ?? 'Failed to load requisitions.';
       }
     } catch {
       this.errorMessage = 'An error occurred while fetching requisitions.';

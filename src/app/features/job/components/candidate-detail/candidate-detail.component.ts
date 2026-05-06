@@ -16,9 +16,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   styleUrls: ['./candidate-detail.component.scss']
 })
 export class CandidateDetailComponent implements OnChanges {
-  @Input() candidate: any = null;
+  @Input() candidate: any;
   @Input() pipelineStatus: string = 'APPLIED';
-  @Output() action = new EventEmitter<{ type: string; candidate: any; reason?:any,payload?: any }>();
+  @Output() action = new EventEmitter<{ type: string; candidate: any; reason?: any, payload?: any }>();
   private job = inject(JobService);
   isExporting = false;
   private notification = inject(NotificationService);
@@ -38,6 +38,7 @@ export class CandidateDetailComponent implements OnChanges {
   constructor() {
     this.generateTimeSlots(this.selectedDate);
     this.onDateSelect(this.selectedDate);
+    console.log(this.candidate);
   }
 
   generateTimeSlots(selectedDate: any): void {
@@ -106,12 +107,25 @@ export class CandidateDetailComponent implements OnChanges {
   handleExport() {
     this.job.exportByCandidateId(this.candidate?.id)
       .then((res: any) => {
-        const blob = new Blob([res], { type: 'application/pdf' });
+        const blob = new Blob([res.body], { type: 'application/pdf' });
+
+
+        const contentDisposition = res.headers.get('content-disposition');
+        let fileName = 'download.pdf';
+        console.log(contentDisposition)
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?(.+?)"?$/);
+          console.log(match);
+          if (match?.[1]) {
+            fileName = match[1];
+          }
+        }
+
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'candidate.pdf';
+        a.download = fileName;
         a.click();
 
         URL.revokeObjectURL(url);
@@ -127,7 +141,7 @@ export class CandidateDetailComponent implements OnChanges {
       this.scheduleVisible = true;
       return;
     }
-    if (this.candidate) this.action.emit({ type, candidate: this.candidate,reason:this.actionComment });
+    if (this.candidate) this.action.emit({ type, candidate: this.candidate, reason: this.actionComment });
   }
 
   onDateSelect(date: Date | null): void {
@@ -207,7 +221,7 @@ export class CandidateDetailComponent implements OnChanges {
 
   openActionModal(event: MouseEvent, action: 'hire' | 'reject'): void {
     event.stopPropagation();
-  
+
     this.modalAction = action;
     this.actionComment = '';
     this.showActionModal = true;

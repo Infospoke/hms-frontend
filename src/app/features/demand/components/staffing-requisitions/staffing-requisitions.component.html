@@ -19,7 +19,7 @@
 
   <div class="sr-error" *ngIf="!isLoading && errorMessage">
     <span>{{ errorMessage }}</span>
-    <button class="btn-retry" (click)="loadPage(currentPage)">Retry</button>
+    <!-- <button class="btn-retry" (click)="loadPage(currentPage)">Retry</button> -->
   </div>
 
   <div class="sr-empty" *ngIf="!isLoading && !errorMessage && requisitions.length === 0">

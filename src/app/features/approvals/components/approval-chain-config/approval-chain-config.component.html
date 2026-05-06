@@ -17,50 +17,61 @@
       [totalItems]="totalItems"
       [pageSize]="pageSize"
       [currentPage]="currentPage"
+      [cellTemplate]="cellTpl"
       emptyMessage="No approval chains found."
       (pageChange)="onPageChange($event)">
-
-      <!-- Chain Name -->
-      <ng-template #chainName let-row>
-        <div class="chain-name-cell">
-          <div class="chain-icon"
-            [style.background]="row.iconBgColor"
-            [style.color]="row.iconColor">
-            <i [class]="row.iconClass"></i>
-          </div>
-          <div class="chain-name-body">
-            <span class="chain-name-text">{{ row.chainName }}</span>
-            <span class="chain-desc">{{ row.description }}</span>
-          </div>
-        </div>
-      </ng-template>
-
-      <!-- Levels -->
-      <ng-template #levels let-row>
-        <div class="level-badges">
-          <span class="level-badge" *ngFor="let lvl of row.levels">{{ lvl }}</span>
-        </div>
-      </ng-template>
-
-      <!-- Last Updated -->
-      <ng-template #lastUpdated let-row>
-        <div class="last-updated-cell">
-          <span class="last-updated-date">{{ row.lastUpdated }}</span>
-          <span class="last-updated-by">by {{ row.updatedBy }}</span>
-        </div>
-      </ng-template>
-
-      <!-- Status -->
-      <ng-template #status let-row>
-        <span class="status-badge"
-          [ngClass]="row.status === 'Active' ? 'active' : 'deactivated'">
-          {{ row.status }}
-        </span>
-      </ng-template>
-
-
-      
     </app-reusable-table>
   </div>
 
 </div>
+
+<ng-template #cellTpl let-ctx>
+
+  <!-- Chain Name + description + icon -->
+  <ng-container *ngIf="ctx.col.key === 'chainName'">
+    <div class="chain-name-cell">
+      <div class="chain-icon"
+        [style.background]="ctx.row.iconBgColor"
+        [style.color]="ctx.row.iconColor">
+        <i [class]="ctx.row.iconClass"></i>
+      </div>
+      <div class="chain-name-body">
+        <span class="chain-name-text">{{ ctx.row.chainName }}</span>
+        <span class="chain-desc">{{ ctx.row.description }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Levels — numbered pills -->
+  <ng-container *ngIf="ctx.col.key === 'levels'">
+    <div class="level-badges">
+      <span class="level-badge" >{{ ctx.row.levels }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Last Updated -->
+  <ng-container *ngIf="ctx.col.key === 'lastUpdated'">
+    <div class="last-updated-cell">
+      <span class="last-updated-date">{{ ctx.row.lastUpdated }}</span>
+      <span class="last-updated-by">by {{ ctx.row.updatedBy }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Status badge -->
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="status-badge"
+      [ngClass]="ctx.row.status === 'Active' ? 'active' : 'deactivated'">
+      {{ ctx.row.status }}
+    </span>
+  </ng-container>
+
+  <!-- Actions -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <app-common-table-actions
+      (view)="onView(ctx.row)"
+      (edit)="onEdit(ctx.row)"
+      viewPermission="SYSTEM&ADMINS:APPROVAL_CHAIN:VIEW"
+      editPermission="SYSTEM&ADMINS:APPROVAL_CHAIN:EDIT"/>
+  </ng-container>
+
+</ng-template>

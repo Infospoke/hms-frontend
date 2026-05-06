@@ -1,4 +1,4 @@
-<div class="detail-container" *ngIf="candidate; else noSelection">
+<div class="detail-container" *ngIf="candidate &&  candidate?.name; else noSelection">
   <div class="detail-scroll">
 
     <!-- ── Single Header (title changes with viewMode) ── -->

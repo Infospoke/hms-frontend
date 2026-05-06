@@ -45,7 +45,7 @@
         <div class="card-info">
           <div class="name-row">
             <h3 class="candidate-name">{{ candidate?.name }}</h3>
-            <span class="status-badge" [ngClass]="'badge-' + candidate?.status?.toLowerCase()">{{ candidate.status
+            <span class="status-badge" [ngClass]="'badge-' + candidate?.status?.toLowerCase()?.replace(/ /g, '_')">{{ candidate.status
               }}</span>
           </div>
           <p class="candidate-role">{{ candidate?.role }} &middot; Applied on : {{ candidate.appliedDate }}</p>

@@ -44,17 +44,19 @@
         </div>
       </ng-container>
 
-      <!-- INTERVIEW / OFFER / HIRED: always show interview scores -->
+      <!-- INTERVIEW / OFFER / HIRED: show screening scores in the profile card.
+           The interview API only holds interview-specific data (total_score, qna_count,
+           proctoring etc.). The 6 resume-based scores always come from screeningData. -->
       <ng-container *ngIf="['INTERVIEW','OFFER','HIRED'].includes(candidate.status?.toUpperCase())">
         <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ interviewData.finalScore }}</span><span class="score-label">Final Score</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.experience }}</span><span class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span class="score-label">Experience</span></div>
         </div>
         <div class="score-row" style="margin-top: 10px;">
-          <div class="score-box"><span class="score-value">{{ interviewData.education }}</span><span class="score-label">Education</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.keywords }}</span><span class="score-label">Keywords</span></div>
-          <div class="score-box"><span class="score-value">{{ interviewData.growth }}</span><span class="score-label">Growth</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span class="score-label">Growth</span></div>
         </div>
       </ng-container>
 

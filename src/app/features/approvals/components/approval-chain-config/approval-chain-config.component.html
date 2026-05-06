@@ -1,1 +1,66 @@
-<p>approval-chain-config works!</p>
+<div class="approval-component">
+
+  <app-approval-layout
+    [heading]="'Approval Chain Configuration'"
+    subHeading="Create and manage multi-level approval workflows"
+    [showInfo]="true"
+    infoTooltip="Manage approval chains"
+    [cards]="cards"
+    [dropDownData]="dropDownData"
+    [searchPlaceholder]="'Search by chain name...'">
+  </app-approval-layout>
+
+  <div class="card-dd">
+    <app-reusable-table
+      [columns]="columns"
+      [data]="data"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      emptyMessage="No approval chains found."
+      (pageChange)="onPageChange($event)">
+
+      <!-- Chain Name -->
+      <ng-template #chainName let-row>
+        <div class="chain-name-cell">
+          <div class="chain-icon"
+            [style.background]="row.iconBgColor"
+            [style.color]="row.iconColor">
+            <i [class]="row.iconClass"></i>
+          </div>
+          <div class="chain-name-body">
+            <span class="chain-name-text">{{ row.chainName }}</span>
+            <span class="chain-desc">{{ row.description }}</span>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- Levels -->
+      <ng-template #levels let-row>
+        <div class="level-badges">
+          <span class="level-badge" *ngFor="let lvl of row.levels">{{ lvl }}</span>
+        </div>
+      </ng-template>
+
+      <!-- Last Updated -->
+      <ng-template #lastUpdated let-row>
+        <div class="last-updated-cell">
+          <span class="last-updated-date">{{ row.lastUpdated }}</span>
+          <span class="last-updated-by">by {{ row.updatedBy }}</span>
+        </div>
+      </ng-template>
+
+      <!-- Status -->
+      <ng-template #status let-row>
+        <span class="status-badge"
+          [ngClass]="row.status === 'Active' ? 'active' : 'deactivated'">
+          {{ row.status }}
+        </span>
+      </ng-template>
+
+
+      
+    </app-reusable-table>
+  </div>
+
+</div>

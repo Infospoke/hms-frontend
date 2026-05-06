@@ -8,5 +8,9 @@ export const APPROVAL_ROUTES: Routes = [
   {
     path:'view-sr/sr?=',
     loadComponent:()=>import("../components/view-sr/view-sr.component").then(m=>m.ViewSrComponent)
+  },
+  {
+    path:'chain-config',
+    loadComponent:()=>import("../components/approval-chain-config/approval-chain-config.component").then(m=>m.ApprovalChainConfigComponent)
   }
 ];

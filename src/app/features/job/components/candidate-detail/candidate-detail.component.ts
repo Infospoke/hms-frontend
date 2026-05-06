@@ -194,12 +194,14 @@ export class CandidateDetailComponent implements OnChanges {
 
   get interviewData(): any {
     if (!this.candidate) return null;
-    console.log(this.candidate);
-    if (this.candidate.interviewData) return this.candidate.interviewData;
+    // Guard against null, undefined, or empty object {} — all mean "no data yet"
+    const d = this.candidate.interviewData;
+    if (d && typeof d === 'object' && Object.keys(d).length > 0) return d;
     return {
-      finalScore: 0, skillMatch: 0, experience: 0, education: 0, keywords: 0, growth: 0,
-      overallScore: 0, questionsAttempted: '0/0', proctoringViolations: 0,
-      proctoringResults: [], questions: []
+      total_score: 0, skills_match: 0, experience_score: 0,
+      education_score: 0, keywords_match: 0, growth_score: 0,
+      qna_count: 0, proctoring_violations: 0,
+      proctoring_logs: [], qna_analysis: []
     };
   }
 

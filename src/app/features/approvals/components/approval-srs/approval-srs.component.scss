@@ -228,3 +228,91 @@
         color: #92400e;
     }
 }
+
+
+
+.status-badge {
+  &.active {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.deactivated {
+    background: #fef9c3;
+    color: #854d0e;
+  }
+}
+
+
+.chain-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chain-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  font-size: 15px;
+}
+
+.chain-name-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chain-name-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.chain-desc {
+  font-size: 11px;
+  color: #64748b;
+}
+
+// Level badges (the numbered pills: 1 2 3 4)
+.level-badges {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #e0e7ff;
+  color: #4338ca;
+  cursor: default;
+}
+
+// Last updated cell
+.last-updated-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.last-updated-date {
+  font-size: 13px;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.last-updated-by {
+  font-size: 11px;
+  color: #94a3b8;
+}

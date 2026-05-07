@@ -127,7 +127,7 @@ export class JobOverview {
     // SCHEDULED / UPCOMING / COMPLETED / DID NOT ATTEND) as well as OFFER and HIRED.
     // The sub-status lives in candidate.displayStatus — the main pipeline stage
     // is always 'INTERVIEW', never 'COMPLETED'.
-    if (candidate?.status === 'INTERVIEW' || candidate?.status === 'OFFER' || candidate?.status === 'HIRED') {
+    if (candidate?.status === 'COMPLETED' || candidate?.status === 'OFFER' || candidate?.status === 'HIRED') {
       const payload = { application_id: candidate?.id };
       data = await this.jobApi.fetchInterViewAnalysis(payload);
     }

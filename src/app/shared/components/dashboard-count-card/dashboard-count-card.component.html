@@ -19,6 +19,11 @@
     <div class="card-content">
       <span class="label" [style.color]="labelColor">{{ label }}</span>
       <span class="value" [style.color]="valueColor">{{ value }}</span>
+      <span class="bottom-text" *ngIf="bottomText" [style.color]="bottomTextColor">
+
+        {{ bottomText }}
+
+      </span>
     </div>
 
   </div>

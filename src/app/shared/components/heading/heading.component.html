@@ -1,5 +1,10 @@
 <div class="heading-component" [ngClass]="{ 'center': isCenter }">
 
+    <div class="cnc-back" (click)="goBack()" *ngIf="showBackButton">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>{{ buttonText }}</span>
+    </div>
+
     <div class="heading-wrapper" *ngIf="heading">
         <h4 class="heading-h4" [style.font-size]="headingFontSize" [style.color]="headingColor">
             {{ heading }}

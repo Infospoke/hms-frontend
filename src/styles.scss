@@ -136,7 +136,12 @@ body {
     background: var(--brand-color);
   }
 }
-
+.sr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 body {
   font-family: Inter, sans-serif;
   background: var(--color-bg);

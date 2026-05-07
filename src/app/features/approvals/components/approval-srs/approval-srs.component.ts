@@ -7,6 +7,7 @@ import { ReusableTableComponent } from "../../../../shared/components/reusable-t
 import { CommonTableActionsComponent } from "../../../../shared/components/common-table-actions/common-table-actions.component";
 import { Router } from '@angular/router';
 import { ApprovalLayoutComponent } from "../approval-layout/approval-layout.component";
+import { statusOptions } from '../../../../shared/constants/reusbale-filter';
 
 @Component({
   selector: 'app-approval-srs',
@@ -45,29 +46,7 @@ export class ApprovalSrsComponent {
       iconColor: '#ef4444',
     },
   ];
-  dropDownData = [{
-    key: 'status',
-    label: 'Status',
-    selected: 'all',
-    options: [
-      { label: 'All', value: 'all' },
-      { label: 'In Progress', value: 'in_progress' },
-      { label: 'Approved', value: 'approved' },
-      { label: 'Rejected', value: 'rejected' },
-    ]
-  },
-  {
-    key: 'dateRange',
-    label: 'Date Range',
-    selected: 'all',
-    options: [
-      { label: 'All', value: 'all' },
-      { label: 'Today', value: 'today' },
-      { label: 'Last Week', value: 'last week' },
-      { label: 'Last Month', value: 'last month' },
-      { label: 'Custom', value: 'custom' }
-    ]
-  }]
+  dropDownData =statusOptions;
   private router=inject(Router);
   columns: any[] = [
     { key: 'srId', label: 'SR ID', width: '148px' ,custom: true,},

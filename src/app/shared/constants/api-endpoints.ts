@@ -78,5 +78,14 @@ export const API = {
     },
     SUPPLY:{
         KANBAN:`/hms/kanban/filter`
+    },
+    APPROVALS:{
+        CREATE_CHAIN:`/hms/approval-chains/create`,
+        GET_FUNCTIONALITIES:`/hms/configurations/get-all-functionalities`,
+        UPDATE_CHAIN:`/hms/approval-chains/update`,
+        APPROVAL_CHAIN_COUNT:`/hms/approval-chains/count`,
+        APPROVAL_CHAIN_DETAILS:(id:any)=>`/hms/approval-chains/details/${id}`,
+        APPROVAL_CHAIN_LIST:`/hms/approval-chains/list`,
+        DEPATMENTS:`/hms/configurations/departments`,
     }
 }

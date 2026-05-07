@@ -12,5 +12,17 @@ export const APPROVAL_ROUTES: Routes = [
   {
     path:'chain-config',
     loadComponent:()=>import("../components/approval-chain-config/approval-chain-config.component").then(m=>m.ApprovalChainConfigComponent)
-  }
+  },
+  {
+    path:'chain-config/new-chain/:type',
+    loadComponent:()=>import("../components/create-new-chain/create-new-chain.component").then(m=>m.CreateNewChainComponent)
+  },
+  {
+    path:"chains",
+    loadComponent:()=>import("../components/approval-chain/approval-chain.component").then(r=>r.ApprovalChainComponent)
+  },
+   {
+    path:'chains/:type',
+    loadComponent:()=>import("../components/create-new-chain/create-new-chain.component").then(m=>m.CreateNewChainComponent)
+  },
 ];

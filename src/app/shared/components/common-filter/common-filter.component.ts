@@ -7,11 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 
-
-export interface FilterChange {
-  search: string;
-  filters: { [key: string]: string };
-}
+const CUSTOM_VALUE = 'CUSTOM';
 
 @Component({
   selector: 'app-common-filter',
@@ -27,18 +23,26 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
   @Input() debounceMs: number = 400;
   @Input() dropdowns: any[] = [];
 
-  @Output() filterChange = new EventEmitter<FilterChange>();
+  @Output() filterChange = new EventEmitter<any>();
 
   searchTerm: string = '';
   selectedFilters: { [key: string]: string } = {};
   openDropdownKey: string | null = null;
 
+
+  fromDate: string = '';
+  toDate: string = '';
+
+
+  readonly today = new Date().toISOString().split('T')[0];
+
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.dropdowns.forEach(d => {
       this.selectedFilters[d.key] = d.selected ?? d.options[0]?.value ?? '';
     });
@@ -50,55 +54,136 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     ).subscribe(() => this.emitChange());
   }
 
-  onSearchInput(value: string) {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+
+  get dateDropdown(): any | undefined {
+    return this.dropdowns.find(d => d.isDateFilter);
+  }
+
+
+  get isCustomDate(): boolean {
+    const dd = this.dateDropdown;
+    return !!dd && this.selectedFilters[dd.key] === CUSTOM_VALUE;
+  }
+
+
+  get minToDate(): string {
+    return this.fromDate || '';
+  }
+
+
+  onSearchInput(value: string): void {
     this.searchTerm = value;
     this.searchSubject.next(value);
   }
 
-  clearSearch() {
+  clearSearch(): void {
     this.searchTerm = '';
     this.searchSubject.next('');
   }
 
-  toggleDropdown(key: string, event: MouseEvent) {
+
+  toggleDropdown(key: string, event: MouseEvent): void {
     event.stopPropagation();
     this.openDropdownKey = this.openDropdownKey === key ? null : key;
     this.cdr.markForCheck();
   }
 
-  selectOption(key: string, value: string) {
+  selectOption(key: string, value: string): void {
+
     this.selectedFilters[key] = value;
     this.openDropdownKey = null;
-    this.emitChange();
+    if (value !== CUSTOM_VALUE) {
+
+      this.fromDate = '';
+      this.toDate = '';
+
+      this.emitChange();
+    }
+
+    if (value === CUSTOM_VALUE) {
+
+      this.cdr.markForCheck();
+      return;
+    }
+
     this.cdr.markForCheck();
   }
 
-  getSelectedLabel(dropdown:any): string {
+  getSelectedLabel(dropdown: any): string {
     const val = this.selectedFilters[dropdown.key];
-    return dropdown.options.find((o:any) => o.value === val)?.label ?? '';
+    return dropdown.options.find((o: any) => o.value === val)?.label ?? '';
   }
 
   isOpen(key: string): boolean {
     return this.openDropdownKey === key;
   }
 
+
+  onFromDateChange(value: string): void {
+
+    this.fromDate = value;
+
+    if (this.toDate && this.toDate < value) {
+      this.toDate = '';
+    }
+
+    if (this.fromDate && this.toDate) {
+      this.emitChange();
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  onToDateChange(value: string): void {
+
+    this.toDate = value;
+
+
+    if (this.fromDate && this.toDate) {
+      this.emitChange();
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  clearDateRange(): void {
+    this.fromDate = '';
+    this.toDate = '';
+    const dd = this.dateDropdown;
+    if (dd) {
+
+      this.selectedFilters[dd.key] = dd.options[0]?.value ?? '';
+    }
+    this.emitChange();
+    this.cdr.markForCheck();
+  }
+
+
   @HostListener('document:click')
-  onDocumentClick() {
+  onDocumentClick(): void {
     if (this.openDropdownKey !== null) {
       this.openDropdownKey = null;
       this.cdr.markForCheck();
     }
   }
 
-  private emitChange() {
-    this.filterChange.emit({
-      search: this.searchTerm,
-      filters: { ...this.selectedFilters }
-    });
-  }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private emitChange(): void {
+    const payload: any = {
+      search: this.searchTerm,
+      filters: { ...this.selectedFilters },
+    };
+
+    if (this.isCustomDate) {
+      payload.fromDate = this.fromDate || undefined;
+      payload.toDate = this.toDate || undefined;
+    }
+
+    this.filterChange.emit(payload);
   }
 }

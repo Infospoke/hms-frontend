@@ -1,6 +1,6 @@
 <div class="filter-bar">
 
-  <!-- Search Box -->
+  <!-- ── Search Box ─────────────────────────────────────────────────────── -->
   <div class="search-box">
     <svg class="search-icon" viewBox="0 0 16 16" fill="none">
       <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/>
@@ -25,7 +25,7 @@
     </button>
   </div>
 
-
+  <!-- ── Dropdowns ──────────────────────────────────────────────────────── -->
   <div class="dropdown-wrapper">
     <div
       class="dropdown-box"
@@ -36,11 +36,12 @@
       <span class="dropdown-label">{{ dropdown.label }}:</span>
       <span class="dropdown-value">{{ getSelectedLabel(dropdown) }}</span>
       <svg class="chevron-icon" viewBox="0 0 10 10" fill="none">
-        <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4"
+              stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
 
-
-      <div class="dropdown-panel" *ngIf="isOpen(dropdown.key)" (click)="$event.stopPropagation()">
+      <div class="dropdown-panel" *ngIf="isOpen(dropdown.key)"
+           (click)="$event.stopPropagation()">
         <ul class="option-list" role="listbox">
           <li
             *ngFor="let option of dropdown.options"
@@ -50,19 +51,94 @@
             role="option"
             [attr.aria-selected]="selectedFilters[dropdown.key] === option.value"
           >
-            <svg
-              class="check-icon"
-              *ngIf="selectedFilters[dropdown.key] === option.value"
-              viewBox="0 0 12 12" fill="none"
-            >
-              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg class="check-icon"
+                 *ngIf="selectedFilters[dropdown.key] === option.value"
+                 viewBox="0 0 12 12" fill="none">
+              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.6"
+                    stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="option-placeholder" *ngIf="selectedFilters[dropdown.key] !== option.value"></span>
+            <span class="option-placeholder"
+                  *ngIf="selectedFilters[dropdown.key] !== option.value"></span>
             {{ option.label }}
           </li>
         </ul>
       </div>
     </div>
+  </div>
+
+  <!-- ── Custom Date Range ──────────────────────────────────────────────── -->
+  <div
+    class="date-range-bar"
+    *ngIf="isCustomDate"
+    (click)="$event.stopPropagation()"
+  >
+
+    <!-- FROM -->
+    <div class="date-field">
+      <span class="date-label">From</span>
+      <div class="date-input-wrap" [class.has-value]="fromDate">
+        <svg class="cal-icon" viewBox="0 0 16 16" fill="none">
+          <rect x="1.5" y="2.5" width="13" height="12" rx="2"
+                stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5 1v3M11 1v3M1.5 6.5h13"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="date"
+          class="date-input"
+          [max]="today"
+          [value]="fromDate"
+          (change)="onFromDateChange($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <!-- Arrow separator -->
+    <span class="date-range-sep">
+      <svg viewBox="0 0 18 10" fill="none" width="18" height="10">
+        <path d="M0 5h15M11 1.5l4 3.5-4 3.5"
+              stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+
+    <!-- TO -->
+    <div class="date-field">
+      <span class="date-label">To</span>
+      <div class="date-input-wrap"
+           [class.has-value]="toDate"
+           [class.is-disabled]="!fromDate">
+        <svg class="cal-icon" viewBox="0 0 16 16" fill="none">
+          <rect x="1.5" y="2.5" width="13" height="12" rx="2"
+                stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5 1v3M11 1v3M1.5 6.5h13"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="date"
+          class="date-input"
+          [min]="minToDate"
+          [max]="today"
+          [value]="toDate"
+          [disabled]="!fromDate"
+          (change)="onToDateChange($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <!-- Clear button -->
+    <button
+      class="date-clear-btn"
+      (click)="clearDateRange()"
+      title="Clear date range"
+      aria-label="Clear date range"
+    >
+      <svg viewBox="0 0 12 12" fill="none">
+        <path d="M2 2l8 8M10 2l-8 8"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+
   </div>
 
 </div>

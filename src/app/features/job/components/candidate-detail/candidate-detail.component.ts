@@ -215,7 +215,7 @@ export class CandidateDetailComponent implements OnChanges {
       total_score: 0, skills_match: 0, experience_score: 0,
       education_score: 0, keywords_match: 0, growth_score: 0,
       qna_count: 0, proctoring_violations: 0,
-      proctoring_logs: [], qna_analysis: []
+      proctoring_logs: [], qna_analysis: [], interview_timeline: []
     };
   }
 
@@ -238,5 +238,43 @@ export class CandidateDetailComponent implements OnChanges {
 
     this.onAction(this.modalAction);
     this.closeActionModal();
+  }
+
+  labelMap: Record<string, string> = {
+    scheduled_dt: 'Scheduled',
+    started_dt: 'Started',
+    completed_dt: 'Completed',
+    ended_dt: 'Ended'
+  };
+
+  get entries(): { key: string; label: string; date: string | null }[] {
+    const timeline = this.interviewData?.interview_timeline ?? {};
+    return Object.entries(timeline).map(([key, value]) => ({
+      key,
+      label: this.labelMap[key] ?? this.formatKey(key),
+      date: this.fmt(value as string | null)
+    }));
+  }
+
+  fmt(iso: string | null): string | null {
+    if (!iso) return null;
+    const d = new Date(iso);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${dd}-${mm}-${yyyy}  ${hh}:${min}`;
+  }
+
+  private formatKey(key: string): string {
+    return key
+      .replace(/_dt$/, '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  isLast(index: number): boolean {
+    return index === this.entries.length - 1;
   }
 }

@@ -7,7 +7,13 @@
     infoTooltip="Manage approval chains"
     [cards]="cards"
     [dropDownData]="dropDownData"
-    [searchPlaceholder]="'Search by chain name...'">
+    [searchPlaceholder]="'Search by chain name...'"
+    (handle)="onCreate()"
+    [showBtn]="true"
+    [buttonType]="'Create Chain'"
+    (filterChange)="filtersResponse($event)"
+    >
+    
   </app-approval-layout>
 
   <div class="card-dd">
@@ -52,7 +58,7 @@
   <!-- Last Updated -->
   <ng-container *ngIf="ctx.col.key === 'lastUpdated'">
     <div class="last-updated-cell">
-      <span class="last-updated-date">{{ ctx.row.lastUpdated }}</span>
+      <span class="last-updated-date">{{ ctx.row.lastUpdated |date:'dd MMM yyyy' }}</span>
       <span class="last-updated-by">by {{ ctx.row.updatedBy }}</span>
     </div>
   </ng-container>
@@ -70,8 +76,8 @@
     <app-common-table-actions
       (view)="onView(ctx.row)"
       (edit)="onEdit(ctx.row)"
-      viewPermission="SYSTEM&ADMINS:APPROVAL_CHAIN:VIEW"
-      editPermission="SYSTEM&ADMINS:APPROVAL_CHAIN:EDIT"/>
+      viewPermission="SYSTEM&ADMINS:APPROVALCHAINCONFIGURATION:VIEW"
+      editPermission="SYSTEM&ADMINS:APPROVALCHAINCONFIGURATION:EDIT"/>
   </ng-container>
 
 </ng-template>

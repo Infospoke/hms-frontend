@@ -1,0 +1,366 @@
+<div class="cnc-page">
+
+  
+
+  <app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [backButtonUrl]="'/approval/chain-config'" [showBackButton]="true" [buttonText]="backText" />
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- ── Chain Information ─────────────────────────────────────────────────── -->
+    <div class="cnc-card">
+      <div class="cnc-section-header">
+        <h2 class="cnc-section-title">Chain Information</h2>
+      </div>
+
+      <!-- READ-ONLY view (view / approve) -->
+      <ng-container *ngIf="readOnly">
+        <div class="cnc-detail-grid">
+
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Chain Name</span>
+            <span class="cnc-detail-value">{{ form.get('chainName')?.value || '—' }}</span>
+          </div>
+
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Description</span>
+            <span class="cnc-detail-value">{{ form.get('description')?.value || '—' }}</span>
+          </div>
+
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Status</span>
+            <span class="cnc-status-pill" [class.cnc-status-pill--active]="activeValue"
+              [class.cnc-status-pill--inactive]="!activeValue">
+              <span class="cnc-status-dot"></span>
+              {{ activeValue ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Functionality</span>
+            <span class="cnc-detail-value" [class.cnc-detail-value--empty]="!form.get('functionality')?.value">
+              {{ getFunctionalityLabel(form.get('functionality')?.value) }}
+            </span>
+          </div>
+
+        </div>
+      </ng-container>
+
+      <!-- EDIT mode: only Status toggle is editable -->
+      <ng-container *ngIf="isEdit">
+        <div class="cnc-detail-grid">
+
+          <!-- Chain Name — read-only display -->
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Chain Name</span>
+            <span class="cnc-detail-value">{{ form.getRawValue().chainName || '—' }}</span>
+          </div>
+
+          <!-- Description — read-only display -->
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Description</span>
+            <span class="cnc-detail-value">{{ form.getRawValue().description || '—' }}</span>
+          </div>
+
+          <!-- Status — EDITABLE toggle -->
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Status <span class="cnc-req">*</span></span>
+            <div class="cnc-toggle-row">
+              <button class="cnc-toggle" [class.cnc-toggle--on]="activeValue" type="button" (click)="toggleActive()"
+                [attr.aria-checked]="activeValue" role="switch">
+                <span class="cnc-toggle-thumb"></span>
+              </button>
+              <span class="cnc-toggle-label">{{ activeValue ? 'Active' : 'Deactive' }}</span>
+            </div>
+            <span class="cnc-hint">Only the status can be changed in edit mode</span>
+          </div>
+
+          <!-- Functionality — read-only display -->
+          <div class="cnc-detail-field">
+            <span class="cnc-detail-label">Functionality</span>
+            <span class="cnc-detail-value" [class.cnc-detail-value--empty]="!form.getRawValue().functionality">
+              {{ getFunctionalityLabel(form.getRawValue().functionality) }}
+            </span>
+          </div>
+
+        </div>
+      </ng-container>
+
+      <!-- CREATE mode: full editable form -->
+      <ng-container *ngIf="isCreate">
+        <div class="cnc-form-grid">
+
+          <div class="cnc-field cnc-field--chain-name">
+            <label class="cnc-label">Chain Name <span class="cnc-req">*</span></label>
+            <input class="cnc-input" type="text" placeholder="Enter chain name" maxlength="100"
+              formControlName="chainName" />
+            <div class="cnc-field-footer">
+              <span class="cnc-error-msg" *ngIf="fieldError('chainName')">{{ fieldError('chainName') }}</span>
+              <span class="cnc-counter">{{ chainNameLength }}/100</span>
+            </div>
+          </div>
+
+          <div class="cnc-field cnc-field--description">
+            <label class="cnc-label">Description <span class="cnc-req">*</span></label>
+            <textarea class="cnc-textarea" placeholder="Enter Chain Description" maxlength="300" [rows]="2"
+              formControlName="description"></textarea>
+            <div class="cnc-field-footer">
+              <span class="cnc-error-msg" *ngIf="fieldError('description')">{{ fieldError('description') }}</span>
+              <span class="cnc-counter">{{ descriptionLength }}/300</span>
+            </div>
+          </div>
+
+          <div class="cnc-field cnc-field--status">
+            <label class="cnc-label">Status <span class="cnc-req">*</span></label>
+            <div class="cnc-toggle-row">
+              <button class="cnc-toggle" [class.cnc-toggle--on]="activeValue" type="button" (click)="toggleActive()"
+                [attr.aria-checked]="activeValue" role="switch">
+                <span class="cnc-toggle-thumb"></span>
+              </button>
+              <span class="cnc-toggle-label">{{ activeValue ? 'Active' : 'Deactive' }}</span>
+            </div>
+            <span class="cnc-hint">Set the status of this approval chain</span>
+          </div>
+
+          <div class="cnc-field cnc-field--functionality">
+            <label class="cnc-label">Functionality</label>
+            <div class="cnc-select-wrap">
+              <select class="cnc-select" formControlName="functionality">
+                <option value="">Select functionality</option>
+                <option *ngFor="let opt of functionalityOptions" [value]="opt.value">{{ opt.label }}</option>
+              </select>
+              <i class="fa-solid fa-chevron-down cnc-select-caret"></i>
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- ── Level Configuration ────────────────────────────────────────────────── -->
+    <div class="cnc-card">
+      <div class="cnc-section-header">
+        <div>
+          <h2 class="cnc-section-title">Level Configuration</h2>
+          <p class="cnc-section-sub">{{ getLevelSubtitle() }}</p>
+        </div>
+      </div>
+
+      <!-- READ-ONLY level table (view / approve / edit — levels locked) -->
+      <ng-container *ngIf="readOnly || isEdit">
+        <div class="cnc-level-table cnc-level-table--ro">
+
+          <div class="cnc-level-head cnc-level-head--ro">
+            <div class="cnc-level-col cnc-level-col--num">Level</div>
+            <div class="cnc-level-col cnc-level-col--dept">Department</div>
+            <div class="cnc-level-col cnc-level-col--role">Role / Approver</div>
+          </div>
+
+          <div class="cnc-level-row cnc-level-row--ro"
+            *ngFor="let level of levels.controls; let i = index; trackBy: trackByIndex">
+            <div class="cnc-level-col cnc-level-col--num">
+              <span class="cnc-level-badge">{{ i + 1 }}</span>
+            </div>
+            <div class="cnc-level-col cnc-level-col--dept cnc-level-col--text">
+              {{ getDepartmentLabel(level.getRawValue().department) }}
+            </div>
+            <div class="cnc-level-col cnc-level-col--role cnc-level-col--text">
+              {{ getApproverLabel(i, level.getRawValue().approver) }}
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
+
+      <!-- EDITABLE level table (create only) -->
+      <ng-container *ngIf="isCreate">
+        <div class="cnc-level-table" formArrayName="levels">
+
+          <div class="cnc-level-head">
+            <div class="cnc-level-col cnc-level-col--drag"></div>
+            <div class="cnc-level-col cnc-level-col--num">Level</div>
+            <div class="cnc-level-col cnc-level-col--dept">Department <span class="cnc-req">*</span></div>
+            <div class="cnc-level-col cnc-level-col--role">Role / Approver <span class="cnc-req">*</span></div>
+            <div class="cnc-level-col cnc-level-col--del"></div>
+          </div>
+
+          <div class="cnc-level-row" *ngFor="let level of levels.controls; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i">
+
+            <div class="cnc-level-col cnc-level-col--drag">
+              <span class="cnc-drag-handle" title="Drag to reorder">
+                <i class="fa-solid fa-grip-vertical"></i>
+              </span>
+            </div>
+
+            <div class="cnc-level-col cnc-level-col--num">
+              <span class="cnc-level-badge">{{ i + 1 }}</span>
+            </div>
+
+            <!-- Department select -->
+            <div class="cnc-level-col cnc-level-col--dept">
+              <div class="cnc-select-wrap">
+                <select class="cnc-select" formControlName="department"
+                  (change)="onDepartmentChange(i, $any($event.target).value)">
+                  <option value="">Select department</option>
+                  <option *ngFor="let d of departmentOptions" [value]="d.value">{{ d.label }}</option>
+                </select>
+                <i class="fa-solid fa-chevron-down cnc-select-caret"></i>
+              </div>
+              <span class="cnc-level-field-err" *ngIf="controlHasError(i, 'department')">
+                Department is required
+              </span>
+            </div>
+
+            <!-- Role / Approver select -->
+            <div class="cnc-level-col cnc-level-col--role">
+              <div class="cnc-select-wrap">
+                <select class="cnc-select" formControlName="approver">
+                  <option value="">
+                    {{ loadingRoles[i] ? 'Loading roles…' : 'Select role / approver' }}
+                  </option>
+                  <option *ngFor="let r of approverOptionsFor(i)" [value]="r.value">{{ r.label }}</option>
+                </select>
+                <i class="fa-solid cnc-select-caret" [class.fa-spinner]="loadingRoles[i]"
+                  [class.fa-spin]="loadingRoles[i]" [class.fa-chevron-down]="!loadingRoles[i]">
+                </i>
+              </div>
+              <span class="cnc-level-field-err" *ngIf="controlHasError(i, 'approver')">
+                Approver is required
+              </span>
+            </div>
+
+            <div class="cnc-level-col cnc-level-col--del">
+              <button class="cnc-del-btn" type="button" title="Remove level" (click)="removeLevel(i)"
+                [disabled]="levels.length === 1">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <button class="cnc-add-btn" type="button" (click)="addLevel()" [disabled]="levels.length >= 5">
+          <i class="fa-solid fa-plus"></i>
+          Add Level
+        </button>
+        <p class="cnc-levels-hint" *ngIf="levels.length >= 5">Maximum of 5 levels reached.</p>
+      </ng-container>
+
+    </div>
+
+    <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+    <div class="cnc-footer">
+
+      <!-- Approve mode: Reject + Approve -->
+      <ng-container *ngIf="isApprove">
+        <button class="cnc-btn cnc-btn--reject" type="button" (click)="onReject()">
+          <i class="fa-solid fa-xmark"></i>
+          Reject
+        </button>
+        <button class="cnc-btn cnc-btn--approve" type="button" (click)="onApprove()">
+          <i class="fa-solid fa-check"></i>
+          Approve
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="isView">
+        <button class="cnc-btn cnc-btn--cancel" type="button" (click)="goBack()">
+          <i class="fa-solid fa-arrow-left"></i> Close
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="!readOnly">
+        <button class="cnc-btn cnc-btn--cancel" type="button" (click)="onCancel()">Cancel</button>
+        <button class="cnc-btn cnc-btn--submit" type="submit" [disabled]="submitting">
+          <i class="fa-solid fa-check" *ngIf="!submitting"></i>
+          <i class="fa-solid fa-spinner fa-spin" *ngIf="submitting"></i>
+          {{ submitting ? 'Saving…' : (isEdit ? 'Save Changes' : 'Submit') }}
+        </button>
+      </ng-container>
+
+    </div>
+
+  </form>
+
+
+  <div class="cnc-modal-backdrop" *ngIf="showCommentModal" (click)="closeCommentModal()">
+    <div class="cnc-modal" (click)="$event.stopPropagation()">
+
+      <div class="cnc-modal-header">
+        <h3 class="cnc-modal-title">
+          <ng-container [ngSwitch]="commentModalAction">
+            <span *ngSwitchCase="'approve'">
+              <i class="fa-solid fa-circle-check cnc-modal-icon cnc-modal-icon--approve"></i>
+              Approve Chain
+            </span>
+            <span *ngSwitchCase="'activate'">
+              <i class="fa-solid fa-circle-check cnc-modal-icon cnc-modal-icon--approve"></i>
+              Activate Chain
+            </span>
+            <span *ngSwitchCase="'reject'">
+              <i class="fa-solid fa-circle-xmark cnc-modal-icon cnc-modal-icon--reject"></i>
+              Reject Chain
+            </span>
+            <span *ngSwitchCase="'deactivate'">
+              <i class="fa-solid fa-circle-minus cnc-modal-icon cnc-modal-icon--deactivate"></i>
+              Deactivate Chain
+            </span>
+          </ng-container>
+        </h3>
+        <button class="cnc-modal-close" type="button" (click)="closeCommentModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="cnc-modal-body">
+        <p class="cnc-modal-desc">
+          <ng-container [ngSwitch]="commentModalAction">
+            <span *ngSwitchCase="'approve'">Please provide a comment for approving this chain.</span>
+            <span *ngSwitchCase="'reject'">Please provide a reason for rejecting this chain.</span>
+            <span *ngSwitchCase="'deactivate'">Please provide a reason for deactivating this chain.</span>
+            <span *ngSwitchCase="'activate'">Please provide a reason for activating this chain.</span>
+
+          </ng-container>
+        </p>
+        <label class="cnc-label">
+          Comments <span class="cnc-req">*</span>
+        </label>
+        <textarea class="cnc-textarea cnc-modal-textarea" rows="4" placeholder="Enter your comments here..."
+          maxlength="500" minlength="6" [(ngModel)]="commentText" [ngModelOptions]="{ standalone: true }"
+          [class.cnc-textarea--error]="commentError">
+        </textarea>
+        <div class="cnc-field-footer">
+          <span class="cnc-error-msg" *ngIf="commentError">{{ commentError }}</span>
+          <span class="cnc-counter">{{ commentText.length }}/500</span>
+        </div>
+      </div>
+
+      <div class="cnc-modal-footer">
+        <button class="cnc-btn cnc-btn--cancel" type="button" (click)="closeCommentModal()"
+          [disabled]="submittingModal">
+          Cancel
+        </button>
+        <button class="cnc-btn" [class.cnc-btn--approve]="commentModalAction === 'approve'"
+          [class.cnc-btn--reject]="commentModalAction === 'reject' || commentModalAction === 'deactivate'" [class.cnc-btn--activate]="commentModalAction === 'activate'"
+           type="button"
+          (click)="confirmModalAction()" [disabled]="submittingModal">
+          <ng-container *ngIf="!submittingModal">
+            <ng-container [ngSwitch]="commentModalAction">
+              <span *ngSwitchCase="'approve'"><i class="fa-solid fa-check"></i> Approve</span>
+              <span *ngSwitchCase="'reject'"><i class="fa-solid fa-xmark"></i> Reject</span>
+              <span *ngSwitchCase="'deactivate'"><i class="fa-solid fa-ban"></i> Deactivate</span>
+              <span *ngSwitchCase="'activate'">
+                <i class="fa-solid fa-check"></i> Activate
+              </span>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="submittingModal">
+            <i class="fa-solid fa-spinner fa-spin"></i> Saving…
+          </ng-container>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

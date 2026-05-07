@@ -43,3 +43,23 @@
         }
     }
 }
+
+
+.cnc-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2563eb;
+    cursor: pointer;
+    width: fit-content;
+    transition: gap 0.15s ease;
+    margin-bottom: 10px;
+    i { font-size: 12px; }
+
+    &:hover {
+        gap: 9px;
+        text-decoration: underline;
+    }
+}

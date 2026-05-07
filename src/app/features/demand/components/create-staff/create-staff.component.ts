@@ -872,14 +872,13 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         if (mgr) this.selectManager(mgr);
       });
 
-      // --- Step 1: Business Justification ---
       this.step1Form.patchValue({
         justType: bj.requisitionType ?? 'New Headcount',
         bizCase: bj.businessCase ?? '',
         impactNote: bj.impactIfNotFilled ?? '',
         replacesEmp: bj.replacesEmployee ?? ''
       });
-
+      this.replaceEmployee=this.managersList?.find((item:any)=>item.id==bj.replacesEmployee)
       // --- Step 2: Budget & Compensation ---
       this.step2Form.patchValue({
         proposedComp: bc.proposedTotalCompensation ? bc.proposedTotalCompensation : 0,
@@ -1163,7 +1162,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     );
   }
   onSearchReplace() {
-    const value = this.step0Form.get('replacesEmpSearch')?.value?.toLowerCase() || '';
+    const value = this.step1Form.get('replaceSearch')?.value?.toLowerCase() || '';
     this.filteredManagers = this.managersList.filter(m =>
       m.username?.toLowerCase().includes(value) || m.name?.toLowerCase().includes(value)
     );

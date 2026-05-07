@@ -79,6 +79,33 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/users/role-permissions',
         permissionName: 'ROLES&PERMISSIONS',
       },
+       {
+        label: 'Approval Chain Configuration',  
+        icon: 'fa-solid fa-network-wired',
+        path: '/approval/chain-config',
+        permissionName: 'APPROVALCHAINCONFIGURATION',
+      },
     ],
   },
+  {
+    id: 'My Approvals',
+    permissionName: 'MYAPPROVAL',
+    label: 'My Approvals',
+    icon: 'fa-solid fa-check-circle',
+    children: [
+      {
+        label: 'SR Approvals',
+        icon: 'fa-solid fa-list-check',
+        path: '/approval/sr-list',
+        permissionName: 'SRAPPROVALS',
+      },
+      {
+        label: 'Hierarchy Approvals',
+        icon: 'fa-solid fa-diagram-project',
+        path: '/approval/chains',
+        permissionName: 'HIERARCHYAPPROVALS',
+      },
+    
+    ],
+  }
 ];

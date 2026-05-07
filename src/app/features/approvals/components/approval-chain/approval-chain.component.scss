@@ -1,0 +1,169 @@
+
+.acc-tabs-wrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px 10px 0 0;
+  padding: 0 16px;
+  margin-bottom: 0;
+  margin-top:5px;
+}
+
+.acc-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.acc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+
+  &:hover {
+    color: #1e40af;
+  }
+
+  &--active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+    font-weight: 600;
+  }
+}
+
+.acc-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+
+  .acc-tab--active & {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}
+
+// ── Table card (flush with tabs) ─────────────────────────────────────────────
+.card-dd {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+}
+
+// ── Chain name cell ───────────────────────────────────────────────────────────
+.chain-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chain-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.chain-name-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+// ── Description cell ─────────────────────────────────────────────────────────
+.chain-desc-cell {
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ── Level badge ───────────────────────────────────────────────────────────────
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+// ── Date cell ─────────────────────────────────────────────────────────────────
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &__date {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0f172a;
+  }
+
+  &__time {
+    font-size: 11.5px;
+    color: #94a3b8;
+  }
+}
+
+// ── Status badges ─────────────────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--pending {
+    background: #fff7ed;
+    color: #c2410c;
+  }
+
+  &--approved {
+    background: #f0fdf4;
+    color: #15803d;
+  }
+
+  &--rejected {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+}
+
+// ── Footer range label ────────────────────────────────────────────────────────
+.acc-range-label {
+  font-size: 12.5px;
+  color: #64748b;
+  padding: 10px 4px 0;
+}

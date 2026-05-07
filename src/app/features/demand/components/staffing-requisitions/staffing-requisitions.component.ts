@@ -9,6 +9,7 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
 import { SrReviewComponent } from '../sr-review/sr-review';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { CanDirective } from '../../../../shared/directives/can.directive';
+import { UserService } from '../../../settings/users/servics/user-service';
 
 export interface StaffingRequisition {
   id: string;
@@ -38,7 +39,7 @@ interface SrListResponse {
 @Component({
   selector: 'app-staffing-requisitions',
   standalone: true,
-  imports: [CommonModule, PaginationComponent, NzModalModule,CanDirective],
+  imports: [CommonModule, PaginationComponent, NzModalModule, CanDirective],
   templateUrl: './staffing-requisitions.component.html',
   styleUrl: './staffing-requisitions.component.scss',
 })
@@ -48,6 +49,7 @@ export class StaffingRequisitionsComponent implements OnInit {
   draftSR: StaffingRequisition | null = null;
 
   private demandService = inject(StaffingServiceService);
+  private userService = inject(UserService);
   private modal = inject(NzModalService);
   private router = inject(Router);
 
@@ -67,13 +69,13 @@ export class StaffingRequisitionsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
     try {
-      const response:any = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
+      const response: any = await this.demandService.getAllSRS({ page: page - 1, size: this.pageSize }) as SrListResponse;
       if (response?.responsecode === '00' && response.data) {
         const { content, totalPages, totalElements } = response.data;
 
         this.totalPages = totalPages;
         this.totalElements = totalElements;
-        this.requisitions = content.map((item:any )=> this.mapToRequisition(item));
+        this.requisitions = content.map((item: any) => this.mapToRequisition(item));
         this.draftSR = this.requisitions.find(r => r.status === 'Draft') ?? null;
       } else {
         this.errorMessage = response?.errors?.[0] ?? 'Failed to load requisitions.';
@@ -85,149 +87,162 @@ export class StaffingRequisitionsComponent implements OnInit {
     }
   }
 
-  
+
   async viewSR(sr: StaffingRequisition): Promise<void> {
-  if (!sr?.id || sr.id === 'Draft – Pending ID') return;
+    if (!sr?.id || sr.id === 'Draft – Pending ID') return;
+    const obj = {
+      page: 0, size: 10, sortBy: 'id', direction: 'DESC', filters: {}
+    };
+    this.viewLoading = true;
+    try {
 
-  this.viewLoading = true;
-  try {
+      const [res, travelRes, firstPage]: any[] = await firstValueFrom(
+        forkJoin([
+          this.demandService.getBySrId(sr.id),
+          this.demandService.getTravel(),
+          this.userService.getList({ ...obj, page: 0, size: 10 }),
+        ])
+      );
 
-    const [res, travelRes]: any[] = await firstValueFrom(
-      forkJoin([
-        this.demandService.getBySrId(sr.id),
-        this.demandService.getTravel(),       
-      ])
-    );
+      if (res?.responsecode !== '00') {
+        this.viewLoading = false;
+        return;
+      }
+      let managersList = firstPage?.data?.users ?? firstPage?.content ?? [];
+      const totalElements = firstPage?.data?.totalElements ?? 0;
+      if (totalElements > 10) {
+        const fullRes: any =
+          await this.userService.getList({ ...obj, page: 0, size: totalElements })
+        console.log(fullRes);
+        managersList = fullRes?.data?.users ?? fullRes?.content ?? [];
+      }
+      const travelOpts: { id: string; name: string }[] = travelRes?.data ?? [];
 
-    if (res?.responsecode !== '00') {
+      const getTravelName = (id: string): string =>
+        travelOpts.find(t => String(t.id) === String(id))?.name ?? id;
+
+      const d = res.data ?? {};
+      const p = d.positonBasicsResponse ?? {};
+      const bj = d.businessJustificationResponse ?? {};
+      const bc = d.budgetAndCompensationResponse ?? {};
+      const rr = d.rolesAndRequirementsResponse ?? {};
+      const ss = d.sourcingStrategyResponse ?? {};
+
+      const boardKeys: Record<string, string> = {
+        internalBoard: 'Internal Board',
+        naukri: 'Naukri',
+        linkedIn: 'LinkedIn',
+        indeed: 'Indeed',
+        companySite: 'Company Site',
+        agencyRpo: 'Agency / RPO',
+      };
+      const jobBoards = Object.entries(boardKeys)
+        .filter(([key]) => ss[key])
+        .map(([, label]) => label);
+      const diversityBoards = this.splitCsv(ss.diversityTags);
+
+      const modal = this.modal.create({
+        nzTitle: `${p.jobTitle ?? sr.title} — ${sr.id}`,
+        nzContent: SrReviewComponent,
+        nzWidth: 780,
+        nzCentered: true,
+        nzWrapClassName: 'custom-edit-modal',
+        nzBodyStyle: { 'max-height': '78vh', 'overflow-y': 'auto', padding: '0' },
+        nzFooter: [{ label: 'Close', onClick: () => modal.destroy() }],
+      });
+
+      const instance = modal.getContentComponent() as SrReviewComponent;
+
+      instance.viewOnly = true;
+      instance.srId = sr.id;
+      instance.jobTitle = p.jobTitle ?? sr.title;
+
+      instance.step0 = {
+        jobTitle: p.jobTitle ?? '',
+        dept: p.departmentName ?? '',
+        bu: p.businessUnitName ?? '',
+        location: p.location ?? '',
+        workMode: p.workMode ?? '',
+        empType: p.employmentType ?? '',
+        seniority: p.seniorityLevelName ?? '',
+        openings: p.openings ?? 0,
+        priority: p.priority ?? '',
+        startDate: p.targetStartDate ?? '',
+      };
+
+      instance.selectedManagers = Array.isArray(p.reportingManagerInfo)
+        ? p.reportingManagerInfo
+          .map((id: any) =>
+            managersList.find((item: any) => String(item.id) === String(id))
+          )
+          .filter(Boolean)
+        : [];
+
+      instance.step1 = {
+        justType: bj.requisitionType ?? '',
+        bizCase: bj.businessCase ?? '',
+        impactNote: bj.impactIfNotFilled ?? '',
+      };
+      const replaceEmployee = managersList.find((item: any) => item.id == bj.replacesEmployee)
+      console.log(replaceEmployee, managersList);
+      // instance.replaceEmployee = bj.replacesEmployee
+      //   ? { id: bj.replacesEmployee, username: String(bj.replacesEmployee) }
+      //   : null;
+      instance.replaceEmployee = replaceEmployee ? { id: replaceEmployee?.id, username: String(replaceEmployee.username || replaceEmployee?.name) }
+        : null;
+      instance.supportDoc = bj.document
+        ? { name: bj.document, sizeText: '' }
+        : null;
+
+      instance.step2 = {
+        costCenter: bc.costCenter ?? '',
+        budgetCode: bc.budgetCode ?? '',
+        hcSlot: bc.approved ?? false,
+        salaryComp: bc?.minSalary + '-' + bc?.maxSalary,
+        proposedComp: Number(bc.proposedTotalCompensation),
+        signingBonus: bc.signingBonus ?? false,
+        signingAmt: Number(bc.signingBonusAmount),
+        equity: bc.equity ?? false,
+        equityAmt: Number(bc.equityAmount),
+        relocation: bc.relocationBudget ?? false,
+        relocAmt: Number(bc.relocationBudgetAmount),
+        annualHiringCost: bc.annualHiringCost ?? 0,
+      };
+
+      instance.step3 = {
+        eduReq: rr.educationRequirement ?? '',
+
+        travel: getTravelName(rr.travelRequirement ?? ''),
+        expMin: rr.minExperience ?? 0,
+        expMax: rr.maxExperience ?? 0,
+        interviewMin: rr.minInterviewRounds ?? 0,
+        interviewMax: rr.maxInterviewRounds ?? 0,
+        assessmentOn: rr.assessmentRequired ?? false,
+      };
+
+      instance.mustSkills = this.splitCsv(rr.skillsMustHave);
+      instance.niceSkills = this.splitCsv(rr.niceToHaveSkills);
+      instance.certs = this.splitCsv(rr.certificationsRequired);
+      instance.langs = this.splitCsv(rr.languages);
+      instance.assessmentTypes = [];
+
+      instance.step4 = {
+        internalFirst: ss.internalFirstPolicy ?? false,
+        sourcingBudget: ss.sourcingBudget != null ? String(ss.sourcingBudget) : '',
+        referralOn: ss.referralEnabled ?? false,
+        referralAmt: ss.referralAmount != null ? String(ss.referralAmount) : '',
+        diversityOn: ss.diversityEnabled ?? false,
+      };
+
+      instance.jobBoards = jobBoards;
+      instance.diversityBoards = diversityBoards;
+
+    } catch {
+      // silently fail
+    } finally {
       this.viewLoading = false;
-      return;
     }
-
-
-    const travelOpts: { id: string; name: string }[] = travelRes?.data ?? [];
-
-    const getTravelName = (id: string): string =>
-      travelOpts.find(t => String(t.id) === String(id))?.name ?? id;
-
-    const d  = res.data ?? {};
-    const p  = d.positonBasicsResponse         ?? {};
-    const bj = d.businessJustificationResponse ?? {};
-    const bc = d.budgetAndCompensationResponse  ?? {};
-    const rr = d.rolesAndRequirementsResponse  ?? {};
-    const ss = d.sourcingStrategyResponse      ?? {};
-
-    const boardKeys: Record<string, string> = {
-      internalBoard: 'Internal Board',
-      naukri:        'Naukri',
-      linkedIn:      'LinkedIn',
-      indeed:        'Indeed',
-      companySite:   'Company Site',
-      agencyRpo:     'Agency / RPO',
-    };
-    const jobBoards      = Object.entries(boardKeys)
-      .filter(([key]) => ss[key])
-      .map(([, label]) => label);
-    const diversityBoards = this.splitCsv(ss.diversityTags);
-
-    const modal = this.modal.create({
-      nzTitle:     `${p.jobTitle ?? sr.title} — ${sr.id}`,
-      nzContent:   SrReviewComponent,
-      nzWidth:     780,
-      nzCentered:  true,
-      nzWrapClassName: 'custom-edit-modal',
-      nzBodyStyle: { 'max-height': '78vh', 'overflow-y': 'auto', padding: '0' },
-      nzFooter: [{ label: 'Close', onClick: () => modal.destroy() }],
-    });
-
-    const instance = modal.getContentComponent() as SrReviewComponent;
-
-    instance.viewOnly = true;
-    instance.srId     = sr.id;
-    instance.jobTitle = p.jobTitle ?? sr.title;
-
-    instance.step0 = {
-      jobTitle:  p.jobTitle          ?? '',
-      dept:      p.departmentName    ?? '',
-      bu:        p.businessUnitName  ?? '',
-      location:  p.location          ?? '',
-      workMode:  p.workMode          ?? '',
-      empType:   p.employmentType    ?? '',
-      seniority: p.seniorityLevelName ?? '',
-      openings:  p.openings          ?? 0,
-      priority:  p.priority          ?? '',
-      startDate: p.targetStartDate   ?? '',
-    };
-
-    instance.selectedManagers = Array.isArray(p.reportingManagerInfo)
-      ? p.reportingManagerInfo.map((id: any) =>
-          typeof id === 'object' ? id : { id, username: String(id) }
-        )
-      : [];
-
-    instance.step1 = {
-      justType:   bj.requisitionType   ?? '',
-      bizCase:    bj.businessCase      ?? '',
-      impactNote: bj.impactIfNotFilled ?? '',
-    };
-
-    instance.replaceEmployee = bj.replacesEmployee
-      ? { id: bj.replacesEmployee, username: String(bj.replacesEmployee) }
-      : null;
-
-    instance.supportDoc = bj.document
-      ? { name: bj.document, sizeText: '' }
-      : null;
-
-    instance.step2 = {
-      costCenter:       bc.costCenter                  ?? '',
-      budgetCode:       bc.budgetCode                  ?? '',
-      hcSlot:           bc.approved                    ?? false,
-      salaryComp:       bc?.minSalary + '-' + bc?.maxSalary,
-      proposedComp:     Number(bc.proposedTotalCompensation),
-      signingBonus:     bc.signingBonus                ?? false,
-      signingAmt:       Number(bc.signingBonusAmount),
-      equity:           bc.equity                      ?? false,
-      equityAmt:        Number(bc.equityAmount),
-      relocation:       bc.relocationBudget            ?? false,
-      relocAmt:         Number(bc.relocationBudgetAmount),
-      annualHiringCost: bc.annualHiringCost            ?? 0,
-    };
-
-    instance.step3 = {
-      eduReq:       rr.educationRequirement ?? '',
-
-      travel:       getTravelName(rr.travelRequirement ?? ''),
-      expMin:       rr.minExperience        ?? 0,
-      expMax:       rr.maxExperience        ?? 0,
-      interviewMin: rr.minInterviewRounds   ?? 0,
-      interviewMax: rr.maxInterviewRounds   ?? 0,
-      assessmentOn: rr.assessmentRequired   ?? false,
-    };
-
-    instance.mustSkills      = this.splitCsv(rr.skillsMustHave);
-    instance.niceSkills      = this.splitCsv(rr.niceToHaveSkills);
-    instance.certs           = this.splitCsv(rr.certificationsRequired);
-    instance.langs           = this.splitCsv(rr.languages);
-    instance.assessmentTypes = [];
-
-    instance.step4 = {
-      internalFirst:  ss.internalFirstPolicy ?? false,
-      sourcingBudget: ss.sourcingBudget != null ? String(ss.sourcingBudget) : '',
-      referralOn:     ss.referralEnabled      ?? false,
-      referralAmt:    ss.referralAmount != null ? String(ss.referralAmount) : '',
-      diversityOn:    ss.diversityEnabled     ?? false,
-    };
-
-    instance.jobBoards       = jobBoards;
-    instance.diversityBoards = diversityBoards;
-
-  } catch {
-    // silently fail
-  } finally {
-    this.viewLoading = false;
   }
-}
   private splitCsv(value: any): string[] {
     if (!value) return [];
     if (Array.isArray(value)) {
@@ -237,12 +252,12 @@ export class StaffingRequisitionsComponent implements OnInit {
   }
 
   private mapToRequisition(item: SrListItem): StaffingRequisition {
-    
-    
+
+
     return {
-      id:     item.srId ?? 'Draft – Pending ID',
-      title:  item.jobTitle,
-      meta:   `Created ${item.createdDate}`,
+      id: item.srId ?? 'Draft – Pending ID',
+      title: item.jobTitle,
+      meta: `Created ${item.createdDate}`,
       status: item.status,
     };
   }
@@ -266,11 +281,11 @@ export class StaffingRequisitionsComponent implements OnInit {
 
   badgeClass(status: string): string {
     const map: Record<string, string> = {
-      draft:     'badge-draft',
+      draft: 'badge-draft',
       submitted: 'badge-submitted',
-      approved:  'badge-approved',
-      rejected:  'badge-rejected',
-      pending:'badge-pending'
+      approved: 'badge-approved',
+      rejected: 'badge-rejected',
+      pending: 'badge-pending'
     };
     return map[status?.toLowerCase()] ?? '';
   }
@@ -280,6 +295,6 @@ export class StaffingRequisitionsComponent implements OnInit {
   }
 
   canEdit(sr: StaffingRequisition): boolean {
-    return sr.status === 'Draft' || sr.status === 'Submitted' ;
+    return sr.status === 'Draft' || sr.status === 'Submitted';
   }
 }

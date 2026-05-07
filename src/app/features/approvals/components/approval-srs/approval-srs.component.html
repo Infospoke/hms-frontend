@@ -1,7 +1,7 @@
 <div class="approval-component">
 
     <app-approval-layout [heading]="'My SRs — Approval Status'" subHeading="Track the progress of all your staffing requisitions"
-        [showInfo]="true" infoTooltip="More details about approval status" [cards]="cards" [dropDownData]="dropDownData" [searchPlaceholder]="'Search by SR ID or Job Title'"/>
+        [showInfo]="true" infoTooltip="More details about approval status" [cards]="cards"  [searchPlaceholder]="'Search by SR ID or Job Title'" [dropDownData]="dropDownData"/>
     
     <div class="card-dd">
         <app-reusable-table [columns]="columns" [data]="data" [totalItems]="totalItems" [pageSize]="pageSize"
@@ -38,7 +38,7 @@
 
 
     <ng-container *ngIf="ctx.col.key === 'actions'">
-        <app-common-table-actions (view)="onView(ctx.row)" (edit)="onEdit(ctx.row)" viewPermission="SYSTEM&ADMINS:ROLES&PERMISSIONS:VIEW" editPermission="SYSTEM&ADMINS:ROLES&PERMISSIONS:EDIT"/>
+        <app-common-table-actions (view)="onView(ctx.row)" (edit)="onEdit(ctx.row)" viewPermission="MYAPPROVAL:SRAPPROVALS:VIEW" editPermission="MYAPPROVAL:SRAPPROVALS:EDIT"/>
     </ng-container>
 
 </ng-template>

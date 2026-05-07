@@ -33,14 +33,20 @@
       <!-- SCREENED: always show screening scores -->
       <ng-container *ngIf="candidate.status?.toUpperCase() === 'SCREENED'">
         <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span class="score-label">Final Score</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span
+              class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span
+              class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span
+              class="score-label">Experience</span></div>
         </div>
         <div class="score-row" style="margin-top: 10px;">
-          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span class="score-label">Education</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span class="score-label">Keywords</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span class="score-label">Growth</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span
+              class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span
+              class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span
+              class="score-label">Growth</span></div>
         </div>
       </ng-container>
 
@@ -49,23 +55,32 @@
            proctoring etc.). The 6 resume-based scores always come from screeningData. -->
       <ng-container *ngIf="['INTERVIEW','OFFER','HIRED'].includes(candidate.status?.toUpperCase())">
         <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span class="score-label">Final Score</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span class="score-label">Skill Match</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.finalScore }}</span><span
+              class="score-label">Final Score</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.skillMatch }}</span><span
+              class="score-label">Skill Match</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.experience }}</span><span
+              class="score-label">Experience</span></div>
         </div>
         <div class="score-row" style="margin-top: 10px;">
-          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span class="score-label">Education</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span class="score-label">Keywords</span></div>
-          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span class="score-label">Growth</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.education }}</span><span
+              class="score-label">Education</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.keywords }}</span><span
+              class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ screeningData.growth }}</span><span
+              class="score-label">Growth</span></div>
         </div>
       </ng-container>
 
       <!-- APPLIED (and any unknown): show basic 3-box scores -->
       <ng-container *ngIf="!['SCREENED','INTERVIEW','OFFER','HIRED'].includes(candidate.status?.toUpperCase())">
         <div class="score-row">
-          <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span class="score-label">Skill</span></div>
-          <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span class="score-label">Experience</span></div>
-          <div class="score-box"><span class="score-value">{{ candidate.keywordScore }}%</span><span class="score-label">Keywords</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.skillScore }}%</span><span
+              class="score-label">Skill</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.experienceScore }}%</span><span
+              class="score-label">Experience</span></div>
+          <div class="score-box"><span class="score-value">{{ candidate.keywordScore }}%</span><span
+              class="score-label">Keywords</span></div>
         </div>
       </ng-container>
     </div>
@@ -78,9 +93,12 @@
 
     <!-- ── Tab Nav: 3 tabs for INTERVIEW / OFFER / HIRED pipeline ── -->
     <div class="iv-tabs" *ngIf="['INTERVIEW','OFFER','HIRED'].includes(pipelineStatus.toUpperCase())">
-      <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Candidate Details</button>
-      <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screening Details</button>
-      <button class="iv-tab" [class.active]="activeTab === 'interview'" (click)="setTab('interview')">Interview Analysis</button>
+      <button class="iv-tab" [class.active]="activeTab === 'default'" (click)="setTab('default')">Candidate
+        Details</button>
+      <button class="iv-tab" [class.active]="activeTab === 'screened'" (click)="setTab('screened')">Screening
+        Details</button>
+      <button class="iv-tab" [class.active]="activeTab === 'interview'" (click)="setTab('interview')">Interview
+        Analysis</button>
     </div>
 
     <!-- ══════════════════════════════════════════════════════
@@ -225,7 +243,8 @@
           <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="314"
             [attr.stroke-dashoffset]="314 - (314 * interviewData.total_score / 100)" stroke-linecap="round"
             transform="rotate(-90 60 60)" />
-          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{ interviewData.total_score }}</text>
+          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{
+            interviewData.total_score }}</text>
           <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
         </svg>
       </div>
@@ -277,32 +296,61 @@
           </div>
         </div>
       </div>
+      <div class="tl-wrap">
+        <div class="tl-title sc-section-title">Interview Timeline</div>
+
+        <ng-container *ngIf="entries.length > 0; else emptyState">
+          <div class="tl-list">
+            <div class="tl-item" *ngFor="let entry of entries; let i = index">
+              <div class="tl-spine">
+                <div class="tl-dot" [class.filled]="entry.date" [class.empty-dot]="!entry.date"></div>
+                <div class="tl-line" [class.transparent]="isLast(i)"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-key">{{ entry.label }}</div>
+                <div class="tl-date" [class.pending]="!entry.date">
+                  {{ entry.date ?? 'Pending' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #emptyState>
+          <div class="tl-empty">No timeline data available.</div>
+        </ng-template>
+      </div>
     </ng-container>
 
     <!-- ── Action buttons — only for APPLIED or SCREENED ── -->
-    <div class="action-grid" *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
-      <button class="action-btn primary" (click)="onAction('interview')">
+    <div class="action-grid"
+      *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
+      <button class="action-btn primary" (click)="onAction('interview')"
+        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
         Move to Interview
       </button>
-      <button class="action-btn success" (click)="openActionModal($event, 'hire')">
+      <button class="action-btn success" (click)="openActionModal($event, 'hire')"
+        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
           <path d="m9 11 3 3L22 4" />
         </svg>
         Hire Candidate
       </button>
-      <button class="action-btn outline" (click)="onAction('schedule')">
+      <button class="action-btn outline" (click)="onAction('schedule')"
+        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="4" width="18" height="18" rx="2" />
           <path d="M16 2v4M8 2v4M3 10h18" />
         </svg>
         Schedule Interview
       </button>
-      <button class="action-btn danger" (click)="openActionModal($event, 'reject')">
+      <button class="action-btn danger" (click)="openActionModal($event, 'reject')"
+        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" />
           <path d="m15 9-6 6M9 9l6 6" />

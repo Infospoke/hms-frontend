@@ -1,0 +1,233 @@
+:host {
+  display: block;
+}
+
+
+
+// ── Page Header ───────────────────────────────────────────────────────────────
+.an-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.an-back-row {
+  margin-bottom: 2px;
+}
+
+.an-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  transition: color 0.12s;
+
+  i { font-size: 12px; }
+  &:hover { color: #1d4ed8; }
+}
+
+.an-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.an-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.an-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.an-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.an-mark-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.14s;
+
+  i { font-size: 13px; }
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+  }
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+.an-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0;
+}
+
+.an-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px 11px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.14s;
+  white-space: nowrap;
+
+  &:hover { color: #2563eb; }
+
+  &--active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    font-weight: 600;
+  }
+}
+
+.an-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.14s;
+
+  &--active {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+}
+
+
+.an-filter-wrap {
+  
+
+  padding: 12px 0px;
+}
+
+
+.an-notif-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.an-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2563eb;
+  flex-shrink: 0;
+}
+
+.an-notif-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i { font-size: 13px; }
+}
+
+.an-notif-title {
+  font-size: 13px;
+  color: #475569;
+  white-space: nowrap;
+
+  &--unread {
+    font-weight: 600;
+    color: #1e293b;
+  }
+}
+
+// ── Custom Cell: Related To ───────────────────────────────────────────────────
+.an-related-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.an-related-id {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+}
+
+.an-related-dept {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+// ── Custom Cell: Action ───────────────────────────────────────────────────────
+.an-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.12s;
+
+  &:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #2563eb;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .an-page { padding: 16px; gap: 14px; }
+  .an-title { font-size: 18px; }
+  .an-title-row { flex-direction: column; }
+  .an-filter-wrap { overflow-x: auto; }
+}

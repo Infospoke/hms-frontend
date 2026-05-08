@@ -1,0 +1,67 @@
+<div class="np-overlay" *ngIf="visible" (click)="close()"></div>
+
+<div class="np-panel" *ngIf="visible">
+
+  <!-- Header -->
+  <div class="np-head">
+    <span class="np-title">
+      Notifications
+      <span class="np-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+    </span>
+    <div class="np-head-actions">
+      <button class="np-link-btn" (click)="markAllAsRead()" [disabled]="unreadCount === 0"
+              title="Mark all as read">
+        <i class="fa-regular fa-envelope-open"></i>
+        Mark all as read
+      </button>
+      <button class="np-link-btn np-clear-btn" (click)="clearAll()"
+              [disabled]="notifications.length === 0" title="Clear all">
+        <i class="fa-solid fa-trash-can"></i>
+        Clear all
+      </button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="np-list">
+
+    <div class="np-empty" *ngIf="notifications.length === 0">
+      <i class="fa-regular fa-bell-slash"></i>
+      <p>No notifications</p>
+    </div>
+
+    <div
+      class="np-item"
+      *ngFor="let notif of notifications"
+      [class.np-item--unread]="!notif.isRead"
+      (click)="markAsRead(notif)"
+    >
+      <!-- Icon -->
+      <div class="np-icon-wrap" [style.background]="getIconColor(notif.type) + '1a'">
+        <i [class]="getIconClass(notif.type)" [style.color]="getIconColor(notif.type)"></i>
+      </div>
+
+      <!-- Content -->
+      <div class="np-content">
+        <div class="np-item-head">
+          <span class="np-item-title">{{ notif.title }}</span>
+          <span class="np-time">{{ notif.timeAgo }}</span>
+        </div>
+        <p class="np-msg">{{ notif.message }}</p>
+      </div>
+
+      <!-- Unread dot -->
+      <span class="np-dot" *ngIf="!notif.isRead"></span>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="np-footer">
+    <button class="np-view-all" (click)="viewAll()">
+      View all notifications
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+</div>

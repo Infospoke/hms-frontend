@@ -56,4 +56,18 @@ export class ApprovalService {
       this.api.hrmspost(API.APPROVALS.APPROVAL_CHAIN_LIST, payload)
     );
   }
+
+  /** Full SR detail + approval pipeline for the view-sr page */
+  async getSrDetails(srId: string) {
+    return await firstValueFrom(
+      this.api.hrmsget(API.APPROVALS.SR_DETAILS(srId))
+    );
+  }
+
+  /** Approve or reject an SR at the current stage */
+  async approveOrReject(payload: { srId: string; decision: 'APPROVE' | 'REJECT'; comments?: string }) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.APPROVALS.APPROVE_OR_REJECT, payload)
+    );
+  }
 }

@@ -114,10 +114,14 @@ export class ApprovalSrsComponent {
   }
 
   onView(row: any): void {
-    this.router.navigateByUrl('/approval-srs/view', { state: { srId: row.srId, type: 'view' } });
+    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+      state: { srId: row.srId, url: '/approval/sr-list' }
+    });
   }
 
   onEdit(row: any): void {
-    this.router.navigateByUrl('/approval-srs/edit', { state: { srId: row.srId, type: 'edit' } });
+    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+      state: { srId: row.srId, url: '/approval/sr-list' }
+    });
   }
 }

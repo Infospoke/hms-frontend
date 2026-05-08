@@ -1,1 +1,287 @@
-<p>view-sr works!</p>
+<!-- ══════════════════════════════════════════════════════════════
+     VIEW SR — Approval Page
+     ══════════════════════════════════════════════════════════════ -->
+<div class="vsr-wrapper">
+
+  <!-- ── Loading skeleton ─────────────────────────────────────────────────── -->
+  <div class="vsr-loading" *ngIf="isLoading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <span>Loading SR details…</span>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ════════════════════════════════════════════════════════════
+         HEADER
+         ════════════════════════════════════════════════════════════ -->
+    <div class="vsr-header-zone">
+
+      <!-- Back button (uses HeadingComponent's back feature) -->
+      <app-heading
+        [showBackButton]="true"
+        [buttonText]="'Back to SR List'"
+        (click)="goBack()"
+      />
+
+      <!-- SR ID + status badge -->
+      <div class="vsr-title-row">
+        <h2 class="vsr-id">{{ srId }}</h2>
+        <span class="vsr-status-badge"
+              [ngStyle]="{
+                color:            currentSrStatus.color,
+                background:       currentSrStatus.bg,
+                'border-color':   currentSrStatus.border
+              }">
+          {{ currentSrStatus.label }}
+        </span>
+      </div>
+
+      <!-- Meta info strip -->
+      <div class="vsr-meta-strip">
+        <div class="meta-item" *ngFor="let m of metaItems">
+          <i [class]="m.icon" class="meta-icon"></i>
+          <div class="meta-text">
+            <span class="meta-label">{{ m.label }}</span>
+            <span class="meta-value">
+              <span *ngIf="m.isPriority"
+                    class="priority-dot"
+                    [ngStyle]="{ background: priorityDotColor }">
+              </span>
+              {{ m.value }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         APPROVAL PIPELINE CARD
+         ════════════════════════════════════════════════════════════ -->
+    <div class="pipeline-card">
+
+      <!-- Left: stage nodes -->
+      <div class="pipeline-left">
+        <p class="pipeline-title">Approval Pipeline</p>
+        <div class="pipeline-stages">
+          <ng-container *ngFor="let stage of pipelineStages; let i = index; let last = last">
+
+            <!-- Stage node -->
+            <div class="stage-node">
+              <div class="stage-circle" [ngStyle]="getStageCircleStyle(stage.status)">
+                <i [class]="stageStatusCfg[stage.status].icon"
+                   [ngStyle]="{ color: stageStatusCfg[stage.status].color, 'font-size': '18px' }">
+                </i>
+              </div>
+              <div class="stage-info">
+                <span class="stage-role">{{ stage.role }}</span>
+                <span class="stage-status-lbl"
+                      [ngStyle]="{ color: stageStatusCfg[stage.status].color }">
+                  {{ stageStatusCfg[stage.status].label }}
+                </span>
+                <span class="stage-time" *ngIf="stage.timestamp">{{ stage.timestamp }}</span>
+              </div>
+            </div>
+
+            <!-- Arrow between stages — line + chevron -->
+            <div class="stage-arrow" *ngIf="!last"
+                 [class.arrow-done]="isConnectorFilled(stage.status)">
+              <span class="arrow-line"></span>
+              <i class="fa-solid fa-chevron-right arrow-head"></i>
+            </div>
+
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Right: progress bar -->
+      <div class="pipeline-right">
+        <p class="prog-title">Overall Progress</p>
+        <div class="prog-row">
+          <div class="prog-track">
+            <div class="prog-fill" [style.width.%]="progressPercent"></div>
+          </div>
+          <span class="prog-pct">{{ progressPercent }}%</span>
+        </div>
+        <span class="prog-step">{{ progressStep }}</span>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════
+         MAIN CONTENT — two-column
+         ════════════════════════════════════════════════════════════ -->
+    <div class="vsr-body">
+
+      <!-- ── LEFT: SR Summary ──────────────────────────────────────────── -->
+      <div class="vsr-left">
+        <div class="panel-hdr">
+          <span class="panel-title">SR Summary</span>
+          <button class="btn-view-full" (click)="openFullSr()">
+            <i class="fa-solid fa-expand"></i> View Full SR
+          </button>
+        </div>
+
+        <!-- Tick progress hint -->
+        <div class="tick-progress-bar" *ngIf="!allSectionsReviewed">
+          <div class="tick-fill" [style.width.%]="(reviewedCount / TOTAL_SECTIONS) * 100"></div>
+        </div>
+        <p class="tick-hint" *ngIf="!allSectionsReviewed">
+          <i class="fa-solid fa-circle-info"></i>
+          Tick all {{ TOTAL_SECTIONS }} sections after reviewing — this unlocks Approve &amp; Reject
+          ({{ reviewedCount }}/{{ TOTAL_SECTIONS }} reviewed)
+        </p>
+        <p class="tick-done" *ngIf="allSectionsReviewed">
+          <i class="fa-solid fa-circle-check"></i>
+          All sections reviewed — you can now Approve or Reject
+        </p>
+
+        <!-- SR Review component (viewOnly, showTicks enabled) -->
+        <app-sr-review
+          [viewOnly]="true"
+          [showTicks]="true"
+          [step0]="step0"
+          [step1]="step1"
+          [step2]="step2"
+          [step3]="step3"
+          [step4]="step4"
+          [mustSkills]="mustSkills"
+          [niceSkills]="niceSkills"
+          [certs]="certs"
+          [langs]="langs"
+          [jobBoards]="jobBoards"
+          [assessmentTypes]="assessmentTypes"
+          [diversityBoards]="diversityBoards"
+          [selectedManagers]="selectedManagers"
+          [replaceEmployee]="replaceEmployee"
+          [supportDoc]="supportDoc"
+          (ticksChanged)="onTicksChanged($event)"
+        />
+      </div>
+
+      <!-- ── RIGHT: Approval Timeline ──────────────────────────────────── -->
+      <div class="vsr-right">
+        <p class="panel-title">Approval Timeline</p>
+
+        <div class="timeline">
+          <div class="tl-item" *ngFor="let stage of pipelineStages; let last = last">
+
+            <!-- Vertical dot + line -->
+            <div class="tl-track">
+              <div class="tl-dot" [ngStyle]="{ background: stageStatusCfg[stage.status].color }">
+                <i [class]="stageStatusCfg[stage.status].icon" style="color:#fff; font-size:9px;"></i>
+              </div>
+              <div class="tl-line" *ngIf="!last"
+                   [class.tl-line-done]="stage.status === 'APPROVED'">
+              </div>
+            </div>
+
+            <!-- Stage card -->
+            <div class="tl-card" [ngStyle]="getTimelineBorderStyle(stage.status)">
+
+              <!-- Card header row -->
+              <div class="tl-card-hdr">
+                <span class="tl-role">{{ stage.role }}</span>
+                <span class="tl-badge" [ngStyle]="getStatusBadgeStyle(stage.status)">
+                  {{ stageStatusCfg[stage.status].label }}
+                </span>
+              </div>
+
+              <!-- Approver info (if assigned) -->
+              <ng-container *ngIf="stage.approverName">
+                <div class="tl-approver-row">
+                  <div class="tl-avatar" [ngStyle]="getAvatarStyle(stage.status)">
+                    {{ stage.approverInitials || getInitials(stage.approverName) }}
+                  </div>
+                  <div class="tl-approver-info">
+                    <span class="tl-name">{{ stage.approverName }}</span>
+                    <span class="tl-time" *ngIf="stage.timestamp">{{ stage.timestamp }}</span>
+                  </div>
+                </div>
+
+                <!-- Comments (read-only, data from backend) -->
+                <p class="tl-comments-label">Comments</p>
+                <div class="tl-comment-text" *ngIf="stage.comments; else noComment">
+                  {{ stage.comments }}
+                </div>
+                <ng-template #noComment>
+                  <div class="tl-comment-empty">—</div>
+                </ng-template>
+              </ng-container>
+
+              <!-- Pending stage – no approver yet -->
+              <ng-container *ngIf="!stage.approverName && stage.status === 'PENDING'">
+                <p class="tl-pending-msg">
+                  <i class="fa-regular fa-clock"></i>
+                  Awaiting previous approval
+                </p>
+              </ng-container>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /vsr-body -->
+
+    <!-- ════════════════════════════════════════════════════════════
+         BOTTOM ACTION BAR
+         ════════════════════════════════════════════════════════════ -->
+    <div class="vsr-action-bar">
+      <div class="action-left">
+        <button class="btn-approve"
+                [disabled]="!allSectionsReviewed || isSubmitting"
+                (click)="onApprove()">
+          <i class="fa-solid fa-circle-check"></i>
+          {{ isSubmitting ? 'Processing…' : 'Approve' }}
+        </button>
+        <button class="btn-reject"
+                [disabled]="!allSectionsReviewed || isSubmitting"
+                (click)="onReject()">
+          <i class="fa-solid fa-circle-xmark"></i>
+          Reject
+        </button>
+      </div>
+      <button class="btn-save-exit" (click)="goBack()">
+        Save &amp; Exit
+      </button>
+    </div>
+
+  </ng-container><!-- /!isLoading -->
+
+</div><!-- /vsr-wrapper -->
+
+<!-- ════════════════════════════════════════════════════════════
+     FULL SR MODAL
+     ════════════════════════════════════════════════════════════ -->
+<nz-modal
+  [nzVisible]="isFullSrOpen"
+  nzTitle="Full Staffing Requisition"
+  [nzWidth]="920"
+  [nzFooter]="null"
+  (nzOnCancel)="closeFullSr()">
+
+  <ng-container *nzModalContent>
+    <div class="full-sr-modal-body">
+      <app-sr-review
+        [viewOnly]="true"
+        [showTicks]="false"
+        [step0]="step0"
+        [step1]="step1"
+        [step2]="step2"
+        [step3]="step3"
+        [step4]="step4"
+        [mustSkills]="mustSkills"
+        [niceSkills]="niceSkills"
+        [certs]="certs"
+        [langs]="langs"
+        [jobBoards]="jobBoards"
+        [assessmentTypes]="assessmentTypes"
+        [diversityBoards]="diversityBoards"
+        [selectedManagers]="selectedManagers"
+        [replaceEmployee]="replaceEmployee"
+        [supportDoc]="supportDoc"
+      />
+    </div>
+  </ng-container>
+
+</nz-modal>

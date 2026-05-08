@@ -87,5 +87,7 @@ export const API = {
         APPROVAL_CHAIN_DETAILS:(id:any)=>`/hms/approval-chains/details/${id}`,
         APPROVAL_CHAIN_LIST:`/hms/approval-chains/list`,
         DEPATMENTS:`/hms/configurations/departments`,
+        SR_DETAILS:(srId: string) => `/hms/staffing-requisition/approval-view/${srId}`,
+        APPROVE_OR_REJECT:`/hms/staffing-requisition/approve-or-reject`,
     }
 }

@@ -9,7 +9,7 @@ type Stage = 'Shortlisted' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
 type SlaStatus = 'BREACHED' | 'WARNING' | 'OK' | '';
 type ApplicantFilter = 'all' | 'referral' | 'non-referral';
 type SlaFilter = 'green' | 'orange' | 'red';
-type DateFilter = 'today' | 'last week' | 'last month' | 'custom';
+type DateFilter = 'today' | 'this week' | 'custom' | 'this month';
 
 
 interface Candidate {
@@ -132,8 +132,8 @@ export class KanbanComponent implements OnInit {
 
   dateOptions: { val: DateFilter; lbl: string }[] = [
     { val: 'today', lbl: 'Today' },
-    { val: 'last week', lbl: 'Last week' },
-    { val: 'last month', lbl: 'Last month' },
+    { val: 'this week', lbl: 'This week' },
+    { val: 'this month', lbl: 'This month' },
     { val: 'custom', lbl: 'Custom' },
   ];
 
@@ -146,14 +146,14 @@ export class KanbanComponent implements OnInit {
   ];
 
   filterApplicantType: ApplicantFilter = 'all';
-  filterDateType: DateFilter = 'last month';
+  filterDateType: DateFilter = 'this month';
   filterSources: string[] = ['Naukri', 'LinkedIn', 'Website', 'Agency / Rpo'];
   filterSla: SlaFilter[] = [];
   filterStartDate = '';
   filterEndDate = '';
 
   tempApplicantType: ApplicantFilter = 'all';
-  tempDateType: DateFilter = 'last month';
+  tempDateType: DateFilter = 'this month';
   tempSources: string[] = ['Naukri', 'LinkedIn', 'Website', 'Agency / Rpo'];
   tempSla: SlaFilter[] = [];
   tempStartDate = '';
@@ -312,7 +312,7 @@ export class KanbanComponent implements OnInit {
 
   resetFilters(): void {
     this.tempApplicantType = 'all';
-    this.tempDateType = 'last month';
+    this.tempDateType = 'this month';
     this.tempSources = ['Naukri', 'LinkedIn', 'Website', 'Agency / Rpo'];
     this.tempSla = [];
     this.tempStartDate = '';
@@ -400,9 +400,9 @@ export class KanbanComponent implements OnInit {
       chips.push({ label: this.capitalize(this.tempApplicantType), key: 'applicant' });
     }
 
-    if (this.tempDateType && this.tempDateType !== 'last month') {
+    if (this.tempDateType) {
       const labels: Record<string, string> = {
-        today: 'Today', lastweek: 'Last week', lastmonth: 'Last month', custom: 'Custom',
+        today: 'Today', thisweek: 'This week', thismonth: 'This month', custom: 'Custom',
       };
       chips.push({ label: labels[this.tempDateType] ?? this.tempDateType, key: 'date' });
     }
@@ -422,7 +422,7 @@ export class KanbanComponent implements OnInit {
     if (key === 'applicant') {
       this.tempApplicantType = 'all';
     } else if (key === 'date') {
-      this.tempDateType = 'last month';
+      this.tempDateType = 'this month';
       this.tempStartDate = '';
       this.tempEndDate = '';
     } else if (key.startsWith('source_')) {
@@ -437,7 +437,7 @@ export class KanbanComponent implements OnInit {
   get appliedFilterCount(): number {
     let count = 0;
     if (this.filterApplicantType !== 'all') count++;
-    if (this.filterDateType && this.filterDateType !== 'last month') count++;
+    if (this.filterDateType && this.filterDateType !== 'this month') count++;
     const realSources = this.sourceOptions.filter(s => s !== 'All');
     const allSelected = realSources.every(s => this.filterSources.includes(s));
     if (!allSelected) count += this.filterSources.filter(s => s !== 'All').length;

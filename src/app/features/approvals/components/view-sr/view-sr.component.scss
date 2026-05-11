@@ -185,6 +185,7 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  margin: 0px 10px;
 }
 
 .stage-circle {
@@ -672,10 +673,8 @@
   &:hover { background: var(--c-bg-section); }
 }
 
-// ─── Full SR modal body ───────────────────────────────────────────────────────
+// ─── Full SR modal body — nz-modal handles the outer scroll, no inner scroll ──
 .full-sr-modal-body {
-  max-height: 72vh;
-  overflow-y: auto;
   padding: 2px;
 }
 

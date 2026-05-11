@@ -90,12 +90,18 @@ export class SrReviewComponent implements OnInit {
   @Input() showTicks = false;
   @Output() ticksChanged = new EventEmitter<boolean[]>();
 
+  // ── Accordion behaviour controls ─────────────────────────────────────────────
+  /** Start all sections expanded — used by the Full SR modal */
+  @Input() startOpen = false;
+  /** Allow multiple sections open simultaneously — used by the Full SR modal */
+  @Input() allowMultipleOpen = false;
+
   open: boolean[] = [true, true, true, true, true];
   sectionTicked: boolean[] = [false, false, false, false, false];
 
   ngOnInit(): void {
-    // In view/approval mode start all closed so only one fits in viewport at a time
-    if (this.viewOnly) {
+    // Start all closed for single-accordion approval mode, unless overridden
+    if (this.viewOnly && !this.startOpen) {
       this.open = [false, false, false, false, false];
     }
   }
@@ -112,13 +118,13 @@ export class SrReviewComponent implements OnInit {
   }
 
   toggle(i: number): void {
-    if (this.viewOnly) {
-      // Single-accordion in approval / view-only mode:
-      // clicking the open section closes it; clicking a closed one opens it and closes all others
+    if (this.viewOnly && !this.allowMultipleOpen) {
+      // Single-accordion: opening one closes all others
       const wasOpen = this.open[i];
       this.open = [false, false, false, false, false];
       this.open[i] = !wasOpen;
     } else {
+      // Multi-accordion: each section toggles independently
       this.open[i] = !this.open[i];
     }
   }

@@ -24,7 +24,7 @@ export class CreateNewChainComponent implements OnInit {
   private fb = inject(FormBuilder);
   private approvalService = inject(ApprovalService);
   private userService = inject(UserService);
-  private url: string = '';
+   url: string = '';
   private notificationService = inject(NotificationService)
   mode: PageMode = 'create';
 
@@ -247,7 +247,7 @@ export class CreateNewChainComponent implements OnInit {
 
 
   addLevel(): void {
-    if (!this.readOnly && this.levels.length < 5) {
+    if (!this.readOnly && this.levels.length < 3) {
       this.levels.push(this.buildLevelGroup());
     }
   }
@@ -256,7 +256,6 @@ export class CreateNewChainComponent implements OnInit {
     if (!this.readOnly && this.levels.length > 1) {
       this.levels.removeAt(index);
 
-
       const rebuilt: typeof this.approverOptionsByLevel = {};
       Object.entries(this.approverOptionsByLevel).forEach(([k, v]) => {
         const ki = Number(k);
@@ -264,6 +263,94 @@ export class CreateNewChainComponent implements OnInit {
         else if (ki > index) rebuilt[ki - 1] = v;
       });
       this.approverOptionsByLevel = rebuilt;
+    }
+  }
+
+  /**
+   * Move a level row up (-1) or down (+1).
+   * Swaps the FormGroup controls AND remaps the approverOptionsByLevel cache
+   * so dropdowns stay in sync after the move.
+   */
+  // ── Drag-and-drop state ──────────────────────────────────────────────────────
+  dragIndex: number | null = null;
+  dragOverIndex: number | null = null;
+
+  onDragStart(event: DragEvent, index: number): void {
+    this.dragIndex = index;
+    // Required for Firefox
+    event.dataTransfer?.setData('text/plain', String(index));
+    event.dataTransfer!.effectAllowed = 'move';
+  }
+
+  onDragOver(event: DragEvent, index: number): void {
+    event.preventDefault();                     // allow drop
+    event.dataTransfer!.dropEffect = 'move';
+    this.dragOverIndex = index;
+  }
+
+  onDragLeave(): void {
+    this.dragOverIndex = null;
+  }
+
+  onDrop(event: DragEvent, dropIndex: number): void {
+    event.preventDefault();
+    const fromIndex = this.dragIndex;
+    if (fromIndex === null || fromIndex === dropIndex) {
+      this.resetDragState();
+      return;
+    }
+    this.swapLevels(fromIndex, dropIndex);
+    this.resetDragState();
+  }
+
+  onDragEnd(): void {
+    this.resetDragState();
+  }
+
+  private resetDragState(): void {
+    this.dragIndex = null;
+    this.dragOverIndex = null;
+  }
+
+  /**
+   * Core swap: moves the dragged row to the drop position by
+   * re-inserting it (handles non-adjacent rows correctly).
+   * Also remaps approverOptionsByLevel and loadingRoles caches.
+   */
+  private swapLevels(from: number, to: number): void {
+    const total = this.levels.length;
+
+    // 1. Snapshot values + caches for ALL rows into plain arrays
+    const values: { department: string; approver: string }[] = [];
+    const opts:   { value: any; label: string }[][]          = [];
+    const loads:  boolean[]                                   = [];
+
+    for (let i = 0; i < total; i++) {
+      // Use getRawValue() so disabled controls are also captured
+      const raw = (this.levels.at(i) as any).getRawValue();
+      values.push({ department: raw.department ?? '', approver: raw.approver ?? '' });
+      opts.push([...(this.approverOptionsByLevel[i] ?? [])]);
+      loads.push(this.loadingRoles[i] ?? false);
+    }
+
+    // 2. Swap only the two affected indices
+    [values[from], values[to]] = [values[to], values[from]];
+    [opts[from],   opts[to]]   = [opts[to],   opts[from]];
+    [loads[from],  loads[to]]  = [loads[to],  loads[from]];
+
+    // 3. Restore caches FIRST so the template has options before patchValue triggers CD
+    const rebuiltOpts: typeof this.approverOptionsByLevel = {};
+    const rebuiltLoads: typeof this.loadingRoles          = {};
+    opts.forEach((o, i)  => { rebuiltOpts[i]  = o; });
+    loads.forEach((l, i) => { rebuiltLoads[i] = l; });
+    this.approverOptionsByLevel = { ...rebuiltOpts };
+    this.loadingRoles           = { ...rebuiltLoads };
+
+    // 4. Patch each FormGroup in-place — no remove/insert, no reference issues
+    for (let i = 0; i < total; i++) {
+      const grp = this.levels.at(i) as FormGroup;
+      grp.get('department')!.setValue(values[i].department, { emitEvent: false });
+      grp.get('approver')!.setValue(values[i].approver,    { emitEvent: false });
     }
   }
 
@@ -286,7 +373,7 @@ export class CreateNewChainComponent implements OnInit {
     const count = this.levels.length;
     if (this.isApprove) return `This chain contains ${count} level(s) for approval.`;
     if (this.isView) return 'Configured approvers for each level';
-    return 'Configure the approvers for each level (Maximum 5 levels allowed)';
+    return 'Configure the approvers for each level (Maximum 3 levels allowed)';
   }
 
   approverOptionsFor(levelIndex: number): { value: any; label: string }[] {

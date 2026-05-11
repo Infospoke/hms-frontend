@@ -277,4 +277,35 @@ export class CandidateDetailComponent implements OnChanges {
   isLast(index: number): boolean {
     return index === this.entries.length - 1;
   }
+
+
+  showMoveToInterview(isStatus: string, currentStatus: string): boolean {
+    console.log(isStatus, currentStatus,this.candidate);
+    if (
+      (isStatus === 'APPLIED' || isStatus === 'SCREENED') &&
+      currentStatus !== 'INTERVIEW' &&
+      currentStatus !== 'OFFER' &&
+      currentStatus !== 'HIRED'
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+
+  showReject(isStatus: string, currentStatus: string): boolean {
+    console.log(isStatus, currentStatus);
+    return (
+      (
+        ['SCREENED', 'APPLIED'].includes(isStatus) &&
+        ['SHORTLISTED', 'NOT SHORTLISTED','SCREENED','Applied','APPLIED','Shortlisted','NotShortlisted','Not Shortlisted'].includes(currentStatus)
+      ) ||
+      (
+        isStatus === 'INTERVIEW' &&
+        currentStatus === 'COMPLETED'
+      )
+    );
+
+  }
 }

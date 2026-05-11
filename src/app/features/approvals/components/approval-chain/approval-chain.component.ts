@@ -7,13 +7,14 @@ import { CommonTableActionsComponent } from '../../../../shared/components/commo
 import { ApprovalService } from '../../services/approval-service';
 import { chainOptions, statusOptions } from '../../../../shared/constants/reusbale-filter';
 
-type TabKey = 'pending' | 'approved' | 'rejected';
+type TabKey = 'all' | 'pending' | 'approved' | 'rejected';
 
 
 const TAB_APPROVAL_MAP: Record<TabKey, string> = {
   pending: 'in_progress',
   approved: 'Approved',
   rejected: 'Rejected',
+  all: ''
 };
 
 
@@ -43,19 +44,21 @@ export class ApprovalChainComponent implements OnInit {
   private approvalService = inject(ApprovalService);
 
 
-  activeTab: TabKey = 'pending';
+  activeTab: TabKey = 'all';
 
   tabs: { key: TabKey; label: string; count: number }[] = [
+    { key: 'all', label: 'All', count: 0 },
     { key: 'pending', label: 'Pending', count: 0 },
     { key: 'approved', label: 'Approved', count: 0 },
     { key: 'rejected', label: 'Rejected', count: 0 },
+
   ];
 
   dropDownData = chainOptions;
   cards = [
     {
-      label: 'Total Approvals',
-      subLabel: 'All approval chains',
+      label: 'Total Chains',
+      subLabel: 'All  chains',
       value: 0,
       iconClass: 'fa-solid fa-user-check',
       iconBgColor: '#eaf2ff',
@@ -106,7 +109,7 @@ export class ApprovalChainComponent implements OnInit {
   loading = false;
 
 
-  private activeFilters: Partial<any> = {};
+  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
 
   get rangeStart(): number { return (this.currentPage - 1) * this.pageSize + 1; }
   get rangeEnd(): number { return Math.min(this.currentPage * this.pageSize, this.totalItems); }
@@ -116,7 +119,8 @@ export class ApprovalChainComponent implements OnInit {
     await Promise.all([this.loadCounts(), this.loadList()]);
   }
 
-  setTab(key: TabKey): void {
+  setTab(key: any): void {
+    console.log('Selected tab:', key);
     this.activeTab = key;
     this.currentPage = 1;
     this.loadList();
@@ -132,9 +136,7 @@ export class ApprovalChainComponent implements OnInit {
       this.cards[1].value = d.approved ?? 0;
       this.cards[2].value = d.pending ?? 0;
       this.cards[3].value = d.rejected ?? 0;
-      this.tabs.find(t => t.key === 'pending')!.count = d.pending ?? 0;
-      this.tabs.find(t => t.key === 'approved')!.count = d.approved ?? 0;
-      this.tabs.find(t => t.key === 'rejected')!.count = d.rejected ?? 0;
+
 
       this.cdr.markForCheck();
     } catch (err) {
@@ -156,6 +158,16 @@ export class ApprovalChainComponent implements OnInit {
       this.filteredData = (d.approvalChains ?? []).map((c: any, i: number) =>
         this.mapChain(c, i)
       );
+
+      this.tabs = this.tabs.map(t => ({
+        ...t,
+        count:
+          t.key === 'all' ? (d?.counts?.total ?? 0) :
+            t.key === 'pending' ? (d?.counts?.pending ?? 0) :
+              t.key === 'approved' ? (d?.counts?.approved ?? 0) :
+                t.key === 'rejected' ? (d?.counts?.rejected ?? 0) :
+                  t.count
+      }));
     } catch (err) {
       console.error('[approvalChainList]', err);
       this.filteredData = [];
@@ -170,7 +182,7 @@ export class ApprovalChainComponent implements OnInit {
   private buildPayload(): object {
 
     const f: any = this.activeFilters || {};
-
+    console.log(this.activeTab)
     const filters: any = {
       approval: TAB_APPROVAL_MAP[this.activeTab],
     };

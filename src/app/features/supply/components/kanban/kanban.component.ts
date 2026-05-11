@@ -251,14 +251,14 @@ export class KanbanComponent implements OnInit {
   toggleJrSelection(jobId: any, event: Event): void {
     event.stopPropagation();
 
-    if (this.selectedJrIds.includes(jobId)) {
-
-      this.selectedJrIds = this.selectedJrIds.filter((id: any) => id !== jobId);
+    // Use loose equality (==) to handle string vs number mismatch from API
+    const alreadySelected = this.selectedJrIds.some((id: any) => id == jobId);
+    if (alreadySelected) {
+      this.selectedJrIds = this.selectedJrIds.filter((id: any) => id != jobId);
     } else {
-      // add
-      this.selectedJrIds.push(jobId);
+      this.selectedJrIds = [...this.selectedJrIds, jobId];
     }
-    this.closeJrDropdown();
+    // Keep dropdown open for multi-select; closes on outside click via HostListener
     this.onJrSelectionChange();
   }
 
@@ -284,7 +284,7 @@ export class KanbanComponent implements OnInit {
 
   //   // return `JR: ${this.selectedJrIds} selected`;
   // }
-  isJrSelected(jobId: string | number): boolean { return this.selectedJrIds.includes(jobId); }
+  isJrSelected(jobId: string | number): boolean { return this.selectedJrIds.some((id: any) => id == jobId); }
   // isJrSelected(jobId: string | number): boolean { return this.selectedJrIds === jobId; }
   openFilterPanel(): void {
     this.tempApplicantType = this.filterApplicantType;
@@ -416,6 +416,27 @@ export class KanbanComponent implements OnInit {
     this.tempSla.forEach(s => chips.push({ label: this.capitalize(s), key: `sla_${s}` }));
 
     return chips;
+  }
+
+  // Default filters that are always active (shown in chip panel so user knows)
+  get tempDefaultChips(): { label: string; key: string }[] {
+    const defaults: { label: string; key: string }[] = [];
+    // "All" applicants is the baseline — no chip
+    // "This month" date is the default — show it
+    if (this.tempDateType === 'this month') {
+      defaults.push({ label: 'This month', key: 'default_date' });
+    }
+    // All sources selected = default — show a summarised chip
+    const real = this.sourceOptions.filter(s => s !== 'All');
+    const allSel = real.every(s => this.tempSources.includes(s));
+    if (allSel) {
+      defaults.push({ label: 'All sources', key: 'default_sources' });
+    }
+    return defaults;
+  }
+
+  get tempAllChips(): { label: string; key: string }[] {
+    return [...this.tempDefaultChips, ...this.tempActiveChips];
   }
 
   removeTempChip(key: string): void {
@@ -576,5 +597,46 @@ export class KanbanComponent implements OnInit {
     if (breached) return '#EF4444';
     if (warned) return '#F59E0B';
     return '#22C55E';
+  }
+
+  // Returns how many options are active in each filter section tab (uses temp state, shown inside modal)
+  getFilterSectionCount(sec: string): number {
+    switch (sec) {
+      case 'Applicants':
+        return this.tempApplicantType !== 'all' ? 1 : 0;
+      case 'Date Filters':
+        return this.tempDateType && this.tempDateType !== 'this month' ? 1 : 0;
+      case 'Source': {
+        const real = this.sourceOptions.filter(s => s !== 'All');
+        const allSel = real.every(s => this.tempSources.includes(s));
+        return allSel ? 0 : this.tempSources.filter(s => s !== 'All').length;
+      }
+      case 'SLA':
+        return this.tempSla.length;
+      default:
+        return 0;
+    }
+  }
+
+  readonly maxVisibleJrChips = 3;
+
+  get visibleJrChips(): any[] {
+    return this.selectedJrIds.slice(0, this.maxVisibleJrChips);
+  }
+
+  get hiddenJrCount(): number {
+    return Math.max(0, this.selectedJrIds.length - this.maxVisibleJrChips);
+  }
+
+
+  getJobById(jobId: any): any {
+    return this.jobsList.find(j => j.jobId == jobId) ?? null;
+  }
+
+
+  removeJrChip(jobId: any, event: Event): void {
+    event.stopPropagation();
+    this.selectedJrIds = this.selectedJrIds.filter((id: any) => id != jobId);
+    this.onJrSelectionChange();
   }
 }

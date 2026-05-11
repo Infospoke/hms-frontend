@@ -6,7 +6,7 @@ import { CommonTableActionsComponent } from '../../../../shared/components/commo
 import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { ApprovalService } from '../../services/approval-service';
-import { filterDropdowns, statusOptions } from '../../../../shared/constants/reusbale-filter';
+import { chainOptions, filterDropdowns, statusOptions } from '../../../../shared/constants/reusbale-filter';
 
 
 const CHAIN_ICON_PALETTE = [
@@ -46,15 +46,22 @@ export class ApprovalChainConfigComponent implements OnInit {
     { key: 'status', label: 'Status', width: '120px', custom: true, align: 'center' },
     { key: 'actions', label: 'Actions', width: '90px', custom: true, align: 'center' },
   ];
-  dropDownData = filterDropdowns;
+  activeTab = 'all';
+  dropDownData = chainOptions;
   data: any[] = [];
   totalItems = 0;
   currentPage = 1;
   pageSize = 10;
 
 
+  tabs: { key: string; label: string; count: number }[] = [
+    { key: 'all', label: 'All', count: 0 },
+    { key: 'active', label: 'Active', count: 0 },
+    { key: 'inactive', label: 'Inactive', count: 0 },
 
-  private activeFilters: Partial<any> = {};
+
+  ];
+  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
 
 
   ngOnInit(): void {
@@ -84,8 +91,8 @@ export class ApprovalChainConfigComponent implements OnInit {
       filters['chainName'] = f.chainName.trim();
     }
 
-    if (f.status) {
-      filters['status'] = f.status;
+    if (this.activeTab!=='all') {
+      filters['status'] = this.activeTab;
     }
 
     if (f.dateFilter) {
@@ -151,7 +158,14 @@ export class ApprovalChainConfigComponent implements OnInit {
           this.mapChain(chain, index)
         );
 
-
+        this.tabs = this.tabs.map(t => ({
+          ...t,
+          count:
+            t.key === 'all' ? (listPayload?.counts?.total ?? 0) :
+              t.key === 'active' ? (listPayload?.counts?.active ?? 0) :
+                t.key === 'inactive' ? (listPayload?.counts?.deactive ?? 0) :
+                  t.count
+        }));
         this.cdr.markForCheck();
       },
       error: (err) => {
@@ -180,6 +194,15 @@ export class ApprovalChainConfigComponent implements OnInit {
         (chain: any, index: number) =>
           this.mapChain(chain, index)
       );
+
+      this.tabs = this.tabs.map(t => ({
+        ...t,
+        count:
+          t.key === 'all' ? (listPayload?.counts?.total ?? 0) :
+            t.key === 'active' ? (listPayload?.counts?.active ?? 0) :
+              t.key === 'inactive' ? (listPayload?.counts?.deactive ?? 0) :
+                t.count
+      }));
 
     } catch (err) {
 
@@ -213,22 +236,27 @@ export class ApprovalChainConfigComponent implements OnInit {
     };
   }
 
+  setTab(key: any): void {
+    this.activeTab = key;
+    this.currentPage = 1;
+    this.loadList();
+  }
 
   onView(row: any): void {
     this.router.navigateByUrl('/approval/chain-config/new-chain/view', {
-      state: { chainId: row.id, type: 'view',url:'/approval/chain-config' },
+      state: { chainId: row.id, type: 'view', url: '/approval/chain-config' },
     });
   }
 
   onEdit(row: any): void {
     this.router.navigateByUrl('/approval/chain-config/new-chain/edit', {
-      state: { chainId: row.id, type: 'edit',url:'/approval/chain-config' },
+      state: { chainId: row.id, type: 'edit', url: '/approval/chain-config' },
     });
   }
 
   onCreate(): void {
     this.router.navigateByUrl('/approval/chain-config/new-chain/create', {
-      state: { type: 'create' ,url:'/approval/chain-config'},
+      state: { type: 'create', url: '/approval/chain-config' },
     });
   }
 }

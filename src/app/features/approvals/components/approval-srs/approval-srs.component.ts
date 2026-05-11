@@ -7,7 +7,7 @@ import { ReusableTableComponent } from "../../../../shared/components/reusable-t
 import { CommonTableActionsComponent } from "../../../../shared/components/common-table-actions/common-table-actions.component";
 import { Router } from '@angular/router';
 import { ApprovalLayoutComponent } from "../approval-layout/approval-layout.component";
-import { statusOptions } from '../../../../shared/constants/reusbale-filter';
+import { chainOptions, statusOptions } from '../../../../shared/constants/reusbale-filter';
 
 @Component({
   selector: 'app-approval-srs',
@@ -46,7 +46,15 @@ export class ApprovalSrsComponent {
       iconColor: '#ef4444',
     },
   ];
-  dropDownData =statusOptions;
+  dropDownData =chainOptions;
+
+   tabs:any[] = [
+    { key: 'all', label: 'All', count: 0 },
+    { key: 'in_progress', label: 'In progress', count: 0 },
+    { key: 'approved', label: 'Approved', count: 0 },
+    { key: 'rejected', label: 'Rejected', count: 0 },
+
+  ];
   private router=inject(Router);
   columns: any[] = [
     { key: 'srId', label: 'SR ID', width: '148px' ,custom: true,},
@@ -70,7 +78,7 @@ export class ApprovalSrsComponent {
     { srId: 'SR-2026-MKT-0016', jobTitle: 'Marketing Specialist', department: 'Marketing', currentStage: 'Rejected at Finance', stagePerson: 'Arun Gupta', overallStatus: 'Rejected', createdOn: '18 Mar 2026' },
     { srId: 'SR-2026-SLS-0009', jobTitle: 'Sales Executive', department: 'Sales', currentStage: 'Returned by HRBP', stagePerson: '', overallStatus: 'In Progress', createdOn: '16 Mar 2026' },
   ];
-
+  activeTab='all'
   ngOnInit(): void {
     this.loadData();
   }
@@ -113,6 +121,12 @@ export class ApprovalSrsComponent {
     this.cdr.markForCheck();
   }
 
+
+  setTab(key: any): void {
+    this.activeTab = key;
+    this.currentPage = 1;
+    // this.loadList();
+  }
   onView(row: any): void {
     this.router.navigateByUrl('/approval-srs/view', { state: { srId: row.srId, type: 'view' } });
   }

@@ -1,4 +1,11 @@
 <div class="card">
+
+  <div class="cr-heading">
+    <h1 class="cr-heading-title">Invite User</h1>
+    <p class="cr-heading-sub">
+      Add user details and assign roles to invite a new user to the system.
+    </p>
+  </div>
   <form [formGroup]="form">
     <div class="grid">
 
@@ -47,7 +54,7 @@
           <span *ngIf="c('employeeId')?.hasError('required')">Employee ID is required</span>
           <span *ngIf="c('employeeId')?.hasError('numericOnly')">Employee ID must be numeric</span>
           <span *ngIf="c('employeeId')?.hasError('maxlength')">Employee ID must have exactly 4 digits</span>
-           <span *ngIf="c('employeeId')?.hasError('minlength')">Employee ID must have exactly 4 digits</span>
+          <span *ngIf="c('employeeId')?.hasError('minlength')">Employee ID must have exactly 4 digits</span>
         </div>
       </div>
 
@@ -57,7 +64,8 @@
         <input formControlName="email" placeholder="Enter corporate email address">
         <div class="error" *ngIf="c('email')?.touched">
           <span *ngIf="c('email')?.hasError('required')">Email address is required</span>
-          <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email address</span>
+          <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email
+            address</span>
         </div>
       </div>
 

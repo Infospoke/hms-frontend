@@ -12,7 +12,7 @@
 
     </div>
     <div class="card-dd">
-        <app-common-filter [dropdowns]="dropDownData" [searchPlaceholder]="searchPlaceholder"  (filterChange)="onFilterChange($event)"/>
+        <app-common-filter [dropdowns]="dropDownData" [searchPlaceholder]="searchPlaceholder"  (filterChange)="onFilterChange($event)"  [tabs]="tabs" (tabChange)="tabChangeEvent($event)" [activeTab]="activeTab"/>
     </div>
 
 </div>

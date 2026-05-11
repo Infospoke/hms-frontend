@@ -79,7 +79,9 @@
                 </app-heading>
 
                 <div class="activity-body">
-                    <div class="activity-list">
+
+                    <div class="activity-list" *ngIf="activityList && activityList.length > 0; else noActivity">
+
                         <div class="activity-item" *ngFor="let log of activityList">
 
                             <!-- DOT -->
@@ -88,13 +90,24 @@
                             <!-- CONTENT -->
                             <div class="activity-content">
                                 <p class="message">
-                                    {{log?.activity}}
+                                    {{ log?.activity }}
                                 </p>
-                                <span class="time">{{getTimeAgo(log?.timeStamp)}}</span>
+
+                                <span class="time">
+                                    {{ getTimeAgo(log?.timeStamp) }}
+                                </span>
                             </div>
 
                         </div>
+
                     </div>
+
+                    <ng-template #noActivity>
+                        <p class="no-activity">
+                            No recent activity found within 24 hours!
+                        </p>
+                    </ng-template>
+
                 </div>
             </div>
 

@@ -2,11 +2,10 @@
 
   
 
-  <app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [backButtonUrl]="'/approval/chain-config'" [showBackButton]="true" [buttonText]="backText" />
+  <app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [backButtonUrl]="url" [showBackButton]="true" [buttonText]="backText" />
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-    <!-- ── Chain Information ─────────────────────────────────────────────────── -->
     <div class="cnc-card">
       <div class="cnc-section-header">
         <h2 class="cnc-section-title">Chain Information</h2>
@@ -183,8 +182,17 @@
             <div class="cnc-level-col cnc-level-col--del"></div>
           </div>
 
-          <div class="cnc-level-row" *ngFor="let level of levels.controls; let i = index; trackBy: trackByIndex"
-            [formGroupName]="i">
+          <div class="cnc-level-row"
+            *ngFor="let level of levels.controls; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i"
+            draggable="true"
+            [class.cnc-level-row--dragging]="dragIndex === i"
+            [class.cnc-level-row--drag-over]="dragOverIndex === i && dragOverIndex !== dragIndex"
+            (dragstart)="onDragStart($event, i)"
+            (dragover)="onDragOver($event, i)"
+            (dragleave)="onDragLeave()"
+            (drop)="onDrop($event, i)"
+            (dragend)="onDragEnd()">
 
             <div class="cnc-level-col cnc-level-col--drag">
               <span class="cnc-drag-handle" title="Drag to reorder">
@@ -243,7 +251,7 @@
           <i class="fa-solid fa-plus"></i>
           Add Level
         </button>
-        <p class="cnc-levels-hint" *ngIf="levels.length >= 5">Maximum of 5 levels reached.</p>
+        <p class="cnc-levels-hint" *ngIf="levels.length >= 3">Maximum of 3 levels reached.</p>
       </ng-container>
 
     </div>

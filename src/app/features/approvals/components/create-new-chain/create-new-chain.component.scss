@@ -462,6 +462,21 @@ textarea:disabled {
     }
 }
 
+// ── Drag-and-drop row states ──────────────────────────────────────────────────
+.cnc-level-row {
+    &--dragging {
+        opacity: 0.45;
+        background: #f0f6ff !important;
+        border: 1.5px dashed #93c5fd;
+        border-radius: 8px;
+    }
+
+    &--drag-over {
+        background: #eff6ff !important;
+        border-top: 2.5px solid #2563eb;
+    }
+}
+
 .cnc-level-badge {
     display: inline-flex;
     align-items: center;

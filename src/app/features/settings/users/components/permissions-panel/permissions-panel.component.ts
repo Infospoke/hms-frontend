@@ -76,6 +76,7 @@ const MODULE_ICON_MAP: Array<{ keywords: string[]; icon: string }> = [
   { keywords: ['training'], icon: 'fa-solid fa-graduation-cap' },
   { keywords: ['onboard'], icon: 'fa-solid fa-person-walking-arrow-right' },
   { keywords: ['sourcing'], icon: 'fa-solid fa-magnifying-glass' },
+  { keywords: ['approval', 'approvals', 'approve', 'sr approval', 'hierarchy approval'], icon: 'fa-solid fa-circle-check' },
 ];
 
 @Component({

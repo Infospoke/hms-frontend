@@ -1,18 +1,10 @@
 import {
   Component, EventEmitter, Input, Output, OnInit,
-  ChangeDetectionStrategy, ChangeDetectorRef
+  ChangeDetectionStrategy, ChangeDetectorRef, inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
-export interface AppNotification {
-  id: string;
-  type: 'approved' | 'pending' | 'changes' | 'submitted' | 'rejected' | 'info';
-  title: string;
-  message: string;
-  timeAgo: string;
-  isRead: boolean;
-}
+import { NotificationService } from '../../services/notification-service';
 
 @Component({
   selector: 'app-notification-panel',
@@ -24,69 +16,81 @@ export interface AppNotification {
 })
 export class NotificationPanelComponent implements OnInit {
 
-  @Input() visible = false;
+  @Input()  visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() countChange = new EventEmitter<number>();
+  @Output() countChange   = new EventEmitter<number>();
 
-  notifications: AppNotification[] = [
-    {
-      id: '1', type: 'approved', title: 'SR Approved', isRead: false,
-      message: 'SR-2026-ENG-0042 has been approved by Department Head',
-      timeAgo: '10 min ago'
-    },
-    {
-      id: '2', type: 'pending', title: 'Action Required', isRead: false,
-      message: 'SR-2026-FIN-0031 is awaiting your approval (Finance)',
-      timeAgo: '25 min ago'
-    },
-    {
-      id: '3', type: 'changes', title: 'Changes Requested', isRead: false,
-      message: 'SR-2026-DA-0025 has changes requested by Hrbp Manager',
-      timeAgo: '1 hr ago'
-    },
-    {
-      id: '4', type: 'submitted', title: 'SR Submitted', isRead: true,
-      message: 'SR-2026-MKT-0010 has been submitted successfully',
-      timeAgo: '2 hrs ago'
-    },
-    {
-      id: '5', type: 'rejected', title: 'SR Rejected', isRead: true,
-      message: 'SR-2026-OPS-0008 has been rejected',
-      timeAgo: '3 hrs ago'
-    },
-  ];
+  private notificationService = inject(NotificationService);
+  private router              = inject(Router);
+  private cdr                 = inject(ChangeDetectorRef);
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+  notifications: any[] = [];
+  unreadCount = 0;
+  isLoading   = false;
 
+ 
   ngOnInit(): void {
-    this.emitCount();
+    this.loadPanelData();
   }
 
-  get unreadCount(): number {
-    return this.notifications.filter(n => !n.isRead).length;
+  
+  private async loadPanelData(): Promise<void> {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    try {
+      // Load counts first
+      const countRes = await this.notificationService.getNotificationCounts();
+      this.unreadCount = countRes?.data?.unread ?? 0;
+      this.countChange.emit(this.unreadCount);
+
+     
+      const listRes = await this.notificationService.getNotifications({
+        page: 0,  
+        size: 5,
+        sortBy: 'notificationSentAt',
+        direction: 'DESC',
+        filters: { isRead: false },
+      });
+
+      this.notifications = listRes?.data?.notifications ?? [];
+    } catch (err) {
+      console.error('Failed to load notifications', err);
+    } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    }
   }
+
+ 
 
   markAllAsRead(): void {
+  
     this.notifications = this.notifications.map(n => ({ ...n, isRead: true }));
-    this.emitCount();
+    this.unreadCount   = 0;
+    this.countChange.emit(0);
     this.cdr.markForCheck();
   }
 
   clearAll(): void {
     this.notifications = [];
-    this.emitCount();
+    this.unreadCount   = 0;
+    this.countChange.emit(0);
     this.cdr.markForCheck();
   }
 
-  markAsRead(notif: AppNotification): void {
-    notif.isRead = true;
-    this.emitCount();
-    this.cdr.markForCheck();
+  markAsRead(notif: any): void {
+    if (!notif.isRead) {
+      notif.isRead   = true;
+      this.unreadCount = Math.max(0, this.unreadCount - 1);
+      this.countChange.emit(this.unreadCount);
+      this.cdr.markForCheck();
+    }
   }
 
   viewAll(): void {
     this.close();
-    this.router.navigateByUrl('/notifications');
+    this.router.navigateByUrl('/notifications/all-notifications');
   }
 
   close(): void {
@@ -94,23 +98,30 @@ export class NotificationPanelComponent implements OnInit {
     this.visibleChange.emit(false);
   }
 
-  private emitCount(): void {
-    this.countChange.emit(this.unreadCount);
+ 
+  private resolveType(notif: any): string {
+    const title = (notif.notificationTitle ?? '').toLowerCase();
+    if (title.includes('approv'))   return 'approved';
+    if (title.includes('reject'))   return 'rejected';
+    if (title.includes('pending') || title.includes('action') || title.includes('sla') || title.includes('awaiting')) return 'pending';
+    if (title.includes('change'))   return 'changes';
+    if (title.includes('submit') || title.includes('creat')) return 'submitted';
+    return 'info';
   }
 
-  getIconClass(type: AppNotification['type']): string {
+  getIconClass(notif: any): string {
     const map: Record<string, string> = {
-      approved: 'fa-solid fa-circle-check',
-      pending:  'fa-regular fa-clock',
-      changes:  'fa-solid fa-comment-dots',
-      submitted:'fa-solid fa-paper-plane',
-      rejected: 'fa-solid fa-circle-xmark',
-      info:     'fa-solid fa-circle-info',
+      approved:  'fa-solid fa-circle-check',
+      pending:   'fa-regular fa-clock',
+      changes:   'fa-solid fa-comment-dots',
+      submitted: 'fa-solid fa-paper-plane',
+      rejected:  'fa-solid fa-circle-xmark',
+      info:      'fa-solid fa-circle-info',
     };
-    return map[type] ?? 'fa-solid fa-bell';
+    return map[this.resolveType(notif)] ?? 'fa-solid fa-bell';
   }
 
-  getIconColor(type: AppNotification['type']): string {
+  getIconColor(notif: any): string {
     const map: Record<string, string> = {
       approved:  '#16a34a',
       pending:   '#f59e0b',
@@ -119,6 +130,19 @@ export class NotificationPanelComponent implements OnInit {
       rejected:  '#dc2626',
       info:      '#0891b2',
     };
-    return map[type] ?? '#64748b';
+    return map[this.resolveType(notif)] ?? '#64748b';
+  }
+
+
+  getTimeAgo(isoDate: string): string {
+    if (!isoDate) return '';
+    const diff = Date.now() - new Date(isoDate).getTime();
+    const mins  = Math.floor(diff / 60_000);
+    if (mins < 1)   return 'Just now';
+    if (mins < 60)  return `${mins} min ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs  < 24)  return `${hrs} hr${hrs > 1 ? 's' : ''} ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
   }
 }

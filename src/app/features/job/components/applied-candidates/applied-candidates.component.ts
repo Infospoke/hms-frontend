@@ -83,6 +83,7 @@ export class AppliedCandidatesComponent implements OnChanges {
         skillScore: analysis?.skills_match ?? 0,
         experienceScore: analysis?.experience_score ?? 0,
         keywordScore: analysis?.keywords_match ?? 0,
+        currentStage: app.currentStage,
         screeningData: analysis ? this.mapScreeningData(analysis) : null,
         interviewData: analysis ? this.mapInterviewData(analysis, app) : null
       };

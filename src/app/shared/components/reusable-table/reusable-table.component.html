@@ -18,6 +18,8 @@
             [class.rt-th--sortable]="isSortable(col.key)"
             [class.rt-th--sorted]="activeSortCol === col.key"
             [class.hide-mobile]="col.hideOnMobile"
+            [class.rt-td--center]="col.align === 'center'"
+            [class.rt-td--right]="col.align === 'right'"
             [attr.aria-sort]="activeSortCol === col.key ? activeSortDir : null"
             (click)="onSort(col.key)"
           >

@@ -108,7 +108,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   deptKeys: any[] = [];
   bussiness: any[] = [];
 
-  readonly requisitionTypes = ['New Headcount', 'Backfill', 'Replacement', 'Contract to Perm'];
+  readonly requisitionTypes = ['New Headcount', 'Backfill', 'Replacement', 'Contract to Permanent'];
   readonly workModes = ['Remote', 'Hybrid', 'On-site'];
   readonly empTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
   readonly priorities = ['Critical', 'High', 'Standard'];
@@ -448,7 +448,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
 
   validateStep2(type: any): void {
-    this.step1Form.markAllAsTouched();
+    this.step2Form.markAllAsTouched();
     if (!this.step2Form.value.hcSlot) {
       this.showBanner('HC slot required to proceed', 'err');
       return;
@@ -590,6 +590,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
 
   validateStep4(type: any): void {
+    this.step4Form.markAllAsTouched();
     if (this.jobBoards.length === 0) {
       this.showBanner('Select at least one sourcing channel', 'err');
       return;
@@ -644,6 +645,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   validateStep5(type: any): void {
+   
     this.isSaving = true;
     const payload = {
       positonBascicsRequest: this.buildPositionBasicsRequest(),

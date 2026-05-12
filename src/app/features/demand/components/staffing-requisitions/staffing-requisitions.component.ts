@@ -236,6 +236,10 @@ export class StaffingRequisitionsComponent implements OnInit {
 
       instance.jobBoards = jobBoards;
       instance.diversityBoards = diversityBoards;
+      instance.viewOnly = true;
+      instance.showTicks = false;
+      instance.startOpen = true;
+      instance.allowMultipleOpen = true;
 
     } catch {
       // silently fail
@@ -257,7 +261,7 @@ export class StaffingRequisitionsComponent implements OnInit {
     return {
       id: item.srId ?? 'Draft – Pending ID',
       title: item.jobTitle,
-      meta: `Created ${item.createdDate}`,
+      meta: `Created ${this.formatDate(item.createdDate)}`,
       status: item.status,
     };
   }
@@ -296,5 +300,17 @@ export class StaffingRequisitionsComponent implements OnInit {
 
   canEdit(sr: StaffingRequisition): boolean {
     return sr.status === 'Draft' || sr.status === 'Submitted';
+  }
+
+
+  private formatDate(dateStr: string): string {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr; // fallback if unparseable
+    return d.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }); // → "11 May 2025"
   }
 }

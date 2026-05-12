@@ -7,6 +7,9 @@
                 <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(0)">
                     <i class="fa fa-pen"></i> Edit
                 </span>
+                <span *ngIf="showTicks" class="tick-btn" [class.ticked]="isTicked(0)" (click)="onTickSection(0, $event)" [title]="isTicked(0) ? 'Reviewed' : 'Mark as reviewed'">
+                    <i [class]="isTicked(0) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
+                </span>
                 <span class="arrow-view" [class.open]="open[0]">
                     <i class="fa-solid fa-chevron-down"></i>
                 </span>
@@ -78,6 +81,9 @@
                 <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(1)">
                     <i class="fa fa-pen"></i> Edit
                 </span>
+                <span *ngIf="showTicks" class="tick-btn" [class.ticked]="isTicked(1)" (click)="onTickSection(1, $event)" [title]="isTicked(1) ? 'Reviewed' : 'Mark as reviewed'">
+                    <i [class]="isTicked(1) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
+                </span>
                 <span class="arrow-view" [class.open]="open[1]">
                     <i class="fa-solid fa-chevron-down"></i>
                 </span>
@@ -124,6 +130,9 @@
             <div class="step-actions">
                 <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(2)">
                     <i class="fa fa-pen"></i> Edit
+                </span>
+                <span *ngIf="showTicks" class="tick-btn" [class.ticked]="isTicked(2)" (click)="onTickSection(2, $event)" [title]="isTicked(2) ? 'Reviewed' : 'Mark as reviewed'">
+                    <i [class]="isTicked(2) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
                 </span>
                 <span class="arrow-view" [class.open]="open[2]">
                     <i class="fa-solid fa-chevron-down"></i>
@@ -203,6 +212,9 @@
                 <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(3)">
                     <i class="fa fa-pen"></i> Edit
                 </span>
+                <span *ngIf="showTicks" class="tick-btn" [class.ticked]="isTicked(3)" (click)="onTickSection(3, $event)" [title]="isTicked(3) ? 'Reviewed' : 'Mark as reviewed'">
+                    <i [class]="isTicked(3) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
+                </span>
                 <span class="arrow-view" [class.open]="open[3]">
                     <i class="fa-solid fa-chevron-down"></i>
                 </span>
@@ -264,6 +276,9 @@
             <div class="step-actions">
                 <span *ngIf="!viewOnly" class="edit-link" (click)="$event.stopPropagation(); goTo(4)">
                     <i class="fa fa-pen"></i> Edit
+                </span>
+                <span *ngIf="showTicks" class="tick-btn" [class.ticked]="isTicked(4)" (click)="onTickSection(4, $event)" [title]="isTicked(4) ? 'Reviewed' : 'Mark as reviewed'">
+                    <i [class]="isTicked(4) ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'"></i>
                 </span>
                 <span class="arrow-view" [class.open]="open[4]">
                     <i class="fa-solid fa-chevron-down"></i>

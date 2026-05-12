@@ -521,7 +521,7 @@
                         <label class="lbl">Must-Have Skills <span class="astrick">*</span>
                         </label>
 
-                        <span class="ai-chip" (click)="aiSuggestSkills()">✦ AI-suggest</span>
+                        <span class="ai-chip">✦ AI-suggest</span>
                     </div>
                     <div class="tag-area" [class.err]="mustSkills.length < 3 && mustSkills.length > 0"
                         (click)="mustInput.focus()">
@@ -541,7 +541,12 @@
                 </div>
 
                 <div class="field" style="margin-top:5px;">
-                    <label class="lbl">Nice-to-Have Skills</label>
+                    <div class="field-header">
+                        <label class="lbl">Nice-to-Have Skills <span class="astrick">*</span>
+                        </label>
+
+                        <span class="ai-chip">✦ AI-suggest</span>
+                    </div>
                     <div class="tag-area" (click)="niceInput.focus()">
                         <span class="tag" *ngFor="let t of niceSkills; let i = index; trackBy: trackByIndex">
                             {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeNice(i)">×</span>
@@ -559,7 +564,12 @@
                 </div>
 
                 <div class="field">
-                    <label class="lbl">Education Requirement <span class="astrick">*</span></label>
+                    <div class="field-header">
+                        <label class="lbl">Education Requirement <span class="astrick">*</span>
+                        </label>
+
+                        <span class="ai-chip">✦ AI-suggest</span>
+                    </div>
                     <select formControlName="eduReq" [class.err]="hasError(step3Form, 'eduReq')">
                         <option value="" disabled>Select education</option>
                         <option *ngFor="let e of educationOpts" [value]="e?.degree">{{ e?.degree }}</option>
@@ -640,7 +650,12 @@
 
                 <!-- Certifications -->
                 <div class="field">
-                    <label class="lbl">Certifications <span class="lbl-sub"></span></label>
+                    <div class="field-header">
+                        <label class="lbl">Certifications <span class="lbl-sub"></span>
+                        </label>
+
+                        <span class="ai-chip">✦ AI-suggest</span>
+                    </div>
                     <div class="tag-area" (click)="certInp.focus()">
                         <span class="tag" *ngFor="let t of certs; let i = index; trackBy: trackByIndex">
                             {{ t }}<span class="tx" (click)="$event.stopPropagation(); removeCert(i)">×</span>
@@ -657,7 +672,12 @@
                 </div>
 
                 <div class="field">
-                    <label class="lbl">Language Requirements <span class="lbl-sub"></span></label>
+                    <div class="field-header">
+                        <label class="lbl">Language Requirements <span class="lbl-sub"></span>
+                        </label>
+
+                        <span class="ai-chip">✦ AI-suggest</span>
+                    </div>
                     <div class="tag-area" (click)="langInp.focus()">
                         <span class="tag" *ngFor="let l of langs; let i = index; trackBy: trackByIndex">
                             {{ l }}<span class="tx" (click)="$event.stopPropagation(); removeLang(i)">×</span>
@@ -741,6 +761,10 @@
                             ✓ Selected
                         </div> -->
                     </div>
+                </div>
+               <div class="banner" *ngIf="banner"
+                    [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
+                    {{ banner.text }}
                 </div>
             </div>
 

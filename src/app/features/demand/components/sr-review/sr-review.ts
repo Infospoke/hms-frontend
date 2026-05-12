@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -86,13 +86,47 @@ export class SrReviewComponent implements OnInit {
   @Output() onSaveDraft = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<void>();
 
-  
-  open: boolean[] = [true, true, true, true, true];
+  // ── Tick / review mode (used by ViewSrComponent so approver marks each section) ──
+  @Input() showTicks = false;
+  @Output() ticksChanged = new EventEmitter<boolean[]>();
 
-  ngOnInit(): void {}
+  // ── Accordion behaviour controls ─────────────────────────────────────────────
+  /** Start all sections expanded — used by the Full SR modal */
+  @Input() startOpen = false;
+  /** Allow multiple sections open simultaneously — used by the Full SR modal */
+  @Input() allowMultipleOpen = false;
+
+  open: boolean[] = [true, true, true, true, true];
+  sectionTicked: boolean[] = [false, false, false, false, false];
+
+  ngOnInit(): void {
+    // Start all closed for single-accordion approval mode, unless overridden
+    if (this.viewOnly && !this.startOpen) {
+      this.open = [false, false, false, false, false];
+    }
+  }
+
+  /** Toggle tick for a single section without collapsing the accordion */
+  onTickSection(index: number, event: MouseEvent): void {
+    event.stopPropagation();
+    this.sectionTicked[index] = !this.sectionTicked[index];
+    this.ticksChanged.emit([...this.sectionTicked]);
+  }
+
+  isTicked(i: number): boolean {
+    return this.sectionTicked[i];
+  }
 
   toggle(i: number): void {
-    this.open[i] = !this.open[i];
+    if (this.viewOnly && !this.allowMultipleOpen) {
+      // Single-accordion: opening one closes all others
+      const wasOpen = this.open[i];
+      this.open = [false, false, false, false, false];
+      this.open[i] = !wasOpen;
+    } else {
+      // Multi-accordion: each section toggles independently
+      this.open[i] = !this.open[i];
+    }
   }
 
   goTo(step: number): void {

@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { UserService } from '../../servics/user-service';
 import { AuthService } from '../../../../../core/auth/auth.service';
+import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
 
 
 export interface PermissionRow {
@@ -105,7 +106,7 @@ const MODULE_ICON_MAP: Array<{ keywords: string[]; icon: string }> = [
 @Component({
   selector: 'app-edit-role-info',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeadingComponent],
   templateUrl: './edit-role-info.component.html',
   styleUrl: './edit-role-info.component.scss',
 })
@@ -116,6 +117,8 @@ export class EditRoleInfoComponent implements OnInit {
 
   private authService=inject(AuthService)
   allModules: ApiModule[] = [];
+  backButtonUrl='/users/role-permissions'
+  backText='Back to Roles';
   selectedModuleId: number | 'all' = 'all';
   permMap = new Map<number, PermissionRow>();
   loading = true;

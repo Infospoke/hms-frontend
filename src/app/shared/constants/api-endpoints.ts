@@ -89,13 +89,16 @@ export const API = {
         APPROVAL_CHAIN_DETAILS: (id: any) => `/hms/approval-chains/details/${id}`,
         APPROVAL_CHAIN_LIST: `/hms/approval-chains/list`,
         DEPATMENTS: `/hms/configurations/departments`,
+        SR_DETAILS: (srId: string) => `/hms/staffing-requisition/approval-view/${srId}`,
+        APPROVE_OR_REJECT: `/hms/staffing-requisition/sr-approval`,
     },
     NOTIFICATIONS: {
         ALL_NOTIFICATIONS: `/hms/notifications/list`,
         NOTIFICATION_COUNTS: `/hms/notifications/counts`,
     },
     SR_APPROVALS: {
-        COUNT:`/hms/staffing-requisition/sr-counts`,
-        LIST:``
+        COUNT: `/hms/staffing-requisition/sr-counts`,
+        LIST: `/hms/staffing-requisition/assigned-srs-for-approvals`,
+
     }
-}
+};

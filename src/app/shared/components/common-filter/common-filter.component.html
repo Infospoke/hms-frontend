@@ -141,4 +141,16 @@
 
   </div>
 
+  
 </div>
+
+
+<div class="acc-tabs-wrap">
+    <div class="acc-tabs">
+      <button class="acc-tab" *ngFor="let tab of tabs" [class.acc-tab--active]="activeTab === tab.key"
+        (click)="setTab(tab.key)">
+        {{ tab.label }}
+        <span class="acc-tab-count">{{ tab.count }}</span>
+      </button>
+    </div>
+  </div>

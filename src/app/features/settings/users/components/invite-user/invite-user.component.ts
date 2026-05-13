@@ -6,12 +6,13 @@ import { UserService } from '../../servics/user-service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { alphabetsOnly, numericOnly, mobileValidator, notSameAsMobile } from '../../../../../shared/validations/validators';
+import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
 
 
 @Component({
   selector: 'app-invite-user',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,HeadingComponent],
   templateUrl: './invite-user.component.html',
   styleUrl: './invite-user.component.scss',
 })
@@ -32,7 +33,10 @@ export class InviteUserComponent implements OnInit {
   userData: any = null;
   isView: boolean = false;
   userId: any;
-
+  pageTitle='Invite User';
+  pageSubtitle='Fill in the details to invite a new user to the system.';
+  backText="Back to Users";
+  backButtonUrl='/users/user-onboard-roles';
   constructor(private fb: FormBuilder) {
     const nav = this.router.getCurrentNavigation();
     const state = nav?.extras?.state as { type: string; user: any };
@@ -49,7 +53,7 @@ export class InviteUserComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), alphabetsOnly()]],
       lastName: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(50), alphabetsOnly()]],
       employeeId: ['', [Validators.required, numericOnly(), Validators.minLength(4), Validators.maxLength(4)]],
-      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],
+      email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org|net|edu)$/)]],
       mobile: ['', [Validators.required, mobileValidator(), Validators.minLength(10), Validators.maxLength(15)]],
       altMobile: ['', [mobileValidator(), Validators.minLength(10), Validators.maxLength(15), notSameAsMobile('mobile')]],
       employmentType: ['', Validators.required],

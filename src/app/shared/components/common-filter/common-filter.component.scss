@@ -1,3 +1,6 @@
+// ── Shared height token ───────────────────────────────────────────────────────
+$ctrl-h: 38px;
+
 .filter-bar {
   display: flex;
   align-items: center;
@@ -22,7 +25,7 @@
 
     .search-input {
       width: 100%;
-      height: 38px;
+      height: $ctrl-h;                 // ← unified
       padding: 0 36px 0 32px;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
@@ -70,7 +73,7 @@
     align-items: center;
     gap: 5px;
     width: 200px;
-    height: 38px;
+    height: $ctrl-h;                   // ← unified
     padding: 0 32px 0 12px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -79,6 +82,7 @@
     user-select: none;
     transition: border-color 0.18s;
     white-space: nowrap;
+    box-sizing: border-box;
 
     &:hover { border-color: #d1d5db; }
 
@@ -170,15 +174,17 @@
   }
 }
 
-// ── Date Range Bar ────────────────────────────────────────────────────────────
+// ── Date Range Bar ─────────────────────────────────────────────────────────────
 .date-range-bar {
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  height: $ctrl-h;                     // ← unified
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 5px 12px;
+  padding: 0 12px;                     // horizontal only — height drives vertical
+  gap: 0;
   animation: drSlideIn 0.16s ease;
 
   @keyframes drSlideIn {
@@ -191,7 +197,8 @@
 .date-field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: center;            // vertically centre inside $ctrl-h
+  gap: 1px;
 }
 
 .date-label {
@@ -234,10 +241,9 @@
   position: relative;
   z-index: 2;
 
-  // Stretch the native picker icon over the entire row so clicking anywhere opens calendar
   &::-webkit-calendar-picker-indicator {
     position: absolute;
-    left: -22px;           // cover the calendar svg icon too
+    left: -22px;
     width: calc(100% + 22px);
     height: 100%;
     opacity: 0;
@@ -253,25 +259,18 @@
   }
 }
 
-// Arrow between FROM and TO
 .date-range-sep {
   display: flex;
-  align-items: flex-end;
-  padding-bottom: 1px;
+  align-items: center;
   margin: 0 10px;
   color: #9ca3af;
 
-  svg {
-    width: 18px;
-    height: 10px;
-  }
+  svg { width: 18px; height: 10px; }
 }
 
-// Clear (×) button — sits at the end, vertically centered with inputs
 .date-clear-btn {
   display: flex;
-  align-items: flex-end;
-  padding-bottom: 1px;
+  align-items: center;
   margin-left: 10px;
   background: transparent;
   border: none;
@@ -283,4 +282,70 @@
 
   svg { width: 11px; height: 11px; }
   &:hover { color: #ef4444; }
+}
+
+
+
+.acc-tabs-wrap {
+  background: #ffffff;
+  width:100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px 10px 0 0;
+  padding: 0 16px;
+  margin-bottom: 0;
+  margin-top: 5px;
+}
+
+.acc-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.acc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+
+
+  &:not(:last-child) {
+    border-right: 1px solid #e2e8f0;
+  }
+
+  &:hover { color: #1e40af; }
+
+  &--active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+    font-weight: 600;
+  }
+}
+
+.acc-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+
+  .acc-tab--active & {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
 }

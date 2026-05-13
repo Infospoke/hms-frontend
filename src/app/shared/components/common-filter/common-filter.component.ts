@@ -5,6 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { TabKey } from '../../constants/candidate.modal';
 
 
 const CUSTOM_VALUE = 'CUSTOM';
@@ -25,6 +26,9 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
 
   @Output() filterChange = new EventEmitter<any>();
 
+  @Output() tabChange = new EventEmitter<any>();
+  @Input() tabs: { key: string; label: string; count: number }[] = [];
+  @Input() activeTab: string = ''
   searchTerm: string = '';
   selectedFilters: { [key: string]: string } = {};
   openDropdownKey: string | null = null;
@@ -46,12 +50,14 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     this.dropdowns.forEach(d => {
       this.selectedFilters[d.key] = d.selected ?? d.options[0]?.value ?? '';
     });
-
+    
     this.searchSubject.pipe(
       debounceTime(this.debounceMs),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
     ).subscribe(() => this.emitChange());
+    console.log(this.tabs);
+    
   }
 
   ngOnDestroy(): void {
@@ -157,7 +163,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     const dd = this.dateDropdown;
     if (dd) {
 
-      this.selectedFilters[dd.key] = dd.options[0]?.value ?? '';
+      this.selectedFilters[dd.key] = dd.options[2]?.value ?? '';
     }
     this.emitChange();
     this.cdr.markForCheck();
@@ -185,5 +191,15 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     }
 
     this.filterChange.emit(payload);
+  }
+
+
+
+  setTab(key: any): void {
+    // key?.stopPropagation();
+    this.activeTab = key;
+    this.tabChange.emit( key );
+    // this.currentPage = 1;
+    // this.loadList();
   }
 }

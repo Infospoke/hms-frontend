@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding: 14px;
-  gap: 10px
+  gap: 10px;
 }
 
 .logo {
@@ -19,7 +19,7 @@
   margin-left: auto;
   display: flex;
   gap: 6px;
-  align-items: center
+  align-items: center;
 }
 
 .av {
@@ -38,7 +38,7 @@
 
 .lay {
   display: flex;
-  min-height: 100vh
+  min-height: 100vh;
 }
 
 app-search-bar {
@@ -46,6 +46,9 @@ app-search-bar {
   max-width: 400px;
 }
 
+.notif-wrapper {
+  position: relative;
+}
 
 .notification {
   position: relative;
@@ -55,9 +58,7 @@ app-search-bar {
   color: #475569;
 }
 
-.notification:hover {
-  color: #2563eb;
-}
+.notification:hover { color: #2563eb; }
 
 .notif-count {
   position: absolute;
@@ -70,34 +71,17 @@ app-search-bar {
   border-radius: 50%;
 }
 
-.custom-menu {
-  min-width: 180px;
-}
+.custom-menu { min-width: 180px; }
 
 .menu-icon {
   margin-right: 10px;
   font-size: 14px;
 }
 
-/* Different icon colors */
-.menu-icon.profile {
-  color: #2563eb; /* blue */
-}
+.menu-icon.profile  { color: #2563eb; }
+.menu-icon.password { color: #f59e0b; }
+.menu-icon.logout   { color: #dc2626; }
 
-.menu-icon.password {
-  color: #f59e0b; /* amber */
-}
+.ant-dropdown-menu-item:hover { background: #f1f5f9 !important; }
 
-.menu-icon.logout {
-  color: #dc2626; /* red */
-}
-
-/* Hover effect */
-.ant-dropdown-menu-item:hover {
-  background: #f1f5f9 !important;
-}
-
-
-.logout-item span {
-  color: #dc2626;
-}
+.logout-item span { color: #dc2626; }

@@ -27,7 +27,7 @@ export class AddSkillComponent {
   }
 
 
-  getPlaceholder(): string {
+ get  getPlaceholder(): string {
   switch (this.modalType) {
     case 'Must-Have Skills':
       return 'Enter Skills (e.g. Java, Python )';

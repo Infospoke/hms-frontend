@@ -1,4 +1,4 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, inject, signal } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
 import { CardComponent } from "../card/card.component";
@@ -8,10 +8,16 @@ import { CommonModule } from '@angular/common';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { Router } from '@angular/router';
+import { NotificationPanelComponent } from '../../../features/notification-panel/components/notification-panel/notification-panel.component';
+
 
 @Component({
   selector: 'app-header',
-  imports: [CardComponent, ProfilePipe, SearchBarComponent, CommonModule, NzDropDownModule,NzMenuModule],
+  imports: [
+    CardComponent, ProfilePipe, SearchBarComponent,
+    CommonModule, NzDropDownModule, NzMenuModule,
+    NotificationPanelComponent
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -20,38 +26,23 @@ export class HeaderComponent {
   menuToggle = output();
   isDropdownOpen = false;
   notificationCount = 3;
+  notifPanelOpen = false;
+
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
-  private router=inject(Router);
-  // get userName(): string { return this.tokenService.getUser()?.name || 'User'; }
-  // get userRole(): string { return this.tokenService.getUser()?.role || ''; }
+  private router = inject(Router);
 
   logout() { this.authService.logout(); }
 
+  get userName() { return this.authService.getUserName(); }
+  get roleName()  { return this.authService.getRole();    }
 
-  get userName() {
-    return this.authService.getUserName();
-  }
+  toggleDropdown() { this.isDropdownOpen = !this.isDropdownOpen; }
 
-  get roleName() {
-    return this.authService.getRole();
-  }
+  openNotifications() { this.notifPanelOpen = !this.notifPanelOpen; }
 
+  onNotifCountChange(count: number) { this.notificationCount = count; }
 
-
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
-
-  goToProfile() {
-    console.log('Profile clicked');
-  }
-
-  changePassword() {
-  this.router.navigateByUrl("/auth/change-password")
-  }
-
-  openNotifications() {
-    console.log('Notifications clicked');
-  }
+  goToProfile()    { console.log('Profile clicked'); }
+  changePassword() { this.router.navigateByUrl('/auth/change-password'); }
 }

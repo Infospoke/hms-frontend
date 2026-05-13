@@ -2,18 +2,10 @@
 
   <app-approval-layout [heading]="'Approval of Chains'" subHeading="Review and approve pending chains" [showInfo]="true"
     infoTooltip="Manage approval chains" [cards]="cards" [searchPlaceholder]="'Search by chain name...'"
-    (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData">
+    (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData" [tabs]="tabs" (tabChange)="setTab($event)" [activeTab]="activeTab">
   </app-approval-layout>
 
-  <div class="acc-tabs-wrap">
-    <div class="acc-tabs">
-      <button class="acc-tab" *ngFor="let tab of tabs" [class.acc-tab--active]="activeTab === tab.key"
-        (click)="setTab(tab.key)">
-        {{ tab.label }}
-        <span class="acc-tab-count">{{ tab.count }}</span>
-      </button>
-    </div>
-  </div>
+  
 
   <!-- ── Table ── -->
   <div class="card-dd">

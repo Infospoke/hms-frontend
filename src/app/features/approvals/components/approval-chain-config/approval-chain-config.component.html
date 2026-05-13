@@ -12,6 +12,9 @@
     [showBtn]="true"
     [buttonType]="'Create Chain'"
     (filterChange)="filtersResponse($event)"
+    [tabs]="tabs"
+    (tabChange)="setTab($event)"
+    [activeTab]="activeTab"
     >
     
   </app-approval-layout>

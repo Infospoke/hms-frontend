@@ -326,7 +326,7 @@
     <div class="action-grid"
       *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
       <button class="action-btn primary" (click)="onAction('interview')"
-        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
+        *ngIf="showMoveToInterview(candidate.status, candidate.currentStage)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="3" width="20" height="14" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -334,7 +334,7 @@
         Move to Interview
       </button>
       <button class="action-btn success" (click)="openActionModal($event, 'hire')"
-        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
+        *ngIf="showReject(candidate.status, candidate.currentStage)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
           <path d="m9 11 3 3L22 4" />
@@ -342,7 +342,7 @@
         Hire Candidate
       </button>
       <button class="action-btn outline" (click)="onAction('schedule')"
-        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED'">
+        *ngIf="showMoveToInterview(candidate.status, candidate.currentStage)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="4" width="18" height="18" rx="2" />
           <path d="M16 2v4M8 2v4M3 10h18" />
@@ -350,7 +350,7 @@
         Schedule Interview
       </button>
       <button class="action-btn danger" (click)="openActionModal($event, 'reject')"
-        *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
+        *ngIf="showReject(candidate.status, candidate.currentStage)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10" />
           <path d="m15 9-6 6M9 9l6 6" />

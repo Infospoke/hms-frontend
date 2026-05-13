@@ -1,3 +1,4 @@
+<app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [backButtonUrl]="backButtonUrl" [showBackButton]="true" [buttonText]="backText" />
 <div class="card">
   <form [formGroup]="form">
     <div class="grid">
@@ -44,10 +45,22 @@
         <label>Employee ID <span class="astrick">*</span></label>
         <input formControlName="employeeId" placeholder="Enter employee ID (eg. 0092)">
         <div class="error" *ngIf="c('employeeId')?.touched">
-          <span *ngIf="c('employeeId')?.hasError('required')">Employee ID is required</span>
-          <span *ngIf="c('employeeId')?.hasError('numericOnly')">Employee ID must be numeric</span>
-          <span *ngIf="c('employeeId')?.hasError('maxlength')">Employee ID must have exactly 4 digits</span>
-           <span *ngIf="c('employeeId')?.hasError('minlength')">Employee ID must have exactly 4 digits</span>
+
+          <span *ngIf="hasError('employeeId','required')">
+            Employee ID is required
+          </span>
+
+          <span *ngIf="!hasError('employeeId','required') 
+                  && hasError('employeeId','numericOnly')">
+            Employee ID must be numeric
+          </span>
+
+          <span *ngIf="!hasError('employeeId','required') 
+                  && !hasError('employeeId','numericOnly')
+                  && (hasError('employeeId','maxlength') || hasError('employeeId','minlength'))">
+            Employee ID must have exactly 4 digits
+          </span>
+
         </div>
       </div>
 
@@ -56,19 +69,42 @@
         <label>Email Address <span class="astrick">*</span></label>
         <input formControlName="email" placeholder="Enter corporate email address">
         <div class="error" *ngIf="c('email')?.touched">
-          <span *ngIf="c('email')?.hasError('required')">Email address is required</span>
-          <span *ngIf="c('email')?.hasError('email') || c('email')?.hasError('pattern')">Enter a valid email address</span>
+
+          <span *ngIf="hasError('email','required')">
+            Email address is required
+          </span>
+
+          <span *ngIf="!hasError('email','required') 
+                  && hasError('email','email')">
+            Enter a valid email address
+          </span>
+
+          <span *ngIf="!hasError('email','required') 
+                  && !hasError('email','email')
+                  && hasError('email','pattern')">
+            Only .com, .in, .org, .net, .edu domains are allowed
+          </span>
+
         </div>
       </div>
 
       <!-- Mobile -->
       <div class="field">
         <label>Mobile Number <span class="astrick">*</span></label>
-        <input formControlName="mobile" placeholder="Enter mobile with country code (e.g.9876543210)">
+
+        <input formControlName="mobile" placeholder="Enter mobile number (e.g.9876543210)">
+
         <div class="error" *ngIf="c('mobile')?.touched">
-          <span *ngIf="c('mobile')?.hasError('required')">Mobile number is required</span>
-          <span *ngIf="c('mobile')?.hasError('invalidMobile')">Enter a valid mobile number</span>
-          <span *ngIf="c('mobile')?.hasError('minlength')">Enter a valid mobile number</span>
+
+          <span *ngIf="hasError('mobile','required')">
+            Mobile number is required
+          </span>
+
+          <span *ngIf="!hasError('mobile','required') &&
+                  (hasError('mobile','invalidMobile') || hasError('mobile','minlength'))">
+            Enter a valid mobile number
+          </span>
+
         </div>
       </div>
 

@@ -11,6 +11,7 @@ import { PermissionsPanelComponent }           from '../permissions-panel/permis
 import { PermissionRow, ApiModule, ApiSubModule } from '../permissions-panel/permissions-panel.component';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { Router } from '@angular/router';
+import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
 
 const SUB_DESC: Record<string, string> = {
   'My Jrs':              'Manage job requisitions',
@@ -24,7 +25,7 @@ const SUB_DESC: Record<string, string> = {
 @Component({
   selector:    'app-create-role',
   standalone:  true,
-  imports:     [CommonModule, ReactiveFormsModule, PermissionsPanelComponent],
+  imports:     [CommonModule, ReactiveFormsModule, PermissionsPanelComponent,HeadingComponent],
   templateUrl: './createrole.component.html',
   styleUrls:   ['./createrole.component.scss'],
 })
@@ -45,8 +46,8 @@ export class CreateRoleComponent implements OnInit {
   permMap    = new Map<number, PermissionRow>();
   loading    = true;
   permTouched = false;
-
-
+  backButtonUrl='/users/role-permissions'
+  backText='Back to Roles';
   ngOnInit(): void {
     this.buildForm();
     this.loadModules();

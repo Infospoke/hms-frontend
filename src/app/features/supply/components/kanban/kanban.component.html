@@ -1,8 +1,9 @@
 <div class="kanban-page">
 
 
-  <div class="filter-bar">
-    <div class="filter-left">
+    <div class="filter-bar">
+    <!-- Controls + chips in one single row -->
+    <div class="filter-controls">
       <button class="btn-outline" (click)="openFilterPanel()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
@@ -30,19 +31,19 @@
         <div class="jr-dropdown-panel" *ngIf="showJrDropdown">
           <div class="jr-dropdown-header">Select Job Requisition</div>
           <div class="jr-dropdown-list">
-            <label
+            <div
               class="jr-option"
               *ngFor="let job of jobsList"
               [class.selected]="isJrSelected(job.jobId)"
               (click)="toggleJrSelection(job.jobId, $event)">
               <span class="jr-checkbox" [class.checked]="isJrSelected(job.jobId)">
-                <svg *ngIf="isJrSelected(job.id)" width="10" height="10" viewBox="0 0 12 12" fill="none">
+                <svg *ngIf="isJrSelected(job.jobId)" width="10" height="10" viewBox="0 0 12 12" fill="none">
                   <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </span>
               <span class="jr-code">{{ job.jobCode }}</span>
               <span class="jr-title">{{ job.jobTitle }}</span>
-            </label>
+            </div>
             <div class="jr-empty" *ngIf="jobsList.length === 0 && !jobsLoading">No open requisitions</div>
             <div class="jr-loading" *ngIf="jobsLoading">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -53,6 +54,22 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- ── JR CHIPS inline to the right ────────────────────── -->
+      <div class="jr-chips-inline" *ngIf="selectedJrIds.length > 0">
+        <ng-container *ngFor="let jobId of visibleJrChips">
+          <ng-container *ngIf="getJobById(jobId) as job">
+            <span class="jr-filter-chip">
+              <span class="jr-chip-code">{{ job.jobCode }}</span>
+              <span class="jr-chip-title">{{ job.jobTitle }}</span>
+              <span class="jr-chip-remove" (click)="removeJrChip(jobId, $event)">x</span>
+            </span>
+          </ng-container>
+        </ng-container>
+        <span class="jr-more-pill" *ngIf="hiddenJrCount > 0" (click)="toggleJrDropdown()">
+          +{{ hiddenJrCount }} more
+        </span>
       </div>
     </div>
   </div>
@@ -71,7 +88,10 @@
             *ngFor="let sec of filterSections"
             [class.active]="activeFilterSection === sec"
             (click)="activeFilterSection = sec">
-            {{ sec }}
+            <span class="section-tab-label">{{ sec }}</span>
+            <span class="section-count-badge" *ngIf="getFilterSectionCount(sec) > 0">
+              {{ getFilterSectionCount(sec) }}
+            </span>
           </div>
           <a class="reset-link" (click)="resetFilters()">RESET FILTER</a>
         </div>
@@ -149,20 +169,22 @@
         </div>
 
         <div class="filter-chips-col">
-          <div class="chips-summary" *ngIf="tempActiveChips.length > 0">
-            <span class="chips-count-label">{{ tempActiveChips.length }} Filters Selected</span>
+          <div class="chips-summary">
+            <span class="chips-count-label">
+              {{ tempAllChips.length }} Filter{{ tempAllChips.length !== 1 ? 's' : '' }} Active
+            </span>
             <div class="chips-grid">
+              <!-- Default / non-removable chips -->
+              <span class="filter-chip filter-chip-default" *ngFor="let chip of tempDefaultChips">
+                {{ chip.label }}
+                <span class="chip-default-badge">default</span>
+              </span>
+              <!-- User-applied chips -->
               <span class="filter-chip" *ngFor="let chip of tempActiveChips">
                 {{ chip.label }}
-                <span class="chip-remove" (click)="removeTempChip(chip.key)">×</span>
+                <span class="chip-remove" (click)="removeTempChip(chip.key)">x</span>
               </span>
             </div>
-          </div>
-          <div class="chips-empty" *ngIf="tempActiveChips.length === 0">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5">
-              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-            </svg>
-            <span>No filters applied</span>
           </div>
         </div>
       </div>

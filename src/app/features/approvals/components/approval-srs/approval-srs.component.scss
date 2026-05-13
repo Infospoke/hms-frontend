@@ -241,6 +241,26 @@
     background: #fef9c3;
     color: #854d0e;
   }
+
+  &.in-progress {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.approved {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
 }
 
 

@@ -7,7 +7,15 @@ import { ReusableTableComponent } from "../../../../shared/components/reusable-t
 import { CommonTableActionsComponent } from "../../../../shared/components/common-table-actions/common-table-actions.component";
 import { Router } from '@angular/router';
 import { ApprovalLayoutComponent } from "../approval-layout/approval-layout.component";
-import { statusOptions } from '../../../../shared/constants/reusbale-filter';
+import { chainOptions, statusOptions } from '../../../../shared/constants/reusbale-filter';
+import { ApprovalService } from '../../services/approval-service';
+
+const TAB_APPROVAL_MAP: Record<any, string> = {
+  pending: 'in_progress',
+  approved: 'Approved',
+  rejected: 'Rejected',
+  all: ''
+};
 
 @Component({
   selector: 'app-approval-srs',
@@ -19,105 +27,196 @@ export class ApprovalSrsComponent {
   cards = [
     {
       label: 'Total SRs',
-      value: 12,
+      value: 0,
       iconClass: 'fa-regular fa-file-lines',
       iconBgColor: '#eef2ff',
       iconColor: '#6366f1',
     },
     {
       label: 'In Progress',
-      value: 5,
+      value: 0,
       iconClass: 'fa-regular fa-circle-dot',
       iconBgColor: '#fffbeb',
       iconColor: '#f59e0b',
     },
     {
       label: 'Approved',
-      value: 4,
+      value: 0,
       iconClass: 'fa-solid fa-circle-check',
       iconBgColor: '#f0fdf4',
       iconColor: '#22c55e',
     },
     {
       label: 'Rejected',
-      value: 2,
+      value: 0,
       iconClass: 'fa-solid fa-circle-xmark',
       iconBgColor: '#fef2f2',
       iconColor: '#ef4444',
     },
   ];
-  dropDownData =statusOptions;
-  private router=inject(Router);
+  dropDownData = chainOptions;
+
+  tabs: any[] = [
+    { key: 'all', label: 'All', count: 0 },
+    { key: 'in_progress', label: 'In progress', count: 0 },
+    { key: 'approved', label: 'Approved', count: 0 },
+    { key: 'rejected', label: 'Rejected', count: 0 },
+
+  ];
+  private router = inject(Router);
   columns: any[] = [
-    { key: 'srId', label: 'SR ID', width: '148px' ,custom: true,},
+    { key: 'srId', label: 'SR ID', width: '148px', custom: true, },
     { key: 'jobTitle', label: 'Job Title', width: 'auto' },
     { key: 'department', label: 'Department', width: '120px', hideOnMobile: true },
     { key: 'currentStage', label: 'Current Stage', width: '190px', custom: true },
     { key: 'overallStatus', label: 'Overall Status', width: '130px', custom: true, align: 'center' },
-    { key: 'createdOn', label: 'Created On', width: '110px', hideOnMobile: true },
+    { key: 'createdOn', label: 'Created On', width: '110px', hideOnMobile: true , custom: true,},
     { key: 'actions', label: 'Action', width: '90px', align: 'center', custom: true },
   ];
-  data:any[]=[]
+  data: any[] = []
+  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
   totalItems = 0;
   currentPage = 1;
   pageSize = 10;
   private cdr = inject(ChangeDetectorRef);
-  private mockData: any[] = [
-    { srId: 'SR-2026-ENG-0042', jobTitle: 'Senior Backend Engineer', department: 'Engineering', currentStage: 'HRBP (Pending)', stagePerson: 'Priya Sharma', overallStatus: 'In Progress', createdOn: '10 Apr 2026' },
-    { srId: 'SR-2026-FIN-0031', jobTitle: 'QA Engineer', department: 'Quality', currentStage: 'Finance (Pending)', stagePerson: 'Neel Malhotra', overallStatus: 'In Progress', createdOn: '05 Apr 2026' },
-    { srId: 'SR-2026-DA-0025', jobTitle: 'Data Analyst', department: 'Analytics', currentStage: 'Dept Head (Pending)', stagePerson: 'Neha Verma', overallStatus: 'In Progress', createdOn: '04 Apr 2026' },
-    { srId: 'SR-2026-HR-0018', jobTitle: 'HRBP Manager', department: 'HR', currentStage: 'Completed', stagePerson: 'All stages approved', overallStatus: 'Approved', createdOn: '20 Mar 2026' },
-    { srId: 'SR-2026-MKT-0016', jobTitle: 'Marketing Specialist', department: 'Marketing', currentStage: 'Rejected at Finance', stagePerson: 'Arun Gupta', overallStatus: 'Rejected', createdOn: '18 Mar 2026' },
-    { srId: 'SR-2026-SLS-0009', jobTitle: 'Sales Executive', department: 'Sales', currentStage: 'Returned by HRBP', stagePerson: '', overallStatus: 'In Progress', createdOn: '16 Mar 2026' },
-  ];
+  private approvalService = inject(ApprovalService);
 
-  ngOnInit(): void {
-    this.loadData();
+  activeTab = 'all'
+  async ngOnInit(): Promise<void> {
+    await Promise.all([this.loadCounts(), this.loadList()]);
   }
+  private async loadCounts(): Promise<void> {
+    try {
+      const res: any = await this.approvalService.getSrCount();
+      const d = res?.data ?? {};
 
-  private loadData(): void {
+      this.cards[0].value = d.totalSrs    ?? d.all        ?? 0;
+      this.cards[1].value = d.inProgress  ?? d.in_progress ?? 0;
+      this.cards[2].value = d.approved    ?? 0;
+      this.cards[3].value = d.rejected    ?? 0;
+
+
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('[chainCount]', err);
+    }
+  }
+  private async loadList(): Promise<void> {
     this.cdr.markForCheck();
-    this.data=this.mockData;
+
+    try {
+      const payload = this.buildPayload();
+      const res: any = await this.approvalService.getSRList(payload);
+      const d = res?.data ?? {};
+      this.data = (d.content ?? []).map((item: any) => ({
+        srId:          item.srId          ?? '—',
+        jobTitle:      item.jobTitle       ?? '—',
+        department:    item.Department     ?? '—',
+        currentStage:  item.CurrentStage   ?? '—',
+        stagePerson:   item.stagePerson    ?? null,
+        overallStatus: item.overAllStatus  ?? '—',
+        createdOn:     item.createdOn      ?? '—',
+      }));
+
+      this.totalItems = d.totalElements ?? d.content?.length ?? 0;
+
+     
+      const counts = d.counts ?? {};
+      this.tabs = this.tabs.map(t => ({
+        ...t,
+        count:
+          t.key === 'all'         ? (counts.all        ?? 0) :
+          t.key === 'in_progress' ? (counts.inProgress ?? 0) :
+          t.key === 'approved'    ? (counts.approved   ?? 0) :
+          t.key === 'rejected'    ? (counts.rejected   ?? 0) :
+          t.count
+      }));
+
+    } catch (err) {
+      console.error('[approvalSrList]', err);
+      this.data       = [];
+      this.totalItems = 0;
+    } finally {
+      this.cdr.markForCheck();
+    }
   }
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadData();
+    this.loadList();
   }
 
-  onStatusChange(event: Event): void {
-    // this.selectedStatus = (event.target as HTMLSelectElement).value;
-    this.applyFilters();
-  }
 
-  onDateChange(event: Event): void {
-    // this.selectedDateRange = (event.target as HTMLSelectElement).value;
-    this.applyFilters();
-  }
 
-  private applyFilters(): void {
-    let filtered = [...this.mockData];
 
-    // if (this.searchTerm) {
-    //   filtered = filtered.filter(r =>
-    //     r.srId.toLowerCase().includes(this.searchTerm) ||
-    //     r.jobTitle.toLowerCase().includes(this.searchTerm)
-    //   );
-    // }
 
-    
+  filtersResponse(event: any): void {
+    this.activeFilters = event;
 
-    this.data = filtered;
-    this.totalItems = filtered.length;
     this.currentPage = 1;
-    this.cdr.markForCheck();
+    this.loadList();
   }
 
+  setTab(key: any): void {
+    this.activeTab = key;
+    this.currentPage = 1;
+    this.loadList();
+  }
   onView(row: any): void {
-    this.router.navigateByUrl('/approval-srs/view', { state: { srId: row.srId, type: 'view' } });
+    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+      state: { srId: row.srId, url: '/approval/sr-list' }
+    });
   }
 
   onEdit(row: any): void {
-    this.router.navigateByUrl('/approval-srs/edit', { state: { srId: row.srId, type: 'edit' } });
+    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+      state: { srId: row.srId, url: '/approval/sr-list' }
+    });
   }
+
+  private buildPayload(): object {
+
+    const f: any = this.activeFilters || {};
+    console.log(this.activeTab)
+    const filters: any = {
+      approval: TAB_APPROVAL_MAP[this.activeTab],
+    };
+
+    // direct filters
+    if (f.chainName?.trim()) {
+      filters['search'] = f.chainName.trim();
+    }
+
+    if (f.approval && f.approval!=="") {
+      filters['status'] = f.approval;
+    }
+
+    // if (f.approval) {
+    //   filters['approval'] = f.approval;
+    // }
+
+    if (f.dateFilter) {
+      filters['dateFilter'] = f.dateFilter;
+    }
+
+    if (f.dateFilter === 'CUSTOM') {
+
+      if (f.fromDate) {
+        filters['fromDate'] = f.fromDate;
+      }
+
+      if (f.toDate) {
+        filters['toDate'] = f.toDate;
+      }
+    }
+
+    return {
+      page: this.currentPage - 1,
+      size: this.pageSize,
+      sortBy: 'createdOn',
+      direction: 'desc',
+      filters,
+    };
+  }
+
 }

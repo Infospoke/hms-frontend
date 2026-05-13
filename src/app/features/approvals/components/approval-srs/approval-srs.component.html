@@ -1,7 +1,7 @@
 <div class="approval-component">
 
     <app-approval-layout [heading]="'My SRs — Approval Status'" subHeading="Track the progress of all your staffing requisitions"
-        [showInfo]="true" infoTooltip="More details about approval status" [cards]="cards"  [searchPlaceholder]="'Search by SR ID or Job Title'" [dropDownData]="dropDownData"/>
+        [showInfo]="true" infoTooltip="More details about approval status" [cards]="cards"  [searchPlaceholder]="'Search by SR ID or Job Title'" [dropDownData]="dropDownData" [tabs]="tabs" [activeTab]="activeTab" (tabChange)="setTab($event)" (filterChange)="filtersResponse($event)"/>
     
     <div class="card-dd">
         <app-reusable-table [columns]="columns" [data]="data" [totalItems]="totalItems" [pageSize]="pageSize"
@@ -23,9 +23,7 @@
     <ng-container *ngIf="ctx.col.key === 'currentStage'">
         <div class="stage-cell">
             <span class="stage-main">{{ ctx.row['currentStage'] }}</span>
-            <span class="stage-person" *ngIf="ctx.row['stagePerson']">
-                {{ ctx.row['stagePerson'] }}
-            </span>
+            
         </div>
     </ng-container>
 
@@ -33,6 +31,12 @@
     <ng-container *ngIf="ctx.col.key === 'overallStatus'">
         <span class="status-badge" [ngClass]="ctx.row['overallStatus']?.toLowerCase()?.replace(' ', '-')">
             {{ ctx.row['overallStatus'] }}
+        </span>
+    </ng-container>
+
+     <ng-container *ngIf="ctx.col.key == 'createdOn'">
+        <span  class="stage-main">
+            {{ ctx.row['createdOn'] |date:'d MMM yyyy' }}
         </span>
     </ng-container>
 

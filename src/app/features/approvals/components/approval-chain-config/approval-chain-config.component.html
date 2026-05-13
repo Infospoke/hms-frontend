@@ -19,7 +19,7 @@
     
   </app-approval-layout>
 
-  <div class="card-dd">
+  <div class="">
     <app-reusable-table
       [columns]="columns"
       [data]="data"
@@ -45,8 +45,8 @@
         <i [class]="ctx.row.iconClass"></i>
       </div>
       <div class="chain-name-body">
-        <span class="chain-name-text">{{ ctx.row.chainName }}</span>
-        <span class="chain-desc">{{ ctx.row.description }}</span>
+        <span class="chain-name-text">{{ truncate(ctx.row.chainName, 40) }}</span>
+        <span class="chain-desc">{{ truncate(ctx.row.description, 40) }}</span>
       </div>
     </div>
   </ng-container>

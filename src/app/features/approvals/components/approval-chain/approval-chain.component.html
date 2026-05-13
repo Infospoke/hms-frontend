@@ -32,7 +32,7 @@
 
   <!-- Description -->
   <ng-container *ngIf="ctx.col.key === 'description'">
-    <span class="chain-desc-cell">{{ ctx.row.description }}</span>
+    <span class="chain-desc-cell">{{ truncate(ctx.row.description, 40) }}</span>
   </ng-container>
 
   <!-- Levels -->
@@ -52,8 +52,8 @@
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="status-badge" [ngClass]="{
       'status-badge--pending':  ctx.row.status === 'In_Progress',
-      'status-badge--approved': ctx.row.status === 'Approved',
-      'status-badge--rejected': ctx.row.status === 'Rejected'
+      'status-badge--approved': ctx.row.status === 'APPROVED' || ctx.row.status === 'Approved',
+      'status-badge--rejected': ctx.row.status === 'Rejected' || ctx.row.status === 'REJECTED'
     }">
       {{ ctx.row.status?.replace('_', ' ') }}
     </span>

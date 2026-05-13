@@ -1,41 +1,32 @@
-
 <div class="vsr-wrapper">
 
-  <!-- ── Loading skeleton ─────────────────────────────────────────────────── -->
-  <div class="vsr-loading" *ngIf="isLoading">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-    <span>Loading SR details…</span>
-  </div>
+
+
 
   <ng-container *ngIf="!isLoading">
 
-    <!-- ════════════════════════════════════════════════════════════
-         HEADER
-         ════════════════════════════════════════════════════════════ -->
+
     <div class="vsr-header-zone">
 
-      <!-- Back button -->
-      <app-heading
-        [showBackButton]="true"
-        [buttonText]="'Back to SR List'"
-        (click)="goBack()"
-      />
+      <app-heading [showBackButton]="true" [buttonText]="'Back to SR List'" [backButtonUrl]="'/approval/sr-list'"
+        (click)="goBack()" />
 
-      <!-- SR ID + status badge -->
       <div class="vsr-title-row">
         <h2 class="vsr-id">{{ srId }}</h2>
-        <span class="vsr-status-badge"
-              [ngStyle]="{
-                color:           currentSrStatus.color,
-                background:      currentSrStatus.bg,
-                'border-color':  currentSrStatus.border
+        <span class="vsr-job-title" *ngIf="jobTitle">
+          <i class="fa-solid fa-briefcase vsr-job-title-icon"></i>
+          {{ jobTitle }}
+        </span>
+        <span class="vsr-status-badge" [ngStyle]="{
+                color:          currentSrStatus.color,
+                background:     currentSrStatus.bg,
+                'border-color': currentSrStatus.border
               }">
           <span class="badge-dot" [ngStyle]="{ background: currentSrStatus.color }"></span>
           {{ currentSrStatus.label }}
         </span>
       </div>
 
-      <!-- Meta info strip -->
       <div class="vsr-meta-strip">
         <div class="meta-item" *ngFor="let m of metaItems">
           <div class="meta-icon-wrap">
@@ -44,9 +35,7 @@
           <div class="meta-text">
             <span class="meta-label">{{ m.label }}</span>
             <span class="meta-value">
-              <span *ngIf="m.isPriority"
-                    class="priority-dot"
-                    [ngStyle]="{ background: priorityDotColor }">
+              <span *ngIf="m.isPriority" class="priority-dot" [ngStyle]="{ background: priorityDotColor }">
               </span>
               {{ m.value }}
             </span>
@@ -55,12 +44,7 @@
       </div>
     </div>
 
-    <!-- ════════════════════════════════════════════════════════════
-         APPROVAL PIPELINE CARD
-         ════════════════════════════════════════════════════════════ -->
     <div class="pipeline-card">
-
-      <!-- Left: stage nodes -->
       <div class="pipeline-left">
         <p class="pipeline-title">
           <i class="fa-solid fa-diagram-project pipeline-title-icon"></i>
@@ -68,36 +52,30 @@
         </p>
         <div class="pipeline-stages">
           <ng-container *ngFor="let stage of pipelineStages; let i = index; let last = last">
-
-            <!-- Stage node -->
-            <div class="stage-node">
+            <div class="stage-node" [class.stage-node--active]="isActiveStage(stage.status)">
               <div class="stage-circle" [ngStyle]="getStageCircleStyle(stage.status)">
                 <i [class]="stageStatusCfg[stage.status].icon"
-                   [ngStyle]="{ color: stageStatusCfg[stage.status].color, 'font-size': '17px' }">
+                  [ngStyle]="{ color: stageStatusCfg[stage.status].color, 'font-size': '17px' }">
                 </i>
               </div>
               <div class="stage-info">
                 <span class="stage-role">{{ stage.role }}</span>
-                <span class="stage-status-lbl"
-                      [ngStyle]="{ color: stageStatusCfg[stage.status].color }">
+                <span class="stage-status-lbl" [ngStyle]="{ color: stageStatusCfg[stage.status].color }">
                   {{ stageStatusCfg[stage.status].label }}
                 </span>
                 <span class="stage-time" *ngIf="stage.timestamp">{{ stage.timestamp }}</span>
               </div>
             </div>
-
-            <!-- Arrow between stages -->
             <div class="stage-arrow" *ngIf="!last"
-                 [class.arrow-done]="isConnectorFilled(stage.status)">
+              [class.arrow-done]="stage.status === 'APPROVED'"
+              [class.arrow-rejected]="stage.status === 'REJECTED'">
               <span class="arrow-line"></span>
               <i class="fa-solid fa-chevron-right arrow-head"></i>
             </div>
-
           </ng-container>
         </div>
       </div>
 
-      <!-- Right: progress bar -->
       <div class="pipeline-right">
         <p class="prog-title">Overall Progress</p>
         <div class="prog-row">
@@ -108,112 +86,101 @@
         </div>
         <span class="prog-step">{{ progressStep }}</span>
       </div>
-
     </div>
 
-    <!-- ════════════════════════════════════════════════════════════
-         MAIN CONTENT — two-column
-         ════════════════════════════════════════════════════════════ -->
+    <!-- ══════════════════════════════════════════════════════════
+         MAIN BODY — two columns
+         ══════════════════════════════════════════════════════════ -->
     <div class="vsr-body">
 
-      <!-- ── LEFT: SR Summary ──────────────────────────────────────────── -->
+      <!-- ── LEFT: SR Summary ──────────────────────────────────────────────── -->
       <div class="vsr-left">
         <div class="panel-hdr">
           <span class="panel-title">
             <i class="fa-regular fa-file-lines panel-title-icon"></i>
-            SR Summary
+            SR Details
           </span>
           <button class="btn-view-full" (click)="openFullSr()">
             <i class="fa-solid fa-expand"></i> View Full SR
           </button>
         </div>
 
-        <!-- Tick progress hint -->
-        <div class="tick-progress-bar" *ngIf="!allSectionsReviewed">
-          <div class="tick-fill" [style.width.%]="(reviewedCount / TOTAL_SECTIONS) * 100"></div>
-        </div>
-        <p class="tick-hint" *ngIf="!allSectionsReviewed">
+        <p class="tick-hint" *ngIf="!allSectionsReviewed && !isViewMode">
           <i class="fa-solid fa-circle-info"></i>
           Tick all {{ TOTAL_SECTIONS }} sections after reviewing — this unlocks Approve &amp; Reject
           ({{ reviewedCount }}/{{ TOTAL_SECTIONS }} reviewed)
         </p>
-        <p class="tick-done" *ngIf="allSectionsReviewed">
+        <p class="tick-done" *ngIf="allSectionsReviewed && !isViewMode">
           <i class="fa-solid fa-circle-check"></i>
           All sections reviewed — you can now Approve or Reject
         </p>
 
-        <!-- SR Review component (viewOnly, showTicks enabled) -->
-        <app-sr-review
-          [viewOnly]="true"
-          [showTicks]="true"
-          [step0]="step0"
-          [step1]="step1"
-          [step2]="step2"
-          [step3]="step3"
-          [step4]="step4"
-          [mustSkills]="mustSkills"
-          [niceSkills]="niceSkills"
-          [certs]="certs"
-          [langs]="langs"
-          [jobBoards]="jobBoards"
-          [assessmentTypes]="assessmentTypes"
-          [diversityBoards]="diversityBoards"
-          [selectedManagers]="selectedManagers"
-          [replaceEmployee]="replaceEmployee"
-          [supportDoc]="supportDoc"
-          (ticksChanged)="onTicksChanged($event)"
-        />
+        <app-sr-review [viewOnly]="true" [showTicks]="!isViewMode" [step0]="step0" [step1]="step1" [step2]="step2"
+          [step3]="step3" [step4]="step4" [mustSkills]="mustSkills" [niceSkills]="niceSkills" [certs]="certs"
+          [langs]="langs" [jobBoards]="jobBoards" [assessmentTypes]="assessmentTypes"
+          [diversityBoards]="diversityBoards" [selectedManagers]="selectedManagers" [replaceEmployee]="replaceEmployee"
+          [supportDoc]="supportDoc" (ticksChanged)="onTicksChanged($event)" />
       </div>
 
-     
+      <!-- ── RIGHT: Approval Timeline ─────────────────────────────────────── -->
       <div class="vsr-right">
         <p class="panel-title">
           <i class="fa-regular fa-clock panel-title-icon"></i>
           Approval Timeline
         </p>
 
-        <div class="timeline">
-          <div class="tl-item" *ngFor="let stage of pipelineStages; let last = last">
-
-            <!-- Vertical dot + line -->
-            <div class="tl-track">
-              <div class="tl-dot" [ngStyle]="{ background: stageStatusCfg[stage.status].color }">
-                <i [class]="stageStatusCfg[stage.status].icon" style="color:#fff; font-size:8px;"></i>
-              </div>
-              <div class="tl-line" *ngIf="!last"
-                   [class.tl-line-done]="stage.status === 'APPROVED'">
-              </div>
+        <!-- ── No real approver data ────────────────────────────────────────── -->
+        <ng-container *ngIf="!hasRealApproverData">
+          <div class="tl-empty-state">
+            <div class="tl-empty-icon-wrap">
+              <i class="fa-regular fa-comment-dots tl-empty-icon"></i>
             </div>
+            <p class="tl-empty-title">No approval chain configured yet</p>
+            <p class="tl-empty-sub">
+              No approvers have been assigned to this SR.
+              Click <strong>Approve</strong> or <strong>Reject</strong> below to add your comment
+              and take action.
+            </p>
+          </div>
+        </ng-container>
 
-            <!-- Stage card — compact redesign -->
-            <div class="tl-card"
-                 [class.tl-card--active]="stage.status === 'IN_PROGRESS'"
-                 [class.tl-card--approved]="stage.status === 'APPROVED'"
-                 [class.tl-card--rejected]="stage.status === 'REJECTED'"
-                 [ngStyle]="getTimelineBorderStyle(stage.status)">
+        <!-- ── Real timeline data ────────────────────────────────────────────── -->
+        <ng-container *ngIf="hasRealApproverData">
+          <div class="timeline">
+            <div class="tl-item" *ngFor="let stage of timelineStages; let last = last">
 
-              <!-- Card header: role + badge -->
-              <div class="tl-card-hdr">
-                <span class="tl-role">{{ stage.role }}</span>
-                <span class="tl-badge" [ngStyle]="getStatusBadgeStyle(stage.status)">
-                  {{ stageStatusCfg[stage.status].label }}
-                </span>
+              <div class="tl-track">
+                <div class="tl-dot" [ngStyle]="{ background: stageStatusCfg[stage.status].color }">
+                  <i [class]="stageStatusCfg[stage.status].icon" style="color:#fff; font-size:8px;"></i>
+                </div>
+                <div class="tl-line" *ngIf="!last" [class.tl-line-done]="stage.status === 'APPROVED'">
+                </div>
               </div>
 
-              <!-- Approver info (if assigned) — avatar + name + time inline -->
-              <ng-container *ngIf="stage.approverName">
-                <div class="tl-approver-row">
-                  <div class="tl-avatar" [ngStyle]="getAvatarStyle(stage.status)">
-                    {{ stage.approverInitials || getInitials(stage.approverName) }}
-                  </div>
-                  <div class="tl-approver-info">
-                    <span class="tl-name">{{ stage.approverName }}</span>
-                    <span class="tl-time" *ngIf="stage.timestamp">· {{ stage.timestamp }}</span>
-                  </div>
+              <div class="tl-card" [class.tl-card--active]="stage.status === 'IN_PROGRESS'"
+                [class.tl-card--approved]="stage.status === 'APPROVED'"
+                [class.tl-card--rejected]="stage.status === 'REJECTED'">
+
+                <div class="tl-card-hdr">
+                  <span class="tl-role">{{ stage.role }}</span>
+                  <span class="tl-badge" [ngStyle]="getStatusBadgeStyle(stage.status)">
+                    {{ stageStatusCfg[stage.status].label }}
+                  </span>
                 </div>
 
-                <!-- ── APPROVED / REJECTED — read-only comment (accent-bar style) ── -->
-                <ng-container *ngIf="stage.status === 'APPROVED' || stage.status === 'REJECTED'">
+                <!-- Actioned stages (APPROVED / REJECTED) — read-only comment -->
+                <ng-container
+                  *ngIf="stage.approverName && (stage.status === 'APPROVED' || stage.status === 'REJECTED')">
+                  <div class="tl-approver-row">
+                    <div class="tl-avatar" [ngStyle]="getAvatarStyle(stage.status)">
+                      {{ stage.approverInitials || getInitials(stage.approverName) }}
+                    </div>
+                    <div class="tl-approver-info">
+                      <span class="tl-name">{{ stage.approverName }}</span>
+                      <span class="tl-time" *ngIf="stage.timestamp">· {{ stage.timestamp }}</span>
+                    </div>
+                  </div>
+
                   <p class="tl-comments-label">
                     <i class="fa-regular fa-comment-dots"></i>
                     Comments
@@ -226,117 +193,100 @@
                   </ng-template>
                 </ng-container>
 
-                <!-- ── IN_PROGRESS — editable textarea for current approver ── -->
-                <ng-container *ngIf="stage.status === 'IN_PROGRESS'">
-                  <p class="tl-comments-label">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                    Your Comments
-                    <span class="tl-comments-hint">(optional)</span>
-                  </p>
-                  <div class="tl-textarea-wrap">
-                    <textarea
-                      class="tl-textarea"
-                      rows="3"
-                      maxlength="500"
-                      placeholder="Add your comments… (plain text only)"
-                      [(ngModel)]="approvalComment"
-                      (input)="onCommentInput($event)">
-                    </textarea>
-                    <div class="tl-char-row">
-                      <span class="tl-char-warn" *ngIf="approvalComment.length >= 450">
-                        {{ 500 - approvalComment.length }} left
+                <!--
+                  IN_PROGRESS stage — nudge only in approve mode.
+                  Hidden in view-only mode since there are no action buttons.
+                -->
+                <ng-container *ngIf="stage.status === 'IN_PROGRESS' && !isViewMode">
+                  <div class="tl-action-hint">
+                    <i class="fa-solid fa-circle-info tl-action-hint-icon"></i>
+                    <span>
+                      Use the <strong>Approve</strong> or <strong>Reject</strong> buttons below to provide your comments and take the appropriate action.
+                    </span>
+                  </div>
+                </ng-container>
+
+                <!-- PENDING — locked, or blocked by a prior rejection -->
+                <ng-container *ngIf="stage.status === 'PENDING'">
+                  <div class="tl-pending-state"
+                       [class.tl-pending-state--prev-rejected]="stage.prevRejected">
+                    <i class="fa-solid tl-pending-lock-icon"
+                       [class.fa-ban]="stage.prevRejected"
+                       [class.fa-lock]="!stage.prevRejected"></i>
+                    <div class="tl-pending-text">
+                      <span class="tl-pending-title">
+                        {{ stage.prevRejected ? 'Previous step was rejected' : 'Waiting for previous approval' }}
                       </span>
-                      <span class="tl-char-count"
-                            [class.tl-char-count--near]="approvalComment.length >= 450">
-                        {{ approvalComment.length }}/500
+                      <span class="tl-pending-sub">
+                        {{ stage.prevRejected
+                          ? 'This stage will not proceed as a prior step in the chain was rejected.'
+                          : 'This stage unlocks once the previous approver acts.' }}
                       </span>
                     </div>
                   </div>
                 </ng-container>
 
-              </ng-container>
+              </div><!-- /tl-card -->
+            </div><!-- /tl-item -->
+          </div><!-- /timeline -->
+        </ng-container>
 
-              <!-- Pending stage – no approver yet -->
-              <ng-container *ngIf="!stage.approverName && stage.status === 'PENDING'">
-                <p class="tl-pending-msg">
-                  <i class="fa-regular fa-clock"></i>
-                  Awaiting previous approval
-                </p>
-              </ng-container>
-
-            </div><!-- /tl-card -->
-          </div><!-- /tl-item -->
-        </div><!-- /timeline -->
       </div><!-- /vsr-right -->
-
     </div><!-- /vsr-body -->
 
-    <!-- ── Action bar ──────────────────────────────────────────────────────── -->
+
     <div class="vsr-action-bar">
       <div class="action-left">
-        <button class="btn-approve"
-                [disabled]="!allSectionsReviewed || isSubmitting"
-                (click)="onApprove()">
-          <i class="fa-solid fa-circle-check"></i>
-          {{ isSubmitting ? 'Processing…' : 'Approve' }}
-        </button>
-        <button class="btn-reject"
-                [disabled]="!allSectionsReviewed || isSubmitting"
-                (click)="onReject()">
-          <i class="fa-solid fa-circle-xmark"></i>
-          Reject
-        </button>
-      </div>
-      <div class="action-right">
-        <span class="action-hint" *ngIf="!allSectionsReviewed">
-          <i class="fa-solid fa-lock"></i>
-          Review all sections to enable actions
-        </span>
-        <button class="btn-save-exit" (click)="goBack()">
-          <i class="fa-regular fa-floppy-disk"></i>
-          Save &amp; Exit
-        </button>
+
+        <!-- VIEW mode — only a Close / Back button -->
+        <!-- <ng-container *ngIf="isViewMode">
+          <button class="btn-close" type="button" (click)="goBack()">
+            <i class="fa-solid fa-arrow-left"></i>
+            Close
+          </button>
+        </ng-container> -->
+
+        <!-- APPROVE mode — Approve + Reject + lock hint -->
+        <ng-container *ngIf="!isViewMode">
+          <button class="btn-approve" [disabled]="!allSectionsReviewed || isSubmitting" (click)="onApprove()">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ isSubmitting ? 'Processing…' : 'Approve' }}
+          </button>
+          <button class="btn-reject" [disabled]="!allSectionsReviewed || isSubmitting" (click)="onReject()">
+            <i class="fa-solid fa-circle-xmark"></i>
+            Reject
+          </button>
+          <span class="action-hint" *ngIf="!allSectionsReviewed">
+            <i class="fa-solid fa-lock"></i>
+            Review all sections to enable actions
+          </span>
+        </ng-container>
+
       </div>
     </div>
 
   </ng-container><!-- /!isLoading -->
-
 </div><!-- /vsr-wrapper -->
 
-<!-- ════════════════════════════════════════════════════════════
-     FULL SR MODAL
-     ════════════════════════════════════════════════════════════ -->
-<nz-modal
-  [nzVisible]="isFullSrOpen"
-  nzTitle="Full Staffing Requisition"
-  [nzWidth]="920"
-  [nzFooter]="null"
-  (nzOnCancel)="closeFullSr()">
 
+<nz-modal [nzVisible]="isFullSrOpen" nzTitle="Full Staffing Requisition" [nzWidth]="920" [nzCentered]="true"
+  [nzWrapClassName]="'custom-edit-modal'" [nzBodyStyle]="{
+    'max-height': '80vh',
+    'overflow-y': 'auto',
+    'padding': '16px'
+  }" [nzFooter]="null" (nzOnCancel)="closeFullSr()">
   <ng-container *nzModalContent>
     <div class="full-sr-modal-body">
-      <app-sr-review
-        [viewOnly]="true"
-        [showTicks]="false"
-        [startOpen]="true"
-        [allowMultipleOpen]="true"
-        [step0]="step0"
-        [step1]="step1"
-        [step2]="step2"
-        [step3]="step3"
-        [step4]="step4"
-        [mustSkills]="mustSkills"
-        [niceSkills]="niceSkills"
-        [certs]="certs"
-        [langs]="langs"
-        [jobBoards]="jobBoards"
-        [assessmentTypes]="assessmentTypes"
-        [diversityBoards]="diversityBoards"
-        [selectedManagers]="selectedManagers"
-        [replaceEmployee]="replaceEmployee"
-        [supportDoc]="supportDoc"
-      />
+      <app-sr-review [viewOnly]="true" [showTicks]="false" [startOpen]="true" [allowMultipleOpen]="true" [step0]="step0"
+        [step1]="step1" [step2]="step2" [step3]="step3" [step4]="step4" [mustSkills]="mustSkills"
+        [niceSkills]="niceSkills" [certs]="certs" [langs]="langs" [jobBoards]="jobBoards"
+        [assessmentTypes]="assessmentTypes" [diversityBoards]="diversityBoards" [selectedManagers]="selectedManagers"
+        [replaceEmployee]="replaceEmployee" [supportDoc]="supportDoc" />
     </div>
   </ng-container>
-
 </nz-modal>
+
+
+<app-common-modal [visible]="showCommentModal" [action]="commentModalAction" [config]="modalConfig"
+  [submitting]="isSubmitting" (cancelled)="closeCommentModal()" (confirmed)="onModalConfirmed($event)">
+</app-common-modal>

@@ -1,0 +1,89 @@
+<ng-container *ngIf="visible && action">
+
+  <!-- Backdrop -->
+  <div class="cm-backdrop" (click)="onBackdropClick()">
+
+    <!-- Modal panel — stop click propagation so backdrop click doesn't fire -->
+    <div class="cm-panel" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+      <!-- ── Header ──────────────────────────────────────────────────────── -->
+      <div class="cm-header">
+        <h3 class="cm-title">
+          <i [class]="resolvedConfig.iconClass"></i>
+          {{ resolvedConfig.title }}
+        </h3>
+        <button
+          class="cm-close"
+          type="button"
+          [disabled]="submitting"
+          (click)="onCancelClick()"
+          aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- ── Body ───────────────────────────────────────────────────────── -->
+      <div class="cm-body">
+        <p class="cm-desc">{{ resolvedConfig.description }}</p>
+
+        <label class="cm-label">
+          Comments <span class="cm-req">*</span>
+        </label>
+
+        <textarea
+          class="cm-textarea"
+          [class.cm-textarea--error]="commentError"
+          rows="4"
+          placeholder="Enter your comments here…"
+          maxlength="500"
+          minlength="6"
+          [(ngModel)]="commentText"
+          (ngModelChange)="commentError = ''"
+          [disabled]="submitting">
+        </textarea>
+
+        <div class="cm-field-footer">
+          <span class="cm-error" *ngIf="commentError">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            {{ commentError }}
+          </span>
+          <span class="cm-counter">{{ commentLength }}/500</span>
+        </div>
+      </div>
+
+      <!-- ── Footer ─────────────────────────────────────────────────────── -->
+      <div class="cm-footer">
+        <button
+          class="cm-btn cm-btn--cancel"
+          type="button"
+          [disabled]="submitting"
+          (click)="onCancelClick()">
+          Cancel
+        </button>
+
+        <button
+          class="cm-btn"
+          [class.cm-btn--approve]="resolvedConfig.confirmVariant === 'approve'"
+          [class.cm-btn--reject]="resolvedConfig.confirmVariant === 'reject'"
+          [class.cm-btn--activate]="resolvedConfig.confirmVariant === 'activate'"
+          type="button"
+          [disabled]="submitting"
+          (click)="onConfirmClick()">
+
+          <ng-container *ngIf="!submitting">
+            <i [class]="resolvedConfig.confirmIconClass"></i>
+            {{ resolvedConfig.confirmLabel }}
+          </ng-container>
+
+          <ng-container *ngIf="submitting">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Saving…
+          </ng-container>
+
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</ng-container>

@@ -13,6 +13,7 @@ import { ReusableTableComponent, TableColumn } from '../../../../../shared/compo
 import { UserService } from '../../servics/user-service';
 import { getInitials } from '../../../../../shared/validations/validators';
 import { Router } from '@angular/router';
+import { HeadingComponent } from "../../../../../shared/components/heading/heading.component";
 
 export interface UserRow {
   initials: string;
@@ -27,7 +28,7 @@ const AVATAR_COLORS = ['blue', 'green', 'teal', 'yellow', 'pink', 'orange', 'pur
 @Component({
   selector: 'app-users-by-role',
   standalone: true,
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent, HeadingComponent],
   templateUrl: './users-by-role.component.html',
   styleUrls: ['./users-by-role.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +48,8 @@ export class UsersByRoleComponent implements OnInit, OnChanges {
   currentPage = 1;
   pageSize = 10;
   private router=inject(Router);
-
+  backButtonUrl='/users/role-permissions';
+  backText="Back to Roles"
   columns: TableColumn[] = [
     { key: 'name',  label: 'User Name', width: 'auto',   custom: true },
     { key: 'email', label: 'Email Id',  width: '300px',  custom: true, hideOnMobile: true },

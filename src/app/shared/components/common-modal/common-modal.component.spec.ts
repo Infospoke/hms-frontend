@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ApprovalSrsComponent } from './approval-srs.component';
+import { CommonModalComponent } from './common-modal.component';
 
-describe('ApprovalSrsComponent', () => {
-  let component: ApprovalSrsComponent;
-  let fixture: ComponentFixture<ApprovalSrsComponent>;
-  
+describe('CommonModalComponent', () => {
+  let component: CommonModalComponent;
+  let fixture: ComponentFixture<CommonModalComponent>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ApprovalSrsComponent]
+      imports: [CommonModalComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ApprovalSrsComponent);
+    fixture = TestBed.createComponent(CommonModalComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

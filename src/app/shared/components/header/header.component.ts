@@ -25,7 +25,7 @@ export class HeaderComponent {
   sidebarCollapsed = input(false);
   menuToggle = output();
   isDropdownOpen = false;
-  notificationCount = 3;
+  notificationCount = 0;
   notifPanelOpen = false;
 
   private authService = inject(AuthService);

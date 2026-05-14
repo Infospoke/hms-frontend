@@ -12,8 +12,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CommentModalAction, CommentModalConfig, CommentModalResult, CommonModalComponent } from '../../../../shared/components/common-modal/common-modal.component';
 
 // ─── Stage status types & config ─────────────────────────────────────────────
-export type StageStatus = 'APPROVED' | 'IN_PROGRESS' | 'PENDING' | 'REJECTED';
-
+export type StageStatus = 'APPROVED' | 'IN_PROGRESS' | 'PENDING' | 'REJECTED' | 'CREATED';
 export interface StageStatusDef {
   icon: string;
   color: string;
@@ -27,6 +26,7 @@ export const STAGE_STATUS_CONFIG: Record<StageStatus, StageStatusDef> = {
   IN_PROGRESS: { icon: 'fa-solid fa-clock',          color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', label: 'In Progress' },
   PENDING:     { icon: 'fa-regular fa-circle',        color: '#9ca3af', bg: '#f9fafb', border: '#e5e7eb', label: 'Waiting for previous approval'     },
   REJECTED:    { icon: 'fa-solid fa-circle-xmark',   color: '#dc2626', bg: '#fef2f2', border: '#fca5a5', label: 'Rejected'    },
+  CREATED:     { icon: 'fa-solid fa-paper-plane',  color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Created'     },
 };
 
 // ─── SR overall-status ────────────────────────────────────────────────────────
@@ -452,7 +452,7 @@ export class ViewSrComponent implements OnInit {
       role: 'HM Manager',
       approverName: creatorName,
       approverInitials: this.getInitials(creatorName),
-      status: 'APPROVED',
+      status: 'CREATED',
       timestamp: this.formatDateTime(basics.createdOn),
       comments: 'SR submitted for approval.',
     };

@@ -1,13 +1,12 @@
 <div class="an-page">
 
-
   <div class="an-page-header">
     <div class="an-title-row">
       <app-heading [heading]="'All Notifications'" [subHeading]="'Stay updated on all activities and actions'"
-        [showBackButton]="true"  [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'">
+        [showBackButton]="true" [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'">
       </app-heading>
       <div class="an-header-actions">
-        <button class="an-mark-all-btn" (click)="markAllAsRead()">
+        <button class="an-mark-all-btn" (click)="markAllAsRead()" [disabled]="!hasUnreadRows">
           <i class="fa-regular fa-envelope-open"></i>
           Mark all as read
         </button>
@@ -15,27 +14,31 @@
     </div>
   </div>
 
-
-  <div class="an-tabs">
-    <button class="an-tab" *ngFor="let tab of tabs" [class.an-tab--active]="activeTab === tab.key"
-      (click)="selectTab(tab.key)">
-      {{ tab.label }}
-      <span class="an-tab-count" [class.an-tab-count--active]="activeTab === tab.key">
-        {{ tab.count }}
-      </span>
-    </button>
-  </div>
-
- 
   <div class="an-filter-wrap">
     <app-common-filter [searchPlaceholder]="'Search notifications...'" [dropdowns]="dropdowns"
-      (filterChange)="onFilterChange($event)">
+      (filterChange)="onFilterChange($event)" [tabs]="tabs" (tabChange)="selectTab($event)" [activeTab]="activeTab">
     </app-common-filter>
   </div>
 
+  <!-- ── Selection action bar (visible only when rows are checked) ────────── -->
+  <div class="an-selection-bar" *ngIf="selectedCount > 0">
+    <span class="an-selection-label">
+      <i class="fa-solid fa-circle-check"></i>
+      {{ selectedCount }} notification{{ selectedCount > 1 ? 's' : '' }} selected
+    </span>
+    <button class="an-mark-selected-btn" (click)="markSelectedAsRead()" [disabled]="markingRead">
+      <i class="fa-regular fa-envelope-open"></i>
+      {{ markingRead ? 'Marking…' : 'Mark as read' }}
+    </button>
+    <button class="an-clear-btn" (click)="selectedIds.clear()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
   <!-- ── Table ─────────────────────────────────────────────────────────────── -->
-  <app-reusable-table [columns]="columns" [data]="displayData" [cellTemplate]="customCells" [totalItems]="totalItems"
-    [pageSize]="pageSize" [currentPage]="currentPage" [showPagination]="true" [emptyMessage]="'No notifications found'"
+  <app-reusable-table [columns]="columns" [data]="displayData" [cellTemplate]="customCells"
+    [totalItems]="totalItems" [pageSize]="pageSize" [currentPage]="currentPage"
+    [showPagination]="true" [emptyMessage]="'No notifications found'"
     (pageChange)="onPageChange($event)">
   </app-reusable-table>
 
@@ -44,7 +47,35 @@
 <!-- ── Custom Cell Templates ─────────────────────────────────────────────────── -->
 <ng-template #customCells let-ctx>
 
-  <!-- Notification column -->
+  <!-- ── Checkbox column ─────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'checkbox'">
+
+    <!-- Header cell: select-all for unread rows -->
+    <ng-container *ngIf="ctx.isHeader; else rowCheckbox">
+      <label class="an-checkbox-wrap" *ngIf="hasUnreadRows" title="Select all unread">
+        <input type="checkbox"
+               class="an-checkbox"
+               [checked]="allUnreadSelected"
+               [indeterminate]="selectedCount > 0 && !allUnreadSelected"
+               (change)="toggleSelectAll()" />
+        <span class="an-checkbox-box"></span>
+      </label>
+    </ng-container>
+
+    <!-- Row cell: shown only for unread rows -->
+    <ng-template #rowCheckbox>
+      <label class="an-checkbox-wrap" *ngIf="!ctx.row.isRead" (click)="$event.stopPropagation()">
+        <input type="checkbox"
+               class="an-checkbox"
+               [checked]="isSelected(ctx.row)"
+               (change)="toggleRow(ctx.row)" />
+        <span class="an-checkbox-box"></span>
+      </label>
+    </ng-template>
+
+  </ng-container>
+
+  <!-- ── Notification column ─────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'notification'">
     <div class="an-notif-cell">
       <span class="an-unread-dot" *ngIf="!ctx.row.isRead"></span>
@@ -57,7 +88,7 @@
     </div>
   </ng-container>
 
-  <!-- Related To column -->
+  <!-- ── Related To column ───────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'relatedId'">
     <div class="an-related-cell">
       <a class="an-related-id" [style.color]="getRelatedColor(ctx.row.relatedDept)">
@@ -67,7 +98,7 @@
     </div>
   </ng-container>
 
-  <!-- Action column -->
+  <!-- ── Action column ───────────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'action'">
     <button class="an-action-btn" (click)="openNotification(ctx.row)" title="Open">
       <i class="fa-solid fa-arrow-up-right-from-square"></i>

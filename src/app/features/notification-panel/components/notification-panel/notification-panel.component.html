@@ -33,7 +33,7 @@
 
     <div class="np-item" *ngFor="let notif of notifications"
       [class.np-item--unread]="!notif.isRead"
-      (click)="markAsRead(notif)">
+      >
 
       <!-- Icon -->
       <div class="np-icon-wrap" [style.background]="getIconColor(notif) + '1a'">

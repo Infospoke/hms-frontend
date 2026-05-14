@@ -95,6 +95,7 @@ export const API = {
     NOTIFICATIONS: {
         ALL_NOTIFICATIONS: `/hms/notifications/list`,
         NOTIFICATION_COUNTS: `/hms/notifications/counts`,
+        MARK_AS_READ: `/hms/notifications/update`,
     },
     SR_APPROVALS: {
         COUNT: `/hms/staffing-requisition/sr-counts`,

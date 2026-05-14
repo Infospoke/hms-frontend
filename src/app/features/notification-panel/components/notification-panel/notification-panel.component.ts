@@ -25,32 +25,33 @@ export class NotificationPanelComponent implements OnInit {
   private cdr                 = inject(ChangeDetectorRef);
 
   notifications: any[] = [];
-  unreadCount = 0;
-  isLoading   = false;
+  unreadCount  = 0;
+  isLoading    = false;
+  markingRead  = false;
 
- 
+
   ngOnInit(): void {
     this.loadPanelData();
   }
 
-  
+ 
   private async loadPanelData(): Promise<void> {
     this.isLoading = true;
     this.cdr.markForCheck();
 
     try {
-      // Load counts first
-      const countRes = await this.notificationService.getNotificationCounts();
+
+      const countRes   = await this.notificationService.getNotificationCounts();
       this.unreadCount = countRes?.data?.unread ?? 0;
       this.countChange.emit(this.unreadCount);
 
-     
+
       const listRes = await this.notificationService.getNotifications({
-        page: 0,  
-        size: 5,
-        sortBy: 'notificationSentAt',
+        page:      0,
+        size:      5,
+        sortBy:    'notificationSentAt',
         direction: 'DESC',
-        filters: { isRead: false },
+        filters:   { isRead: false },
       });
 
       this.notifications = listRes?.data?.notifications ?? [];
@@ -62,16 +63,61 @@ export class NotificationPanelComponent implements OnInit {
     }
   }
 
- 
+  // ── Mark single notification as read ──────────────────────────────────────
+  async markAsRead(notif: any): Promise<void> {
+    if (notif.isRead || this.markingRead) return;
 
-  markAllAsRead(): void {
-  
-    this.notifications = this.notifications.map(n => ({ ...n, isRead: true }));
-    this.unreadCount   = 0;
-    this.countChange.emit(0);
+    this.markingRead = true;
     this.cdr.markForCheck();
+
+    try {
+      await this.notificationService.markAsRead({
+        ids:    [notif.id],
+        isRead: true,
+      });
+
+      // Optimistic update
+      notif.isRead     = true;
+      this.unreadCount = Math.max(0, this.unreadCount - 1);
+      this.countChange.emit(this.unreadCount);
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('Failed to mark notification as read', err);
+    } finally {
+      this.markingRead = false;
+      this.cdr.markForCheck();
+    }
   }
 
+  // ── Mark ALL as read — uses only the 5 IDs already loaded in the panel ─────
+  async markAllAsRead(): Promise<void> {
+    if (this.unreadCount === 0 || this.markingRead) return;
+
+    this.markingRead = true;
+    this.cdr.markForCheck();
+
+    try {
+      const unreadIds: number[] = this.notifications
+        .filter(n => !n.isRead && n.id !== null && n.id !== undefined)
+        .map(n => n.id);
+
+      if (unreadIds.length) {
+        await this.notificationService.markAsRead({ ids: unreadIds, isRead: true });
+      }
+
+     this.loadPanelData();
+      this.unreadCount   = 0;
+      this.countChange.emit(0);
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('Failed to mark all notifications as read', err);
+    } finally {
+      this.markingRead = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  // ── Clear all (local UI only) ──────────────────────────────────────────────
   clearAll(): void {
     this.notifications = [];
     this.unreadCount   = 0;
@@ -79,15 +125,7 @@ export class NotificationPanelComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  markAsRead(notif: any): void {
-    if (!notif.isRead) {
-      notif.isRead   = true;
-      this.unreadCount = Math.max(0, this.unreadCount - 1);
-      this.countChange.emit(this.unreadCount);
-      this.cdr.markForCheck();
-    }
-  }
-
+  // ── Navigation / panel control ─────────────────────────────────────────────
   viewAll(): void {
     this.close();
     this.router.navigateByUrl('/notifications/all-notifications');
@@ -98,14 +136,15 @@ export class NotificationPanelComponent implements OnInit {
     this.visibleChange.emit(false);
   }
 
- 
+  // ── Icon / colour helpers ──────────────────────────────────────────────────
   private resolveType(notif: any): string {
     const title = (notif.notificationTitle ?? '').toLowerCase();
     if (title.includes('approv'))   return 'approved';
     if (title.includes('reject'))   return 'rejected';
-    if (title.includes('pending') || title.includes('action') || title.includes('sla') || title.includes('awaiting')) return 'pending';
+    if (title.includes('pending') || title.includes('action') ||
+        title.includes('sla')     || title.includes('awaiting')) return 'pending';
     if (title.includes('change'))   return 'changes';
-    if (title.includes('submit') || title.includes('creat')) return 'submitted';
+    if (title.includes('submit')  || title.includes('creat'))    return 'submitted';
     return 'info';
   }
 
@@ -132,7 +171,6 @@ export class NotificationPanelComponent implements OnInit {
     };
     return map[this.resolveType(notif)] ?? '#64748b';
   }
-
 
   getTimeAgo(isoDate: string): string {
     if (!isoDate) return '';

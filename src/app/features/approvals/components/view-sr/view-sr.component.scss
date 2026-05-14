@@ -886,6 +886,12 @@
 }
 
 
+// ─── Created card modifier ────────────────────────────────────────────────────
+.tl-card--created {
+  border-left: 3px solid #6366f1;
+  background: #f5f3ff;
+}
+
 // IN_PROGRESS hint — replaces the old inline textarea
 .tl-action-hint {
   display: flex;

@@ -144,7 +144,7 @@ export class JobOverview {
 
     try {
       let res: any;
-
+      console.log('Action event received in overview:', event);
       switch (event.type) {
         case 'interview':
           res = await this.jobApi.moveToInterview({
@@ -166,7 +166,10 @@ export class JobOverview {
           res = await this.jobApi.viewResume('resume', event.candidate.id, 'view');
 
           break;
+        case 'schedule':
+          break;
         default:
+          console.log(event,"this is default..!");
           return;
       }
 
@@ -195,6 +198,7 @@ export class JobOverview {
       }
       this.handleJobDetailsById();
       this.loadApplicants(this.selectedApplicantStatus, this.selectedJobId);
+      this.selectedCandidateForDetail = null;  
     } catch (error) {
       console.error('Error occurred while updating applicant status:', error);
     }

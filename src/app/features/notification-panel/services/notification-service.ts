@@ -45,4 +45,11 @@ export class NotificationService {
   getCountsValue() {
     return this.countsSignal();
   }
+
+  async markAsRead(payload:any){
+    const res: any = await firstValueFrom(
+      this.api.hrmsput(API.NOTIFICATIONS.MARK_AS_READ, payload)
+    );
+    return res;
+  }
 }

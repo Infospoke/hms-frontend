@@ -1,8 +1,9 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 
 import { Subject, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environments/environment.prod';
+import { AuthService } from '../../../core/auth/auth.service';
 
 declare var SockJS: any;
 
@@ -14,7 +15,7 @@ export class NotificationWebsocketService implements OnDestroy {
     private stompClient!: Client;
     private notificationSubject = new Subject<any>();
     private statusSubject = new BehaviorSubject<ConnectionStatus>('disconnected');
-
+    private authService=inject(AuthService);
     public notification$ = this.notificationSubject.asObservable();
     public status$ = this.statusSubject.asObservable();
 
@@ -22,7 +23,7 @@ export class NotificationWebsocketService implements OnDestroy {
         this.statusSubject.next('connecting');
 
         this.stompClient = new Client({
-            webSocketFactory: () => new SockJS(`${environment.hrmsApiUrl}/ws`),
+            webSocketFactory: () => new SockJS(`${environment.hrmsApiUrl}/ws/${this.authService.getRole()}`),
 
             reconnectDelay: 5000,
             debug: (str) => console.log('[STOMP]', str)
@@ -32,6 +33,7 @@ export class NotificationWebsocketService implements OnDestroy {
             this.statusSubject.next('connected');
             this.stompClient.subscribe('/topic/notifications', (message: IMessage) => {
                 if (message.body) {
+                    console.log('Received notification:', message.body);
                     this.notificationSubject.next(JSON.parse(message.body));
                 }
             });

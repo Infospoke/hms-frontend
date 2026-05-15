@@ -202,4 +202,9 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     // this.currentPage = 1;
     // this.loadList();
   }
+
+   truncate(value: string, limit = 10): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
+  }
 }

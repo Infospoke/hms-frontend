@@ -25,7 +25,7 @@ $ctrl-h: 38px;
 
     .search-input {
       width: 100%;
-      height: $ctrl-h;                 // ← unified
+      height: $ctrl-h; // ← unified
       padding: 0 36px 0 32px;
       border: 1px solid #e5e7eb;
       border-radius: 8px;
@@ -36,8 +36,13 @@ $ctrl-h: 38px;
       transition: border-color 0.18s;
       box-sizing: border-box;
 
-      &::placeholder { color: #9ca3af; }
-      &:focus { border-color: #4a90e2; }
+      &::placeholder {
+        color: #9ca3af;
+      }
+
+      &:focus {
+        border-color: #4a90e2;
+      }
     }
 
     .clear-btn {
@@ -55,8 +60,14 @@ $ctrl-h: 38px;
       color: #9ca3af;
       transition: color 0.15s;
 
-      svg { width: 11px; height: 11px; }
-      &:hover { color: #6b7280; }
+      svg {
+        width: 11px;
+        height: 11px;
+      }
+
+      &:hover {
+        color: #6b7280;
+      }
     }
   }
 
@@ -73,7 +84,8 @@ $ctrl-h: 38px;
     align-items: center;
     gap: 5px;
     width: 200px;
-    height: $ctrl-h;                   // ← unified
+
+    height: $ctrl-h; // ← unified
     padding: 0 32px 0 12px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -84,11 +96,16 @@ $ctrl-h: 38px;
     white-space: nowrap;
     box-sizing: border-box;
 
-    &:hover { border-color: #d1d5db; }
+    &:hover {
+      border-color: #d1d5db;
+    }
 
     &.is-open {
       border-color: #4a90e2;
-      .chevron-icon { transform: rotate(180deg); }
+
+      .chevron-icon {
+        transform: rotate(180deg);
+      }
     }
 
     .dropdown-label {
@@ -101,7 +118,12 @@ $ctrl-h: 38px;
     .dropdown-value {
       font-size: 0.84rem;
       color: #6b7280;
-      pointer-events: none;
+      display: inline-block;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
     }
 
     .chevron-icon {
@@ -127,8 +149,15 @@ $ctrl-h: 38px;
       animation: dropdownIn 0.12s ease;
 
       @keyframes dropdownIn {
-        from { opacity: 0; transform: translateY(-4px); }
-        to   { opacity: 1; transform: translateY(0);    }
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
     }
 
@@ -149,7 +178,9 @@ $ctrl-h: 38px;
       cursor: pointer;
       transition: background 0.12s;
 
-      &:hover { background: #f3f4f6; }
+      &:hover {
+        background: #f3f4f6;
+      }
 
       &.is-selected {
         color: #4a90e2;
@@ -178,18 +209,25 @@ $ctrl-h: 38px;
 .date-range-bar {
   display: inline-flex;
   align-items: center;
-  height: $ctrl-h;                     // ← unified
+  height: $ctrl-h; // ← unified
   box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 0 12px;                     // horizontal only — height drives vertical
+  padding: 0 12px; // horizontal only — height drives vertical
   gap: 0;
   animation: drSlideIn 0.16s ease;
 
   @keyframes drSlideIn {
-    from { opacity: 0; transform: translateY(-3px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
@@ -197,7 +235,7 @@ $ctrl-h: 38px;
 .date-field {
   display: flex;
   flex-direction: column;
-  justify-content: center;            // vertically centre inside $ctrl-h
+  justify-content: center; // vertically centre inside $ctrl-h
   gap: 1px;
 }
 
@@ -255,7 +293,9 @@ $ctrl-h: 38px;
     color: #c1c7d0;
     cursor: not-allowed;
 
-    &::-webkit-calendar-picker-indicator { cursor: not-allowed; }
+    &::-webkit-calendar-picker-indicator {
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -265,7 +305,10 @@ $ctrl-h: 38px;
   margin: 0 10px;
   color: #9ca3af;
 
-  svg { width: 18px; height: 10px; }
+  svg {
+    width: 18px;
+    height: 10px;
+  }
 }
 
 .date-clear-btn {
@@ -280,15 +323,21 @@ $ctrl-h: 38px;
   transition: color 0.15s;
   flex-shrink: 0;
 
-  svg { width: 11px; height: 11px; }
-  &:hover { color: #ef4444; }
+  svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  &:hover {
+    color: #ef4444;
+  }
 }
 
 
 
 .acc-tabs-wrap {
   background: #ffffff;
-  width:100%;
+  width: 100%;
   border: 1px solid #e2e8f0;
   border-radius: 10px 10px 0 0;
   padding: 0 16px;
@@ -322,7 +371,9 @@ $ctrl-h: 38px;
     border-right: 1px solid #e2e8f0;
   }
 
-  &:hover { color: #1e40af; }
+  &:hover {
+    color: #1e40af;
+  }
 
   &--active {
     color: #1d4ed8;

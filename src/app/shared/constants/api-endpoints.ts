@@ -100,6 +100,6 @@ export const API = {
     SR_APPROVALS: {
         COUNT: `/hms/staffing-requisition/sr-counts`,
         LIST: `/hms/staffing-requisition/assigned-srs-for-approvals`,
-
+        FUNCATNALITIES:    `/hms/configurations/functionality`,
     }
 };

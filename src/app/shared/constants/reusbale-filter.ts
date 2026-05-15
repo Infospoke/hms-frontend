@@ -31,14 +31,15 @@ export const filterDropdowns: any = [
 export const statusOptions: any = [
   {
     key: 'status',
-    label: 'Status',
+    label: 'Functionality',
     selected: '',
-    options: [
-      { value: '',         label: 'All'      },
-      { value: 'in_progress',   label: 'In Progress'   },
-      { value: 'Approved', label: 'Approved' },
-      { value: 'Rejected', label: 'Rejected' },
-    ],
+    options: [],
+    // options: [
+    //   { value: '',         label: 'All'      },
+    //   { value: 'in_progress',   label: 'In Progress'   },
+    //   { value: 'Approved', label: 'Approved' },
+    //   { value: 'Rejected', label: 'Rejected' },
+    // ],
   },
  
   {

@@ -4,6 +4,7 @@ export const environment = {
   websiteURL:'http://172.16.1.101:5003/infospoke-website',
   // apiUrl:'https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Infospoke',
   //apiUrl: "http://localhost:5000",
+  hrmsApiUrl:'http://172.16.1.101:5006',
   resumeDownloadApi:"https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Website/job/download",
   //resumeDownloadApi: "http://localhost:5001/job/download",
   //atsUrl: "http://localhost:5002/api",

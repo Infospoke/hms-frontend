@@ -59,7 +59,7 @@
             </svg>
             <span class="option-placeholder"
                   *ngIf="selectedFilters[dropdown.key] !== option.value"></span>
-            {{ option.label }}
+            {{ truncate(option.label,20) }}
           </li>
         </ul>
       </div>

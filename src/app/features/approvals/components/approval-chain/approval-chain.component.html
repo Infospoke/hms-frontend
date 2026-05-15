@@ -1,8 +1,8 @@
 <div class="approval-component">
 
   <app-approval-layout [heading]="'Approval of Chains'" subHeading="Review and approve pending chains" [showInfo]="true"
-    infoTooltip="Manage approval chains" [cards]="cards" [searchPlaceholder]="'Search by chain name...'"
-    (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData" [tabs]="tabs" (tabChange)="setTab($event)" [activeTab]="activeTab">
+    infoTooltip="Manage approval chains"  [searchPlaceholder]="'Search by chain name...'"
+    (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData"  >
   </app-approval-layout>
 
   
@@ -26,7 +26,7 @@
       <div class="chain-icon" [style.background]="ctx.row.iconBgColor" [style.color]="ctx.row.iconColor">
         <i [class]="ctx.row.iconClass"></i>
       </div>
-      <span class="chain-name-text">{{ ctx.row.chainName }}</span>
+      <span class="chain-name-text">{{ truncate(ctx.row.chainName, 30) }}</span>
     </div>
   </ng-container>
 
@@ -48,14 +48,22 @@
     </div>
   </ng-container>
 
-  <!-- Status — shows approval value (Approved / Pending / Rejected) -->
-  <ng-container *ngIf="ctx.col.key === 'status'">
+  <ng-container *ngIf="ctx.col.key === 'chainStatus'">
     <span class="status-badge" [ngClass]="{
-      'status-badge--pending':  ctx.row.status === 'In_Progress',
-      'status-badge--approved': ctx.row.status === 'APPROVED' || ctx.row.status === 'Approved',
-      'status-badge--rejected': ctx.row.status === 'Rejected' || ctx.row.status === 'REJECTED'
+      'status-badge--active':  ctx.row.chainStatus === 'ACTIVE' || ctx.row.chainStatus === 'Active',
+      'status-badge--deactive': ctx.row.chainStatus === 'DEACTIVE' || ctx.row.chainStatus === 'Inactive',
     }">
-      {{ ctx.row.status?.replace('_', ' ') }}
+      {{ ctx.row.chainStatus?.replace('_', ' ') }}
+    </span>
+  </ng-container>
+  <!-- Status — shows approval value (Approved / Pending / Rejected) -->
+  <ng-container *ngIf="ctx.col.key === 'approval'">
+    <span class="status-badge" [ngClass]="{
+      'status-badge--pending':  ctx.row.approval === 'In_Progress',
+      'status-badge--approved': ctx.row.approval === 'APPROVED' || ctx.row.approval === 'Approved',
+      'status-badge--rejected': ctx.row.approval === 'Rejected' || ctx.row.approval === 'REJECTED'
+    }">
+      {{ ctx.row.approval?.replace('_', ' ') }}
     </span>
   </ng-container>
 

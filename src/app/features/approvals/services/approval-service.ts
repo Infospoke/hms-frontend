@@ -78,6 +78,13 @@ export class ApprovalService {
     );
   }
 
+
+   async getActiveFuncationalies() {
+    return await firstValueFrom(
+      this.api.hrmsget(API.SR_APPROVALS.FUNCATNALITIES)
+    );
+  }
+
    async getSRList(payload: any) {
     return await firstValueFrom(
       this.api.hrmspost(API.SR_APPROVALS.LIST, payload)

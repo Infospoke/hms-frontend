@@ -1,6 +1,6 @@
 <div class="approval-component">
     <div class="heading-info sr-header">
-        <app-heading [heading]="heading" [subHeading]="subHeading" [showInfo]="showInfo" [infoTooltip]="infoTooltip" />
+        <app-heading [heading]="heading" [subHeading]="subHeading" [showInfo]="showInfo" [infoTooltip]="infoTooltip" [showBackButton]="showBackButton" [buttonText]="buttonText"/>
          <button class="btn-new" *ngIf="showBtn" (click)="handleNavigate()">+ {{buttonType}}</button>
     </div>
     <div class="stats-grid">
@@ -11,7 +11,7 @@
         </div>
 
     </div>
-    <div class="card-dd">
+    <div class="card-dd" *ngIf="dropDownData.length>=1 || searchPlaceholder">
         <app-common-filter [dropdowns]="dropDownData" [searchPlaceholder]="searchPlaceholder"  (filterChange)="onFilterChange($event)"  [tabs]="tabs" (tabChange)="tabChangeEvent($event)" [activeTab]="activeTab"/>
     </div>
 

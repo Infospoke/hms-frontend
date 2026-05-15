@@ -23,7 +23,7 @@ export class NotificationWebsocketService implements OnDestroy {
         this.statusSubject.next('connecting');
 
         this.stompClient = new Client({
-            webSocketFactory: () => new SockJS(`${environment.hrmsApiUrl}/ws/${this.authService.getRole()}`),
+            webSocketFactory: () => new SockJS(`${environment.hrmsApiUrl}/ws`),
 
             reconnectDelay: 5000,
             debug: (str) => console.log('[STOMP]', str)
@@ -31,7 +31,7 @@ export class NotificationWebsocketService implements OnDestroy {
 
         this.stompClient.onConnect = () => {
             this.statusSubject.next('connected');
-            this.stompClient.subscribe('/topic/notifications', (message: IMessage) => {
+            this.stompClient.subscribe(`/topic/notifications/${this.authService.getRoleId()}`, (message: IMessage) => {
                 if (message.body) {
                     console.log('Received notification:', message.body);
                     this.notificationSubject.next(JSON.parse(message.body));

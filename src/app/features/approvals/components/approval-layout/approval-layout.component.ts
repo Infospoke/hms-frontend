@@ -24,6 +24,8 @@ export class ApprovalLayoutComponent {
   @Input() dropDownData: any[] = [];
   @Input() tabs: { key: string; label: string; count: number }[] = [];
   @Input() activeTab: string = '';
+  @Input() showBackButton: boolean = false;
+  @Input() buttonText:any=null;
   @Output() handle=new EventEmitter<any>();
   @Output() tabChange = new EventEmitter<any>();
   @Output() filterChange = new EventEmitter<any>();

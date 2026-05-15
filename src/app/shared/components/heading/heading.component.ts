@@ -26,7 +26,7 @@ export class HeadingComponent implements OnInit {
   @Input() backButtonUrl:string='';
 
   @Input() buttonText:string='Back';
-
+  
   private router=inject(Router);
   constructor() { }
   ngOnInit(): void {

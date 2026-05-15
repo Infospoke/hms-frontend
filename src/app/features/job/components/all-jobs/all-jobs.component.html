@@ -1,0 +1,55 @@
+<div class="jobs-contaier">
+
+
+    <app-approval-layout [heading]="'All Jobs'"
+        [subHeading]="'View all jobs posted by you with overall status and assignment details'" [showInfo]="false"
+        [infoTooltip]="false" [cards]="cards" [showBtn]="false"
+        [searchPlaceholder]="'Search by jobcode or job title or department'"
+        [dropDownData]="dropDownData"></app-approval-layout>
+
+    <div class="card-dd">
+        <app-reusable-table [columns]="ableColumns" [data]="filteredData" [totalItems]="totalItems" [pageSize]="pageSize"
+            [currentPage]="currentPage" [cellTemplate]="jobCellTemplate" emptyMessage="No approval chains found."
+            (pageChange)="onPageChange($event)">
+        </app-reusable-table>
+    </div>
+</div>
+
+<ng-template #jobCellTemplate let-ctx>
+ 
+  <ng-container *ngIf="ctx.col.key === 'jobDetails'">
+    <div class="aj-job-details">
+      <div class="aj-job-icon" [style.background]="ctx.row['iconBg']">
+        <span class="material-icons" [style.color]="ctx.row['iconColor']">{{ ctx.row['icon'] }}</span>
+      </div>
+      <div class="aj-job-meta">
+        <span class="aj-job-title">{{ ctx.row['title'] }}</span>
+        <span class="aj-job-code">{{ ctx.row['code'] }}</span>
+      </div>
+    </div>
+  </ng-container>
+ 
+  <ng-container *ngIf="ctx.col.key === 'assignees'">
+    <div class="aj-assignees">
+      <span class="aj-assignee-count">{{ ctx.row['assignees'] }}</span>
+      <a class="aj-view-link" >View Assignees</a>
+    </div>
+  </ng-container>
+ 
+  <ng-container *ngIf="ctx.col.key === 'accepted'">
+    <span class="aj-badge aj-badge--green">{{ ctx.row['accepted'] }}</span>
+  </ng-container>
+ 
+  <ng-container *ngIf="ctx.col.key === 'pending'">
+    <span class="aj-badge aj-badge--orange">{{ ctx.row['pending'] }}</span>
+  </ng-container>
+ 
+  <ng-container *ngIf="ctx.col.key === 'declined'">
+    <span class="aj-badge aj-badge--red">{{ ctx.row['declined'] }}</span>
+  </ng-container>
+ 
+  <!-- <ng-container *ngIf="ctx.col.key === 'action'">
+    <a class="aj-action-link" >View Details</a>
+  </ng-container> -->
+ 
+</ng-template>

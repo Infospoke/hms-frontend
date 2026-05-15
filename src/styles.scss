@@ -627,7 +627,6 @@ select::-webkit-scrollbar-thumb:hover {
 .ant-message {
   z-index: 1000 !important;
 }
-
 // ══════════════════════════════════════════════════════════════════════════════
 // UNIFIED SELECT STYLING
 // Single source of truth — overrides all scattered legacy select rules above.
@@ -765,25 +764,84 @@ nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
   color: #6b7280 !important;
 }
 
-// ── Arrow: color + offset (top:50%;margin-top:-6px now centers in 42px host) ─
+// ── Arrow: color + offset ────────────────────────────────────────────────────
 .ant-select-arrow {
   color: #64748b !important;
   inset-inline-end: 12px !important;
 }
 
-// ── Dropdown panel ───────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// DROPDOWN PANEL
+// CDK Virtual Scroll REQUIRES a fixed height on .cdk-virtual-scroll-viewport
+// to render items. height:auto collapses it to 0px — items load but never show.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Dropdown root panel ──────────────────────────────────────────────────────
+.ant-select-dropdown {
+  height: auto !important;
+  max-height: 220px !important;
+  overflow: hidden !important;       // panel itself never scrolls
+  padding: 4px 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10) !important;
+}
+
+// ── nz-option-container — wraps the virtual scroll viewport ─────────────────
+.ant-select-dropdown nz-option-container {
+  display: block !important;
+  height: auto !important;
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+// ── CDK Virtual Scroll viewport — MUST be fixed height, never auto ───────────
+// auto = 0px height = items calculated but never rendered (blank dropdown bug)
+.ant-select-dropdown .cdk-virtual-scroll-viewport {
+  height: 220px !important;          // fixed — required for CDK to render items
+  min-height: unset !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+// ── CDK content wrapper inside viewport ─────────────────────────────────────
+.ant-select-dropdown .cdk-virtual-scroll-content-wrapper {
+  height: auto !important;
+  min-height: unset !important;
+  width: 100% !important;
+}
+
+// ── No Data state — stays compact, no forced height ─────────────────────────
+.ant-select-dropdown .ant-empty {
+  margin: 16px 0 !important;
+  padding: 8px !important;
+}
+
+// ── Thin scrollbar inside dropdown ──────────────────────────────────────────
+.ant-select-dropdown ::-webkit-scrollbar        { width: 5px; }
+.ant-select-dropdown ::-webkit-scrollbar-track  { background: transparent; }
+.ant-select-dropdown ::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 4px; }
+.ant-select-dropdown ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+// ── Each option row ──────────────────────────────────────────────────────────
 .ant-select-dropdown .ant-select-item {
   font-size: 14px !important;
   font-family: inherit !important;
-  padding: 8px 12px !important;
+  padding: 0 12px !important;
+  height: 30px !important;
+  line-height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
+// ── Selected option ──────────────────────────────────────────────────────────
 .ant-select-dropdown .ant-select-item-option-selected {
   background-color: rgba(37, 99, 235, 0.08) !important;
   color: var(--color-primary, #2563eb) !important;
   font-weight: 500 !important;
 }
 
+// ── Hovered option ───────────────────────────────────────────────────────────
 .ant-select-dropdown .ant-select-item-option-active {
   background-color: #f3f4f6 !important;
 }

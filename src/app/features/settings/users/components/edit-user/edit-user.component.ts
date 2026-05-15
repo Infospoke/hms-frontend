@@ -4,13 +4,14 @@ import { FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Vali
 import { forkJoin } from 'rxjs';
 import { UserService } from '../../servics/user-service';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 import { ConfirmModalComponent } from '../../../../../shared/components/modal-component/confirm-modal.component';
 
 @Component({
   selector: 'app-edit-user',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule, ProfilePipe],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, NzModalModule, NzSelectModule, ProfilePipe],
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.scss',
 })

@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AddSkillComponent } from '../../../../shared/components/add-skill/add-skill.component';
 import { forkJoin, of, switchMap } from 'rxjs';
 import { StaffingServiceService } from '../../services/staffing-service.service';
@@ -64,7 +65,7 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
 @Component({
   selector: 'app-create-staff',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule, NzModalModule, NzModalModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, QuillModule, NzModalModule, NzSelectModule],
   templateUrl: './create-staff.component.html',
   styleUrl: './create-staff.component.scss'
 })

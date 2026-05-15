@@ -7,10 +7,11 @@ import { first } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 @Component({
   selector: 'app-add-applicant',
-  imports: [ReactiveFormsModule, CommonModule, HeadingComponent],
+  imports: [ReactiveFormsModule, CommonModule, HeadingComponent, NzSelectModule],
   templateUrl: './add-applicant.component.html',
   styleUrl: './add-applicant.component.scss',
 })
@@ -127,8 +128,7 @@ export class AddApplicantComponent implements OnInit {
       this.applicationForm.markAllAsTouched();
     }
   }
-  handleJobChange($event:any){
-    const jobId = $event.target.value;
+  handleJobChange(jobId: any){
     this.selectedJob=this.jobRoles.find(job=>job.jobId==jobId);
   }
 

@@ -627,3 +627,163 @@ select::-webkit-scrollbar-thumb:hover {
 .ant-message {
   z-index: 1000 !important;
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UNIFIED SELECT STYLING
+// Single source of truth — overrides all scattered legacy select rules above.
+// .cnc-select is excluded from the arrow rule because it uses a FA icon caret.
+// ══════════════════════════════════════════════════════════════════════════════
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 36px 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+// Custom chevron arrow — skip .cnc-select which has its own FA icon
+select:not(.cnc-select) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  outline: none;
+}
+
+select.ng-invalid.ng-touched {
+  border-color: var(--error-color);
+}
+
+select:invalid {
+  color: var(--color-text-secondary);
+}
+
+select:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+select option {
+  color: var(--color-text);
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+select option:disabled {
+  color: var(--color-text-secondary);
+}
+
+// Thin scrollbar inside the option list (webkit)
+select::-webkit-scrollbar        { width: 5px; }
+select::-webkit-scrollbar-track  { background: transparent; }
+select::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 4px; }
+select::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GLOBAL NZ-SELECT STYLING — applies to EVERY nz-select in the project
+// The core issue: ng-zorro hard-codes height:32px on .ant-select-single.ant-select
+// which is the arrow's positioning context (top:50% calculates from it).
+// Fix: override host height to 42px everywhere so the arrow always centers.
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Host: override ng-zorro's fixed 32px so arrow centers correctly ──────────
+nz-select,
+.ant-select-single.ant-select {
+  height: 42px !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+// ── Trigger box: fill host height, apply field styling ──────────────────────
+nz-select nz-select-top-control,
+.ant-select-single.ant-select nz-select-top-control {
+  height: 100% !important;
+  min-height: 42px !important;
+  border: 1px solid var(--color-border, #d1d5db) !important;
+  border-radius: 8px !important;
+  padding: 0 36px 0 12px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  background-color: #fff !important;
+  box-shadow: none !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease !important;
+  cursor: pointer !important;
+}
+
+// ── Placeholder ──────────────────────────────────────────────────────────────
+nz-select nz-select-top-control nz-select-placeholder {
+  color: var(--color-text-secondary, #9ca3af) !important;
+  font-size: 14px !important;
+}
+
+// ── Selected value ───────────────────────────────────────────────────────────
+nz-select nz-select-top-control nz-select-item {
+  color: var(--color-text, #111827) !important;
+  font-size: 14px !important;
+}
+
+// ── Focus ────────────────────────────────────────────────────────────────────
+nz-select.ant-select-focused nz-select-top-control,
+nz-select nz-select-top-control:focus-within {
+  border-color: var(--color-primary, #2563eb) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+// ── Error state ──────────────────────────────────────────────────────────────
+nz-select.ng-invalid.ng-touched nz-select-top-control {
+  border-color: var(--error-color, #ef4444) !important;
+}
+
+// ── Disabled ─────────────────────────────────────────────────────────────────
+nz-select.ant-select-disabled nz-select-top-control {
+  background-color: #f3f4f6 !important;
+  border-color: #e5e7eb !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+nz-select.ant-select-disabled nz-select-top-control nz-select-item,
+nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
+  color: #6b7280 !important;
+}
+
+// ── Arrow: color + offset (top:50%;margin-top:-6px now centers in 42px host) ─
+.ant-select-arrow {
+  color: #64748b !important;
+  inset-inline-end: 12px !important;
+}
+
+// ── Dropdown panel ───────────────────────────────────────────────────────────
+.ant-select-dropdown .ant-select-item {
+  font-size: 14px !important;
+  font-family: inherit !important;
+  padding: 8px 12px !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-selected {
+  background-color: rgba(37, 99, 235, 0.08) !important;
+  color: var(--color-primary, #2563eb) !important;
+  font-weight: 500 !important;
+}
+
+.ant-select-dropdown .ant-select-item-option-active {
+  background-color: #f3f4f6 !important;
+}

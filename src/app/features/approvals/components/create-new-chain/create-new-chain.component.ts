@@ -7,6 +7,7 @@ import { ApprovalService } from '../../services/approval-service';
 import { UserService } from '../../../settings/users/servics/user-service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CommentModalAction, CommentModalConfig, CommentModalResult, CommonModalComponent } from '../../../../shared/components/common-modal/common-modal.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 export type PageMode = 'create' | 'edit' | 'view' | 'approve';
 
@@ -18,8 +19,8 @@ export type PageMode = 'create' | 'edit' | 'view' | 'approve';
     ReactiveFormsModule,
     FormsModule,
     HeadingComponent,
-  
     CommonModalComponent,
+    NzSelectModule,
   ],
   templateUrl: './create-new-chain.component.html',
   styleUrl: './create-new-chain.component.scss',

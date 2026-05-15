@@ -6,11 +6,11 @@
       <!-- User Type -->
       <div class="field">
         <label>User Type <span class="astrick">*</span></label>
-        <select formControlName="userType">
-          <option value="" disabled>Select user type</option>
-          <option *ngIf="userTypes.length === 0" disabled value="">No user types available</option>
-          <option *ngFor="let u of userTypes" [value]="u?.id">{{ u?.name }}</option>
-        </select>
+        <nz-select formControlName="userType" nzPlaceHolder="Select user type"
+          [nzOptionOverflowSize]="5" class="nz-field-select">
+          <nz-option *ngIf="userTypes.length === 0" nzDisabled nzValue="" nzLabel="No user types available"></nz-option>
+          <nz-option *ngFor="let u of userTypes" [nzValue]="u?.id" [nzLabel]="u?.name"></nz-option>
+        </nz-select>
         <div class="error" *ngIf="c('userType')?.touched">
           <span *ngIf="c('userType')?.hasError('required')">User type is required</span>
         </div>
@@ -122,11 +122,11 @@
       <!-- Employment Type -->
       <div class="field">
         <label>Employment Type <span class="astrick">*</span></label>
-        <select formControlName="employmentType">
-          <option value="" disabled>Select employment type</option>
-          <option *ngIf="employmentTypes.length === 0" disabled value="">No employment types available</option>
-          <option *ngFor="let e of employmentTypes" [value]="e?.id">{{ e?.name }}</option>
-        </select>
+        <nz-select formControlName="employmentType" nzPlaceHolder="Select employment type"
+          [nzOptionOverflowSize]="5" class="nz-field-select">
+          <nz-option *ngIf="employmentTypes.length === 0" nzDisabled nzValue="" nzLabel="No employment types available"></nz-option>
+          <nz-option *ngFor="let e of employmentTypes" [nzValue]="e?.id" [nzLabel]="e?.name"></nz-option>
+        </nz-select>
         <div class="error" *ngIf="c('employmentType')?.touched">
           <span *ngIf="c('employmentType')?.hasError('required')">Employment type is required</span>
         </div>
@@ -135,11 +135,11 @@
       <!-- Business Unit -->
       <div class="field">
         <label>Business Unit <span class="astrick">*</span></label>
-        <select formControlName="businessUnit">
-          <option value="" disabled>Select business unit</option>
-          <option *ngIf="businessUnits.length === 0" disabled value="">No business units available</option>
-          <option *ngFor="let b of businessUnits" [value]="b?.id">{{ b?.name }}</option>
-        </select>
+        <nz-select formControlName="businessUnit" nzPlaceHolder="Select business unit"
+          [nzOptionOverflowSize]="5" class="nz-field-select">
+          <nz-option *ngIf="businessUnits.length === 0" nzDisabled nzValue="" nzLabel="No business units available"></nz-option>
+          <nz-option *ngFor="let b of businessUnits" [nzValue]="b?.id" [nzLabel]="b?.name"></nz-option>
+        </nz-select>
         <div class="error" *ngIf="c('businessUnit')?.touched">
           <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
         </div>
@@ -148,15 +148,12 @@
       <!-- Department -->
       <div class="field">
         <label>Department / Team <span class="astrick">*</span></label>
-        <select formControlName="department">
-          <option value="" disabled>
-            {{ departments.length ? 'Select department' : 'Select business unit first' }}
-          </option>
-          <option *ngIf="departments.length === 0 && c('businessUnit')?.value" disabled value="">
-            No departments available
-          </option>
-          <option *ngFor="let d of departments" [value]="d?.id">{{ d?.name }}</option>
-        </select>
+        <nz-select formControlName="department"
+          [nzPlaceHolder]="departments.length ? 'Select department' : 'Select business unit first'"
+          [nzOptionOverflowSize]="5" class="nz-field-select">
+          <nz-option *ngIf="departments.length === 0 && c('businessUnit')?.value" nzDisabled nzValue="" nzLabel="No departments available"></nz-option>
+          <nz-option *ngFor="let d of departments" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
+        </nz-select>
         <div class="error" *ngIf="c('department')?.touched">
           <span *ngIf="c('department')?.hasError('required')">Department is required</span>
         </div>
@@ -165,15 +162,12 @@
       <!-- Role -->
       <div class="field">
         <label>Designation / Role <span class="astrick">*</span></label>
-        <select formControlName="role">
-          <option value="" disabled>
-            {{ roles.length ? 'Select role' : 'Select department first' }}
-          </option>
-          <option *ngIf="roles.length === 0 && c('department')?.value" disabled value="">
-            No roles available
-          </option>
-          <option *ngFor="let r of roles" [value]="r?.id">{{ r?.name }}</option>
-        </select>
+        <nz-select formControlName="role"
+          [nzPlaceHolder]="roles.length ? 'Select role' : 'Select department first'"
+          [nzOptionOverflowSize]="5" class="nz-field-select">
+          <nz-option *ngIf="roles.length === 0 && c('department')?.value" nzDisabled nzValue="" nzLabel="No roles available"></nz-option>
+          <nz-option *ngFor="let r of roles" [nzValue]="r?.id" [nzLabel]="r?.name"></nz-option>
+        </nz-select>
         <div class="error" *ngIf="c('role')?.touched">
           <span *ngIf="c('role')?.hasError('required')">Designation / Role is required</span>
         </div>

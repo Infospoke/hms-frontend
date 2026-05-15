@@ -6,12 +6,13 @@ import { LoaderService } from '../../../../core/services/loader.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @Component({
   selector: 'app-add-job',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeadingComponent],
+  imports: [CommonModule, ReactiveFormsModule, HeadingComponent, NzSelectModule],
   templateUrl: './add-job.component.html',
   styleUrls: ['./add-job.component.scss']
 })

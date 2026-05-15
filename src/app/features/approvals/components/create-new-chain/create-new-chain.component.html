@@ -116,13 +116,10 @@
 
           <div class="cnc-field cnc-field--functionality">
             <label class="cnc-label">Functionality</label>
-            <div class="cnc-select-wrap">
-              <select class="cnc-select" formControlName="functionality">
-                <option value="">Select functionality</option>
-                <option *ngFor="let opt of functionalityOptions" [value]="opt.value">{{ opt.label }}</option>
-              </select>
-              <i class="fa-solid fa-chevron-down cnc-select-caret"></i>
-            </div>
+            <nz-select formControlName="functionality" nzPlaceHolder="Select functionality"
+              [nzOptionOverflowSize]="5" class="nz-field-select">
+              <nz-option *ngFor="let opt of functionalityOptions" [nzValue]="opt.value" [nzLabel]="opt.label"></nz-option>
+            </nz-select>
           </div>
 
         </div>
@@ -199,31 +196,23 @@
             </div>
 
             <div class="cnc-level-col cnc-level-col--dept">
-              <div class="cnc-select-wrap">
-                <select class="cnc-select" formControlName="department"
-                  (change)="onDepartmentChange(i, $any($event.target).value)">
-                  <option value="">Select department</option>
-                  <option *ngFor="let d of departmentOptions" [value]="d.value">{{ d.label }}</option>
-                </select>
-                <i class="fa-solid fa-chevron-down cnc-select-caret"></i>
-              </div>
+              <nz-select formControlName="department" nzPlaceHolder="Select department"
+                [nzOptionOverflowSize]="5" class="nz-field-select"
+                (ngModelChange)="onDepartmentChange(i, $event)">
+                <nz-option *ngFor="let d of departmentOptions" [nzValue]="d.value" [nzLabel]="d.label"></nz-option>
+              </nz-select>
               <span class="cnc-level-field-err" *ngIf="controlHasError(i, 'department')">
                 Department is required
               </span>
             </div>
 
             <div class="cnc-level-col cnc-level-col--role">
-              <div class="cnc-select-wrap">
-                <select class="cnc-select" formControlName="approver">
-                  <option value="">
-                    {{ loadingRoles[i] ? 'Loading roles…' : 'Select role / approver' }}
-                  </option>
-                  <option *ngFor="let r of approverOptionsFor(i)" [value]="r.value">{{ r.label }}</option>
-                </select>
-                <i class="fa-solid cnc-select-caret" [class.fa-spinner]="loadingRoles[i]"
-                  [class.fa-spin]="loadingRoles[i]" [class.fa-chevron-down]="!loadingRoles[i]">
-                </i>
-              </div>
+              <nz-select formControlName="approver"
+                [nzPlaceHolder]="loadingRoles[i] ? 'Loading roles…' : 'Select role / approver'"
+                [nzLoading]="loadingRoles[i]"
+                [nzOptionOverflowSize]="5" class="nz-field-select">
+                <nz-option *ngFor="let r of approverOptionsFor(i)" [nzValue]="r.value" [nzLabel]="r.label"></nz-option>
+              </nz-select>
               <span class="cnc-level-field-err" *ngIf="controlHasError(i, 'approver')">
                 Approver is required
               </span>

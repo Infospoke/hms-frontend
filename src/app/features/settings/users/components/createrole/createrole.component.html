@@ -13,13 +13,10 @@
       <div class="form-row two-col">
         <div class="form-group">
           <label class="form-label">Business Unit <span class="astrick">*</span></label>
-          <select formControlName="businessUnit"
-            [class.is-invalid]="isFieldInvalid('businessUnit')">
-            <option value="" disabled>Select Business Unit</option>
-            <option *ngFor="let u of businessUnits" [value]="u.id ?? u">
-              {{ u.name ?? u }}
-            </option>
-          </select>
+          <nz-select formControlName="businessUnit" nzPlaceHolder="Select Business Unit"
+            [nzOptionOverflowSize]="5" [class.is-invalid]="isFieldInvalid('businessUnit')" class="nz-field-select">
+            <nz-option *ngFor="let u of businessUnits" [nzValue]="u.id ?? u" [nzLabel]="u.name ?? u"></nz-option>
+          </nz-select>
           <small class="err-msg" *ngIf="isFieldInvalid('businessUnit')">
             Business Unit is required.
           </small>
@@ -27,13 +24,10 @@
 
         <div class="form-group">
           <label class="form-label">Department <span class="astrick">*</span></label>
-          <select formControlName="department"
-            [class.is-invalid]="isFieldInvalid('department')">
-            <option value="" disabled>Select Department</option>
-            <option *ngFor="let d of departments" [value]="d.id ?? d">
-              {{ d.name ?? d }}
-            </option>
-          </select>
+          <nz-select formControlName="department" nzPlaceHolder="Select Department"
+            [nzOptionOverflowSize]="5" [class.is-invalid]="isFieldInvalid('department')" class="nz-field-select">
+            <nz-option *ngFor="let d of departments" [nzValue]="d.id ?? d" [nzLabel]="d.name ?? d"></nz-option>
+          </nz-select>
           <small class="err-msg" *ngIf="isFieldInvalid('department')">
             Department is required.
           </small>

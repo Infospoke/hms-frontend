@@ -7,12 +7,13 @@ import { NotificationService } from '../../../../../core/services/notification.s
 import { Router } from '@angular/router';
 import { alphabetsOnly, numericOnly, mobileValidator, notSameAsMobile } from '../../../../../shared/validations/validators';
 import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @Component({
   selector: 'app-invite-user',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule,HeadingComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeadingComponent, NzSelectModule],
   templateUrl: './invite-user.component.html',
   styleUrl: './invite-user.component.scss',
 })

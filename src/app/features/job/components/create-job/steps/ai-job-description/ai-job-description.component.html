@@ -1,0 +1,230 @@
+<div class="ajd-layout" (click)="closeMenus()">
+
+  <!-- ── Left: Editor ──────────────────────────────────────────────────── -->
+  <div class="ajd-editor-col">
+    <div class="ajd-card">
+
+      <!-- Card header -->
+      <div class="ajd-card-header">
+        <div class="ajd-card-title-row">
+          <span class="ajd-ai-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+          <div>
+            <h3 class="ajd-card-title">AI Job Description</h3>
+            <p class="ajd-card-sub">AI has used the job details to generate the job description.
+              Review, edit, and customize it before proceeding.</p>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="ajd-actions">
+
+          <button class="ajd-btn ajd-btn--generate" (click)="generateJD()" [disabled]="isGenerating || isRegenerating">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating"></i>
+            <i class="fa-solid fa-stars" *ngIf="!isGenerating"></i>
+            {{ isGenerating ? 'Generating…' : 'Generate JD' }}
+          </button>
+
+          <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
+            <button class="ajd-btn ajd-btn--outline" (click)="toggleMoreAIOptions($event)"
+              [disabled]="isGenerating || isRegenerating">
+              More AI Options
+              <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
+            </button>
+            <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Make it concise')">
+                <i class="fa-solid fa-compress"></i> Make it concise
+              </button>
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Make it detailed')">
+                <i class="fa-solid fa-expand"></i> Make it detailed
+              </button>
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Formal tone')">
+                <i class="fa-solid fa-briefcase"></i> Formal tone
+              </button>
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Friendly tone')">
+                <i class="fa-solid fa-face-smile"></i> Friendly tone
+              </button>
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Add DEI statement')">
+                <i class="fa-solid fa-handshake-angle"></i> Add DEI statement
+              </button>
+            </div>
+          </div>
+
+          <button class="ajd-btn ajd-btn--outline" (click)="regenerate()"
+            [disabled]="isRegenerating || isGenerating || !hasContent">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="isRegenerating"></i>
+            <i class="fa-solid fa-rotate" *ngIf="!isRegenerating"></i>
+            {{ isRegenerating ? 'Regenerating…' : 'Regenerate' }}
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Empty state (before first generation) -->
+      <div class="ajd-empty" *ngIf="!hasContent && !isGenerating">
+        <i class="fa-solid fa-file-pen ajd-empty__icon"></i>
+        <p class="ajd-empty__title">No job description yet</p>
+        <p class="ajd-empty__sub">Click <strong>Generate JD</strong> to let AI create one based on the job details you filled in.</p>
+      </div>
+
+      <!-- Generating shimmer -->
+      <div class="ajd-generating" *ngIf="isGenerating && !hasContent">
+        <div class="ajd-shimmer"></div>
+        <div class="ajd-shimmer ajd-shimmer--sm"></div>
+        <div class="ajd-shimmer"></div>
+        <div class="ajd-shimmer ajd-shimmer--lg"></div>
+        <div class="ajd-shimmer ajd-shimmer--sm"></div>
+        <div class="ajd-shimmer"></div>
+      </div>
+
+      <!-- Toolbar + Editor -->
+      <ng-container *ngIf="hasContent">
+
+        <!-- Toolbar -->
+        <div class="ajd-toolbar">
+          <select class="ajd-toolbar__para" (change)="format('formatBlock', $any($event.target).value)">
+            <option value="p">Paragraph</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+          </select>
+
+          <div class="ajd-toolbar__divider"></div>
+
+          <button class="ajd-tool-btn" [class.ajd-tool-btn--active]="isFormatActive('bold')"
+            title="Bold" (click)="format('bold')"><b>B</b></button>
+          <button class="ajd-tool-btn ajd-tool-btn--italic"
+            [class.ajd-tool-btn--active]="isFormatActive('italic')"
+            title="Italic" (click)="format('italic')"><i>I</i></button>
+          <button class="ajd-tool-btn ajd-tool-btn--underline"
+            [class.ajd-tool-btn--active]="isFormatActive('underline')"
+            title="Underline" (click)="format('underline')"><u>U</u></button>
+
+          <div class="ajd-toolbar__divider"></div>
+
+          <button class="ajd-tool-btn" title="Ordered list" (click)="format('insertOrderedList')">
+            <i class="fa-solid fa-list-ol"></i>
+          </button>
+          <button class="ajd-tool-btn" title="Unordered list" (click)="format('insertUnorderedList')">
+            <i class="fa-solid fa-list-ul"></i>
+          </button>
+
+          <div class="ajd-toolbar__divider"></div>
+
+          <button class="ajd-tool-btn" title="Indent" (click)="format('indent')">
+            <i class="fa-solid fa-indent"></i>
+          </button>
+          <button class="ajd-tool-btn" title="Outdent" (click)="format('outdent')">
+            <i class="fa-solid fa-outdent"></i>
+          </button>
+
+          <div class="ajd-toolbar__divider"></div>
+
+          <button class="ajd-tool-btn" title="Undo" (click)="format('undo')">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button class="ajd-tool-btn" title="Redo" (click)="format('redo')">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+
+        <!-- Editable content area -->
+        <div class="ajd-editor"
+          #editor
+          contenteditable="true"
+          (input)="onEditorInput()"
+          spellcheck="true">
+        </div>
+
+        <!-- Footer -->
+        <div class="ajd-footer">
+          <span class="ajd-word-count">{{ wordCount }} words</span>
+          <span class="ajd-save-status" [ngClass]="{
+            'ajd-save-status--saving': saveStatus === 'saving',
+            'ajd-save-status--saved':  saveStatus === 'saved'
+          }">
+            <ng-container *ngIf="saveStatus === 'saving'">
+              <i class="fa-solid fa-spinner fa-spin"></i> Saving…
+            </ng-container>
+            <ng-container *ngIf="saveStatus === 'saved'">
+              <i class="fa-solid fa-circle-check"></i> All changes saved
+            </ng-container>
+          </span>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- ── Right: Versions panel ─────────────────────────────────────────── -->
+  <div class="ajd-versions-col">
+    <div class="ajd-versions-card">
+
+      <div class="ajd-versions-header">
+        <div>
+          <span class="ajd-versions-title">
+            AI Versions ({{ versions.length }}/3)
+          </span>
+          <i class="fa-solid fa-circle-info ajd-info-icon" title="Up to 3 AI-generated versions are saved."></i>
+        </div>
+        <p class="ajd-versions-sub">We keep up to 3 versions.<br>Select any version to view or use.</p>
+      </div>
+
+      <!-- Version list -->
+      <div class="ajd-version-list" *ngIf="versions.length > 0">
+        <div class="ajd-version-item"
+          *ngFor="let v of versions"
+          [class.ajd-version-item--selected]="selectedVersionId === v.id"
+          (click)="loadVersion(v)">
+
+          <div class="ajd-version-radio">
+            <div class="ajd-radio" [class.ajd-radio--active]="selectedVersionId === v.id">
+              <div class="ajd-radio-dot" *ngIf="selectedVersionId === v.id"></div>
+            </div>
+          </div>
+
+          <div class="ajd-version-info">
+            <div class="ajd-version-name-row">
+              <span class="ajd-version-name">{{ v.label }}</span>
+              <span class="ajd-current-badge" *ngIf="v.isCurrent">Current</span>
+            </div>
+            <span class="ajd-version-date">Generated on {{ formatDate(v.generatedAt) }}</span>
+            <span class="ajd-version-by">By AI</span>
+          </div>
+
+          <div class="ajd-version-check" *ngIf="selectedVersionId === v.id">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+
+          <div class="ajd-version-menu-wrap" *ngIf="!v.isCurrent" (click)="$event.stopPropagation()">
+            <button class="ajd-menu-btn" (click)="toggleMenu(v, $event)">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="ajd-version-menu" *ngIf="v.showMenu">
+              <button class="ajd-version-menu-item" (click)="loadVersion(v)">
+                <i class="fa-solid fa-upload"></i> Load this version
+              </button>
+              <button class="ajd-version-menu-item ajd-version-menu-item--danger" (click)="deleteVersion(v)">
+                <i class="fa-regular fa-trash-can"></i> Delete
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- No versions yet -->
+      <div class="ajd-versions-empty" *ngIf="versions.length === 0">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <p>No versions yet. Generate a JD to get started.</p>
+      </div>
+
+      <!-- Hint -->
+      <div class="ajd-versions-hint" *ngIf="versions.length > 0 && selectedVersionId === null">
+        <i class="fa-solid fa-circle-info"></i>
+        Select a version to load its content in the editor.
+      </div>
+
+    </div>
+  </div>
+
+</div>

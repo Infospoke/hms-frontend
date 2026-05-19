@@ -246,19 +246,21 @@ export class StaffingRequisitionsComponent implements OnInit {
       // if (to) filters['toDate'] = to;
       filters['dateFilter'] = dateFilter;
     } else if (dateFilter === 'CUSTOM') {
+      filters['dateFilter'] = dateFilter;
       if (f.fromDate) filters['fromDate'] = f.fromDate;
       if (f.toDate) filters['toDate'] = f.toDate;
     }
 
     // ── Active tab → status filter ──────────────────────────────────────────
-    if (this.activeTab && this.activeTab !== 'all') {
-      filters['status'] = this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1);
-    }
+    // if (this.activeTab && this.activeTab !== 'all') {
+    //   filters['status'] = this.activeTab.charAt(0).toUpperCase() + this.activeTab.slice(1);
+    // }
 
     return {
       page: this.currentPage - 1,   // API is 0-based
       size: this.pageSize,
       sortBy: 'createdOn',
+      status:this.activeTab !== 'all'? this.activeTab : '',
       direction: 'DESC',
       filters,
     };

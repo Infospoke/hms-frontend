@@ -65,7 +65,7 @@ export class ApprovalService {
   }
 
 
-  async approveOrReject(payload: { srId: string; decision: 'APPROVE' | 'REJECT'; comments?: string }) {
+  async approveOrReject(payload: { srId: string; approved: boolean; comments?: string }) {
     return await firstValueFrom(
       this.api.hrmspost(API.APPROVALS.APPROVE_OR_REJECT, payload)
     );

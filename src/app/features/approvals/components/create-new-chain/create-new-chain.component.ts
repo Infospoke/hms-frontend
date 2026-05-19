@@ -6,102 +6,130 @@ import { HeadingComponent } from '../../../../shared/components/heading/heading.
 import { ApprovalService } from '../../services/approval-service';
 import { UserService } from '../../../settings/users/servics/user-service';
 import { NotificationService } from '../../../../core/services/notification.service';
-
+import { CommentModalAction, CommentModalConfig, CommentModalResult, CommonModalComponent } from '../../../../shared/components/common-modal/common-modal.component';
 
 export type PageMode = 'create' | 'edit' | 'view' | 'approve';
 
 @Component({
   selector: 'app-create-new-chain',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeadingComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    HeadingComponent,
+  
+    CommonModalComponent,
+  ],
   templateUrl: './create-new-chain.component.html',
   styleUrl: './create-new-chain.component.scss',
 })
 export class CreateNewChainComponent implements OnInit {
 
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
-  private approvalService = inject(ApprovalService);
-  private userService = inject(UserService);
-   url: string = '';
-  private notificationService = inject(NotificationService)
+  private router              = inject(Router);
+  private route               = inject(ActivatedRoute);
+  private fb                  = inject(FormBuilder);
+  private approvalService     = inject(ApprovalService);
+  private userService         = inject(UserService);
+  private notificationService = inject(NotificationService);
+
+  url: string = '';
   mode: PageMode = 'create';
 
   functionalityOptions: { value: any; label: string }[] = [];
-  departmentOptions: { value: any; label: string }[] = [];
+  departmentOptions:    { value: any; label: string }[] = [];
 
   approverOptionsByLevel: { [levelIndex: number]: { value: any; label: string }[] } = {};
-  loadingRoles: { [levelIndex: number]: boolean } = {};
+  loadingRoles:           { [levelIndex: number]: boolean } = {};
 
+  // ── Comment modal state ───────────────────────────────────────────────────
+  showCommentModal    = false;
+  commentModalAction: CommentModalAction | null = null;
+  submittingModal     = false;
 
-  showCommentModal = false;
-  commentModalAction: 'approve' | 'reject' | 'deactivate' | 'activate' | null = null;
-  commentText = '';
-  commentError = '';
-  submittingModal = false;
+  /**
+   * Per-use-case config passed down to <app-comment-modal>.
+   * Overrides the default title/description for "Chain" context.
+   */
+  get modalConfig(): Partial<CommentModalConfig> | null {
+    if (!this.commentModalAction) return null;
+    const map: Record<CommentModalAction, Partial<CommentModalConfig>> = {
+      approve:    { title: 'Approve Chain',     description: 'Please provide a comment for approving this chain.'     },
+      reject:     { title: 'Reject Chain',      description: 'Please provide a reason for rejecting this chain.'      },
+      deactivate: { title: 'Deactivate Chain',  description: 'Please provide a reason for deactivating this chain.'   },
+      activate:   { title: 'Activate Chain',    description: 'Please provide a reason for activating this chain.'     },
+    };
+    return map[this.commentModalAction] ?? null;
+  }
 
-
-  get isView(): boolean { return this.mode === 'view'; }
-  get isEdit(): boolean { return this.mode === 'edit'; }
-  get isCreate(): boolean { return this.mode === 'create'; }
+  // ── Page mode helpers ─────────────────────────────────────────────────────
+  get isView():    boolean { return this.mode === 'view';    }
+  get isEdit():    boolean { return this.mode === 'edit';    }
+  get isCreate():  boolean { return this.mode === 'create';  }
   get isApprove(): boolean { return this.mode === 'approve'; }
-  get readOnly(): boolean { return this.isView || this.isApprove; }
+  get readOnly():  boolean { return this.isView || this.isApprove; }
 
   get pageTitle(): string {
-    return ({
-      create: 'Create New Chain',
-      edit: 'Edit Chain',
-      view: 'View Chain',
-      approve: 'Approval of New Chain',
-    })[this.mode];
+    return ({ create: 'Create New Chain', edit: 'Edit Chain', view: 'View Chain', approve: 'Approval of New Chain' })[this.mode];
   }
 
   get backText(): string {
-    return ({
-      create: 'Back to Chain',
-      edit: 'Back to Chain',
-      view: 'Back to Chain',
-      approve: 'Back to Approval Chains',
-    })[this.mode];
+    return ({ create: 'Back to Chain', edit: 'Back to Chain', view: 'Back to Chain', approve: 'Back to Approval Chains' })[this.mode];
   }
 
   get pageSubtitle(): string {
     return ({
-      create: 'Configure a new approval chain workflow',
-      edit: 'Update the approval chain status',
-      view: 'Viewing approval chain details',
+      create:  'Configure a new approval chain workflow',
+      edit:    'Update the approval chain status',
+      view:    'Viewing approval chain details',
       approve: 'Review and take action on the new approval chain request',
     })[this.mode];
   }
 
   submitting = false;
 
+  /** All comment / history fields populated from the API in non-create modes. */
+  approvalStatus     = '';   // 'APPROVED' | 'REJECTED' | ''
+  approvedComments   = '';
+  rejectedComments   = '';
+  activateComments   = '';
+  deactivateComments = '';
+
+  /** True once a chain has already been approved or rejected — gates the Approve/Reject buttons. */
+  get isApprovalDecided(): boolean {
+    const s = (this.approvalStatus ?? '').toUpperCase();
+    return s === 'APPROVED' || s === 'REJECTED';
+  }
+
+  /** True if at least one comment field has a value — drives the Comments card visibility. */
+  get hasAnyComment(): boolean {
+    return !!(this.approvedComments || this.rejectedComments ||
+              this.activateComments || this.deactivateComments);
+  }
+
   form!: FormGroup;
 
-  get levels(): FormArray {
-    return this.form.get('levels') as FormArray;
-  }
+  get levels(): FormArray { return this.form.get('levels') as FormArray; }
 
   private buildLevelGroup(dept = '', approver = ''): FormGroup {
     return this.fb.group({
       department: [dept, Validators.required],
-      approver: [approver, Validators.required],
+      approver:   [approver, Validators.required],
     });
   }
 
-
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
   async ngOnInit(): Promise<void> {
-
     this.mode = (this.route.snapshot.params['type'] as PageMode) ?? 'create';
-    const state = history.state as { chainId?: any, url: string };
+    const state = history.state as { chainId?: any; url: string };
     this.url = state?.url ?? '';
+
     this.form = this.fb.group({
-      chainName: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', Validators.required],
-      active: [true],
+      chainName:     ['', [Validators.required, Validators.minLength(3)]],
+      description:   ['', Validators.required],
+      active:        [true],
       functionality: [''],
-      levels: this.fb.array([this.buildLevelGroup()]),
+      levels:        this.fb.array([this.buildLevelGroup()]),
     });
 
     await this.loadInitialDropdowns();
@@ -109,7 +137,6 @@ export class CreateNewChainComponent implements OnInit {
     if (this.mode !== 'create' && state?.chainId) {
       await this.loadChain(state.chainId);
     }
-
 
     if (this.isEdit) {
       this.form.get('chainName')!.disable();
@@ -121,23 +148,16 @@ export class CreateNewChainComponent implements OnInit {
       });
     }
 
-
-    if (this.readOnly) {
-      this.form.disable();
-    }
+    if (this.readOnly) { this.form.disable(); }
   }
 
-
+  // ── Dropdowns ─────────────────────────────────────────────────────────────
   private async loadInitialDropdowns(): Promise<void> {
     try {
-      const promises: [Promise<any>, Promise<any>?] = [
+      const [deptRes, funcRes] = await Promise.all([
         this.approvalService.departments() as Promise<any>,
-        this.isCreate
-          ? this.approvalService.getFunctionalities() as Promise<any>
-          : Promise.resolve([]),
-      ];
-
-      const [deptRes, funcRes] = await Promise.all(promises);
+        this.isCreate ? this.approvalService.getFunctionalities() as Promise<any> : Promise.resolve([]),
+      ]);
 
       this.departmentOptions = (deptRes?.data ?? deptRes ?? []).map((d: any) => ({
         value: d.id ?? d.value,
@@ -150,7 +170,6 @@ export class CreateNewChainComponent implements OnInit {
           label: f.name ?? f.functionalityName ?? f.label,
         }));
       }
-
     } catch (err) {
       console.error('[init dropdowns]', err);
     }
@@ -159,7 +178,6 @@ export class CreateNewChainComponent implements OnInit {
   async onDepartmentChange(levelIndex: number, deptId: any): Promise<void> {
     (this.levels.at(levelIndex) as FormGroup).get('approver')!.setValue('');
     this.approverOptionsByLevel[levelIndex] = [];
-
     if (!deptId) return;
 
     try {
@@ -176,86 +194,66 @@ export class CreateNewChainComponent implements OnInit {
     }
   }
 
-
   private async loadChain(chainId: any): Promise<void> {
     try {
-      const res: any = await this.approvalService.chainDetailsById(chainId);
-      const chain = res?.data ?? res;
-
+      const res: any  = await this.approvalService.chainDetailsById(chainId);
+      const chain     = res?.data ?? res;
       if (!chain) return;
 
       this.form.patchValue({
-        chainName: chain.chainName ?? chain.name ?? '',
-        description: chain.description ?? '',
-        active: (chain.status ?? '').toLowerCase() === 'active',
+        chainName:     chain.chainName ?? chain.name ?? '',
+        description:   chain.description ?? '',
+        active:        (chain.status ?? '').toLowerCase() === 'active',
         functionality: chain.functionalityName ?? chain.functionalityId ?? '',
       });
 
+      // Capture approval status + all comment fields for the Comments History card.
+      this.approvalStatus     = (chain.approval ?? '').toUpperCase();
+      this.approvedComments   = chain.approvedComments   ?? '';
+      this.rejectedComments   = chain.rejectedComments   ?? '';
+      this.activateComments   = chain.activateComments   ?? '';
+      this.deactivateComments = chain.deactivateComments ?? '';
+
       const levelConfigs: any[] = chain.levelConfig ?? chain.levels ?? [];
+      while (this.levels.length > 0) { this.levels.removeAt(0); }
 
-      // Clear default empty level
-      while (this.levels.length > 0) {
-        this.levels.removeAt(0);
-      }
-
-      if (levelConfigs.length === 0) {
-        this.levels.push(this.buildLevelGroup());
-        return;
-      }
-
+      if (!levelConfigs.length) { this.levels.push(this.buildLevelGroup()); return; }
 
       levelConfigs.forEach(lvl => {
-        const deptId = lvl.departmentId ?? lvl.department ?? '';
-        const roleId = lvl.roleId ?? lvl.approver ?? '';
-        this.levels.push(this.buildLevelGroup(String(deptId), String(roleId)));
+        this.levels.push(this.buildLevelGroup(String(lvl.departmentId ?? lvl.department ?? ''), String(lvl.roleId ?? lvl.approver ?? '')));
       });
 
-
-      await Promise.all(
-        levelConfigs.map(async (lvl, index) => {
-          const deptId = lvl.departmentId ?? lvl.department;
-          const roleId = lvl.roleId ?? lvl.approver;
-
-          if (!deptId) return;
-
-          try {
-            this.loadingRoles[index] = true;
-            const rolesRes: any = await this.userService.getRoles(deptId);
-
-            this.approverOptionsByLevel[index] = (rolesRes?.data ?? rolesRes ?? []).map((r: any) => ({
-              value: r.id ?? r.value,
-              label: r.name ?? r.roleName ?? r.label,
-            }));
-
-            // Set approver value once options are available so <select> binds correctly
-            (this.levels.at(index) as FormGroup)
-              .get('approver')!
-              .setValue(roleId ? String(roleId) : '');
-
-          } catch (err) {
-            console.error(`[loadChain roles - level ${index}, dept ${deptId}]`, err);
-          } finally {
-            this.loadingRoles[index] = false;
-          }
-        })
-      );
-
+      await Promise.all(levelConfigs.map(async (lvl, index) => {
+        const deptId = lvl.departmentId ?? lvl.department;
+        const roleId = lvl.roleId ?? lvl.approver;
+        if (!deptId) return;
+        try {
+          this.loadingRoles[index] = true;
+          const rolesRes: any = await this.userService.getRoles(deptId);
+          this.approverOptionsByLevel[index] = (rolesRes?.data ?? rolesRes ?? []).map((r: any) => ({
+            value: r.id ?? r.value,
+            label: r.name ?? r.roleName ?? r.label,
+          }));
+          (this.levels.at(index) as FormGroup).get('approver')!.setValue(roleId ? String(roleId) : '');
+        } catch (err) {
+          console.error(`[loadChain roles - level ${index}]`, err);
+        } finally {
+          this.loadingRoles[index] = false;
+        }
+      }));
     } catch (err) {
       console.error('[loadChain]', err);
     }
   }
 
-
+  // ── Level CRUD ────────────────────────────────────────────────────────────
   addLevel(): void {
-    if (!this.readOnly && this.levels.length < 3) {
-      this.levels.push(this.buildLevelGroup());
-    }
+    if (!this.readOnly && this.levels.length < 3) { this.levels.push(this.buildLevelGroup()); }
   }
 
   removeLevel(index: number): void {
     if (!this.readOnly && this.levels.length > 1) {
       this.levels.removeAt(index);
-
       const rebuilt: typeof this.approverOptionsByLevel = {};
       Object.entries(this.approverOptionsByLevel).forEach(([k, v]) => {
         const ki = Number(k);
@@ -266,79 +264,48 @@ export class CreateNewChainComponent implements OnInit {
     }
   }
 
-  /**
-   * Move a level row up (-1) or down (+1).
-   * Swaps the FormGroup controls AND remaps the approverOptionsByLevel cache
-   * so dropdowns stay in sync after the move.
-   */
-  // ── Drag-and-drop state ──────────────────────────────────────────────────────
-  dragIndex: number | null = null;
+  // ── Drag-and-drop ─────────────────────────────────────────────────────────
+  dragIndex:     number | null = null;
   dragOverIndex: number | null = null;
 
   onDragStart(event: DragEvent, index: number): void {
     this.dragIndex = index;
-    // Required for Firefox
     event.dataTransfer?.setData('text/plain', String(index));
     event.dataTransfer!.effectAllowed = 'move';
   }
-
   onDragOver(event: DragEvent, index: number): void {
-    event.preventDefault();                     // allow drop
+    event.preventDefault();
     event.dataTransfer!.dropEffect = 'move';
     this.dragOverIndex = index;
   }
-
-  onDragLeave(): void {
-    this.dragOverIndex = null;
-  }
-
+  onDragLeave(): void { this.dragOverIndex = null; }
   onDrop(event: DragEvent, dropIndex: number): void {
     event.preventDefault();
     const fromIndex = this.dragIndex;
-    if (fromIndex === null || fromIndex === dropIndex) {
-      this.resetDragState();
-      return;
-    }
+    if (fromIndex === null || fromIndex === dropIndex) { this.resetDragState(); return; }
     this.swapLevels(fromIndex, dropIndex);
     this.resetDragState();
   }
+  onDragEnd(): void { this.resetDragState(); }
+  private resetDragState(): void { this.dragIndex = null; this.dragOverIndex = null; }
 
-  onDragEnd(): void {
-    this.resetDragState();
-  }
-
-  private resetDragState(): void {
-    this.dragIndex = null;
-    this.dragOverIndex = null;
-  }
-
-  /**
-   * Core swap: moves the dragged row to the drop position by
-   * re-inserting it (handles non-adjacent rows correctly).
-   * Also remaps approverOptionsByLevel and loadingRoles caches.
-   */
   private swapLevels(from: number, to: number): void {
     const total = this.levels.length;
-
-    // 1. Snapshot values + caches for ALL rows into plain arrays
     const values: { department: string; approver: string }[] = [];
-    const opts:   { value: any; label: string }[][]          = [];
-    const loads:  boolean[]                                   = [];
+    const opts:   { value: any; label: string }[][]           = [];
+    const loads:  boolean[]                                    = [];
 
     for (let i = 0; i < total; i++) {
-      // Use getRawValue() so disabled controls are also captured
       const raw = (this.levels.at(i) as any).getRawValue();
       values.push({ department: raw.department ?? '', approver: raw.approver ?? '' });
       opts.push([...(this.approverOptionsByLevel[i] ?? [])]);
       loads.push(this.loadingRoles[i] ?? false);
     }
 
-    // 2. Swap only the two affected indices
     [values[from], values[to]] = [values[to], values[from]];
     [opts[from],   opts[to]]   = [opts[to],   opts[from]];
     [loads[from],  loads[to]]  = [loads[to],  loads[from]];
 
-    // 3. Restore caches FIRST so the template has options before patchValue triggers CD
     const rebuiltOpts: typeof this.approverOptionsByLevel = {};
     const rebuiltLoads: typeof this.loadingRoles          = {};
     opts.forEach((o, i)  => { rebuiltOpts[i]  = o; });
@@ -346,7 +313,6 @@ export class CreateNewChainComponent implements OnInit {
     this.approverOptionsByLevel = { ...rebuiltOpts };
     this.loadingRoles           = { ...rebuiltLoads };
 
-    // 4. Patch each FormGroup in-place — no remove/insert, no reference issues
     for (let i = 0; i < total; i++) {
       const grp = this.levels.at(i) as FormGroup;
       grp.get('department')!.setValue(values[i].department, { emitEvent: false });
@@ -354,65 +320,40 @@ export class CreateNewChainComponent implements OnInit {
     }
   }
 
-
+  // ── Label helpers ─────────────────────────────────────────────────────────
   getDepartmentLabel(value: any): string {
     return this.departmentOptions.find(d => String(d.value) === String(value))?.label ?? value ?? '—';
   }
-
   getApproverLabel(levelIndex: number, value: any): string {
-    const opts = this.approverOptionsByLevel[levelIndex] ?? [];
-    return opts.find(a => String(a.value) === String(value))?.label ?? value ?? '—';
+    return (this.approverOptionsByLevel[levelIndex] ?? []).find(a => String(a.value) === String(value))?.label ?? value ?? '—';
   }
-
   getFunctionalityLabel(value: any): string {
     if (!value) return '—';
     return this.functionalityOptions.find(f => String(f.value) === String(value))?.label ?? String(value);
   }
-
   getLevelSubtitle(): string {
     const count = this.levels.length;
     if (this.isApprove) return `This chain contains ${count} level(s) for approval.`;
-    if (this.isView) return 'Configured approvers for each level';
+    if (this.isView)    return 'Configured approvers for each level';
     return 'Configure the approvers for each level (Maximum 3 levels allowed)';
   }
-
   approverOptionsFor(levelIndex: number): { value: any; label: string }[] {
     return this.approverOptionsByLevel[levelIndex] ?? [];
   }
-
-
   controlHasError(index: number, control: 'department' | 'approver'): boolean {
     const ctrl = (this.levels.at(index) as FormGroup).get(control)!;
     return ctrl.invalid && (ctrl.dirty || ctrl.touched || this.submitting);
   }
-
   trackByIndex(index: number): number { return index; }
 
-  get chainNameLength(): number { return this.form.get('chainName')?.value?.length ?? 0; }
+  get chainNameLength():  number  { return this.form.get('chainName')?.value?.length   ?? 0; }
   get descriptionLength(): number { return this.form.get('description')?.value?.length ?? 0; }
-  get activeValue(): boolean { return this.form.get('active')?.value ?? false; }
-
-
-  toggleActive(): void {
-    if (this.readOnly) return;
-    const ctrl = this.form.get('active')!;
-    const newVal = !ctrl.value;
-    ctrl.setValue(newVal);
-
-
-    if (this.isEdit) {
-      if (!newVal) {
-        this.openCommentModal('deactivate');
-      } else {
-        this.openCommentModal('activate');
-      }
-    }
-  }
+  get activeValue():       boolean { return this.form.get('active')?.value ?? false; }
 
   fieldError(name: string): string | null {
     const ctrl = this.form.get(name)!;
     if (!ctrl.invalid || (!ctrl.dirty && !ctrl.touched && !this.submitting)) return null;
-    if (ctrl.errors?.['required']) return `${name === 'chainName' ? 'Chain name' : 'Description'} is required.`;
+    if (ctrl.errors?.['required'])  return `${name === 'chainName' ? 'Chain name' : 'Description'} is required.`;
     if (ctrl.errors?.['minlength']) return 'Chain name must be at least 3 characters.';
     return null;
   }
@@ -424,137 +365,134 @@ export class CreateNewChainComponent implements OnInit {
     });
   }
 
+  // ── Navigation ────────────────────────────────────────────────────────────
+  goBack():    void { this.router.navigateByUrl(this.url || '/approval/chain-config'); }
+  onCancel():  void { this.router.navigateByUrl(this.url || '/approval/chain-config'); }
 
-  goBack(): void { this.router.navigateByUrl(this.url || '/approval/chain-config'); }
-  onCancel(): void { this.router.navigateByUrl(this.url || '/approval/chain-config'); }
+  // ── Toggle (edit mode) ────────────────────────────────────────────────────
+  toggleActive(): void {
+    if (this.readOnly) return;
+    const ctrl   = this.form.get('active')!;
+    const newVal = !ctrl.value;
+    ctrl.setValue(newVal);
+    if (this.isEdit) {
+      this.openCommentModal(newVal ? 'activate' : 'deactivate');
+    }
+  }
 
-  openCommentModal(action: 'approve' | 'reject' | 'deactivate' | 'activate'): void {
+  // ── Comment Modal ─────────────────────────────────────────────────────────
+  openCommentModal(action: CommentModalAction): void {
     this.commentModalAction = action;
-    this.commentText = '';
-    this.commentError = '';
-    this.submittingModal = false;
-    this.showCommentModal = true;
+    this.submittingModal    = false;
+    this.showCommentModal   = true;
   }
 
   closeCommentModal(): void {
-
-    if (this.commentModalAction === 'deactivate') {
-      this.form.get('active')!.setValue(true);
-    }
-    if (this.commentModalAction === 'activate') {
-      this.form.get('active')!.setValue(false);
-    }
-    this.showCommentModal = false;
+    // Revert toggle if the user cancels a deactivate / activate modal
+    if (this.commentModalAction === 'deactivate') { this.form.get('active')!.setValue(true);  }
+    if (this.commentModalAction === 'activate')   { this.form.get('active')!.setValue(false); }
+    this.showCommentModal   = false;
     this.commentModalAction = null;
-    this.commentText = '';
-    this.commentError = '';
   }
 
-  async confirmModalAction(): Promise<void> {
-    if (!this.commentText.trim()) {
-      this.commentError = 'Comment is required.';
-      return;
-    }
-    if (!this.commentText.trim() || this.commentText.trim().length < 6) {
-      this.commentError = 'Comment must be at least 6 characters.';
-      return;
-    }
-
-    const state = history.state as { chainId?: any };
+  /**
+   * Called by <app-comment-modal> (confirmed) output.
+   * The comment text is already validated inside the modal component,
+   * so we go straight to the API call.
+   */
+  async onModalConfirmed(result: any): Promise<void> {
+    const state   = history.state as { chainId?: any };
     const chainId = state?.chainId;
     this.submittingModal = true;
+
     let res: any;
     try {
-      if (this.commentModalAction === 'approve') {
-        res = await this.approvalService.updateChain({
-          id: chainId,
-          approval: 'Approved',
-          approvedComments: this.commentText.trim(),
-        });
+      switch (result.action) {
+        case 'approve':
+          res = await this.approvalService.updateChain({
+            id:               chainId,
+            approval:         'Approved',
+            approvedComments: result.comment,
+          });
+          break;
 
-      } else if (this.commentModalAction === 'reject') {
-        res = await this.approvalService.updateChain({
-          id: chainId,
-          approval: 'Rejected',
-          rejectedComments: this.commentText.trim(),
-        });
+        case 'reject':
+          res = await this.approvalService.updateChain({
+            id:               chainId,
+            approval:         'Rejected',
+            rejectedComments: result.comment,
+          });
+          break;
 
-      } else if (this.commentModalAction === 'deactivate') {
-        res = await this.approvalService.updateChain({
-          id: chainId,
-          status: 'DEACTIVE',
-          deactivateComments: this.commentText.trim(),
-        });
+        case 'deactivate':
+          res = await this.approvalService.updateChain({
+            id:                 chainId,
+            status:             'DEACTIVE',
+            deactivateComments: result.comment,
+          });
+          break;
+
+        case 'activate':
+          res = await this.approvalService.updateChain({
+            id:               chainId,
+            status:           'ACTIVE',
+            activateComments: result.comment,
+          });
+          break;
       }
-      else if (this.commentModalAction === 'activate') {
-        res = await this.approvalService.updateChain({
-          id: chainId,
-          status: 'ACTIVE',
-          activateComments: this.commentText.trim(),
-        });
-      }
-      if (res.responsecode == '00') {
+
+      if (res?.responsecode === '00') {
         this.showCommentModal = false;
         this.router.navigateByUrl(this.url || '/approval/chain-config');
+      } else {
+        this.notificationService.error(
+          res?.message || res?.responsemessage || res?.errors?.[0] || 'Action failed. Please try again.',
+          'Error',
+        );
       }
-      else {
-        this.notificationService.error(res?.message || res?.responsemessage || res?.errors?.[0] || 'Action failed. Please try again.', 'Error');
-      }
-
-
     } catch (err) {
-      console.error('[confirmModalAction]', err);
+      console.error('[onModalConfirmed]', err);
     } finally {
       this.submittingModal = false;
     }
   }
 
-
+  // ── Form submit ───────────────────────────────────────────────────────────
   async onSubmit(): Promise<void> {
     if (this.readOnly) return;
-
     this.submitting = true;
 
     try {
       if (this.isEdit) {
         const state = history.state as { chainId?: any };
         await this.approvalService.updateChain({
-          id: state?.chainId,
+          id:     state?.chainId,
           status: this.activeValue ? 'ACTIVE' : 'DEACTIVE',
         });
         this.router.navigateByUrl(this.url || '/approval/chain-config');
-
       } else {
-
         this.form.markAllAsTouched();
-
-        const topValid = this.form.get('chainName')!.valid && this.form.get('description')!.valid;
+        const topValid    = this.form.get('chainName')!.valid && this.form.get('description')!.valid;
         const levelsValid = this.atLeastOneCompleteLevelValid();
+        if (!topValid || !levelsValid) { this.submitting = false; return; }
 
-        if (!topValid || !levelsValid) {
-          this.submitting = false;
-          return;
-        }
-
-        const raw = this.form.getRawValue();
-
+        const raw         = this.form.getRawValue();
         const filledLevels = this.levels.controls
           .map((g, i) => ({ ...g.value, _index: i }))
           .filter((l: any) => l.department && l.approver)
           .map((l: any, i: number) => ({
-            level: i + 1,
+            level:        i + 1,
             departmentId: Number(l.department),
-            roleId: Number(l.approver),
+            roleId:       Number(l.approver),
           }));
 
         await this.approvalService.createChain({
-          chainName: raw.chainName,
+          chainName:   raw.chainName,
           description: raw.description,
-          status: this.activeValue ? 'ACTIVE' : 'DEACTIVE',
+          status:      this.activeValue ? 'ACTIVE' : 'DEACTIVE',
           functionality: raw.functionality ? Number(raw.functionality) : null,
           levelConfig: filledLevels,
         });
-
         this.router.navigateByUrl('/approval/chain-config');
       }
     } catch (err) {
@@ -563,6 +501,7 @@ export class CreateNewChainComponent implements OnInit {
       this.submitting = false;
     }
   }
+
   onApprove(): void { this.openCommentModal('approve'); }
-  onReject(): void { this.openCommentModal('reject'); }
+  onReject():  void { this.openCommentModal('reject');  }
 }

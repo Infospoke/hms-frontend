@@ -563,8 +563,8 @@ select:disabled {
 .stats-grid {
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
@@ -619,3 +619,11 @@ select::-webkit-scrollbar-thumb:hover {
   background: #888;
 }
 
+
+
+
+.cdk-overlay-container,
+.ant-notification,
+.ant-message {
+  z-index: 1000 !important;
+}

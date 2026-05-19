@@ -184,7 +184,7 @@ export class StaffingRequisitionsComponent implements OnInit {
         impactNote: bj.impactIfNotFilled ?? '',
       };
       const replaceEmployee = managersList.find((item: any) => item.id == bj.replacesEmployee)
-      console.log(replaceEmployee, managersList);
+     
       // instance.replaceEmployee = bj.replacesEmployee
       //   ? { id: bj.replacesEmployee, username: String(bj.replacesEmployee) }
       //   : null;

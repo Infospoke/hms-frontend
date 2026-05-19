@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { UserService } from '../../servics/user-service';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
+import { NotificationService } from '../../../../../core/services/notification.service';
 
 
 export interface PermissionRow {
@@ -114,7 +115,7 @@ export class EditRoleInfoComponent implements OnInit {
 
   private router = inject(Router);
   private svc = inject(UserService);
-
+  private notificationService = inject(NotificationService);
   private authService=inject(AuthService)
   allModules: ApiModule[] = [];
   backButtonUrl='/users/role-permissions'
@@ -280,7 +281,19 @@ export class EditRoleInfoComponent implements OnInit {
 
     from(this.svc.updatePermission({ roleId: this.roleId, permission: {updatedBy:this.authService.getUserNameByToken() ,modules: modulesPayload } }))
       .subscribe({
-        next: () => { this.saving = false;this.loadData(); },
+        next: (res:any) => { 
+
+          if(res.responsecode=='00'){
+            this.saving = false;
+            this.loadData()
+            this.notificationService.success(res?.message|| res?.responsemessage);
+          }
+          else{
+            this.saving = false;
+            this.loadData();
+            this.notificationService.error(res?.message|| res?.responsemessage);
+          }
+         },
         error: () => { this.saving = false; },
       });
   }

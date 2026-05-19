@@ -1,7 +1,5 @@
 <div class="cnc-page">
 
-  
-
   <app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [backButtonUrl]="url" [showBackButton]="true" [buttonText]="backText" />
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
@@ -48,19 +46,16 @@
       <ng-container *ngIf="isEdit">
         <div class="cnc-detail-grid">
 
-          <!-- Chain Name — read-only display -->
           <div class="cnc-detail-field">
             <span class="cnc-detail-label">Chain Name</span>
             <span class="cnc-detail-value">{{ form.getRawValue().chainName || '—' }}</span>
           </div>
 
-          <!-- Description — read-only display -->
           <div class="cnc-detail-field">
             <span class="cnc-detail-label">Description</span>
             <span class="cnc-detail-value">{{ form.getRawValue().description || '—' }}</span>
           </div>
 
-          <!-- Status — EDITABLE toggle -->
           <div class="cnc-detail-field">
             <span class="cnc-detail-label">Status <span class="cnc-req">*</span></span>
             <div class="cnc-toggle-row">
@@ -73,7 +68,6 @@
             <span class="cnc-hint">Only the status can be changed in edit mode</span>
           </div>
 
-          <!-- Functionality — read-only display -->
           <div class="cnc-detail-field">
             <span class="cnc-detail-label">Functionality</span>
             <span class="cnc-detail-value" [class.cnc-detail-value--empty]="!form.getRawValue().functionality">
@@ -100,11 +94,11 @@
 
           <div class="cnc-field cnc-field--description">
             <label class="cnc-label">Description <span class="cnc-req">*</span></label>
-            <textarea class="cnc-textarea" placeholder="Enter Chain Description" maxlength="300" [rows]="2"
+            <textarea class="cnc-textarea" placeholder="Enter Chain Description" maxlength="250" [rows]="2"
               formControlName="description"></textarea>
             <div class="cnc-field-footer">
               <span class="cnc-error-msg" *ngIf="fieldError('description')">{{ fieldError('description') }}</span>
-              <span class="cnc-counter">{{ descriptionLength }}/300</span>
+              <span class="cnc-counter">{{ descriptionLength }}/250</span>
             </div>
           </div>
 
@@ -135,7 +129,7 @@
       </ng-container>
     </div>
 
-    <!-- ── Level Configuration ────────────────────────────────────────────────── -->
+    <!-- ── Level Configuration ─────────────────────────────────────────────── -->
     <div class="cnc-card">
       <div class="cnc-section-header">
         <div>
@@ -204,7 +198,6 @@
               <span class="cnc-level-badge">{{ i + 1 }}</span>
             </div>
 
-            <!-- Department select -->
             <div class="cnc-level-col cnc-level-col--dept">
               <div class="cnc-select-wrap">
                 <select class="cnc-select" formControlName="department"
@@ -219,7 +212,6 @@
               </span>
             </div>
 
-            <!-- Role / Approver select -->
             <div class="cnc-level-col cnc-level-col--role">
               <div class="cnc-select-wrap">
                 <select class="cnc-select" formControlName="approver">
@@ -256,11 +248,63 @@
 
     </div>
 
-    <!-- ── Footer ─────────────────────────────────────────────────────────────── -->
+  
+    <div class="cnc-card" *ngIf="hasAnyComment && !isCreate">
+      <div class="cnc-section-header">
+        <h2 class="cnc-section-title">Comments History</h2>
+        <p class="cnc-section-sub">Activity comments recorded for this chain</p>
+      </div>
+
+      <div class="cnc-comments-list">
+
+        <div class="cnc-comment-row cnc-comment-row--approved" *ngIf="approvedComments">
+          <div class="cnc-comment-icon-wrap cnc-comment-icon-wrap--approved">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="cnc-comment-body">
+            <span class="cnc-comment-label">Approval Comment</span>
+            <span class="cnc-comment-text">{{ approvedComments }}</span>
+          </div>
+        </div>
+
+        <div class="cnc-comment-row cnc-comment-row--rejected" *ngIf="rejectedComments">
+          <div class="cnc-comment-icon-wrap cnc-comment-icon-wrap--rejected">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </div>
+          <div class="cnc-comment-body">
+            <span class="cnc-comment-label">Rejection Comment</span>
+            <span class="cnc-comment-text">{{ rejectedComments }}</span>
+          </div>
+        </div>
+
+        <div class="cnc-comment-row cnc-comment-row--activate" *ngIf="activateComments">
+          <div class="cnc-comment-icon-wrap cnc-comment-icon-wrap--activate">
+            <i class="fa-solid fa-circle-play"></i>
+          </div>
+          <div class="cnc-comment-body">
+            <span class="cnc-comment-label">Activation Comment</span>
+            <span class="cnc-comment-text">{{ activateComments }}</span>
+          </div>
+        </div>
+
+        <div class="cnc-comment-row cnc-comment-row--deactivate" *ngIf="deactivateComments">
+          <div class="cnc-comment-icon-wrap cnc-comment-icon-wrap--deactivate">
+            <i class="fa-solid fa-circle-pause"></i>
+          </div>
+          <div class="cnc-comment-body">
+            <span class="cnc-comment-label">Deactivation Comment</span>
+            <span class="cnc-comment-text">{{ deactivateComments }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+   
     <div class="cnc-footer">
 
-      <!-- Approve mode: Reject + Approve -->
-      <ng-container *ngIf="isApprove">
+
+      <ng-container *ngIf="isApprove && !isApprovalDecided">
         <button class="cnc-btn cnc-btn--reject" type="button" (click)="onReject()">
           <i class="fa-solid fa-xmark"></i>
           Reject
@@ -290,85 +334,19 @@
 
   </form>
 
-
-  <div class="cnc-modal-backdrop" *ngIf="showCommentModal" (click)="closeCommentModal()">
-    <div class="cnc-modal" (click)="$event.stopPropagation()">
-
-      <div class="cnc-modal-header">
-        <h3 class="cnc-modal-title">
-          <ng-container [ngSwitch]="commentModalAction">
-            <span *ngSwitchCase="'approve'">
-              <i class="fa-solid fa-circle-check cnc-modal-icon cnc-modal-icon--approve"></i>
-              Approve Chain
-            </span>
-            <span *ngSwitchCase="'activate'">
-              <i class="fa-solid fa-circle-check cnc-modal-icon cnc-modal-icon--approve"></i>
-              Activate Chain
-            </span>
-            <span *ngSwitchCase="'reject'">
-              <i class="fa-solid fa-circle-xmark cnc-modal-icon cnc-modal-icon--reject"></i>
-              Reject Chain
-            </span>
-            <span *ngSwitchCase="'deactivate'">
-              <i class="fa-solid fa-circle-minus cnc-modal-icon cnc-modal-icon--deactivate"></i>
-              Deactivate Chain
-            </span>
-          </ng-container>
-        </h3>
-        <button class="cnc-modal-close" type="button" (click)="closeCommentModal()">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="cnc-modal-body">
-        <p class="cnc-modal-desc">
-          <ng-container [ngSwitch]="commentModalAction">
-            <span *ngSwitchCase="'approve'">Please provide a comment for approving this chain.</span>
-            <span *ngSwitchCase="'reject'">Please provide a reason for rejecting this chain.</span>
-            <span *ngSwitchCase="'deactivate'">Please provide a reason for deactivating this chain.</span>
-            <span *ngSwitchCase="'activate'">Please provide a reason for activating this chain.</span>
-
-          </ng-container>
-        </p>
-        <label class="cnc-label">
-          Comments <span class="cnc-req">*</span>
-        </label>
-        <textarea class="cnc-textarea cnc-modal-textarea" rows="4" placeholder="Enter your comments here..."
-          maxlength="500" minlength="6" [(ngModel)]="commentText" [ngModelOptions]="{ standalone: true }"
-          [class.cnc-textarea--error]="commentError">
-        </textarea>
-        <div class="cnc-field-footer">
-          <span class="cnc-error-msg" *ngIf="commentError">{{ commentError }}</span>
-          <span class="cnc-counter">{{ commentText.length }}/500</span>
-        </div>
-      </div>
-
-      <div class="cnc-modal-footer">
-        <button class="cnc-btn cnc-btn--cancel" type="button" (click)="closeCommentModal()"
-          [disabled]="submittingModal">
-          Cancel
-        </button>
-        <button class="cnc-btn" [class.cnc-btn--approve]="commentModalAction === 'approve'"
-          [class.cnc-btn--reject]="commentModalAction === 'reject' || commentModalAction === 'deactivate'" [class.cnc-btn--activate]="commentModalAction === 'activate'"
-           type="button"
-          (click)="confirmModalAction()" [disabled]="submittingModal">
-          <ng-container *ngIf="!submittingModal">
-            <ng-container [ngSwitch]="commentModalAction">
-              <span *ngSwitchCase="'approve'"><i class="fa-solid fa-check"></i> Approve</span>
-              <span *ngSwitchCase="'reject'"><i class="fa-solid fa-xmark"></i> Reject</span>
-              <span *ngSwitchCase="'deactivate'"><i class="fa-solid fa-ban"></i> Deactivate</span>
-              <span *ngSwitchCase="'activate'">
-                <i class="fa-solid fa-check"></i> Activate
-              </span>
-            </ng-container>
-          </ng-container>
-          <ng-container *ngIf="submittingModal">
-            <i class="fa-solid fa-spinner fa-spin"></i> Saving…
-          </ng-container>
-        </button>
-      </div>
-
-    </div>
-  </div>
+  <!--
+    ── Reusable Comment Modal ───────────────────────────────────────────────────
+    Data flows in via [visible], [action], [config], and [submitting].
+    Results flow out via (confirmed) and (cancelled).
+    No modal HTML lives here — it is 100% inside CommentModalComponent.
+  -->
+  <app-common-modal
+    [visible]="showCommentModal"
+    [action]="commentModalAction"
+    [config]="modalConfig"
+    [submitting]="submittingModal"
+    (cancelled)="closeCommentModal()"
+    (confirmed)="onModalConfirmed($event)">
+  </app-common-modal>
 
 </div>

@@ -7,11 +7,11 @@ import { CommonTableActionsComponent } from '../../../../shared/components/commo
 import { ApprovalService } from '../../services/approval-service';
 import { chainOptions, statusOptions } from '../../../../shared/constants/reusbale-filter';
 
-type TabKey = 'all' | 'pending' | 'approved' | 'rejected';
+type TabKey = 'all' | 'in_progress' | 'approved' | 'rejected';
 
 
 const TAB_APPROVAL_MAP: Record<TabKey, string> = {
-  pending: 'in_progress',
+  in_progress: 'in_progress',
   approved: 'Approved',
   rejected: 'Rejected',
   all: ''
@@ -48,7 +48,7 @@ export class ApprovalChainComponent implements OnInit {
 
   tabs: { key: TabKey; label: string; count: number }[] = [
     { key: 'all', label: 'All', count: 0 },
-    { key: 'pending', label: 'Pending', count: 0 },
+    { key: 'in_progress', label: 'In Progress', count: 0 },
     { key: 'approved', label: 'Approved', count: 0 },
     { key: 'rejected', label: 'Rejected', count: 0 },
 
@@ -57,7 +57,7 @@ export class ApprovalChainComponent implements OnInit {
   dropDownData = chainOptions;
   cards = [
     {
-      label: 'Total Chains',
+      label: 'Total',
       subLabel: 'All  chains',
       value: 0,
       iconClass: 'fa-solid fa-user-check',
@@ -73,7 +73,7 @@ export class ApprovalChainComponent implements OnInit {
       iconColor: '#22c55e',
     },
     {
-      label: 'Pending',
+      label: 'In Progress',
       subLabel: 'Awaiting your approval',
       value: 0,
       iconClass: 'fa-regular fa-clock',
@@ -95,6 +95,7 @@ export class ApprovalChainComponent implements OnInit {
   columns: any[] = [
     { key: 'chainName', label: 'Chain Name', width: '200px', custom: true },
     { key: 'description', label: 'Description', width: 'auto', custom: true },
+    { key: 'functionalityName', label: 'Functionality Name', width: 'auto', },
     { key: 'levels', label: 'Levels', width: '90px', custom: true, align: 'center' },
     { key: 'createdOn', label: 'Created On', width: '150px', custom: true },
     { key: 'status', label: 'Status', width: '150px', custom: true, align: 'center' },
@@ -163,7 +164,7 @@ export class ApprovalChainComponent implements OnInit {
         ...t,
         count:
           t.key === 'all' ? (d?.counts?.total ?? 0) :
-            t.key === 'pending' ? (d?.counts?.pending ?? 0) :
+            t.key === 'in_progress' ? (d?.counts?.inProgress ?? 0) :
               t.key === 'approved' ? (d?.counts?.approved ?? 0) :
                 t.key === 'rejected' ? (d?.counts?.rejected ?? 0) :
                   t.count
@@ -251,6 +252,7 @@ export class ApprovalChainComponent implements OnInit {
       chainStatus: c.status ?? '—',
       levelConfig: c.levelConfig ?? [],
       functionality: c.functionality,
+      functionalityName:c.functionalityName ?? '—',
       ...icon,
     };
   }
@@ -281,5 +283,8 @@ export class ApprovalChainComponent implements OnInit {
     });
   }
 
-
+  truncate(value: string, limit = 10): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
+  }
 }

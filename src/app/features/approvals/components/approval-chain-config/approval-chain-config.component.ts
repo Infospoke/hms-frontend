@@ -41,6 +41,7 @@ export class ApprovalChainConfigComponent implements OnInit {
 
   columns: any[] = [
     { key: 'chainName', label: 'Chain Name', width: 'auto', custom: true },
+    { key: 'functionalityName', label: 'Functionality Name', width: 'auto',},
     { key: 'levels', label: 'Levels', width: '150px', custom: true },
     { key: 'lastUpdated', label: 'Last Updated', width: '150px', custom: true },
     { key: 'status', label: 'Status', width: '120px', custom: true, align: 'center' },
@@ -58,8 +59,7 @@ export class ApprovalChainConfigComponent implements OnInit {
     { key: 'all', label: 'All', count: 0 },
     { key: 'active', label: 'Active', count: 0 },
     { key: 'inactive', label: 'Inactive', count: 0 },
-
-
+    
   ];
   private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
 
@@ -148,6 +148,20 @@ export class ApprovalChainConfigComponent implements OnInit {
             iconBgColor: '#fdf4ff',
             iconColor: '#a855f7',
           },
+          {
+            label:'Total Functionalities',
+            value: countData?.totalFunctionalities ?? 0,
+            iconClass: 'fa-solid fa-diagram-project',
+            iconBgColor: '#fff7ed',
+            iconColor: '#f97316',
+          },
+          {
+            label:'Used Functionalities',
+            value: countData?.chainCreated ?? 0,
+            iconClass: 'fa-solid fa-diagram-project',
+            iconBgColor: '#eff6ff',
+            iconColor: '#3b82f6',
+          }
         ];
 
         const listPayload = res?.list?.data ?? {};
@@ -222,7 +236,7 @@ export class ApprovalChainConfigComponent implements OnInit {
     return {
       id: chain.id,
       levelConfig: chain.levelConfig ?? [],
-
+      functionalityName:chain?.functionalityName ?? '—',
       chainName: chain.chainName,
       description: chain.description ?? '',
       levels: chain.levels,
@@ -258,5 +272,11 @@ export class ApprovalChainConfigComponent implements OnInit {
     this.router.navigateByUrl('/approval/chain-config/new-chain/create', {
       state: { type: 'create', url: '/approval/chain-config' },
     });
+  }
+
+
+   truncate(value: string, limit = 20): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
   }
 }

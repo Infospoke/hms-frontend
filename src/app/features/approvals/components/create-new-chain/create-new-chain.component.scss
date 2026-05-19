@@ -729,6 +729,67 @@ textarea:disabled {
     margin-top: 12px;
 }
 
+// ── Comments History Card ─────────────────────────────────────────────────────
+.cnc-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cnc-comment-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+
+  &--approved   { background: #f0fdf4; border-color: #bbf7d0; }
+  &--rejected   { background: #fef2f2; border-color: #fecaca; }
+  &--activate   { background: #eff6ff; border-color: #bfdbfe; }
+  &--deactivate { background: #fffbeb; border-color: #fde68a; }
+}
+
+.cnc-comment-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  font-size: 16px;
+
+  &--approved   { background: #dcfce7; color: #16a34a; }
+  &--rejected   { background: #fee2e2; color: #dc2626; }
+  &--activate   { background: #dbeafe; color: #2563eb; }
+  &--deactivate { background: #fef3c7; color: #d97706; }
+}
+
+.cnc-comment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cnc-comment-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.cnc-comment-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 680px) {
     .cnc-form-grid,

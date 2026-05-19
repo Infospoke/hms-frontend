@@ -72,6 +72,25 @@
   letter-spacing: -0.2px;
 }
 
+.vsr-job-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  background: #f1f5f9;
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  padding: 3px 12px;
+  white-space: nowrap;
+
+  .vsr-job-title-icon {
+    font-size: 11px;
+    color: var(--c-blue);
+  }
+}
+
 .vsr-status-badge {
   display: inline-flex;
   align-items: center;
@@ -165,9 +184,7 @@
   flex-shrink: 0;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// PIPELINE CARD
-// ═══════════════════════════════════════════════════════════════════════════════
+
 .pipeline-card {
   display: flex;
   align-items: center;
@@ -178,11 +195,13 @@
   padding: 16px 22px;
   box-shadow: var(--shadow-card);
   flex-shrink: 0;
+  overflow: visible; // allow pulse-ring box-shadow to bleed outside
 }
 
 .pipeline-left {
   flex: 1;
   min-width: 0;
+  margin-left: 15px;
 }
 
 .pipeline-title {
@@ -205,12 +224,16 @@
   align-items: flex-start;
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
+  overflow-y: visible;  // let pulse-ring box-shadow breathe vertically
+  padding: 10px 4px 10px; // top/bottom room for the pulsing ring
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 
   &::-webkit-scrollbar {
-    display: none;
+    height: 4px;
   }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 }
 
 .stage-node {
@@ -219,7 +242,8 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  margin: 0 10px;
+  margin: 0 6px;
+  min-width: 80px;
 }
 
 .stage-circle {
@@ -238,14 +262,16 @@
   align-items: center;
   gap: 2px;
   text-align: center;
-  max-width: 50px;
+  max-width: 100px;
 }
 
 .stage-role {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--c-text-primary);
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 .stage-status-lbl {
@@ -259,25 +285,42 @@
   white-space: nowrap;
 }
 
+@keyframes flow-line {
+  0%   { background-position: 250% 0; }
+  100% { background-position: -150% 0; }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(245, 158, 11, 0.55); }
+  60%  { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(245, 158, 11, 0);    }
+}
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.6; transform: scale(0.85); }
+}
+
 // ─── Arrow between stages ─────────────────────────────────────────────────────
 .stage-arrow {
   display: flex;
   align-items: center;
   flex: 1;
   align-self: flex-start;
-  margin-top: 14px;
-  min-width: 20px;
+  margin-top: 24px; 
+  // adjusted for the added padding-top on .pipeline-stages
+  min-width: 40px;
 
   .arrow-line {
     flex: 1;
-    height: 1.5px;
+    height: 3px;
     background: #cbd5e1;
     transition: background 0.2s;
     border-radius: 2px;
   }
 
   .arrow-head {
-    font-size: 11px;
+    font-size: 17px;
     color: #cbd5e1;
     transition: color 0.2s;
     margin-left: -1px;
@@ -285,8 +328,29 @@
   }
 
   &.arrow-done {
-    .arrow-line { background: #16a34a; }
+    .arrow-line {
+      background: linear-gradient(90deg, #16a34a 40%, #4ade80 50%, #16a34a 60%);
+      background-size: 250% 100%;
+      animation: flow-line 2.4s linear infinite;
+    }
     .arrow-head { color: #16a34a; }
+  }
+
+  &.arrow-rejected {
+    .arrow-line  { background: #fca5a5; }
+    .arrow-head  { color: #dc2626; }
+  }
+}
+
+// ─── Active (IN_PROGRESS) stage node — pulsing ring ───────────────────────────
+.stage-node--active {
+  .stage-circle {
+    animation: pulse-ring 1.8s ease-out infinite;
+  }
+
+  .stage-status-lbl {
+    animation: blink-dot 1.4s ease-in-out infinite;
+    font-weight: 700;
   }
 }
 
@@ -295,7 +359,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 300px;
+  min-width: 230px;
   border-left: 1px solid var(--c-border-soft);
   padding-left: 22px;
 }
@@ -359,6 +423,8 @@
   border: 1px solid var(--c-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  min-width: 0;   // Prevent grid blowout
+  overflow: hidden;
 }
 
 .panel-hdr {
@@ -472,6 +538,111 @@
   flex-direction: column;
   gap: 10px;
   min-width: 0;
+  overflow: hidden; // Prevent any child overflow bleed
+}
+
+// ─── Empty state (no real approver data) ─────────────────────────────────────
+.tl-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 12px 12px;
+  gap: 6px;
+}
+
+.tl-empty-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.tl-empty-icon {
+  font-size: 20px;
+  color: var(--c-blue);
+}
+
+.tl-empty-title {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--c-text-primary);
+}
+
+.tl-empty-sub {
+  margin: 0;
+  font-size: 11px;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+// ─── Standalone comment block (no-timeline scenario) ─────────────────────────
+.tl-standalone-comment {
+  background: #fafafa;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+// Required label pill
+.tl-comments-required {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--c-red);
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 20px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+// Validation messages
+.tl-validation-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--c-red);
+  font-weight: 500;
+  padding: 4px 6px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+
+  i { font-size: 10px; margin-top: 1px; flex-shrink: 0; }
+}
+
+.tl-validation-ok {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--c-green);
+  font-weight: 500;
+  padding: 3px 6px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-sm);
+
+  i { font-size: 10px; }
+}
+
+// Error state on textarea
+.tl-textarea--error {
+  border-color: var(--c-red) !important;
+  box-shadow: 0 0 0 2px #fee2e2 !important;
 }
 
 // ─── Timeline ─────────────────────────────────────────────────────────────────
@@ -551,6 +722,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 160px;
 }
 
 .tl-badge {
@@ -637,10 +809,13 @@
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: break-word;
   padding: 5px 8px;
   background: rgba(0, 0, 0, .025);
   border-left: 2px solid var(--c-border);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  max-width: 100%;
+  overflow: hidden;
 
   // Prevent any image from rendering inside comments
   img, picture, figure { display: none !important; }
@@ -659,6 +834,7 @@
 
 .tl-textarea {
   width: 100%;
+  max-width: 100%;
   border: 1px solid var(--c-border);
   border-radius: var(--radius-sm);
   padding: 6px 8px;
@@ -666,10 +842,12 @@
   font-family: inherit;
   color: var(--c-text-primary);
   background: #fff;
-  resize: none;
+  resize: vertical;
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
+  overflow-wrap: break-word;
+  word-break: break-word;
 
   &:focus {
     border-color: var(--c-blue);
@@ -707,16 +885,76 @@
   }
 }
 
-// Pending stage message
-.tl-pending-msg {
-  margin: 0;
-  font-size: 10.5px;
-  color: var(--c-text-muted);
-  display: flex;
-  align-items: center;
-  gap: 5px;
 
-  i { color: var(--c-text-light); }
+// IN_PROGRESS hint — replaces the old inline textarea
+.tl-action-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #1d4ed8;
+  line-height: 1.45;
+
+  .tl-action-hint-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong { font-weight: 700; }
+}
+
+// Pending stage — locked state card
+.tl-pending-state {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-top: 2px;
+
+  // Variant: shown when a prior stage was rejected
+  &--prev-rejected {
+    background: #fff5f5;
+    border-color: #fca5a5;
+    border-style: solid;
+
+    .tl-pending-lock-icon { color: #dc2626; }
+    .tl-pending-title     { color: #b91c1c; }
+    .tl-pending-sub       { color: #ef4444; }
+  }
+}
+
+.tl-pending-lock-icon {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.tl-pending-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tl-pending-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.tl-pending-sub {
+  font-size: 10px;
+  color: #94a3b8;
+  line-height: 1.4;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -809,6 +1047,27 @@
   &:hover { background: var(--c-bg-section); }
 
   i { font-size: 11px; }
+}
+
+// ─── Close button (view mode) ─────────────────────────────────────────────────
+.btn-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 22px;
+  background: #f1f5f9;
+  color: var(--c-text-muted);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+
+  &:hover { background: #e2e8f0; }
+
+  i { font-size: 12px; }
 }
 
 // ─── Full SR modal body ────────────────────────────────────────────────────────

@@ -1,0 +1,18 @@
+<div class="my-jobs">
+  <app-approved-srs-layout
+    [heading]="heading"
+    [subheading]="subHeading"
+    [dropDownData]="dropDownData"
+    [searchPlaceholder]="searchPlaceholder"
+    [cards]="cards"
+    [tabs]="tabs"
+    [data]="data"
+    [totalElements]="totalElements"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    [activeTab]="activeTab"
+    [columns]='columns'
+    (filterChange)="filtersResponse($event)"
+    (tabChange)="onTabChange($event)">
+  </app-approved-srs-layout>
+</div>

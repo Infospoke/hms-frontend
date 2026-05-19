@@ -1,0 +1,17 @@
+<div class="my-approvals">
+  <app-approved-srs-layout
+    [heading]="heading"
+    [subheading]="subheading"
+    [dropDownData]="dropDownData"
+    [searchPlaceholder]="searchPlaceholder"
+    [columns]="columns"
+    [data]="data"
+    [totalElements]="totalElements"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+   
+    (filtersChange)="filtersResponse($event)"
+    (pageChange)="onPageChange($event)"
+    >
+  </app-approved-srs-layout>
+</div>

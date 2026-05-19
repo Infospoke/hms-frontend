@@ -150,7 +150,7 @@ export class ApprovalChainComponent implements OnInit {
     return [
       { value: '', label: 'All' },
       ...data.map((item: any) => ({
-        value: item.id,
+        value: item.name,
         label: item.name,
       }))
     ];
@@ -221,7 +221,7 @@ export class ApprovalChainComponent implements OnInit {
     }
 
     if (f.status) {
-      filters['status'] = f.status;
+      filters['functionalityName'] = f.status;
     }
 
     if (f.approval) {
@@ -276,7 +276,7 @@ export class ApprovalChainComponent implements OnInit {
       createdOnDate: createdDate,
       createdOnTime: updatedDate ? `Updated ${updatedDate}` : `By ${c.createdBy ?? '—'}`,
       approval: c.approval ?? c.status ?? '—',
-      chainStatus: c.status ?? '—',
+      chainStatus: c.requestType ?? '—',
       levelConfig: c.levelConfig ?? [],
       functionality: c.functionality,
       functionalityName: c.functionalityName ?? '—',

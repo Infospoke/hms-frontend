@@ -11,7 +11,7 @@
         </div>
 
     </div>
-    <div class="card-dd" *ngIf="dropDownData.length>=1 || searchPlaceholder">
+    <div class="card-dd" *ngIf="dropDownData && dropDownData.length>=1 || searchPlaceholder">
         <app-common-filter [dropdowns]="dropDownData" [searchPlaceholder]="searchPlaceholder"  (filterChange)="onFilterChange($event)"  [tabs]="tabs" (tabChange)="tabChangeEvent($event)" [activeTab]="activeTab"/>
     </div>
 

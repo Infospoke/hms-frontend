@@ -3,7 +3,7 @@
   <div class="an-page-header">
     <div class="an-title-row">
       <app-heading [heading]="'All Notifications'" [subHeading]="'Stay updated on all activities and actions'"
-        [showBackButton]="true" [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'">
+        [showBackButton]="true" [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'"  (backClick)="goBack()"> 
       </app-heading>
       <div class="an-header-actions">
         <button class="an-mark-all-btn" (click)="markAllAsRead()" [disabled]="!hasUnreadRows">
@@ -36,9 +36,8 @@
   </div>
 
   <!-- ── Table ─────────────────────────────────────────────────────────────── -->
-  <app-reusable-table [columns]="columns" [data]="displayData" [cellTemplate]="customCells"
-    [totalItems]="totalItems" [pageSize]="pageSize" [currentPage]="currentPage"
-    [showPagination]="true" [emptyMessage]="'No notifications found'"
+  <app-reusable-table [columns]="columns" [data]="displayData" [cellTemplate]="customCells" [totalItems]="totalItems"
+    [pageSize]="pageSize" [currentPage]="currentPage" [showPagination]="true" [emptyMessage]="'No notifications found'"
     (pageChange)="onPageChange($event)">
   </app-reusable-table>
 
@@ -53,11 +52,8 @@
     <!-- Header cell: select-all for unread rows -->
     <ng-container *ngIf="ctx.isHeader; else rowCheckbox">
       <label class="an-checkbox-wrap" *ngIf="hasUnreadRows" title="Select all unread">
-        <input type="checkbox"
-               class="an-checkbox"
-               [checked]="allUnreadSelected"
-               [indeterminate]="selectedCount > 0 && !allUnreadSelected"
-               (change)="toggleSelectAll()" />
+        <input type="checkbox" class="an-checkbox" [checked]="allUnreadSelected"
+          [indeterminate]="selectedCount > 0 && !allUnreadSelected" (change)="toggleSelectAll()" />
         <span class="an-checkbox-box"></span>
       </label>
     </ng-container>
@@ -65,10 +61,7 @@
     <!-- Row cell: shown only for unread rows -->
     <ng-template #rowCheckbox>
       <label class="an-checkbox-wrap" *ngIf="!ctx.row.isRead" (click)="$event.stopPropagation()">
-        <input type="checkbox"
-               class="an-checkbox"
-               [checked]="isSelected(ctx.row)"
-               (change)="toggleRow(ctx.row)" />
+        <input type="checkbox" class="an-checkbox" [checked]="isSelected(ctx.row)" (change)="toggleRow(ctx.row)" />
         <span class="an-checkbox-box"></span>
       </label>
     </ng-template>
@@ -87,7 +80,11 @@
       </span>
     </div>
   </ng-container>
-
+  <ng-container *ngIf="ctx.col.key === 'message'">
+    <span class="an-notif-title">
+      {{ ctx.row.message }}
+    </span>
+  </ng-container>
   <!-- ── Related To column ───────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'relatedId'">
     <div class="an-related-cell">
@@ -100,9 +97,23 @@
 
   <!-- ── Action column ───────────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'action'">
-    <button class="an-action-btn" (click)="openNotification(ctx.row)" title="Open">
-      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-    </button>
+    <div class="an-action-group" (click)="$event.stopPropagation()">
+
+      <!-- Mark as Read -->
+      <button *ngIf="!ctx.row.isRead" class="an-action-btn an-action-btn--read" (click)="toggleReadStatus(ctx.row)"
+        title="Mark as Read">
+
+        <i class="fa-solid fa-circle-check"></i>
+      </button>
+
+      <!-- Mark as Unread -->
+      <button *ngIf="ctx.row.isRead" class="an-action-btn an-action-btn--unread" (click)="toggleReadStatus(ctx.row)"
+        title="Mark as Unread">
+
+        <i class="fa-solid fa-arrow-rotate-left"></i>
+      </button>
+
+    </div>
   </ng-container>
 
 </ng-template>

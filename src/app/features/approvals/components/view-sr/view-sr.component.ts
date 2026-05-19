@@ -263,11 +263,13 @@ export class ViewSrComponent implements OnInit {
       .replace(/\s+/g, ' ')
       .trim();
   }
-
+ url:any;
 
   ngOnInit(): void {
     const state = history.state ?? {};
+    console.log(state,history.state);
     this.srId     = state.srId  ?? '';
+    this.url=history.state?.url;
     this.pageType = state.type  === 'view' ? 'view' : 'approve';
     this.loadSrDetails();
   }
@@ -540,6 +542,7 @@ export class ViewSrComponent implements OnInit {
   closeFullSr(): void { this.isFullSrOpen = false; }
 
   goBack(): void {
+    console.log(history.state?.url);
     this.router.navigateByUrl(history.state?.url ?? '/approval/sr-list');
   }
 }

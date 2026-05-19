@@ -88,4 +88,16 @@ export class StaffingServiceService {
       this.api.hrmsget(API.SRS.BY_SR_ID, { request: srId })
     );
   }
+
+  async getMySrsCount(){
+     return await firstValueFrom(
+      this.api.hrmsget(API.SRS.MY_SRS_COUNT)
+    );
+  }
+
+  async getRequestedBy(){
+     return await firstValueFrom(
+      this.api.hrmsget(API.SRS.REQUESTED_BY)
+    );
+  }
 }

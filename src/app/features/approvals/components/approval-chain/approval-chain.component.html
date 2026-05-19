@@ -49,17 +49,23 @@
   </ng-container>
 
   <ng-container *ngIf="ctx.col.key === 'chainStatus'">
-    <span class="status-badge" [ngClass]="{
-      'status-badge--active':  ctx.row.chainStatus === 'ACTIVE' || ctx.row.chainStatus === 'Active',
-      'status-badge--deactive': ctx.row.chainStatus === 'DEACTIVE' || ctx.row.chainStatus === 'Inactive',
+    <span class="status-badge"   [ngClass]="{
+      'status-badge--created':
+        ctx.row.chainStatus === 'Chain Created',
+
+      'status-badge--active':
+        ctx.row.chainStatus === 'Chain Active' || ctx.row.chainStatus==='Chain-Active',
+
+      'status-badge--deactive':
+        ctx.row.chainStatus === 'Chain-Deactive'
     }">
-      {{ ctx.row.chainStatus?.replace('_', ' ') }}
+      {{ ctx.row.chainStatus?.replace('-', ' ') }}
     </span>
   </ng-container>
   <!-- Status — shows approval value (Approved / Pending / Rejected) -->
   <ng-container *ngIf="ctx.col.key === 'approval'">
     <span class="status-badge" [ngClass]="{
-      'status-badge--pending':  ctx.row.approval === 'In_Progress',
+      'status-badge--pending':  ctx.row.approval === 'In_Progress' || ctx.row.approval==='IN_PROGRESS',
       'status-badge--approved': ctx.row.approval === 'APPROVED' || ctx.row.approval === 'Approved',
       'status-badge--rejected': ctx.row.approval === 'Rejected' || ctx.row.approval === 'REJECTED'
     }">

@@ -1,4 +1,4 @@
-import { Component, input, output, inject, signal } from '@angular/core';
+import { Component, input, output, inject, signal, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
 import { CardComponent } from "../card/card.component";
@@ -9,6 +9,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { Router } from '@angular/router';
 import { NotificationPanelComponent } from '../../../features/notification-panel/components/notification-panel/notification-panel.component';
+import { NotificationAllService } from '../../../features/notification-panel/services/notification-service';
 
 
 @Component({
@@ -21,7 +22,7 @@ import { NotificationPanelComponent } from '../../../features/notification-panel
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   sidebarCollapsed = input(false);
   menuToggle = output();
   isDropdownOpen = false;
@@ -30,12 +31,18 @@ export class HeaderComponent {
 
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
+  private notificationService = inject(NotificationAllService);
   private router = inject(Router);
-
+  ngOnInit(): void {
+    this.notificationService.getNotificationCountsUnRead();
+    this.notificationService.countunreadSignal$.subscribe(count => {
+      this.notificationCount = count;
+    });
+  }
   logout() { this.authService.logout(); }
 
   get userName() { return this.authService.getUserName(); }
-  get roleName()  { return this.authService.getRole();    }
+  get roleName() { return this.authService.getRole(); }
 
   toggleDropdown() { this.isDropdownOpen = !this.isDropdownOpen; }
 
@@ -43,6 +50,6 @@ export class HeaderComponent {
 
   onNotifCountChange(count: number) { this.notificationCount = count; }
 
-  goToProfile()    { console.log('Profile clicked'); }
+  goToProfile() { console.log('Profile clicked'); }
   changePassword() { this.router.navigateByUrl('/auth/change-password'); }
 }

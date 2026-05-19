@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,6 +27,7 @@ export class HeadingComponent implements OnInit {
 
   @Input() buttonText:string='Back';
   
+  @Output() backClick=new EventEmitter<any>();
   private router=inject(Router);
   constructor() { }
   ngOnInit(): void {
@@ -35,6 +36,14 @@ export class HeadingComponent implements OnInit {
 
 
   goBack(){
+    if(this.backButtonUrl ==='/'){
+      this.handlebackClick();
+      return;
+    }
     this.router.navigateByUrl(this.backButtonUrl);
+  }
+
+  handlebackClick(){
+    this.backClick.emit();
   }
 }

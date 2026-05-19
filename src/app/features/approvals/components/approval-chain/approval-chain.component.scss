@@ -136,6 +136,23 @@
   }
 }
 
+.status-badge--created {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Active */
+.status-badge--active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* Inactive */
+.status-badge--deactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 // ── Footer range label ────────────────────────────────────────────────────────
 .acc-range-label {
   font-size: 12.5px;

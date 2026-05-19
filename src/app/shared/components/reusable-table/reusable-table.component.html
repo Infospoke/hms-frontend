@@ -49,8 +49,8 @@
       <tbody>
 
 
-        <tr *ngIf="data.length === 0" class="rt-empty-row">
-          <td [attr.colspan]="columns.length">
+        <tr *ngIf="data && data.length === 0" class="rt-empty-row">
+          <td [attr.colspan]="columns && columns.length">
             <div class="rt-empty-state">
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
                 <rect x="6" y="10" width="28" height="22" rx="3" stroke="#cbd5e1" stroke-width="1.5" fill="none"/>

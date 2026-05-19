@@ -34,7 +34,7 @@
       (click)="toggleDropdown(dropdown.key, $event)"
     >
       <span class="dropdown-label">{{ dropdown.label }}:</span>
-      <span class="dropdown-value">{{ getSelectedLabel(dropdown) }}</span>
+      <span class="dropdown-value">{{ truncate(getSelectedLabel(dropdown),5) }}</span>
       <svg class="chevron-icon" viewBox="0 0 10 10" fill="none">
         <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4"
               stroke-linecap="round" stroke-linejoin="round"/>

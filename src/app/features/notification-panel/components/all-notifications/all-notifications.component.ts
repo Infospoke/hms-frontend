@@ -2,13 +2,13 @@ import {
   Component, OnInit,
   ChangeDetectionStrategy, ChangeDetectorRef, inject
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ReusableTableComponent } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CommonFilterComponent } from '../../../../shared/components/common-filter/common-filter.component';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { chainOptions } from '../../../../shared/constants/reusbale-filter';
-import { NotificationService } from '../../services/notification-service';
+import { NotificationAllService } from '../../services/notification-service';
 
 export type TabKey = 'all' | 'unread' | 'read';
 
@@ -33,7 +33,7 @@ const TAB_READ_MAP: Record<TabKey, boolean | undefined> = {
 })
 export class AllNotificationsComponent implements OnInit {
 
-  private notificationService = inject(NotificationService);
+  private notificationService = inject(NotificationAllService);
   private router               = inject(Router);
   private cdr                  = inject(ChangeDetectorRef);
 
@@ -50,10 +50,10 @@ export class AllNotificationsComponent implements OnInit {
   columns: any[] = [
     { key: 'checkbox',     label: '',             custom: true, width: '48px' },
     { key: 'notification', label: 'Notification', custom: true, width: '200px' },
-    { key: 'message',      label: 'Message',      width: '320px' },
+    { key: 'message',      label: 'Message',      width: '200px',custom: true },
     { key: 'relatedId',    label: 'Related To',   custom: true, width: '160px' },
     { key: 'dateTime',     label: 'Date & Time',  width: '160px', align: 'left' },
-    { key: 'action',       label: 'Action',       custom: true,  width: '80px', align: 'center' },
+    { key: 'action',       label: 'Actions',      custom: true,  width: '100px', align: 'center' },
   ];
 
   dropdowns   = chainOptions;
@@ -75,14 +75,16 @@ export class AllNotificationsComponent implements OnInit {
   get hasUnreadRows(): boolean {
     return this.displayData.some(r => !r.isRead);
   }
-
+  private location = inject(Location);
   // ── Pagination ─────────────────────────────────────────────────────────────
   currentPage = 1;
   pageSize    = 8;
   totalItems  = 0;
 
   private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
-
+  goBack() {
+    this.location.back(); // navigates to the actual previous history entry
+  }
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.loadNotifications();
@@ -142,20 +144,6 @@ export class AllNotificationsComponent implements OnInit {
     }
   }
 
-  private async loadCounts(): Promise<void> {
-    try {
-      const res = await this.notificationService.getNotificationCounts();
-      const d   = res?.data;
-      this.tabs = [
-        { key: 'all'    as TabKey, label: 'All',    count: d?.total  ?? 0 },
-        { key: 'unread' as TabKey, label: 'Unread', count: d?.unread ?? 0 },
-        { key: 'read'   as TabKey, label: 'Read',   count: d?.read   ?? 0 },
-      ];
-      this.cdr.markForCheck();
-    } catch (err) {
-      console.error('Failed to load notification counts', err);
-    }
-  }
 
   // ── Row mapper ─────────────────────────────────────────────────────────────
   private mapToRow(n: any): any {
@@ -164,7 +152,7 @@ export class AllNotificationsComponent implements OnInit {
       type:         this.resolveType(n.notificationTitle ?? '-'),
       notification: n.notificationTitle ?? 'Notification',
       message:      n.message           ?? '-',
-      relatedId:    n.SRId              ?? '-',
+      relatedId:    n.processId             ?? '-',
       relatedDept:  n.deptName          ?? '-',
       dateTime:     n.notificationSentAt ? this.formatDate(n.notificationSentAt) : '-',
       isRead:       n.isRead            ?? false,
@@ -198,7 +186,7 @@ export class AllNotificationsComponent implements OnInit {
     return this.selectedIds.has(row.id);
   }
 
-  // ── Mark selected as read — calls API ─────────────────────────────────────
+
   async markSelectedAsRead(): Promise<void> {
     if (!this.selectedIds.size || this.markingRead) return;
 
@@ -214,7 +202,8 @@ export class AllNotificationsComponent implements OnInit {
         this.selectedIds.has(n.id) ? { ...n, isRead: true } : n
       );
       this.selectedIds.clear();
-      await this.loadNotifications();   // refresh counts & page
+      await this.loadNotifications(); 
+      await this.notificationService.getNotificationCountsUnRead();  // refresh counts & page
     } catch (err) {
       console.error('Failed to mark selected notifications as read', err);
     } finally {
@@ -263,7 +252,8 @@ export class AllNotificationsComponent implements OnInit {
       // Optimistic update for the current page view
       this.displayData = this.displayData.map(n => ({ ...n, isRead: true }));
       this.selectedIds.clear();
-      await this.loadNotifications();   // refresh counts & current page
+      await this.loadNotifications();  
+      await this.notificationService.getNotificationCountsUnRead();  // refresh counts & current page
     } catch (err) {
       console.error('Failed to mark all as read', err);
     } finally {
@@ -301,6 +291,33 @@ export class AllNotificationsComponent implements OnInit {
 
   openNotification(row: any): void {
     console.log('Open notification', row.id);
+  }
+
+  // ── Per-row read / unread toggle ───────────────────────────────────────────
+  async toggleReadStatus(row: any): Promise<void> {
+    const newState = !row.isRead;
+    try {
+      await this.notificationService.markAsRead({ ids: [row.id], isRead: newState });
+
+      // Optimistic update — flip the flag on this row only
+      this.displayData = this.displayData.map(n =>
+        n.id === row.id ? { ...n, isRead: newState } : n
+      );
+
+      // Sync tab counts without a full reload
+      const delta = newState ? -1 : 1;   // +1 unread when marking unread, -1 when marking read
+      this.tabs = this.tabs.map(t => ({
+        ...t,
+        count:
+          t.key === 'unread' ? Math.max(0, t.count + delta) :
+          t.key === 'read'   ? Math.max(0, t.count - delta) :
+          t.count,
+      }));
+      await this.notificationService.getNotificationCountsUnRead(); 
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('Failed to toggle read status', err);
+    }
   }
 
   // ── Icon / colour helpers ──────────────────────────────────────────────────
@@ -360,5 +377,12 @@ export class AllNotificationsComponent implements OnInit {
       day: '2-digit', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit', hour12: true,
     });
+  }
+
+
+
+  truncate(value: string, limit = 10): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
   }
 }

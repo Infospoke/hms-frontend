@@ -43,6 +43,8 @@ export class ApprovalLayoutComponent {
       status: event.filters['status'] || undefined,
       approval: event.filters['approval'] || undefined,
       dateFilter: event.filters['dateFilter'] || undefined,
+      department:event?.filters['department'] || undefined,
+      requestedBy:event?.filters['requestedBy'] || undefined
     };
 
 

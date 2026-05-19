@@ -15,7 +15,7 @@ export class App implements OnInit{
    
   }
   ngOnInit(): void {
-    this.websocketService.connect();
+    Promise.all([this.websocketService.connect()])
     
   }
 }

@@ -1,3 +1,4 @@
+// ── Page wrapper ──────────────────────────────────────────────────────────────
 .cnc-page {
     display: flex;
     flex-direction: column;
@@ -6,6 +7,33 @@
     width: 100%;
 }
 
+.cnc-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+
+    &--full {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cnc-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+// Level Configuration card grows to fill the remaining height
+// so the left column matches the timeline sidebar height
+.cnc-card--grow {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+// ── Back link ─────────────────────────────────────────────────────────────────
 .cnc-back {
     display: inline-flex;
     align-items: center;
@@ -17,54 +45,13 @@
     width: fit-content;
     transition: gap 0.15s ease;
 
-    i { font-size: 12px; }
+    i {
+        font-size: 12px;
+    }
 
     &:hover {
         gap: 9px;
         text-decoration: underline;
-    }
-}
-
-.cnc-title-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.cnc-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0 0 4px;
-}
-
-.cnc-sub {
-    font-size: 13px;
-    color: #64748b;
-    margin: 0;
-}
-
-.cnc-mode-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11.5px;
-    font-weight: 600;
-    margin-bottom: 4px;
-
-    &--view {
-        background: #f1f5f9;
-        color: #64748b;
-        border: 1px solid #e2e8f0;
-    }
-
-    &--edit {
-        background: #eff6ff;
-        color: #2563eb;
-        border: 1px solid #bfdbfe;
     }
 }
 
@@ -78,8 +65,17 @@
     box-sizing: border-box;
 }
 
+// ── Section header ────────────────────────────────────────────────────────────
 .cnc-section-header {
     margin-bottom: 20px;
+
+    // Inline row with title + status pill
+    &--row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+    }
 }
 
 .cnc-section-title {
@@ -106,6 +102,10 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
+
+    &--full {
+        grid-column: 1 / -1;
+    }
 }
 
 .cnc-detail-label {
@@ -128,7 +128,12 @@
     }
 }
 
-// ── Status pill (readonly) ────────────────────────────────────────────────────
+.cnc-detail-sub {
+    font-size: 11.5px;
+    color: #94a3b8;
+}
+
+// ── Status pill (header inline) ───────────────────────────────────────────────
 .cnc-status-pill {
     display: inline-flex;
     align-items: center;
@@ -138,13 +143,16 @@
     border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
+    flex-shrink: 0;
 
     &--active {
         background: #dcfce7;
         color: #16a34a;
         border: 1px solid #bbf7d0;
 
-        .cnc-status-dot { background: #16a34a; }
+        .cnc-status-dot {
+            background: #16a34a;
+        }
     }
 
     &--inactive {
@@ -152,7 +160,9 @@
         color: #64748b;
         border: 1px solid #e2e8f0;
 
-        .cnc-status-dot { background: #94a3b8; }
+        .cnc-status-dot {
+            background: #94a3b8;
+        }
     }
 }
 
@@ -161,6 +171,77 @@
     height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
+}
+
+// ── Meta person ───────────────────────────────────────────────────────────────
+.cnc-meta-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.cnc-meta-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+
+    &--green {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+}
+
+.cnc-meta-person-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+// ── Inline comment pills (view mode) ──────────────────────────────────────────
+.cnc-comment-inline {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.55;
+
+    i {
+        font-size: 15px;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    &--approved {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+
+        i {
+            color: #16a34a;
+        }
+    }
+
+    &--rejected {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+
+        i {
+            color: #dc2626;
+        }
+    }
 }
 
 // ── Editable form layout (create) ─────────────────────────────────────────────
@@ -175,10 +256,25 @@
     flex-direction: column;
     gap: 6px;
 
-    &--chain-name    { grid-column: 1; grid-row: 1; }
-    &--description   { grid-column: 2; grid-row: 1; }
-    &--status        { grid-column: 1; grid-row: 2; }
-    &--functionality { grid-column: 2; grid-row: 2; }
+    &--chain-name {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    &--description {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    &--status {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    &--functionality {
+        grid-column: 2;
+        grid-row: 2;
+    }
 }
 
 .cnc-label {
@@ -187,12 +283,16 @@
     color: #374151;
 }
 
-.cnc-req { color: #ef4444; }
+.cnc-req {
+    color: #ef4444;
+}
 
 // ── Input / Textarea ──────────────────────────────────────────────────────────
 .cnc-input,
 .cnc-textarea {
-    &::placeholder { color: #94a3b8; }
+    &::placeholder {
+        color: #94a3b8;
+    }
 
     &:focus {
         border-color: #93c5fd;
@@ -277,8 +377,15 @@ textarea:disabled {
     transition: background 0.2s ease;
     flex-shrink: 0;
 
-    &--on      { background: #2563eb; }
-    &--disabled { cursor: not-allowed; opacity: 0.65; pointer-events: none; }
+    &--on {
+        background: #2563eb;
+    }
+
+    &--disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+        pointer-events: none;
+    }
 }
 
 .cnc-toggle-thumb {
@@ -292,7 +399,9 @@ textarea:disabled {
     transition: transform 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
-    .cnc-toggle--on & { transform: translateX(18px); }
+    .cnc-toggle--on & {
+        transform: translateX(18px);
+    }
 }
 
 .cnc-toggle-label {
@@ -301,48 +410,29 @@ textarea:disabled {
     color: #374151;
 }
 
-// ── Select ────────────────────────────────────────────────────────────────────
-.cnc-select-wrap {
-    position: relative;
+// ── Status banner (create mode — locked Inactive) ─────────────────────────────
+.cnc-status-banner {
     display: flex;
-    align-items: center;
-}
-
-.cnc-select {
-    width: 100%;
-    height: 38px;
-    padding: 0 34px 0 12px;
-    border: 1px solid #e2e8f0;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 11px 14px;
     border-radius: 8px;
-    background: #ffffff;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     font-size: 13px;
-    color: #374151;
-    appearance: none;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    font-family: inherit;
+    color: #1e40af;
+    line-height: 1.5;
 
-    &:focus {
-        border-color: #93c5fd;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    i {
+        font-size: 14px;
+        color: #3b82f6;
+        flex-shrink: 0;
+        margin-top: 1px;
     }
 
-    &.cnc-input--error { border-color: #e2e8f0; }
-
-    &:disabled {
-        background: #f3f4f6;
-        color: #6b7280;
-        cursor: not-allowed;
+    strong {
+        font-weight: 700;
     }
-}
-
-.cnc-select-caret {
-    position: absolute;
-    right: 11px;
-    font-size: 11px;
-    color: #94a3b8;
-    pointer-events: none;
 }
 
 // ── Level table — shared base ─────────────────────────────────────────────────
@@ -389,9 +479,19 @@ textarea:disabled {
     font-weight: 600;
     color: #64748b;
 
-    &--drag { padding: 0; }
-    &--num  { text-align: center; }
-    &--del  { padding: 0; display: flex; justify-content: center; }
+    &--drag {
+        padding: 0;
+    }
+
+    &--num {
+        text-align: center;
+    }
+
+    &--del {
+        padding: 0;
+        display: flex;
+        justify-content: center;
+    }
 
     &--text {
         font-size: 13.5px;
@@ -406,9 +506,17 @@ textarea:disabled {
     border-bottom: 1px solid #f1f5f9;
     transition: background 0.12s;
 
-    &:last-child { border-bottom: none; }
-    &:hover { background: #f8fafc; }
-    &--error { background: #ffffff; }
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: #f8fafc;
+    }
+
+    &--error {
+        background: #ffffff;
+    }
 
     .cnc-level-col {
         font-size: 13px;
@@ -422,14 +530,32 @@ textarea:disabled {
         border-bottom: 1px solid #f1f5f9;
         transition: background 0.12s;
 
-        &:last-child { border-bottom: none; }
-        &:hover { background: #f8fafc; }
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background: #f8fafc;
+        }
 
         .cnc-level-col {
             font-size: 13px;
             font-weight: 400;
             color: #0f172a;
         }
+    }
+
+    // Drag states
+    &--dragging {
+        opacity: 0.45;
+        background: #f0f6ff !important;
+        border: 1.5px dashed #93c5fd;
+        border-radius: 8px;
+    }
+
+    &--drag-over {
+        background: #eff6ff !important;
+        border-top: 2.5px solid #2563eb;
     }
 }
 
@@ -452,28 +578,18 @@ textarea:disabled {
     border-radius: 4px;
     transition: color 0.15s;
 
-    &:hover { color: #64748b; }
-    &:active { cursor: grabbing; }
+    &:hover {
+        color: #64748b;
+    }
+
+    &:active {
+        cursor: grabbing;
+    }
 
     &--disabled {
         cursor: not-allowed;
         opacity: 0.4;
         pointer-events: none;
-    }
-}
-
-// ── Drag-and-drop row states ──────────────────────────────────────────────────
-.cnc-level-row {
-    &--dragging {
-        opacity: 0.45;
-        background: #f0f6ff !important;
-        border: 1.5px dashed #93c5fd;
-        border-radius: 8px;
-    }
-
-    &--drag-over {
-        background: #eff6ff !important;
-        border-top: 2.5px solid #2563eb;
     }
 }
 
@@ -505,8 +621,14 @@ textarea:disabled {
     font-size: 13px;
     transition: background 0.15s, color 0.15s;
 
-    &:hover:not(:disabled) { background: #fee2e2; }
-    &:disabled { color: #cbd5e1; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+        background: #fee2e2;
+    }
+
+    &:disabled {
+        color: #cbd5e1;
+        cursor: not-allowed;
+    }
 }
 
 // ── Add Level ─────────────────────────────────────────────────────────────────
@@ -515,6 +637,7 @@ textarea:disabled {
     align-items: center;
     gap: 6px;
     height: 34px;
+    width: 120px;
     padding: 0 16px;
     border: 1.5px dashed #93c5fd;
     border-radius: 8px;
@@ -526,7 +649,9 @@ textarea:disabled {
     transition: background 0.15s, border-color 0.15s;
     font-family: inherit;
 
-    i { font-size: 11px; }
+    i {
+        font-size: 11px;
+    }
 
     &:hover:not(:disabled) {
         background: #eff6ff;
@@ -581,7 +706,20 @@ textarea:disabled {
         color: #475569;
         border: 1px solid #e2e8f0;
 
-        &:hover { background: #e2e8f0; }
+        &:hover {
+            background: #e2e8f0;
+        }
+    }
+
+    &--edit {
+        background: #ffffff;
+        color: #0f172a;
+        border: 1px solid #e2e8f0;
+
+        &:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
     }
 
     &--submit {
@@ -594,7 +732,9 @@ textarea:disabled {
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
 
-        &:active { transform: scale(0.98); }
+        &:active {
+            transform: scale(0.98);
+        }
     }
 
     &--approve {
@@ -607,7 +747,9 @@ textarea:disabled {
             box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
         }
 
-        &:active { transform: scale(0.98); }
+        &:active {
+            transform: scale(0.98);
+        }
     }
 
     &--reject {
@@ -615,8 +757,241 @@ textarea:disabled {
         color: #dc2626;
         border: 1.5px solid #dc2626;
 
-        &:hover { background: #fef2f2; }
-        &:active { transform: scale(0.98); }
+        &:hover {
+            background: #fef2f2;
+        }
+
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+}
+
+.cnc-tl-badge--created {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.cnc-tl-badge--approved {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.cnc-tl-badge--activated {
+    background: #ccfbf1;
+    color: #0f766e;
+}
+
+.cnc-tl-badge--deactivated {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.cnc-tl-badge--rejected {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.cnc-timeline-sidebar {
+    position:sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 100px);
+}
+
+.cnc-timeline-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+    box-sizing: border-box;
+}
+
+
+.cnc-timeline-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 3px;
+}
+
+.cnc-timeline-sub {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0 0 20px;
+}
+
+// ── Timeline items ────────────────────────────────────────────────────────────
+.cnc-timeline {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.cnc-timeline-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    grid-template-rows: auto 1fr;
+    column-gap: 12px;
+    row-gap: 0;
+    position: relative;
+}
+
+// Icon circle
+.cnc-tl-icon-wrap {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    font-size: 14px;
+    z-index: 1;
+    background: #f1f5f9;
+    color: #64748b;
+
+    &.cnc-tl-icon--created {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    &.cnc-tl-icon--activated {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    &.cnc-tl-icon--deactivated {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    &.cnc-tl-icon--requested {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    &.cnc-tl-icon--approved {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    &.cnc-tl-icon--rejected {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+}
+
+// Vertical connecting line
+.cnc-tl-line {
+    grid-column: 1;
+    grid-row: 2;
+    width: 2px;
+    background: #e2e8f0;
+    margin: 4px auto 0;
+    min-height: 20px;
+    height: 100%;
+}
+
+// Content area
+.cnc-tl-content {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    padding-bottom: 20px;
+    min-width: 0;
+}
+
+.cnc-tl-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+    flex-direction: row;
+}
+
+.cnc-tl-time {
+    font-size: 11px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+// Event badge
+.cnc-tl-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    background: #f1f5f9;
+    color: #64748b;
+
+    &--created {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    &--activated {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    &--deactivated {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    &--requested {
+        background: #ffedd5;
+        color: #ea580c;
+    }
+
+    &--approved {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    &--rejected {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+}
+
+.cnc-tl-actor {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 2px;
+}
+
+.cnc-tl-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.cnc-tl-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 0;
+    color: #cbd5e1;
+    font-size: 13px;
+
+    i {
+        font-size: 22px;
     }
 }
 
@@ -633,8 +1008,13 @@ textarea:disabled {
 }
 
 @keyframes cnc-backdrop-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .cnc-modal {
@@ -650,8 +1030,15 @@ textarea:disabled {
 }
 
 @keyframes cnc-modal-in {
-    from { opacity: 0; transform: translateY(-12px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0)     scale(1);    }
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .cnc-modal-header {
@@ -675,9 +1062,17 @@ textarea:disabled {
 .cnc-modal-icon {
     font-size: 17px;
 
-    &--approve    { color: #16a34a; }
-    &--reject     { color: #dc2626; }
-    &--deactivate { color: #f59e0b; }
+    &--approve {
+        color: #16a34a;
+    }
+
+    &--reject {
+        color: #dc2626;
+    }
+
+    &--deactivate {
+        color: #f59e0b;
+    }
 }
 
 .cnc-modal-close {
@@ -729,69 +1124,25 @@ textarea:disabled {
     margin-top: 12px;
 }
 
-// ── Comments History Card ─────────────────────────────────────────────────────
-.cnc-comments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.cnc-comment-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-
-  &--approved   { background: #f0fdf4; border-color: #bbf7d0; }
-  &--rejected   { background: #fef2f2; border-color: #fecaca; }
-  &--activate   { background: #eff6ff; border-color: #bfdbfe; }
-  &--deactivate { background: #fffbeb; border-color: #fde68a; }
-}
-
-.cnc-comment-icon-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  flex-shrink: 0;
-  font-size: 16px;
-
-  &--approved   { background: #dcfce7; color: #16a34a; }
-  &--rejected   { background: #fee2e2; color: #dc2626; }
-  &--activate   { background: #dbeafe; color: #2563eb; }
-  &--deactivate { background: #fef3c7; color: #d97706; }
-}
-
-.cnc-comment-body {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.cnc-comment-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #94a3b8;
-}
-
-.cnc-comment-text {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #1e293b;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 // ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 1024px) {
+    .cnc-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cnc-timeline-sidebar {
+        position: static;
+        max-height: none;
+    }
+
+    .cnc-timeline-card {
+        max-height: none;
+        overflow-y: visible;
+    }
+}
+
 @media (max-width: 680px) {
+
     .cnc-form-grid,
     .cnc-detail-grid {
         grid-template-columns: 1fr;
@@ -810,7 +1161,9 @@ textarea:disabled {
         grid-template-columns: 32px 40px 1fr 1fr 40px;
 
         .cnc-level-col--dept,
-        .cnc-level-col--role { font-size: 11px; }
+        .cnc-level-col--role {
+            font-size: 11px;
+        }
     }
 
     .cnc-level-head--ro,

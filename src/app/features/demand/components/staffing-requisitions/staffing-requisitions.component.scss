@@ -1,207 +1,400 @@
-
-
-
-.sr-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0;
+:host {
+  display: block;
+  font-size: 13px;
+  color: #1e293b;
 }
 
-// ── Draft banner ──────────────────────────────────────────────────────────────
+.rt-connector {
+  flex: 1;
+  height: 1.5px;
+  background: repeating-linear-gradient(
+    90deg,
+    #cbd5e1 0,
+    #cbd5e1 4px,
+    transparent 4px,
+    transparent 8px
+  );
 
-.banner {
-  background: #FAEEDA;
-  border: 0.5px solid #FAC775;
-  border-radius: 8px;
-  padding: 10px 14px;
-  margin-bottom: 1rem;
-  font-size: 13px;
-  color: #633806;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  &--left  { margin-right: 2px; }
+  &--right { margin-left: 2px; }
+  &--hidden { visibility: hidden; }
 
-  .banner-link {
-    color: #185FA5;
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: 500;
+  // ── NEW: solid green when the adjacent step is done ──
+  &--done {
+    background: #22c55e !important;   // solid green, no dashes
+    height: 2px;           // slightly thicker to feel "filled"
+  }
+}
+.rt-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rt-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+.rt-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rt-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+thead {
+  background: #f1f5f9;
+
+  th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+    user-select: none;
+
+    &.rt-td--center { text-align: center; }
+    &.rt-td--right  { text-align: right; }
+
+    &.rt-th--sortable {
+      cursor: pointer;
+      transition: all 0.12s ease;
+      &:hover { color: #1e293b; background: #e9eef5; }
+    }
+
+    &.rt-th--sorted {
+      color: #2563eb;
+      .rt-sort-icon { color: #2563eb; opacity: 1; }
+    }
   }
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #EF9F27;
+.rt-th-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  &--center { justify-content: center; }
+  &--right  { justify-content: flex-end; }
+}
+
+.rt-sort-icon {
+  display: inline-flex;
+  color: #cbd5e1;
+  opacity: 0.6;
+  transition: all 0.12s ease;
   flex-shrink: 0;
+  .rt-sort-active { color: #2563eb; }
 }
 
-// ── UI states (loading / error / empty) ───────────────────────────────────────
+tbody {
+  .rt-row {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background 0.12s ease;
+    &:last-child { border-bottom: none; }
+    &--even { background: transparent; }
+    &:hover { background: #f8fafc; cursor: default; }
+  }
 
-.sr-loading,
-.sr-empty {
-  text-align: center;
-  padding: 2rem 1rem;
+  td {
+    padding: 13px 16px;
+    font-size: 13px;
+    color: #1e293b;
+    vertical-align: middle;
+    &.rt-td--center { text-align: center; }
+    &.rt-td--right  { text-align: right; }
+  }
+}
+
+.rt-cell-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.rt-empty-row td { padding: 48px 24px; }
+
+.rt-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
   font-size: 14px;
-  color: #888;
+  svg { opacity: 0.5; }
+  p   { margin: 0; font-size: 13px; }
 }
 
-.sr-error {
+// ── Footer / Pagination ───────────────────────────────────────────────────────
+.rt-footer {
+  padding: 12px 24px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  app-pagination ::ng-deep .pagination-wrapper {
+    border-top: none;
+    padding: 0;
+    background: transparent;
+  }
+}
+
+.rt-range-label {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+.hide-mobile {
+  @media (max-width: 600px) { display: none; }
+}
+
+@media (max-width: 480px) {
+  .rt-footer {
+    justify-content: center;
+    .rt-range-label { width: 100%; text-align: center; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  CUSTOM CELL TYPES  –  used via ngTemplateOutlet in parent components
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Link cell ─────────────────────────────────────────────────────────────────
+.rt-cell-link {
+  color: #2563eb;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  &:hover { text-decoration: underline; color: #1d4ed8; }
+}
+
+// ── Avatar + name cell ────────────────────────────────────────────────────────
+.rt-cell-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.rt-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 1.25rem 1rem;
-  background: #FCEBEB;
-  border: 0.5px solid #F09595;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  background: #2563eb;   // default; parent can override via inline style
+  letter-spacing: 0.02em;
+}
+
+.rt-cell-user-name {
   font-size: 13px;
-  color: #A32D2D;
+  color: #1e293b;
 }
 
-.btn-retry {
-  padding: 4px 14px;
-  font-size: 12px;
-  border: 0.5px solid #A32D2D;
-  border-radius: 6px;
-  background: transparent;
-  color: #A32D2D;
-  cursor: pointer;
-
-  &:hover {
-    background: #f9d5d5;
-  }
-}
-
-// ── SR List ───────────────────────────────────────────────────────────────────
-
-.sr-list {
+// ── DateTime cell ─────────────────────────────────────────────────────────────
+.rt-cell-datetime {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
+  white-space: nowrap;
 }
 
-.sr-row {
-  background: #fff;
-  border: 0.5px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 14px 16px;
-  display: flex;
-  justify-content: space-between;
+.rt-cell-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.rt-cell-time {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+.rt-badge {
+  display: inline-flex;
   align-items: center;
-  transition: 0.2s;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--approved  { background: #f0fdf4; color: #16a34a; }
+  &--pending   { background: #fff7ed; color: #d97706; }
+  &--submitted { background: #f1f5f9; color: #475569; }
+  &--draft     { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; }
+  &--rejected  { background: #fef2f2; color: #dc2626; }
 }
 
-.sr-row:hover {
-  border-color: #cbd5f5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+// ── Approval stepper ──────────────────────────────────────────────────────────
+// Each stage = fixed 72px slot: icon centred, label below (2-line max, ellipsis)
+// Connector lines live inside the icon-row so the total width stays predictable.
+
+.rt-stepper {
+  display: flex;
+  align-items: flex-start;   // nodes align at top so labels don't shift row height
+  flex-wrap: nowrap;
+  overflow: hidden;           // hard stop — cell never bleeds
 }
 
-// ── Left ──────────────────────────────────────────────────────────────────────
+// ── One fixed-width stage slot ────────────────────────────────────────────────
+.rt-step-node {
+  width: 72px;
+  flex: 0 0 72px;            // never grow, never shrink
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
 
-.sr-left {
+// ── Icon row: left-connector · circle · right-connector ───────────────────────
+.rt-step-icon-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  width: 100%;
+}
+
+// Connector lines fill the space on either side of the icon
+.rt-connector {
   flex: 1;
+  height: 1.5px;
+  background: repeating-linear-gradient(
+    90deg,
+    #cbd5e1 0,
+    #cbd5e1 4px,
+    transparent 4px,
+    transparent 8px
+  );
+
+  &--left  { margin-right: 2px; }
+  &--right { margin-left: 2px; }
+
+  // First node: hide left connector; last node: hide right (via [class.rt-connector--hidden])
+  &--hidden { visibility: hidden; }
 }
 
-.sr-id {
-  font-size: 12px;
-  color: #185FA5;
-  font-weight: 500;
-  min-width: 140px;
-}
+// First node's left connector is always invisible
+.rt-step-node:first-child .rt-connector--left { visibility: hidden; }
 
-.sr-info {
+// ── State-coloured icon circle ────────────────────────────────────────────────
+.rt-step-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+  transition: all 0.25s ease;
+
+  &--done {
+    background: #dcfce7;
+    color: #166534;
+    border: 1.5px solid #22c55e;
+  }
+
+  &--active {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1.5px solid #f59e0b;
+  }
+
+  &--submitted {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1.5px solid #3b82f6;
+  }
+
+  &--pending {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1.5px solid #d1d5db;
+  }
+
+  &--rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1.5px solid #ef4444;
+  }
 }
 
-.sr-name {
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
+// ── Stage label: centred under the icon, two-line max ────────────────────────
+.rt-step-label {
+  width: 100%;
+  font-size: 9.5px;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  text-align: center;
+  padding: 0 2px;
+
+  // Two visible lines then ellipsis — works in all modern browsers
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;     // break long single words if needed
 }
 
-.sr-meta {
-  font-size: 12px;
-  color: #888;
-  margin: 2px 0 0;
-}
-
-// ── Right ─────────────────────────────────────────────────────────────────────
-
-.sr-right {
+// ── Status + stepper combined cell ────────────────────────────────────────────
+.rt-cell-status {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-// ── Badge ─────────────────────────────────────────────────────────────────────
-
-.badge {
-  border-radius: 999px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  min-width: 90px;
-  text-align: center;
-
-  &.badge-draft {
-    background: #F1EFE8;
-    color: #5F5E5A;
-    border: 0.5px solid #B4B2A9;
-  }
-
-  &.badge-submitted {
-    background: #E6F1FB;
-    color: #185FA5;
-    border: 0.5px solid #85B7EB;
-  }
-
-  &.badge-approved {
-    background: #EAF3DE;
-    color: #3B6D11;
-    border: 0.5px solid #97C459;
-  }
-
-  &.badge-rejected {
-    background: #FCEBEB;
-    color: #A32D2D;
-    border: 0.5px solid #F09595;
-  }
-
-  &.badge-pending {
-    background: #FEF3C7;
-    color: #92400E;
-    border: 0.5px solid #FCD34D;
-  }
-}
-
-
-.sr-actions {
+// ── Actions cell ──────────────────────────────────────────────────────────────
+.rt-actions {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 4px;
 }
 
-.action-icon {
-  font-size: 13px;
-  color: var(--color-text-secondary, #64748b);
-  padding: 6px;
+.rt-action-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
   border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
   cursor: pointer;
-  transition: 0.2s;
+  transition: background 0.12s, color 0.12s;
+  padding: 0;
 
   &:hover {
-    background: #eef2ff;
-    color: var(--brand-color);
+    background: #f1f5f9;
+    color: #1e293b;
   }
 
-  &.edit:hover {
-    color: #2563eb;
-  }
+  svg { display: block; }
 }

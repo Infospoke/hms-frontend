@@ -1,0 +1,113 @@
+// ── Shared cell utilities ─────────────────────────────────────────────────────
+
+// Blue clickable SR ID link
+.sr-link {
+  color: #2563eb;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+    color: #1d4ed8;
+  }
+}
+
+// Plain primary text (SR title, job title)
+.cell-text-primary {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+// Muted secondary text (department, etc.)
+.cell-text-secondary {
+  font-size: 0.84rem;
+  color: #6b7280;
+}
+
+// Person cell: avatar circle + name
+.cell-person {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cell-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.cell-person-name {
+  font-size: 0.84rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+// Date cell: date line + time sub-line
+.cell-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cell-date-main {
+  font-size: 0.84rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.cell-date-sub {
+  font-size: 0.76rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.rt-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Create Job button (blue outlined with plus icon)
+.btn-create-job {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1.5px solid #2563eb;
+  border-radius: 6px;
+  background: transparent;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+
+  i {
+    font-size: 0.85rem;
+  }
+
+  &:hover {
+    background: #2563eb;
+    color: #ffffff;
+  }
+}
+
+.card-dd{
+    margin-top: 10px;
+}

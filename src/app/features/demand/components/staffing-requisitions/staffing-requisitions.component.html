@@ -1,60 +1,129 @@
 <div class="sr-page">
 
   <div class="sr-header">
-    <h2 class="sr-title">My Staffing Requisitions</h2>
+    <app-heading [heading]="'My Staffing Requisitions'" [subHeading]="'Create & Manage your staffing requisitions'" />
     <button class="btn-new" (click)="newSR()" *appCan="'DEMAND:MYJRS:CREATE'">+ New SR</button>
   </div>
 
-  <div class="banner" *ngIf="draftSR">
-    <span class="dot"></span>
-    You have a draft SR in progress.
-    <span class="banner-link" (click)="resumeSR(draftSR!)">
-      Resume {{ draftSR.id !== 'Draft – Pending ID' ? draftSR.id : 'Draft' }}
-    </span>
+  <app-approval-layout [showInfo]="false" [infoTooltip]="false" [cards]="cards" [tabs]="tabs"
+    (tabChange)="setTab($event)" [activeTab]="activeTab" [searchPlaceholder]="'Search by SR title ,SR ID..'"
+    (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData" />
+
+  <div class="card-dd">
+    <app-reusable-table [columns]="columns" [data]="requisitions" [totalItems]="totalElements" [pageSize]="pageSize"
+      [currentPage]="currentPage" [showPagination]="true" [emptyMessage]="'No staffing requisitions found.'"
+      [cellTemplate]="srCellTpl" (pageChange)="onPageChange($event)" (rowClick)="viewSR($event)"></app-reusable-table>
   </div>
 
-  <div class="sr-loading" *ngIf="isLoading">
-    <span>Loading requisitions…</span>
-  </div>
 
-  <div class="sr-error" *ngIf="!isLoading && errorMessage">
-    <span>{{ errorMessage }}</span>
-    <!-- <button class="btn-retry" (click)="loadPage(currentPage)">Retry</button> -->
-  </div>
+  <ng-template #srCellTpl let-ctx>
 
-  <div class="sr-empty" *ngIf="!isLoading && !errorMessage && requisitions.length === 0">
-    <span>No staffing requisitions found.</span>
-  </div>
+    <!-- SR Number + Job Title -->
+    <ng-container *ngIf="ctx.col.key === 'srId'">
+      <span class="rt-cell-link" (click)="$event.stopPropagation(); viewSR(ctx.row)">
+        {{ ctx.row['srId'] || 'Draft' }}
+      </span>
+      <span class="rt-cell-text" style="font-weight:500; color:#1e293b;">
+        {{ truncate(ctx.row['jobTitle'],25) }}
+      </span>
+    </ng-container>
 
-  <div class="sr-list" *ngIf="!isLoading && !errorMessage && requisitions.length > 0">
-    <div class="sr-row" *ngFor="let sr of requisitions">
+    <!-- Department -->
+    <ng-container *ngIf="ctx.col.key === 'department'">
+      <span class="rt-cell-text" style="color:#475569;">{{ truncate(ctx.row['department'],20) }}</span>
+    </ng-container>
 
-      <div class="sr-left">
-        <span class="sr-id">{{ sr.id }}</span>
-        <div class="sr-info">
-          <p class="sr-name">{{ sr.title }}</p>
-          <p class="sr-meta">{{ sr.meta }}</p>
+    <!-- Requested By (avatar + name) -->
+    <ng-container *ngIf="ctx.col.key === 'requestedBy'">
+      <div class="rt-cell-user">
+        <div class="rt-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])">
+          {{ initials(ctx.row['requestedBy']) }}
         </div>
+        <span class="rt-cell-user-name">{{ truncate(ctx.row['requestedBy'],10)}}</span>
       </div>
+    </ng-container>
 
-      <div class="sr-right" (click)="$event.stopPropagation()">
-        <span class="badge" [ngClass]="badgeClass(sr.status)">{{ sr.status }}</span>
-        <div class="sr-actions">
-          <i class="fa fa-eye action-icon" title="View" [class.spinning]="viewLoading" (click)="viewSR(sr)"
-            *appCan="'DEMAND:MYJRS:VIEW'">
-          </i>
-          <ng-container *appCan="'DEMAND:MYJRS:EDIT'">
-            <i class="fa fa-pencil action-icon edit" title="Edit" *ngIf="canEdit(sr)" (click)="editSR(sr)">
-            </i>
+    <!-- Requested On (date + time) -->
+    <ng-container *ngIf="ctx.col.key === 'requestedOn'">
+      <div class="rt-cell-datetime">
+        <span class="rt-cell-date">{{ formatDate(ctx.row['requestedOn']) }}</span>
+        <span class="rt-cell-time">{{ formatTime(ctx.row['requestedOn']) }}</span>
+      </div>
+    </ng-container>
+
+    <!-- Current Status (stepper) -->
+    <!-- Current Status (stepper) -->
+    <ng-container *ngIf="ctx.col.key === 'currentStatus'">
+      <div class="rt-cell-status">
+        <div class="rt-stepper">
+
+          <ng-container *ngFor="let step of getSteps(ctx.row); let i = index; let last = last">
+            <ng-container *ngIf="{ prevDone: i > 0 && getSteps(ctx.row)[i - 1]?.state === 'done' } as meta">
+
+              <div class="rt-step-node">
+                <div class="rt-step-icon-row">
+
+                  <!-- Left connector: green if previous step is done -->
+                  <span class="rt-connector rt-connector--left" [class.rt-connector--done]="meta.prevDone">
+                  </span>
+
+                  <div class="rt-step-icon" [ngClass]="'rt-step-icon--' + step.state">
+                    <svg *ngIf="step.state === 'done'" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                    <svg *ngIf="step.state === 'active'" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                      <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M6 3.5V6L7.5 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                    <svg *ngIf="step.state === 'submitted'" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                      <path d="M1.5 6L10.5 1.5L7.5 10.5L6 6.5L1.5 6Z" stroke="currentColor" stroke-width="1.3"
+                        stroke-linejoin="round" />
+                      <path d="M6 6.5L8 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+                    </svg>
+                    <svg *ngIf="step.state === 'pending'" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                      <circle cx="6" cy="6" r="2" fill="currentColor" />
+                    </svg>
+                    <svg *ngIf="step.state === 'rejected'" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                      <path d="M3.5 3.5L8.5 8.5M8.5 3.5L3.5 8.5" stroke="currentColor" stroke-width="1.6"
+                        stroke-linecap="round" />
+                    </svg>
+                  </div>
+
+                  <!-- Right connector: green if THIS step is done, hidden if last -->
+                  <span class="rt-connector rt-connector--right" [class.rt-connector--hidden]="last"
+                    [class.rt-connector--done]="step.state === 'done'">
+                  </span>
+
+                </div>
+                <span class="rt-step-label" [title]="step.label">{{ step.label }}</span>
+              </div>
+
+            </ng-container>
           </ng-container>
         </div>
       </div>
+    </ng-container>
 
-    </div>
-  </div>
+    <!-- Actions -->
+    <ng-container *ngIf="ctx.col.key === 'actions'">
+      <!-- <div class="rt-actions" (click)="$event.stopPropagation()">
+        <button class="rt-action-btn" title="View" (click)="viewSR(ctx.row)">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+            <path d="M1 8C1 8 3.5 3 8 3s7 5 7 5-2.5 5-7 5S1 8 1 8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </button>
+        <button class="rt-action-btn" title="Edit" (click)="editSR(ctx.row)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div> -->
+      <app-common-table-actions [viewPermission]="'DEMAND:MYJRS:VIEW'" [editPermission]="'DEMAND:MYJRS:EDIT'"
+        (view)="viewSR(ctx.row)" (edit)="editSR(ctx.row)"></app-common-table-actions>
+    </ng-container>
 
-  <app-pagination *ngIf="!isLoading && !errorMessage && totalElements > 0" [totalItems]="totalElements"
-    [pageSize]="pageSize" [currentPage]="currentPage" (pageChange)="onPageChange($event)">
-  </app-pagination>
+  </ng-template>
 
 </div>

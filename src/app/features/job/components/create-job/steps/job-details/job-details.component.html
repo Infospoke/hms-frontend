@@ -1,0 +1,209 @@
+<div class="jd-card" [formGroup]="form">
+
+  <div class="jd-card-header">
+    <h3 class="jd-card-title">Job Details</h3>
+    <p class="jd-card-sub">Selected fields from the approved SR. You can edit the details if required.</p>
+  </div>
+
+  <!-- Row 1: Job Title + Job Code -->
+  <div class="jd-row jd-row--2">
+
+    <div class="jd-field">
+      <label class="jd-label">Job Title <span class="jd-req">*</span></label>
+      <input class="jd-input" [class.jd-input--err]="isInvalid('jobTitle')"
+        formControlName="jobTitle" placeholder="e.g. Software Developer – Backend" />
+      <span class="jd-err" *ngIf="isInvalid('jobTitle')">
+        <ng-container *ngIf="f('jobTitle')?.hasError('required')">Job title is required</ng-container>
+        <ng-container *ngIf="f('jobTitle')?.hasError('maxlength')">Max 255 characters</ng-container>
+      </span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Job Code <span class="jd-req">*</span></label>
+      <div class="jd-input-wrap">
+        <input class="jd-input jd-input--readonly" formControlName="jobCode" readonly />
+        <span class="jd-auto-badge">Auto generated &nbsp;<i class="fa-solid fa-circle-info"></i></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Department + Business Unit + Location -->
+  <div class="jd-row jd-row--3">
+
+    <div class="jd-field">
+      <label class="jd-label">Department <span class="jd-req">*</span></label>
+      <nz-select formControlName="department" nzPlaceHolder="Select department"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('department')">
+        <nz-option *ngFor="let d of departments" [nzValue]="d" [nzLabel]="d"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('department')">Department is required</span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Business Unit <span class="jd-req">*</span></label>
+      <nz-select formControlName="businessUnit" nzPlaceHolder="Select business unit"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('businessUnit')">
+        <nz-option *ngFor="let b of businessUnits" [nzValue]="b" [nzLabel]="b"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('businessUnit')">Business unit is required</span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Location <span class="jd-req">*</span></label>
+      <nz-select formControlName="location" nzPlaceHolder="Select location"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('location')">
+        <nz-option *ngFor="let l of locations" [nzValue]="l" [nzLabel]="l"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('location')">Location is required</span>
+    </div>
+
+  </div>
+
+  <!-- Row 3: Work Mode + Employment Type + Experience -->
+  <div class="jd-row jd-row--3">
+
+    <div class="jd-field">
+      <label class="jd-label">Work Mode <span class="jd-req">*</span></label>
+      <nz-select formControlName="workMode" nzPlaceHolder="Select work mode"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('workMode')">
+        <nz-option *ngFor="let w of workModes" [nzValue]="w" [nzLabel]="w"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('workMode')">Work mode is required</span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Employment Type <span class="jd-req">*</span></label>
+      <nz-select formControlName="employmentType" nzPlaceHolder="Select employment type"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('employmentType')">
+        <nz-option *ngFor="let e of employmentTypes" [nzValue]="e" [nzLabel]="e"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('employmentType')">Employment type is required</span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Experience <span class="jd-req">*</span></label>
+      <nz-select formControlName="experience" nzPlaceHolder="Select experience"
+        [nzOptionOverflowSize]="5" class="nz-field-select" [class.nz-err]="isInvalid('experience')">
+        <nz-option *ngFor="let x of experiences" [nzValue]="x" [nzLabel]="x"></nz-option>
+      </nz-select>
+      <span class="jd-err" *ngIf="isInvalid('experience')">Experience is required</span>
+    </div>
+
+  </div>
+
+  <!-- Row 4: Number of Openings + Target Start Date -->
+  <div class="jd-row jd-row--2">
+
+    <div class="jd-field">
+      <label class="jd-label">Number of Openings <span class="jd-req">*</span></label>
+      <input class="jd-input" [class.jd-input--err]="isInvalid('openings')"
+        type="number" min="1" formControlName="openings" placeholder="e.g. 3" />
+      <span class="jd-err" *ngIf="isInvalid('openings')">
+        <ng-container *ngIf="f('openings')?.hasError('required')">Number of openings is required</ng-container>
+        <ng-container *ngIf="f('openings')?.hasError('min')">Must be at least 1</ng-container>
+      </span>
+    </div>
+
+    <div class="jd-field">
+      <label class="jd-label">Target Start Date <span class="jd-req">*</span></label>
+      <nz-date-picker class="jd-date-picker" [class.jd-date-picker--err]="isInvalid('startDate')"
+        formControlName="startDate" nzPlaceHolder="Select date"
+        nzFormat="dd MMM yyyy" [nzDisabledDate]="disablePastDates">
+      </nz-date-picker>
+      <span class="jd-err" *ngIf="isInvalid('startDate')">Target start date is required</span>
+    </div>
+
+  </div>
+
+  <!-- ── Must Have Skills ─────────────────────────────────────────────────── -->
+  <div class="jd-field jd-field--full">
+    <label class="jd-label">Must Have Skills <span class="jd-req">*</span></label>
+
+    <div class="jd-chips-area" [class.jd-chips-area--err]="isInvalid('mustHaveSkills')">
+      <span class="jd-chip" *ngFor="let skill of f('mustHaveSkills')?.value; let i = index">
+        {{ skill }}
+        <button type="button" class="jd-chip-remove" (click)="removeSkill('must', i)">×</button>
+      </span>
+
+      <!-- + Add Skill trigger -->
+      <div class="jd-add-wrap" (click)="$event.stopPropagation()">
+        <button type="button" class="jd-add-trigger" (click)="openPopup('must', $event)">
+          + Add Skill
+        </button>
+
+        <!-- Popup -->
+        <div class="jd-popup" *ngIf="mustPopupOpen">
+          <p class="jd-popup__label">Add a custom skill</p>
+          <div class="jd-popup__row">
+            <input
+              #mustInput
+              class="jd-popup__input"
+              [(ngModel)]="mustSkillInput"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="e.g. TypeScript"
+              (keydown)="onSkillKeydown($event, 'must')"
+              autofocus />
+            <button type="button" class="jd-popup__add-btn"
+              (click)="addSkill('must')" [disabled]="!mustSkillInput.trim()">
+              Add
+            </button>
+          </div>
+          <p class="jd-popup__hint">Press Enter to add, Esc to close</p>
+        </div>
+      </div>
+    </div>
+
+    <span class="jd-err" *ngIf="isInvalid('mustHaveSkills')">At least one must-have skill is required</span>
+  </div>
+
+  <!-- ── Nice to Have Skills ──────────────────────────────────────────────── -->
+  <div class="jd-field jd-field--full">
+    <label class="jd-label">Nice to Have Skills <span class="jd-optional">(Optional)</span></label>
+
+    <div class="jd-chips-area">
+      <span class="jd-chip jd-chip--nice" *ngFor="let skill of f('niceToHaveSkills')?.value; let i = index">
+        {{ skill }}
+        <button type="button" class="jd-chip-remove" (click)="removeSkill('nice', i)">×</button>
+      </span>
+
+      <!-- + Add Skill trigger -->
+      <div class="jd-add-wrap" (click)="$event.stopPropagation()">
+        <button type="button" class="jd-add-trigger" (click)="openPopup('nice', $event)">
+          + Add Skill
+        </button>
+
+        <!-- Popup -->
+        <div class="jd-popup" *ngIf="nicePopupOpen">
+          <p class="jd-popup__label">Add a custom skill</p>
+          <div class="jd-popup__row">
+            <input
+              class="jd-popup__input"
+              [(ngModel)]="niceSkillInput"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="e.g. Kubernetes"
+              (keydown)="onSkillKeydown($event, 'nice')"
+              autofocus />
+            <button type="button" class="jd-popup__add-btn"
+              (click)="addSkill('nice')" [disabled]="!niceSkillInput.trim()">
+              Add
+            </button>
+          </div>
+          <p class="jd-popup__hint">Press Enter to add, Esc to close</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Notes -->
+  <div class="jd-field jd-field--full">
+    <label class="jd-label">Additional Notes <span class="jd-optional">(Optional)</span></label>
+    <div class="jd-textarea-wrap">
+      <textarea class="jd-textarea" formControlName="notes" rows="4"
+        placeholder="Add any additional information relevant to this job."
+        maxlength="250"></textarea>
+      <span class="jd-char-count">{{ notesLength }}/250</span>
+    </div>
+  </div>
+
+</div>

@@ -236,90 +236,100 @@
 
     <!-- ── Interview Analysis body ── -->
     <ng-container *ngIf="viewMode === 'interview'">
-      <div class="sc-section-title">Overall Score</div>
-      <div class="sc-card iv-score-card">
-        <svg viewBox="0 0 120 120" class="iv-gauge">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#e8ecf1" stroke-width="10" />
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="314"
-            [attr.stroke-dashoffset]="314 - (314 * interviewData.total_score / 100)" stroke-linecap="round"
-            transform="rotate(-90 60 60)" />
-          <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{
-            interviewData.total_score }}</text>
-          <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
-        </svg>
-      </div>
-
-      <div class="sc-section-title">Interview Details</div>
-      <div class="sc-card">
-        <div class="sc-grid-2">
-          <div>
-            <span class="info-label">Questions Attempted :</span>
-            <p class="sc-big-value">{{ interviewData.qna_count }}</p>
-          </div>
-          <div>
-            <span class="info-label">Proctoring Violations</span>
-            <p class="sc-big-value red-text">{{ interviewData.proctoring_violations }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="sc-section-title">Proctoring Results</div>
-      <div class="sc-card" *ngFor="let p of interviewData.proctoring_logs">
-        <div class="iv-proctor-row">
-          <div>
-            <div class="sc-bullet-list red"><span class="sc-bullet"></span> {{ p.event_type }}</div>
-            <span class="iv-proctor-time">{{ p.timestamp }}</span>
-          </div>
-          <div class="iv-proctor-img" *ngIf="p.image_base64">
-            <img [src]="p.image_base64" alt="Proctor capture" />
-          </div>
-        </div>
-      </div>
-
-      <div class="sc-section-title">Question Wise Analysis</div>
-      <div class="iv-question" *ngFor="let q of interviewData.qna_analysis; let i = index">
-        <div class="iv-question-header" (click)="toggleQuestion(i)">
-          <span class="iv-question-title">Question {{ i + 1 }} :</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
-            [style.transform]="expandedQuestion === i ? 'rotate(180deg)' : 'none'" style="transition: transform 0.2s;">
-            <path d="m6 9 6 6 6-6" />
+      <div class="interview-data" *ngIf="candidate?.status==='COMPLETED'">
+        <div class="sc-section-title">Overall Score</div>
+        <div class="sc-card iv-score-card">
+          <svg viewBox="0 0 120 120" class="iv-gauge">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e8ecf1" stroke-width="10" />
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#3b82f6" stroke-width="10" stroke-dasharray="314"
+              [attr.stroke-dashoffset]="314 - (314 * interviewData.total_score / 100)" stroke-linecap="round"
+              transform="rotate(-90 60 60)" />
+            <text x="60" y="58" text-anchor="middle" font-size="24" font-weight="700" fill="#1a202c">{{
+              interviewData.total_score }}</text>
+            <text x="60" y="74" text-anchor="middle" font-size="11" fill="#94a3b8">/100</text>
           </svg>
         </div>
-        <div class="iv-qa-block iv-question-text" *ngIf="expandedQuestion === i">
-          <div class="iv-question">
-            <span class="iv-label"><strong>Question</strong></span>
-            <p>{{ q.question_text }}</p>
-          </div>
-          <div class="iv-answer">
-            <span class="iv-label"><strong>Answer</strong></span>
-            <p>{{ q.answer_text }}</p>
+
+        <div class="sc-section-title">Interview Details</div>
+        <div class="sc-card">
+          <div class="sc-grid-2">
+            <div>
+              <span class="info-label">Questions Attempted :</span>
+              <p class="sc-big-value">{{ interviewData.qna_count }}</p>
+            </div>
+            <div>
+              <span class="info-label">Proctoring Violations</span>
+              <p class="sc-big-value red-text">{{ interviewData.proctoring_violations }}</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="tl-wrap">
-        <div class="tl-title sc-section-title">Interview Timeline</div>
 
-        <ng-container *ngIf="entries.length > 0; else emptyState">
-          <div class="tl-list">
-            <div class="tl-item" *ngFor="let entry of entries; let i = index">
-              <div class="tl-spine">
-                <div class="tl-dot" [class.filled]="entry.date" [class.empty-dot]="!entry.date"></div>
-                <div class="tl-line" [class.transparent]="isLast(i)"></div>
-              </div>
-              <div class="tl-content">
-                <div class="tl-key">{{ entry.label }}</div>
-                <div class="tl-date" [class.pending]="!entry.date">
-                  {{ entry.date ?? 'Pending' }}
+        <div class="sc-section-title">Proctoring Results</div>
+        <div class="sc-card" *ngFor="let p of interviewData.proctoring_logs">
+          <div class="iv-proctor-row">
+            <div>
+              <div class="sc-bullet-list red"><span class="sc-bullet"></span> {{ p.event_type }}</div>
+              <span class="iv-proctor-time">{{ p.timestamp }}</span>
+            </div>
+            <div class="iv-proctor-img" *ngIf="p.image_base64">
+              <img [src]="p.image_base64" alt="Proctor capture" />
+            </div>
+          </div>
+        </div>
+
+        <div class="sc-section-title">Question Wise Analysis</div>
+        <div class="iv-question" *ngFor="let q of interviewData.qna_analysis; let i = index">
+          <div class="iv-question-header" (click)="toggleQuestion(i)">
+            <span class="iv-question-title">Question {{ i + 1 }} :</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
+              [style.transform]="expandedQuestion === i ? 'rotate(180deg)' : 'none'"
+              style="transition: transform 0.2s;">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+          <div class="iv-qa-block iv-question-text" *ngIf="expandedQuestion === i">
+            <div class="iv-question">
+              <span class="iv-label"><strong>Question</strong></span>
+              <p>{{ q.question_text }}</p>
+            </div>
+            <div class="iv-answer">
+              <span class="iv-label"><strong>Answer</strong></span>
+              <p>{{ q.answer_text }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="tl-wrap">
+          <div class="tl-title sc-section-title">Interview Timeline</div>
+
+          <ng-container *ngIf="entries.length > 0; else emptyState">
+            <div class="tl-list">
+              <div class="tl-item" *ngFor="let entry of entries; let i = index">
+                <div class="tl-spine">
+                  <div class="tl-dot" [class.filled]="entry.date" [class.empty-dot]="!entry.date"></div>
+                  <div class="tl-line" [class.transparent]="isLast(i)"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-key">{{ entry.label }}</div>
+                  <div class="tl-date" [class.pending]="!entry.date">
+                    {{ entry.date ?? 'Pending' }}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </ng-container>
+          </ng-container>
 
-        <ng-template #emptyState>
-          <div class="tl-empty">No timeline data available.</div>
-        </ng-template>
+          <ng-template #emptyState>
+            <div class="tl-empty">No timeline data available.</div>
+          </ng-template>
+        </div>
       </div>
+
+
+      <div class="interview-data" *ngIf="candidate?.status!=='COMPLETED'">
+        <p class="sc-text">Interview has not been completed for this candidate. Detailed analysis will be available
+          once the interview is completed.</p>
+        </div>
+
     </ng-container>
 
     <!-- ── Action buttons — only for APPLIED or SCREENED ── -->

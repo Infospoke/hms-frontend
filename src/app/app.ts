@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { afterNextRender, Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NotificationWebsocketService } from './features/notification-panel/services/notification-websocket-service';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,14 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit{
   protected readonly title = signal('infospoke_website_2.0');
+
+  constructor(private websocketService:NotificationWebsocketService) {
+   
+  }
+  ngOnInit(): void {
+    Promise.all([this.websocketService.connect()])
+    
+  }
 }

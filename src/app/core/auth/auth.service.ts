@@ -124,8 +124,13 @@ export class AuthService {
     const t = this.tokenService.getAccessToken();
     if (!t) return null;
     const modules = JSON.parse(atob(t.split('.')[1]))?.permissions;
-    console.log('Decoded token permissions:', modules);
+
     return modules || [];
+  }
+  getRoleId(){
+      const t = this.tokenService.getAccessToken();
+    if (!t) return null;
+    return JSON.parse(atob(t.split('.')[1]))?.roleId;
   }
   getUserName() {
     const t = this.tokenService.getAccessToken();

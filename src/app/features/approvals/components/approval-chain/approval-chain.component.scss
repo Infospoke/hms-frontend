@@ -1,11 +1,30 @@
-
-
 // ── Table card (flush with tabs) ─────────────────────────────────────────────
 .card-dd {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-top: none;
   border-radius: 0 0 10px 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+// ── Table scroll wrapper (prevents horizontal overflow) ───────────────────────
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  // Thin, subtle scrollbar
+  &::-webkit-scrollbar {
+    height: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
 }
 
 // ── Chain name cell ───────────────────────────────────────────────────────────
@@ -13,6 +32,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .chain-icon {
@@ -31,6 +51,9 @@
   font-weight: 600;
   color: #0f172a;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
 }
 
 // ── Description cell ─────────────────────────────────────────────────────────
@@ -38,10 +61,11 @@
   font-size: 12.5px;
   color: #64748b;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  display: block;
+  max-width: 260px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 // ── Level badge ───────────────────────────────────────────────────────────────
@@ -100,6 +124,33 @@
     background: #fef2f2;
     color: #b91c1c;
   }
+
+  &--active {
+    background: #f0fdf4;
+    color: #15803d;
+  }
+
+  &--deactive {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+}
+
+.status-badge--created {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Active */
+.status-badge--active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* Inactive */
+.status-badge--deactive {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 // ── Footer range label ────────────────────────────────────────────────────────

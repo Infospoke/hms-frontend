@@ -2,34 +2,18 @@
   display: block;
 }
 
+// ── Page Layout ────────────────────────────────────────────────────────────────
+.an-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
 
-
-// ── Page Header ───────────────────────────────────────────────────────────────
+// ── Page Header ────────────────────────────────────────────────────────────────
 .an-page-header {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-.an-back-row {
-  margin-bottom: 2px;
-}
-
-.an-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0;
-  background: none;
-  border: none;
-  font-size: 13px;
-  font-weight: 500;
-  color: #2563eb;
-  cursor: pointer;
-  transition: color 0.12s;
-
-  i { font-size: 12px; }
-  &:hover { color: #1d4ed8; }
 }
 
 .an-title-row {
@@ -37,20 +21,6 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-}
-
-.an-title {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-}
-
-.an-subtitle {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #64748b;
 }
 
 .an-header-actions {
@@ -76,19 +46,175 @@
 
   i { font-size: 13px; }
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #eff6ff;
     border-color: #bfdbfe;
   }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
+// ── Filter wrap ────────────────────────────────────────────────────────────────
+.an-filter-wrap {
+  padding: 12px 0;
+}
+
+// ── Selection action bar ───────────────────────────────────────────────────────
+.an-selection-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  animation: an-bar-in 0.15s ease;
+}
+
+@keyframes an-bar-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.an-selection-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+  flex: 1;
+
+  i { font-size: 14px; }
+}
+
+.an-mark-selected-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid #93c5fd;
+  border-radius: 7px;
+  background: #2563eb;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.14s;
+
+  i { font-size: 12px; }
+
+  &:hover:not(:disabled) { background: #1d4ed8; }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.an-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: transparent;
+  color: #3b82f6;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.12s;
+
+  &:hover {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}
+
+// ── Custom checkbox ────────────────────────────────────────────────────────────
+.an-checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  line-height: 1;
+
+  // Hide the native input but keep it accessible
+  .an-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .an-checkbox-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+
+  // Checked state
+  .an-checkbox:checked + .an-checkbox-box {
+    background: #2563eb;
+    border-color: #2563eb;
+
+    &::after {
+      content: '';
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
+    }
+  }
+
+  // Indeterminate state (select-all header when partial)
+  .an-checkbox:indeterminate + .an-checkbox-box {
+    background: #2563eb;
+    border-color: #2563eb;
+
+    &::after {
+      content: '';
+      width: 8px;
+      height: 2px;
+      background: #fff;
+      border-radius: 1px;
+      display: block;
+    }
+  }
+
+  &:hover .an-checkbox-box {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+
+  // Don't change hover bg when already checked/indeterminate
+  &:hover .an-checkbox:checked + .an-checkbox-box,
+  &:hover .an-checkbox:indeterminate + .an-checkbox-box {
+    background: #1d4ed8;
+  }
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────────
 .an-tabs {
   display: flex;
   align-items: center;
   gap: 2px;
   border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0;
 }
 
 .an-tab {
@@ -136,14 +262,7 @@
   }
 }
 
-
-.an-filter-wrap {
-  
-
-  padding: 12px 0px;
-}
-
-
+// ── Notification cell ──────────────────────────────────────────────────────────
 .an-notif-cell {
   display: flex;
   align-items: center;
@@ -173,7 +292,9 @@
 .an-notif-title {
   font-size: 13px;
   color: #475569;
-  white-space: nowrap;
+  white-space: normal;       // allow wrapping
+  word-break: break-word;    // break long words/URLs if needed
+  line-height: 1.45;
 
   &--unread {
     font-weight: 600;
@@ -181,7 +302,7 @@
   }
 }
 
-// ── Custom Cell: Related To ───────────────────────────────────────────────────
+// ── Related To cell ────────────────────────────────────────────────────────────
 .an-related-cell {
   display: flex;
   flex-direction: column;
@@ -202,7 +323,13 @@
   color: #94a3b8;
 }
 
-// ── Custom Cell: Action ───────────────────────────────────────────────────────
+// ── Action cell ────────────────────────────────────────────────────────────────
+.an-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .an-action-btn {
   display: inline-flex;
   align-items: center;
@@ -222,12 +349,30 @@
     border-color: #93c5fd;
     color: #2563eb;
   }
+
+  // Mark-as-read button — green tint on hover
+  &--read:hover {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #16a34a;
+  }
+
+  // Mark-as-unread button — amber tint on hover
+  &--unread:hover {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #d97706;
+  }
 }
 
-// ── Responsive ────────────────────────────────────────────────────────────────
+// ── Responsive ─────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .an-page { padding: 16px; gap: 14px; }
-  .an-title { font-size: 18px; }
   .an-title-row { flex-direction: column; }
   .an-filter-wrap { overflow-x: auto; }
+  .an-selection-bar { flex-wrap: wrap; }
+}
+
+.an-action-btn--unread i {
+  color: #f59e0b; /* orange */
 }

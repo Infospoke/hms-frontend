@@ -41,10 +41,14 @@
 
                 <div class="field">
                     <label class="lbl">Business Unit <span class="astrick">*</span></label>
-                    <select formControlName="bu" [class.err]="hasError(step0Form, 'dept')">
-                        <option value="" disabled>Select Bussiness Unit</option>
-                        <option *ngFor="let d of bussiness" [value]="d?.id">{{ d?.name }}</option>
-                    </select>
+                    <nz-select
+                        formControlName="bu"
+                        nzPlaceHolder="Select Business Unit"
+                        [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step0Form, 'bu')"
+                        class="bu-select">
+                        <nz-option *ngFor="let d of bussiness" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'bu')">
                         {{ getError(step0Form, 'bu','Business Unit') }}
                     </span>
@@ -53,10 +57,10 @@
                 <!-- Department -->
                 <div class="field">
                     <label class="lbl">Department <span class="astrick">*</span></label>
-                    <select formControlName="dept" [class.err]="hasError(step0Form, 'dept')">
-                        <option value="" disabled>Select department</option>
-                        <option *ngFor="let d of deptKeys" [value]="d?.id">{{ d?.name}}</option>
-                    </select>
+                    <nz-select formControlName="dept" nzPlaceHolder="Select department"
+                        [nzOptionOverflowSize]="5" [class.err]="hasError(step0Form, 'dept')" class="nz-field-select">
+                        <nz-option *ngFor="let d of deptKeys" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'dept')">
                         {{ getError(step0Form, 'dept','Department') }}
                     </span>
@@ -106,12 +110,10 @@
                 <!-- Seniority -->
                 <div class="field">
                     <label class="lbl">Seniority Level <span class="astrick">*</span></label>
-                    <select formControlName="seniority" [class.err]="hasError(step0Form, 'seniority')">
-                        <option value="" disabled>Select level</option>
-
-                        <option *ngFor="let s of seniorityIC" [value]="s?.id">{{ s?.name }}</option>
-
-                    </select>
+                    <nz-select formControlName="seniority" nzPlaceHolder="Select level"
+                        [nzOptionOverflowSize]="5" [class.err]="hasError(step0Form, 'seniority')" class="nz-field-select">
+                        <nz-option *ngFor="let s of seniorityIC" [nzValue]="s?.id" [nzLabel]="s?.name"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'seniority')">
                         {{ getError(step0Form, 'seniority','Seniority Level') }}
                     </span>
@@ -570,10 +572,10 @@
 
                         <span class="ai-chip">✦ AI-suggest</span>
                     </div>
-                    <select formControlName="eduReq" [class.err]="hasError(step3Form, 'eduReq')">
-                        <option value="" disabled>Select education</option>
-                        <option *ngFor="let e of educationOpts" [value]="e?.degree">{{ e?.degree }}</option>
-                    </select>
+                    <nz-select formControlName="eduReq" nzPlaceHolder="Select education"
+                        [nzOptionOverflowSize]="5" [class.err]="hasError(step3Form, 'eduReq')" class="nz-field-select">
+                        <nz-option *ngFor="let e of educationOpts" [nzValue]="e?.degree" [nzLabel]="e?.degree"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step3Form, 'eduReq')">
                         {{ getError(step3Form, 'eduReq','Education') }}
                     </span>
@@ -582,10 +584,10 @@
                 <!-- Travel -->
                 <div class="field" style="margin-top:5px">
                     <label class="lbl">Travel Requirement <span class="lbl-sub"></span></label>
-                    <select formControlName="travel">
-                        <option value="" disabled>Select travel %</option>
-                        <option *ngFor="let t of travelOpts" [value]="t?.id">{{ t?.name }}</option>
-                    </select>
+                    <nz-select formControlName="travel" nzPlaceHolder="Select travel %"
+                        [nzOptionOverflowSize]="5" class="nz-field-select">
+                        <nz-option *ngFor="let t of travelOpts" [nzValue]="t?.id" [nzLabel]="t?.name"></nz-option>
+                    </nz-select>
                 </div>
 
             </div>

@@ -258,13 +258,13 @@ export class ApprovalChainConfigComponent implements OnInit {
 
   onView(row: any): void {
     this.router.navigateByUrl('/approval/chain-config/new-chain/view', {
-      state: { chainId: row.id, type: 'view', url: '/approval/chain-config' },
+      state: { chainId: row.id, type: 'view', url: '/approval/chain-config',show:true },
     });
   }
 
   onEdit(row: any): void {
     this.router.navigateByUrl('/approval/chain-config/new-chain/edit', {
-      state: { chainId: row.id, type: 'edit', url: '/approval/chain-config' },
+      state: { chainId: row.id, type: 'edit', url: '/approval/chain-config',show:true },
     });
   }
 

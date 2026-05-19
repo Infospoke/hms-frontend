@@ -82,12 +82,10 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Type <span class="required">*</span></label>
-                <select formControlName="jobType">
-                    <option value="">Select Job Type</option>
-                    <option *ngFor="let jobtype of jobTypes" [value]="jobtype.name">
-                        {{ jobtype.name }}
-                    </option>
-                </select>
+                <nz-select formControlName="jobType" nzPlaceHolder="Select Job Type"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let jobtype of jobTypes" [nzValue]="jobtype.name" [nzLabel]="jobtype.name"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="addJobForm.get('jobType')?.touched && addJobForm.get('jobType')?.invalid"
                     style="text-align: left;">
@@ -99,12 +97,10 @@
 
             <div class="form-group">
                 <label> Mode <span class="required">*</span></label>
-                <select formControlName="jobMode">
-                    <option value="">Select Job Mode</option>
-                    <option *ngFor="let jobmode of jobModes" [value]="jobmode.name">
-                        {{ jobmode.name }}
-                    </option>
-                </select>
+                <nz-select formControlName="jobMode" nzPlaceHolder="Select Job Mode"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let jobmode of jobModes" [nzValue]="jobmode.name" [nzLabel]="jobmode.name"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="addJobForm.get('jobMode')?.touched && addJobForm.get('jobMode')?.invalid"
                     style="text-align: left;">
@@ -119,12 +115,11 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Min Experience<span class="required">*</span></label>
-                <select formControlName="startExp" (change)="handleExperience()">
-                    <option value="">Select Min Experience</option>
-                    <option *ngFor="let exp of startExperience" [value]="exp.id">
-                        {{ exp.label }}
-                    </option>
-                </select>
+                <nz-select formControlName="startExp" nzPlaceHolder="Select Min Experience"
+                    [nzOptionOverflowSize]="5" class="nz-field-select"
+                    (ngModelChange)="handleExperience()">
+                    <nz-option *ngFor="let exp of startExperience" [nzValue]="exp.id" [nzLabel]="exp.label"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="addJobForm.get('startExp')?.touched && addJobForm.get('startExp')?.invalid"
                     style="text-align: left;">
@@ -140,12 +135,11 @@
 
             <div class="form-group">
                 <label>Max Experience <span class="required">*</span></label>
-                <select formControlName="endExp" (change)="handleExperience()">
-                    <option value="">Select Max Experience</option>
-                    <option *ngFor="let exp of startExperience" [value]="exp.id">
-                        {{ exp.label }}
-                    </option>
-                </select>
+                <nz-select formControlName="endExp" nzPlaceHolder="Select Max Experience"
+                    [nzOptionOverflowSize]="5" class="nz-field-select"
+                    (ngModelChange)="handleExperience()">
+                    <nz-option *ngFor="let exp of startExperience" [nzValue]="exp.id" [nzLabel]="exp.label"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="addJobForm.get('endExp')?.touched && addJobForm.get('endExp')?.invalid"
                     style="text-align: left;">
@@ -163,10 +157,10 @@
         <div class="form-row">
             <div class="form-group">
                 <label> Country <span class="required">*</span></label>
-                <select formControlName="jobCountry">
-                    <option value="">Select Job Country</option>
-                    <option *ngFor="let c of countries" [value]="c.name">{{ c.name }}</option>
-                </select>
+                <nz-select formControlName="jobCountry" nzPlaceHolder="Select Job Country"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let c of countries" [nzValue]="c.name" [nzLabel]="c.name"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="addJobForm.get('jobCountry')?.touched && addJobForm.get('jobCountry')?.invalid"
                     style="text-align: left;">
@@ -281,12 +275,10 @@
 
             <div class="form-group">
                 <label>Skill <span class="required">*</span></label>
-                <select class="form-select" formControlName="skillId">
-                    <option value=''>Select Skill</option>
-                    <option *ngFor="let s of jobSkills" [value]="s.skillId">
-                        {{s.skillName}}
-                    </option>
-                </select>
+                <nz-select formControlName="skillId" nzPlaceHolder="Select Skill"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let s of jobSkills" [nzValue]="s.skillId" [nzLabel]="s.skillName"></nz-option>
+                </nz-select>
 
                 <div class="muted-text-error"
                     *ngIf="tempSkillForm.get('skillId')?.touched && tempSkillForm.get('skillId')?.invalid">
@@ -316,10 +308,10 @@
             <!-- Weightage -->
             <div class="form-group">
                 <label>Weightage <span class="required">*</span></label>
-                <select class="form-select" formControlName="weightage">
-                    <option value=''>Select</option>
-                    <option *ngFor="let w of weight" [value]="w.name">{{w.name}}</option>
-                </select>
+                <nz-select formControlName="weightage" nzPlaceHolder="Select"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let w of weight" [nzValue]="w.name" [nzLabel]="w.name"></nz-option>
+                </nz-select>
 
                 <div class="muted-text-error"
                     *ngIf="tempSkillForm.get('weightage')?.touched && tempSkillForm.get('weightage')?.invalid">
@@ -330,10 +322,10 @@
             <!-- Experience -->
             <div class="form-group">
                 <label>Experience Level <span class="required">*</span></label>
-                <select class="form-select" formControlName="experienceLevel">
-                    <option value=''>Select</option>
-                    <option *ngFor="let e of skillExp" [value]="e.name">{{e.name}}</option>
-                </select>
+                <nz-select formControlName="experienceLevel" nzPlaceHolder="Select"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let e of skillExp" [nzValue]="e.name" [nzLabel]="e.name"></nz-option>
+                </nz-select>
 
                 <div class="muted-text-error"
                     *ngIf="tempSkillForm.get('experienceLevel')?.touched && tempSkillForm.get('experienceLevel')?.invalid">

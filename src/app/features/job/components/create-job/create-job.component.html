@@ -1,0 +1,72 @@
+<app-heading
+  [heading]="'Create Job'"
+  [subHeading]="'Create a new job from approved service request'"
+  [showInfo]="false"
+  [infoTooltip]="''" />
+
+<!-- ── Stepper ──────────────────────────────────────────────────────────── -->
+<div class="cj-stepper-wrap">
+  <nz-steps [nzCurrent]="currentStep" nzSize="small" class="cj-steps">
+    <nz-step *ngFor="let s of steps" [nzTitle]="s.title"></nz-step>
+  </nz-steps>
+</div>
+
+<!-- ── Step content ─────────────────────────────────────────────────────── -->
+<div class="cj-body">
+
+  <app-job-details-step
+    *ngIf="currentStep === 0"
+    [form]="step1Form">
+  </app-job-details-step>
+
+  <app-ai-job-description-step
+    *ngIf="currentStep === 1"
+    [form]="step2Form">
+  </app-ai-job-description-step>
+
+  <app-sourcing-strategy-step
+    *ngIf="currentStep === 2"
+    [form]="step3Form">
+  </app-sourcing-strategy-step>
+
+  <app-recruiter-assignment-step
+    *ngIf="currentStep === 3"
+    [form]="step4Form">
+  </app-recruiter-assignment-step>
+
+  <app-review-submit-step
+    *ngIf="currentStep === 4"
+    [form]="step5Form"
+    [step1Form]="step1Form"
+    [step2Form]="step2Form"
+    [step3Form]="step3Form"
+    [step4Form]="step4Form"
+    (goToStep)="currentStep = $event">
+  </app-review-submit-step>
+</div>
+
+<!-- ── Action bar ────────────────────────────────────────────────────────── -->
+<div class="cj-action-bar">
+
+  <button class="cj-btn cj-btn--cancel" type="button" (click)="onCancel()">
+    Cancel
+  </button>
+
+  <div class="cj-action-bar__right">
+
+    <button class="cj-btn cj-btn--back" type="button"
+      *ngIf="!isFirstStep" (click)="onBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+
+    <button class="cj-btn cj-btn--draft" type="button" (click)="onSaveAsDraft()">
+      Save as Draft
+    </button>
+
+    <button class="cj-btn cj-btn--primary" type="button" (click)="onNext()">
+      {{ nextButtonLabel }}
+      <i class="fa-solid fa-arrow-right" *ngIf="!isLastStep"></i>
+    </button>
+
+  </div>
+</div>

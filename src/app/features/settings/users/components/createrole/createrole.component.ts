@@ -12,6 +12,7 @@ import { PermissionRow, ApiModule, ApiSubModule } from '../permissions-panel/per
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 const SUB_DESC: Record<string, string> = {
   'My Jrs':              'Manage job requisitions',
@@ -25,7 +26,7 @@ const SUB_DESC: Record<string, string> = {
 @Component({
   selector:    'app-create-role',
   standalone:  true,
-  imports:     [CommonModule, ReactiveFormsModule, PermissionsPanelComponent,HeadingComponent],
+  imports:     [CommonModule, ReactiveFormsModule, PermissionsPanelComponent, HeadingComponent, NzSelectModule],
   templateUrl: './createrole.component.html',
   styleUrls:   ['./createrole.component.scss'],
 })

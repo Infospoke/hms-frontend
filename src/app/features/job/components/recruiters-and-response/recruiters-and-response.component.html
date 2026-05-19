@@ -1,0 +1,101 @@
+<div class="recruter">
+
+  <app-approval-layout
+    [heading]="'Recruiters & Response'"
+    [subHeading]="'View all assigned recruiters and their responses for this job.'"
+    [showInfo]="false"
+    [infoTooltip]="false"
+    [cards]="cards"
+    [showBtn]="false"
+    [showBackButton]="true"
+    [buttonText]="'Back to All Jobs'">
+  </app-approval-layout>
+
+  <div class="info-banner">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>Responses are updated in real-time as recruiters accept or decline the job.</span>
+  </div>
+
+  <div class="card-dd">
+    <app-reusable-table
+      [columns]="tableColumns"
+      [data]="filteredData"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [cellTemplate]="jobCellTemplate"
+      emptyMessage="No recruiters assigned yet."
+      (pageChange)="onPageChange($event)">
+    </app-reusable-table>
+  </div>
+
+  <!-- Add More Assignees -->
+  <div class="card-dd add-assignees-bar">
+    <div class="add-assignees-bar__left">
+      <div class="add-assignees-bar__icon">
+        <i class="fa-solid fa-user-group"></i>
+      </div>
+      <div class="add-assignees-bar__text">
+        <span class="add-assignees-bar__title">Add More Assignees</span>
+        <span class="add-assignees-bar__sub">You can add more recruiters to help with the assignment.</span>
+      </div>
+    </div>
+    <button class="add-assignees-bar__btn" (click)="addAssignees()">
+      <i class="fa-solid fa-plus"></i> Add Assignees
+    </button>
+  </div>
+
+</div>
+
+<!-- ── Cell Template ────────────────────────────────────── -->
+<ng-template #jobCellTemplate let-ctx>
+
+  <!-- Recruiter: name + email -->
+  <ng-container *ngIf="ctx.col.key === 'recruiter'">
+    <div class="rc-recruiter">
+      <span class="rc-recruiter__name">{{ ctx.row['name'] }}</span>
+      <span class="rc-recruiter__email">{{ ctx.row['email'] }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Assigned On: date + time stacked -->
+  <ng-container *ngIf="ctx.col.key === 'assignedOn'">
+    <div class="rc-datetime">
+      <span class="rc-datetime__date">{{ ctx.row['assignedDate'] }}</span>
+      <span class="rc-datetime__time">{{ ctx.row['assignedTime'] }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Status badge -->
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="rc-badge"
+      [class.rc-badge--accepted]="ctx.row['status'] === 'Accepted'"
+      [class.rc-badge--declined]="ctx.row['status'] === 'Declined'"
+      [class.rc-badge--pending]="ctx.row['status'] === 'Pending'">
+      <i class="fa-regular"
+        [class.fa-circle-check]="ctx.row['status'] === 'Accepted'"
+        [class.fa-circle-xmark]="ctx.row['status'] === 'Declined'"
+        [class.fa-clock]="ctx.row['status'] === 'Pending'">
+      </i>
+      {{ ctx.row['status'] }}
+    </span>
+  </ng-container>
+
+  <!-- Responded On: date + time stacked -->
+  <ng-container *ngIf="ctx.col.key === 'respondedOn'">
+    <div class="rc-datetime" *ngIf="ctx.row['respondedDate']; else naCell">
+      <span class="rc-datetime__date">{{ ctx.row['respondedDate'] }}</span>
+      <span class="rc-datetime__time">{{ ctx.row['respondedTime'] }}</span>
+    </div>
+    <ng-template #naCell><span class="rc-na">—</span></ng-template>
+  </ng-container>
+
+  <!-- Comments -->
+  <ng-container *ngIf="ctx.col.key === 'comments'">
+    <span class="rc-comments" *ngIf="ctx.row['comments']; else noComment">
+      {{ ctx.row['comments'] }}
+    </span>
+    <ng-template #noComment><span class="rc-na">—</span></ng-template>
+  </ng-container>
+
+</ng-template>

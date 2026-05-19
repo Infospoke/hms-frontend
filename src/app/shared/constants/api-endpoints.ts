@@ -76,7 +76,9 @@ export const API = {
         SENIORITY: `/hms/configurations/position-basic-seniority-levels`,
         TRAVEL: `/hms/configurations/travel-requirements`,
         ALL_SRS: `/hms/staffing-requisition/sr-list`,
-        BY_SR_ID: `/hms/staffing-requisition/by-sr-id`
+        BY_SR_ID: `/hms/staffing-requisition/by-sr-id`,
+        MY_SRS_COUNT:`/hms/staffing-requisition/get-all-sr-list-count`,
+        REQUESTED_BY:`/hms/configurations/role-users`
     },
     SUPPLY: {
         KANBAN: `/hms/kanban/filter`
@@ -95,10 +97,11 @@ export const API = {
     NOTIFICATIONS: {
         ALL_NOTIFICATIONS: `/hms/notifications/list`,
         NOTIFICATION_COUNTS: `/hms/notifications/counts`,
+        MARK_AS_READ: `/hms/notifications/update`,
     },
     SR_APPROVALS: {
         COUNT: `/hms/staffing-requisition/sr-counts`,
         LIST: `/hms/staffing-requisition/assigned-srs-for-approvals`,
-
+        FUNCATNALITIES:    `/hms/configurations/functionality`,
     }
 };

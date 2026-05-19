@@ -1,0 +1,143 @@
+<div class="ss-layout">
+
+  <!-- ── Left: Channel Table ──────────────────────────────────────────────── -->
+  <div class="ss-main">
+    <div class="ss-card">
+
+      <div class="ss-card-header">
+        <div>
+          <h3 class="ss-card-title">Sourcing Channels</h3>
+          <p class="ss-card-sub">Select the channels where you want to post this job. Toggle to enable or disable.</p>
+        </div>
+      </div>
+
+      <table class="ss-table">
+        <thead>
+          <tr>
+            <th class="ss-th ss-th--channel">Channel</th>
+            <th class="ss-th ss-th--best">Best For</th>
+            <th class="ss-th ss-th--cost">Cost</th>
+            <th class="ss-th ss-th--toggle">Post Job</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let ch of channels">
+            <tr class="ss-row" [class.ss-row--enabled]="ch.enabled">
+              <td class="ss-td ss-td--channel">
+                <div class="ss-channel-info">
+                  <span class="ss-icon"
+                    [style.background]="ch.iconBg"
+                    [style.color]="ch.iconColor">{{ ch.iconText }}</span>
+                  <div class="ss-channel-meta">
+                    <span class="ss-channel-name">{{ ch.name }}</span>
+                    <span class="ss-recommended-badge" *ngIf="ch.isRecommended">
+                      <i class="fa-solid fa-star"></i> Recommended
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td class="ss-td ss-td--best">{{ ch.bestFor }}</td>
+              <td class="ss-td ss-td--cost">
+                <span class="ss-cost-badge" [class.ss-cost-badge--paid]="ch.cost === 'Paid'" [class.ss-cost-badge--free]="ch.cost === 'Free'">
+                  {{ ch.cost }}
+                </span>
+              </td>
+              <td class="ss-td ss-td--toggle">
+                <label class="ss-toggle">
+                  <input type="checkbox" [checked]="ch.enabled" (change)="toggle(ch)">
+                  <span class="ss-toggle__track">
+                    <span class="ss-toggle__thumb"></span>
+                  </span>
+                </label>
+              </td>
+            </tr>
+
+            <!-- Referral amount sub-row -->
+            <tr class="ss-referral-row" *ngIf="ch.hasReferralAmount && ch.enabled">
+              <td colspan="4" class="ss-referral-cell">
+                <div class="ss-referral-input-wrap">
+                  <i class="fa-solid fa-gift ss-referral-icon"></i>
+                  <span class="ss-referral-label">Referral Bonus Amount</span>
+                  <div class="ss-referral-field">
+                    <span class="ss-referral-prefix">₹</span>
+                    <input
+                      type="number"
+                      class="ss-referral-input"
+                      [(ngModel)]="ch.referralAmount"
+                      (ngModelChange)="onReferralAmountChange(ch)"
+                      min="0"
+                      step="500"
+                      placeholder="0">
+                  </div>
+                  <span class="ss-referral-hint">Paid to the referring employee upon successful hire</span>
+                </div>
+              </td>
+            </tr>
+
+          </ng-container>
+        </tbody>
+      </table>
+
+      <!-- Info note -->
+      <div class="ss-info-note">
+        <i class="fa-solid fa-circle-info"></i>
+        Paid channels may incur posting charges as per the platform's policy.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Right: Summary Panel ─────────────────────────────────────────────── -->
+  <div class="ss-side">
+
+    <!-- Selected Channels Summary -->
+    <div class="ss-summary-card">
+      <div class="ss-summary-header">
+        <span class="ss-summary-title">Selected Channels Summary</span>
+        <span class="ss-summary-count">{{ selectedCount }}</span>
+        <button class="ss-clear-btn" *ngIf="selectedCount > 0" (click)="clearAll()">Clear All</button>
+      </div>
+
+      <div class="ss-summary-empty" *ngIf="selectedCount === 0">
+        <i class="fa-solid fa-layer-group"></i>
+        <p>No channels selected yet.<br>Enable at least one to proceed.</p>
+      </div>
+
+      <div class="ss-summary-list" *ngIf="selectedCount > 0">
+        <div class="ss-summary-item" *ngFor="let ch of selectedChannels">
+          <span class="ss-summary-icon"
+            [style.background]="ch.iconBg"
+            [style.color]="ch.iconColor">{{ ch.iconText }}</span>
+          <div class="ss-summary-item-info">
+            <span class="ss-summary-item-name">{{ ch.name }}</span>
+            <span class="ss-summary-item-cost" [class.ss-summary-item-cost--paid]="ch.cost === 'Paid'">{{ ch.cost }}</span>
+          </div>
+          <button class="ss-summary-remove" (click)="removeChannel(ch)" title="Remove">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Referral bonus display -->
+      <div class="ss-summary-referral" *ngIf="getReferralChannel()?.enabled">
+        <i class="fa-solid fa-gift"></i>
+        Referral bonus: <strong>₹{{ formatAmount(getReferralChannel()!.referralAmount || 0) }}</strong>
+      </div>
+    </div>
+
+    <!-- Why these channels? -->
+    <div class="ss-why-card">
+      <div class="ss-why-header">
+        <i class="fa-solid fa-lightbulb ss-why-icon"></i>
+        <span class="ss-why-title">Why these channels?</span>
+      </div>
+      <ul class="ss-why-list">
+        <li class="ss-why-item" *ngFor="let r of whyReasons">
+          <span class="ss-why-check"><i class="fa-solid fa-circle-check"></i></span>
+          {{ r }}
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,249 @@
+<div class="rv-wrap">
+
+  <!-- ── Page header ──────────────────────────────────────────────────────── -->
+  <div class="rv-page-header">
+    <div class="rv-page-header__left">
+      <span class="rv-page-icon"><i class="fa-solid fa-file-circle-check"></i></span>
+      <div>
+        <h3 class="rv-page-title">Review & Submit</h3>
+        <p class="rv-page-sub">Please review all the information below before submitting this job for approval.</p>
+      </div>
+    </div>
+    <button class="rv-collapse-btn" (click)="toggleAll()">
+      <i class="fa-solid" [ngClass]="allCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+      {{ allCollapsed ? 'Expand All' : 'Collapse All' }}
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- 1. Job Details                                                        -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="rv-section">
+    <div class="rv-section-header" (click)="open.jobDetails = !open.jobDetails">
+      <div class="rv-section-header__left">
+        <span class="rv-section-icon rv-section-icon--blue"><i class="fa-solid fa-briefcase"></i></span>
+        <span class="rv-section-num">1.</span>
+        <span class="rv-section-title">Job Details</span>
+        <span class="rv-badge rv-badge--done">Completed</span>
+      </div>
+      <div class="rv-section-header__right">
+        <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(0)">
+          <i class="fa-regular fa-pen-to-square"></i> Edit
+        </button>
+        <i class="fa-solid rv-chevron" [ngClass]="open.jobDetails ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </div>
+    </div>
+
+    <div class="rv-section-body" *ngIf="open.jobDetails">
+      <div class="rv-grid">
+        <div class="rv-field"><span class="rv-label">Job Title</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobTitle || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Employment Type</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.employmentType || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Job Code</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobCode || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Experience</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.experience || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Department</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.department || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Number of Openings</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.openings || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Business Unit</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.businessUnit || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Target Start Date</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.startDate ? (s1.startDate | date:'dd MMM yyyy') : '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Location</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.location || '—' }}</span></div>
+        <div class="rv-field rv-field--skills"><span class="rv-label">Must Have Skills</span><span class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.mustHaveSkills) }}</span></div>
+        <div class="rv-field"><span class="rv-label">Work Mode</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.workMode || '—' }}</span></div>
+        <div class="rv-field rv-field--skills"><span class="rv-label">Nice to Have Skills</span><span class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.niceToHaveSkills) }}</span></div>
+        <div class="rv-field rv-field--full" *ngIf="s1.notes"><span class="rv-label">Additional Notes</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.notes || 'None' }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- 2. AI Job Description                                                 -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="rv-section">
+    <div class="rv-section-header" (click)="open.aiJd = !open.aiJd">
+      <div class="rv-section-header__left">
+        <span class="rv-section-icon rv-section-icon--purple"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        <span class="rv-section-num">2.</span>
+        <span class="rv-section-title">AI Job Description</span>
+        <span class="rv-badge rv-badge--done">Completed</span>
+      </div>
+      <div class="rv-section-header__right">
+        <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(1)">
+          <i class="fa-regular fa-pen-to-square"></i> Edit
+        </button>
+        <i class="fa-solid rv-chevron" [ngClass]="open.aiJd ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </div>
+    </div>
+
+    <div class="rv-section-body" *ngIf="open.aiJd">
+      <div class="rv-jd-meta">
+        <span>Version: <strong>Version 1 (Latest)</strong></span>
+        <span class="rv-jd-meta__sep">|</span>
+        <span>Generated By: <strong>AI</strong></span>
+        <span class="rv-jd-meta__sep">|</span>
+        <span>Generated on: <strong>{{ today | date:'dd MMM yyyy, hh:mm a' }}</strong></span>
+        <span class="rv-jd-meta__sep">|</span>
+        <span>Word Count: <strong>1,250</strong></span>
+      </div>
+
+      <div class="rv-jd-content">
+        <h4>About the Role</h4>
+        <p>We are looking for a skilled Backend Developer to design, build, and maintain scalable server-side applications and APIs. You will collaborate with cross-functional teams to deliver high-quality solutions that drive business impact.</p>
+
+        <h4>Key Responsibilities</h4>
+        <ul>
+          <li>Design, develop and maintain RESTful APIs and backend services.</li>
+          <li>Build scalable, secure and high-performance applications.</li>
+          <li>Collaborate with frontend developers, QA and product teams.</li>
+          <li>Write clean, efficient and well-documented code.</li>
+          <li>Optimize applications for performance and scalability.</li>
+          <li>Troubleshoot, debug and resolve production issues.</li>
+        </ul>
+
+        <h4>Must Have Skills</h4>
+        <div class="rv-skill-chips">
+          <span class="rv-chip" *ngFor="let sk of s1.mustHaveSkills">{{ sk }}</span>
+        </div>
+
+        <h4>Preferred Skills</h4>
+        <div class="rv-skill-chips">
+          <span class="rv-chip rv-chip--nice" *ngFor="let sk of s1.niceToHaveSkills">{{ sk }}</span>
+        </div>
+
+        <h4>Qualifications</h4>
+        <p>Bachelor's or Master's degree in Computer Science or related field.</p>
+
+        <h4>Benefits</h4>
+        <p>Health Insurance, Flexible Working, Learning & Development, Performance Bonus</p>
+
+        <h4>Hiring Process</h4>
+        <p>Application Review → Technical Round → HR Round → Final Round</p>
+      </div>
+
+      <div class="rv-jd-actions">
+        <button class="rv-jd-btn"><i class="fa-regular fa-eye"></i> View Full Description</button>
+        <button class="rv-jd-btn"><i class="fa-solid fa-shuffle"></i> Switch Version</button>
+        <button class="rv-jd-btn rv-jd-btn--primary"><i class="fa-solid fa-rotate"></i> Regenerate JD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- 3. Sourcing Strategy                                                  -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="rv-section">
+    <div class="rv-section-header" (click)="open.sourcing = !open.sourcing">
+      <div class="rv-section-header__left">
+        <span class="rv-section-icon rv-section-icon--orange"><i class="fa-solid fa-bullhorn"></i></span>
+        <span class="rv-section-num">3.</span>
+        <span class="rv-section-title">Sourcing Strategy</span>
+        <span class="rv-badge rv-badge--done">Completed</span>
+      </div>
+      <div class="rv-section-header__right">
+        <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(2)">
+          <i class="fa-regular fa-pen-to-square"></i> Edit
+        </button>
+        <i class="fa-solid rv-chevron" [ngClass]="open.sourcing ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </div>
+    </div>
+
+    <div class="rv-section-body" *ngIf="open.sourcing">
+      <table class="rv-src-table">
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Best For</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Referral Bonus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ch of reviewChannels">
+            <td>
+              <div class="rv-ch-cell">
+                <span class="rv-ch-icon" [style.background]="ch.iconBg" [style.color]="ch.iconColor">{{ ch.iconText }}</span>
+                {{ ch.name }}
+              </div>
+            </td>
+            <td class="rv-src-best">{{ ch.bestFor }}</td>
+            <td>{{ ch.cost }}</td>
+            <td>
+              <span class="rv-status-badge" [ngClass]="ch.enabled ? 'rv-status-badge--on' : 'rv-status-badge--off'">
+                {{ ch.enabled ? 'Enabled' : 'Disabled' }}
+              </span>
+            </td>
+            <td>{{ (ch.id === 'referral' && ch.enabled && ch.referralAmount) ? formatAmount(ch.referralAmount) : '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Summary bar -->
+      <div class="rv-src-summary">
+        <span>Paid Channels: <strong>{{ paidCount }}</strong></span>
+        <span class="rv-src-summary__sep">|</span>
+        <span>Free Channels: <strong>{{ freeCount }}</strong></span>
+        <span class="rv-src-summary__sep">|</span>
+        <span>Internal Channels: <strong>{{ internalCount }}</strong></span>
+        <span class="rv-src-summary__sep">|</span>
+        <span>Referral Amount: <strong>{{ referralAmount ? formatAmount(referralAmount) : '—' }}</strong></span>
+        <span class="rv-src-summary__sep">|</span>
+        <span>Internal Posting: <strong [style.color]="internalPosting ? '#16a34a' : '#64748b'">{{ internalPosting ? 'Enabled' : 'Disabled' }}</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- 4. Recruiter Assignment                                               -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <div class="rv-section">
+    <div class="rv-section-header" (click)="open.recruiter = !open.recruiter">
+      <div class="rv-section-header__left">
+        <span class="rv-section-icon rv-section-icon--green"><i class="fa-solid fa-user-tie"></i></span>
+        <span class="rv-section-num">4.</span>
+        <span class="rv-section-title">Recruiter Assignment</span>
+        <span class="rv-badge rv-badge--done">Completed</span>
+      </div>
+      <div class="rv-section-header__right">
+        <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(3)">
+          <i class="fa-regular fa-pen-to-square"></i> Edit
+        </button>
+        <i class="fa-solid rv-chevron" [ngClass]="open.recruiter ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </div>
+    </div>
+
+    <div class="rv-section-body" *ngIf="open.recruiter">
+
+      <p class="rv-rec-count">Total Recruiters Assigned: <strong>{{ reviewRecruiters.length }}</strong></p>
+
+      <table class="rv-rec-table">
+        <thead>
+          <tr>
+            <th>Recruiter</th>
+            <th>Email ID</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of reviewRecruiters">
+            <td>
+              <div class="rv-rec-cell">
+                <span class="rv-rec-avatar" [style.background]="r.avatarColor">{{ r.initials }}</span>
+                <span class="rv-rec-name">{{ r.name }}</span>
+              </div>
+            </td>
+            <td class="rv-rec-email">{{ r.email }}</td>
+            <td>{{ r.role }}</td>
+          </tr>
+          <tr *ngIf="reviewRecruiters.length === 0">
+            <td colspan="3" class="rv-rec-empty">No recruiters assigned yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Confirmation banner ──────────────────────────────────────────────── -->
+  <div class="rv-confirm-banner">
+    <i class="fa-solid fa-shield-halved"></i>
+    By submitting, you confirm that all the information provided is accurate and complete.
+  </div>
+
+</div>

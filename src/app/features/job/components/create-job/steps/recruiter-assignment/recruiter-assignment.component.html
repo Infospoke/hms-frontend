@@ -1,0 +1,75 @@
+<div class="ra-card">
+
+  <!-- ── Card header ──────────────────────────────────────────────────────── -->
+  <div class="ra-card-header">
+    <div>
+      <h3 class="ra-card-title">Recruiter Assignment</h3>
+      <p class="ra-card-sub">Assign one or more recruiters to own and manage this job.</p>
+    </div>
+    <span class="ra-assigned-badge" *ngIf="assignedCount > 0">
+      <i class="fa-solid fa-user-check"></i>
+      {{ assignedCount }} assigned
+    </span>
+  </div>
+
+  <!-- ── Filters ──────────────────────────────────────────────────────────── -->
+  <div class="ra-filters">
+    <app-common-filter
+      searchPlaceholder="Search by recruiter name, email or role"
+      [dropdowns]="filterDropdowns"
+      (filterChange)="onFilterChange($event)">
+    </app-common-filter>
+  </div>
+
+  <!-- ── Table ────────────────────────────────────────────────────────────── -->
+  <app-reusable-table
+    [columns]="columns"
+    [data]="filteredRecruiters"
+    [showPagination]="false"
+    emptyMessage="No recruiters match your search."
+    [cellTemplate]="recruiterCellTpl">
+  </app-reusable-table>
+
+</div>
+
+<!-- ── Custom cell template ──────────────────────────────────────────────── -->
+<ng-template #recruiterCellTpl let-ctx>
+
+  <!-- Checkbox column -->
+  <ng-container *ngIf="ctx.col.key === 'select'">
+    <label class="ra-checkbox" (click)="$event.stopPropagation()">
+      <input
+        type="checkbox"
+        [checked]="ctx.row.assigned"
+        (change)="toggleRow(ctx.row)"
+      />
+      <span class="ra-checkbox__box"></span>
+    </label>
+  </ng-container>
+
+  <!-- Recruiter avatar + name -->
+  <ng-container *ngIf="ctx.col.key === 'name'">
+    <div class="ra-recruiter-cell">
+      <span class="ra-avatar" [style.background]="ctx.row.avatarColor">
+        {{ ctx.row.initials }}
+      </span>
+      <span class="ra-recruiter-name">{{ ctx.row.name }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Action button -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <button
+      class="ra-assign-btn"
+      [class.ra-assign-btn--assigned]="ctx.row.assigned"
+      (click)="toggleAssign(ctx.row); $event.stopPropagation()">
+      <ng-container *ngIf="ctx.row.assigned">
+        <i class="fa-solid fa-user-minus"></i> Remove
+      </ng-container>
+      <ng-container *ngIf="!ctx.row.assigned">
+        <i class="fa-solid fa-user-plus"></i> Assign
+      </ng-container>
+    </button>
+  </ng-container>
+
+</ng-template>

@@ -102,6 +102,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
   selectOption(key: string, value: string): void {
 
     this.selectedFilters[key] = value;
+    console.log(key,value,"this is a filter");
     this.openDropdownKey = null;
     if (value !== CUSTOM_VALUE) {
 
@@ -180,6 +181,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
 
 
   private emitChange(): void {
+    console.log(this.selectedFilters);
     const payload: any = {
       search: this.searchTerm,
       filters: { ...this.selectedFilters },
@@ -201,5 +203,10 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     this.tabChange.emit( key );
     // this.currentPage = 1;
     // this.loadList();
+  }
+
+   truncate(value: string, limit = 10): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
   }
 }

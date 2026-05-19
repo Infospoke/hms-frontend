@@ -24,6 +24,8 @@ export class ApprovalLayoutComponent {
   @Input() dropDownData: any[] = [];
   @Input() tabs: { key: string; label: string; count: number }[] = [];
   @Input() activeTab: string = '';
+  @Input() showBackButton: boolean = false;
+  @Input() buttonText:any=null;
   @Output() handle=new EventEmitter<any>();
   @Output() tabChange = new EventEmitter<any>();
   @Output() filterChange = new EventEmitter<any>();
@@ -41,6 +43,8 @@ export class ApprovalLayoutComponent {
       status: event.filters['status'] || undefined,
       approval: event.filters['approval'] || undefined,
       dateFilter: event.filters['dateFilter'] || undefined,
+      department:event?.filters['department'] || undefined,
+      requestedBy:event?.filters['requestedBy'] || undefined
     };
 
 

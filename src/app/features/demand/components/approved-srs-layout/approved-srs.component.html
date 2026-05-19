@@ -1,0 +1,63 @@
+<div class="approved-srs">
+    <app-approval-layout [heading]="heading" [subHeading]="subheading" [dropDownData]="dropDownData"
+        [searchPlaceholder]="searchPlaceholder" [cards]="cards" [tabs]="tabs" [activeTab]="activeTab"
+        (filterChange)="filtersResponse($event)" (tabChange)="onTabChange($event)">
+    </app-approval-layout>
+    <div class="card-dd">
+        <app-reusable-table [columns]="columns" [data]="data" [totalItems]="totalElements" [pageSize]="pageSize"
+            [currentPage]="currentPage" [showPagination]="true" [emptyMessage]="'No records found.'"
+            [cellTemplate]="srCellTpl" (pageChange)="onPageChange($event)">
+        </app-reusable-table>
+    </div>
+
+
+    <ng-template #srCellTpl let-ctx>
+
+        <!-- SR ID — clickable blue link -->
+        <ng-container *ngIf="ctx.col.key === 'srId'">
+            <a class="sr-link" (click)="$event.stopPropagation()">
+                {{ ctx.row.srId }}
+            </a>
+        </ng-container>
+
+        <!-- SR Title -->
+        <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+            <span class="cell-text-primary">{{ ctx.row.jobTitle }}</span>
+        </ng-container>
+
+        <!-- Department -->
+        <ng-container *ngIf="ctx.col.key === 'department'">
+            <span class="cell-text-secondary">{{ ctx.row.department }}</span>
+        </ng-container>
+
+        <!-- Requested By — avatar + name -->
+        <ng-container *ngIf="ctx.col.key === 'requestby'">
+            <div class="cell-person">
+                <span class="cell-avatar" [style.background]="ctx.row.avatarBg || '#dbeafe'"
+                    [style.color]="ctx.row.avatarColor || '#1d4ed8'">
+                    {{ (ctx.row.requestby || '') | uppercase }}
+                </span>
+                <span class="cell-person-name">{{ ctx.row.requestby }}</span>
+            </div>
+        </ng-container>
+
+        <!-- Date — two lines: date + time -->
+        <ng-container *ngIf="ctx.col.key === 'date'">
+            <div class="cell-date">
+                <span class="cell-date-main">{{ ctx.row.dateLabel }}</span>
+                <span class="cell-date-sub">{{ ctx.row.timeLabel }}</span>
+            </div>
+        </ng-container>
+
+        <!-- Action — Create Job -->
+        <ng-container *ngIf="ctx.col.key === 'action'">
+            <div class="rt-actions" (click)="$event.stopPropagation()">
+                <button class="btn-create-job" (click)="onCreateJob(ctx.row)">
+                    <i class="fa-regular fa-circle-plus"></i>
+                    Create Job
+                </button>
+            </div>
+        </ng-container>
+
+    </ng-template>
+</div>

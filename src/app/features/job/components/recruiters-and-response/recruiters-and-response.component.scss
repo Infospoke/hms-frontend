@@ -1,0 +1,194 @@
+// ── Tokens ────────────────────────────────────────────────────────
+$green-lt:   #ecfdf5;
+$green-dk:   #15803d;
+$red-lt:     #fef2f2;
+$red-dk:     #b91c1c;
+$amber-lt:   #fff7ed;
+$amber-dk:   #b45309;
+$blue:       #2563eb;
+$blue-lt:    #eaf2ff;
+$border:     #e8eaed;
+$text:       #1a1a2e;
+$text-muted: #5f6368;
+$radius:     8px;
+
+// ── Info Banner ───────────────────────────────────────────────────
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 0.5px solid #bfdbfe;
+  border-radius: $radius;
+  padding: 12px 16px;
+
+  i {
+    font-size: 15px;
+    color: $blue;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  span {
+    font-size: 13.5px;
+    color: #1d4ed8;
+    line-height: 1.5;
+  }
+}
+
+// ── Table overrides ───────────────────────────────────────────────
+.card-dd {
+  ::ng-deep {
+    .rt-container      { border: none; box-shadow: none; border-radius: 0; }
+    .rt-scroll-wrapper { border-radius: 0; }
+
+    .rt-table {
+      thead tr th {
+        background: #f8f9fa;
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        padding: 12px 16px;
+        border-bottom: 1px solid $border;
+        white-space: nowrap;
+      }
+
+      tbody tr td {
+        padding: 16px;
+        border-bottom: 1px solid #f1f3f5;
+        font-size: 13px;
+        color: $text;
+        vertical-align: middle;
+      }
+
+      tbody tr:last-child td { border-bottom: none; }
+      tbody tr:hover         { background: #f8fafe; }
+    }
+  }
+}
+
+// ── Recruiter cell ────────────────────────────────────────────────
+.rc-recruiter {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__name  { font-size: 13px; font-weight: 600; color: $text; }
+  &__email { font-size: 12px; color: $text-muted; }
+}
+
+// ── Date / Time cell ──────────────────────────────────────────────
+.rc-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__date { font-size: 13px; color: $text; }
+  &__time { font-size: 12px; color: $text-muted; }
+}
+
+// ── Status badge ──────────────────────────────────────────────────
+.rc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 500;
+
+  i { font-size: 13px; }
+
+  &--accepted { background: $green-lt; color: $green-dk; border: 1px solid #bbf7d0; }
+  &--declined { background: $red-lt;   color: $red-dk;   border: 1px solid #fecaca; }
+  &--pending  { background: $amber-lt; color: $amber-dk; border: 1px solid #fed7aa; }
+}
+
+// ── Comments / empty ─────────────────────────────────────────────
+.rc-comments {
+  font-size: 13px;
+  color: $text-muted;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.rc-na { color: #c0c4cc; font-size: 13px; }
+
+// ── Add Assignees bar ─────────────────────────────────────────────
+.add-assignees-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: $blue-lt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    i { font-size: 18px; color: $blue; }
+  }
+
+  &__text  { display: flex; flex-direction: column; gap: 3px; }
+  &__title { font-size: 14px; font-weight: 600; color: $text; }
+  &__sub   { font-size: 12.5px; color: $text-muted; }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: $blue;
+    color: #fff;
+    border: none;
+    border-radius: $radius;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.18s;
+
+    i { font-size: 13px; }
+    &:hover { background: darken($blue, 8%); }
+  }
+}
+
+
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 0.5px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 5px;
+
+  i {
+    font-size: 16px;
+    color: #2563eb;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  span {
+    font-size: 13.5px;
+    color: #1d4ed8;
+    line-height: 1.5;
+  }
+}

@@ -66,10 +66,10 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Country <span class="required">*</span></label>
-                <select formControlName="country">
-                    <option value="">Select country</option>
-                    <option *ngFor="let c of countries" [value]="c">{{c}}</option>
-                </select>
+                <nz-select formControlName="country" nzPlaceHolder="Select country"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let c of countries" [nzValue]="c" [nzLabel]="c"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="applicationForm.get('country')?.touched && applicationForm.get('country')?.invalid"
                     style="text-align: left;">
@@ -82,10 +82,11 @@
 
             <div class="form-group">
                 <label>Job Role <span class="required">*</span></label>
-                <select formControlName="jobRole" (change)="handleJobChange($event)">
-                    <option value="">Select job role</option>
-                    <option *ngFor="let job of jobRoles" [value]="job.jobId">{{job.jobTitle}}</option>
-                </select>
+                <nz-select formControlName="jobRole" nzPlaceHolder="Select job role"
+                    [nzOptionOverflowSize]="5" class="nz-field-select"
+                    (ngModelChange)="handleJobChange($event)">
+                    <nz-option *ngFor="let job of jobRoles" [nzValue]="job.jobId" [nzLabel]="job.jobTitle"></nz-option>
+                </nz-select>
                 <div class="muted-text-error m-0"
                     *ngIf="applicationForm.get('jobRole')?.touched && applicationForm.get('jobRole')?.invalid"
                     style="text-align: left;">

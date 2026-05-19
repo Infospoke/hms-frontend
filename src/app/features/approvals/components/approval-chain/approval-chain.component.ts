@@ -46,59 +46,60 @@ export class ApprovalChainComponent implements OnInit {
 
   activeTab: TabKey = 'all';
 
-  tabs: { key: TabKey; label: string; count: number }[] = [
-    { key: 'all', label: 'All', count: 0 },
-    { key: 'in_progress', label: 'In Progress', count: 0 },
-    { key: 'approved', label: 'Approved', count: 0 },
-    { key: 'rejected', label: 'Rejected', count: 0 },
+  // tabs: { key: TabKey; label: string; count: number }[] = [
+  //   { key: 'all', label: 'All', count: 0 },
+  //   { key: 'in_progress', label: 'In Progress', count: 0 },
+  //   { key: 'approved', label: 'Approved', count: 0 },
+  //   { key: 'rejected', label: 'Rejected', count: 0 },
 
-  ];
+  // ];
 
-  dropDownData = chainOptions;
-  cards = [
-    {
-      label: 'Total',
-      subLabel: 'All  chains',
-      value: 0,
-      iconClass: 'fa-solid fa-user-check',
-      iconBgColor: '#eaf2ff',
-      iconColor: '#3b82f6',
-    },
-    {
-      label: 'Approved',
-      subLabel: 'Approved chains',
-      value: 0,
-      iconClass: 'fa-regular fa-circle-check',
-      iconBgColor: '#ecfdf5',
-      iconColor: '#22c55e',
-    },
-    {
-      label: 'In Progress',
-      subLabel: 'Awaiting your approval',
-      value: 0,
-      iconClass: 'fa-regular fa-clock',
-      iconBgColor: '#fff7ed',
-      iconColor: '#f59e0b',
-    },
-    {
-      label: 'Rejected',
-      subLabel: 'Rejected chains',
-      value: 0,
-      iconClass: 'fa-regular fa-circle-xmark',
-      iconBgColor: '#fef2f2',
-      iconColor: '#ef4444',
-    },
-  ];
+  dropDownData = statusOptions;
+  // cards = [
+  //   {
+  //     label: 'Total',
+  //     subLabel: 'All  chains',
+  //     value: 0,
+  //     iconClass: 'fa-solid fa-user-check',
+  //     iconBgColor: '#eaf2ff',
+  //     iconColor: '#3b82f6',
+  //   },
+  //   {
+  //     label: 'Approved',
+  //     subLabel: 'Approved chains',
+  //     value: 0,
+  //     iconClass: 'fa-regular fa-circle-check',
+  //     iconBgColor: '#ecfdf5',
+  //     iconColor: '#22c55e',
+  //   },
+  //   {
+  //     label: 'In Progress',
+  //     subLabel: 'Awaiting your approval',
+  //     value: 0,
+  //     iconClass: 'fa-regular fa-clock',
+  //     iconBgColor: '#fff7ed',
+  //     iconColor: '#f59e0b',
+  //   },
+  //   {
+  //     label: 'Rejected',
+  //     subLabel: 'Rejected chains',
+  //     value: 0,
+  //     iconClass: 'fa-regular fa-circle-xmark',
+  //     iconBgColor: '#fef2f2',
+  //     iconColor: '#ef4444',
+  //   },
+  // ];
 
 
 
   columns: any[] = [
     { key: 'chainName', label: 'Chain Name', width: '200px', custom: true },
-    { key: 'description', label: 'Description', width: 'auto', custom: true },
+    // { key: 'description', label: 'Description', width: 'auto', custom: true },
     { key: 'functionalityName', label: 'Functionality Name', width: 'auto', },
     { key: 'levels', label: 'Levels', width: '90px', custom: true, align: 'center' },
-    { key: 'createdOn', label: 'Created On', width: '150px', custom: true },
-    { key: 'status', label: 'Status', width: '150px', custom: true, align: 'center' },
+    { key: 'createdOn', label: 'Created On', width: '90px', custom: true },
+    { key: 'chainStatus', label: "Request Type", width: 'auto', custom: true, align: 'center' },
+    { key: 'approval', label: 'Approval Status', width: '100px', custom: true, align: 'center' },
     { key: 'actions', label: 'Action', width: '90px', custom: true, align: 'center' },
   ];
 
@@ -117,7 +118,8 @@ export class ApprovalChainComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([this.loadCounts(), this.loadList()]);
+    // await Promise.all([this.loadCounts(), this.loadList()]);
+    await Promise.all([this.loadList(), this.loadFunalities()]);
   }
 
   setTab(key: any): void {
@@ -127,23 +129,48 @@ export class ApprovalChainComponent implements OnInit {
     this.loadList();
   }
 
-
-  private async loadCounts(): Promise<void> {
+  private async loadFunalities(): Promise<void> {
     try {
-      const res: any = await this.approvalService.chainCount();
+      const res: any = await this.approvalService.getActiveFuncationalies();
       const d = res?.data ?? {};
-
-      this.cards[0].value = d.total ?? 0;
-      this.cards[1].value = d.approved ?? 0;
-      this.cards[2].value = d.pending ?? 0;
-      this.cards[3].value = d.rejected ?? 0;
-
-
+      const fun = this.map(d);
+      this.dropDownData = this.dropDownData.map((item: any) =>
+        item.key === 'status'
+          ? { ...item, options: fun ?? [] }
+          : item
+      );
+      console.log(this.dropDownData);
       this.cdr.markForCheck();
     } catch (err) {
       console.error('[chainCount]', err);
     }
   }
+
+  private map(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.name,
+        label: item.name,
+      }))
+    ];
+  }
+  // private async loadCounts(): Promise<void> {
+  //   try {
+  //     const res: any = await this.approvalService.chainCount();
+  //     const d = res?.data ?? {};
+
+  //     this.cards[0].value = d.total ?? 0;
+  //     this.cards[1].value = d.approved ?? 0;
+  //     this.cards[2].value = d.pending ?? 0;
+  //     this.cards[3].value = d.rejected ?? 0;
+
+
+  //     this.cdr.markForCheck();
+  //   } catch (err) {
+  //     console.error('[chainCount]', err);
+  //   }
+  // }
 
 
   private async loadList(): Promise<void> {
@@ -160,15 +187,15 @@ export class ApprovalChainComponent implements OnInit {
         this.mapChain(c, i)
       );
 
-      this.tabs = this.tabs.map(t => ({
-        ...t,
-        count:
-          t.key === 'all' ? (d?.counts?.total ?? 0) :
-            t.key === 'in_progress' ? (d?.counts?.inProgress ?? 0) :
-              t.key === 'approved' ? (d?.counts?.approved ?? 0) :
-                t.key === 'rejected' ? (d?.counts?.rejected ?? 0) :
-                  t.count
-      }));
+      // this.tabs = this.tabs.map(t => ({
+      //   ...t,
+      //   count:
+      //     t.key === 'all' ? (d?.counts?.total ?? 0) :
+      //       t.key === 'in_progress' ? (d?.counts?.inProgress ?? 0) :
+      //         t.key === 'approved' ? (d?.counts?.approved ?? 0) :
+      //           t.key === 'rejected' ? (d?.counts?.rejected ?? 0) :
+      //             t.count
+      // }));
     } catch (err) {
       console.error('[approvalChainList]', err);
       this.filteredData = [];
@@ -194,7 +221,7 @@ export class ApprovalChainComponent implements OnInit {
     }
 
     if (f.status) {
-      filters['status'] = f.status;
+      filters['functionalityName'] = f.status;
     }
 
     if (f.approval) {
@@ -248,11 +275,11 @@ export class ApprovalChainComponent implements OnInit {
       levels: c.levels ?? 0,
       createdOnDate: createdDate,
       createdOnTime: updatedDate ? `Updated ${updatedDate}` : `By ${c.createdBy ?? '—'}`,
-      status: c.approval ?? c.status ?? '—',
-      chainStatus: c.status ?? '—',
+      approval: c.approval ?? c.status ?? '—',
+      chainStatus: c.requestType ?? '—',
       levelConfig: c.levelConfig ?? [],
       functionality: c.functionality,
-      functionalityName:c.functionalityName ?? '—',
+      functionalityName: c.functionalityName ?? '—',
       ...icon,
     };
   }

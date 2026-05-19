@@ -21,14 +21,14 @@
 // The column must have a fixed px width set in the columns[] config so the
 // browser knows where to stop.
 .truncate-cell {
-  display: block;            // block so width constraint is respected
-  max-width: 100%;           // stay inside the td
+  display: block; // block so width constraint is respected
+  max-width: 100%; // stay inside the td
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 13px;
   color: #0f172a;
-  cursor: default;           // native browser tooltip via [title] shows full text
+  cursor: default; // native browser tooltip via [title] shows full text
 }
 
 // ── SR ID cell ────────────────────────────────────────────────────────────────
@@ -117,8 +117,8 @@
   }
 
   &.deactivated {
-    background: #fef9c3;
-    color: #854d0e;
+    background: #fef2f2;
+    color: #b91c1c;
   }
 }
 
@@ -159,7 +159,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 0;              // allows flex children to truncate
+  min-width: 0; // allows flex children to truncate
 }
 
 .chain-name-text {

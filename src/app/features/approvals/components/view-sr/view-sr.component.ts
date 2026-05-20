@@ -178,12 +178,13 @@ export class ViewSrComponent implements OnInit {
 
   get progressPercent(): number {
     if (!this.pipelineStages.length) return 0;
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED').length;
+    console.log(this.pipelineStages);
+    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status==='CREATED').length;
     return Math.round((done / this.pipelineStages.length) * 100);
   }
 
   get progressStep(): string {
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED').length;
+    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status==='CREATED').length;
     return `Step ${done} of ${this.pipelineStages.length}`;
   }
 
@@ -401,7 +402,7 @@ export class ViewSrComponent implements OnInit {
   }
 
   private deriveOverallStatus(basics: PositionBasicsResponse): SrStatus {
-    if (basics.approver1 === false || basics.approver2 === false || basics.approver3 === false) {
+    if ((basics.approver1 === false && basics.approver1By!==null) || (basics.approver2 === false && basics?.approver2By!==null) || (basics.approver3 === false && basics?.approver2By!==null)) {
       return 'Rejected';
     }
     return basics.approved ? 'Approved' : 'Pending Approval';

@@ -33,9 +33,9 @@
         <!-- Requested By — avatar + name -->
         <ng-container *ngIf="ctx.col.key === 'requestby'">
             <div class="cell-person">
-                <span class="cell-avatar" [style.background]="ctx.row.avatarBg || '#dbeafe'"
-                    [style.color]="ctx.row.avatarColor || '#1d4ed8'">
-                    {{ (ctx.row.requestby || '') | uppercase }}
+                <span class="cell-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])"
+                    >
+                    {{ initials(ctx.row.requestby) | uppercase }}
                 </span>
                 <span class="cell-person-name">{{ ctx.row.requestby }}</span>
             </div>
@@ -44,16 +44,16 @@
         <!-- Date — two lines: date + time -->
         <ng-container *ngIf="ctx.col.key === 'date'">
             <div class="cell-date">
-                <span class="cell-date-main">{{ ctx.row.dateLabel }}</span>
-                <span class="cell-date-sub">{{ ctx.row.timeLabel }}</span>
+                <span class="cell-date-main">{{ ctx.row.dateLabel | dateFormat:'date' }}</span>
+                <span class="cell-date-sub">{{ ctx.row.timeLabel| dateFormat:'time' }}</span>
             </div>
         </ng-container>
 
         <!-- Action — Create Job -->
         <ng-container *ngIf="ctx.col.key === 'action'">
-            <div class="rt-actions" (click)="$event.stopPropagation()">
+            <div class="rt-actions" (click)="$event.stopPropagation()" *appCan="typeOfPermission">
                 <button class="btn-create-job" (click)="onCreateJob(ctx.row)">
-                    <i class="fa-regular fa-circle-plus"></i>
+                    <i class="fa-solid fa-plus"></i>
                     Create Job
                 </button>
             </div>

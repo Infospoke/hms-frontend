@@ -100,4 +100,30 @@ export class StaffingServiceService {
       this.api.hrmsget(API.SRS.REQUESTED_BY)
     );
   }
+
+
+   async  getAllApprovedSRS(payload:any){
+    return await firstValueFrom(
+      this.api.hrmspost(API.SRS.APPROVED_SRS,payload)
+    )
+  }
+
+  async  getRecruiterList(payload:any){
+    return await firstValueFrom(
+      this.api.hrmspost(API.RECRUITER_TRACKING.LIST,payload)
+    )
+  }
+
+   async getRecruiterCount(){
+     return await firstValueFrom(
+      this.api.hrmsget(API.RECRUITER_TRACKING.RECRUITER_COUNT)
+    );
+  }
+
+
+   async getAssignmentListById(id:any,payload:any){
+     return await firstValueFrom(
+      this.api.hrmspost(API.RECRUITER_TRACKING.DETAILS_BY_ID(id),payload)
+    );
+  }
 }

@@ -1,8 +1,16 @@
 <div class="ubr-page">
- 
-  <app-heading [heading]="'Users for Role'" [subHeading]="'View all users assigned to this specific role in the system.'" [backButtonUrl]="backButtonUrl" [showBackButton]="true" [buttonText]="backText" />
+
+  <app-heading
+    [heading]="heading"
+  [subHeading]="subHeading"
+    (backClick)="goToBack()"
+    [showBackButton]="true"
+    [buttonText]="backText"
+    [backButtonUrl]="'/'"
+  />
+
   <!-- Table -->
-  <div class="ubr-table-wrap" >
+  <div class="ubr-table-wrap">
     <app-reusable-table
       title=""
       [columns]="columns"
@@ -33,6 +41,11 @@
   <!-- Email -->
   <ng-container *ngIf="ctx.col.key === 'email'">
     <span class="user-email">{{ ctx.row['email'] }}</span>
+  </ng-container>
+
+  <!-- Role Name (only rendered when columns include it, i.e. assignment-list path) -->
+  <ng-container *ngIf="ctx.col.key === 'role'">
+    <span class="user-role">{{ ctx.row['role'] }}</span>
   </ng-container>
 
 </ng-template>

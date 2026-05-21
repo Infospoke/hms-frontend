@@ -13,7 +13,7 @@ export const filterDropdowns: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: '',
+    selected: 'thisMonth',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -45,7 +45,7 @@ export const statusOptions: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: '',
+    selected: 'thisMonth',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -60,6 +60,32 @@ export const statusOptions: any = [
 
 
 
+export const statusOptionsForDepartment: any = [
+  {
+    key: 'department',
+    label: 'Department',
+    selected: '',
+    options: [],
+   
+  },
+
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];
+
+
+
 export const chainOptions: any = [
 
   {
@@ -68,11 +94,26 @@ export const chainOptions: any = [
     selected: 'thisMonth',
     isDateFilter: true,
     options: [
-      // { value: '',        label: 'All Time'    },
+      { value: '',        label: 'All Time'    },
       { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
       { value: 'thisMonth', label: 'This Month' },
       { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];
+
+
+
+export const roles: any = [
+
+  {
+    key: 'roles',
+    label: 'Roles',
+    selected: '',
+    isDateFilter: true,
+    options: [
+      
     ],
   },
 ];
@@ -110,7 +151,7 @@ export const approvedSrs: any = [
     selected: 'thisMonth',
     isDateFilter: true,
     options: [
-      // { value: '',        label: 'All Time'    },
+      { value: '',        label: 'All Time'    },
       { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
       { value: 'thisMonth', label: 'This Month' },

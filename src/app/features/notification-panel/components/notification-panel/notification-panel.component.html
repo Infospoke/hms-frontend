@@ -6,10 +6,10 @@
   <div class="np-head">
     <span class="np-title">
       Notifications
-      <span class="np-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+      <!-- <span class="np-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span> -->
     </span>
     <div class="np-head-actions">
-      <button class="np-link-btn" (click)="markAllAsRead()" [disabled]="unreadCount === 0"
+      <button class="np-link-btn" (click)="markAllAsRead()" [disabled]="mergedNotifications.length === 0"
         title="Mark all as read">
         <i class="fa-regular fa-envelope-open"></i>
         Mark all as read
@@ -23,17 +23,17 @@
     <p>Loading…</p>
   </div>
 
-  <!-- List -->
+  <!-- Unified list — newest item always at top -->
   <div class="np-list" *ngIf="!isLoading">
 
-    <div class="np-empty" *ngIf="notifications.length === 0">
+    <div class="np-empty" *ngIf="mergedNotifications.length === 0">
       <i class="fa-regular fa-bell-slash"></i>
       <p>No notifications</p>
     </div>
 
-    <div class="np-item" *ngFor="let notif of notifications"
-      [class.np-item--unread]="!notif.isRead"
-      >
+    <div class="np-item"
+         *ngFor="let notif of mergedNotifications"
+         [class.np-item--unread]="!notif.isRead">
 
       <!-- Icon -->
       <div class="np-icon-wrap" [style.background]="getIconColor(notif) + '1a'">
@@ -42,11 +42,24 @@
 
       <!-- Content -->
       <div class="np-content">
+
+        <!-- Row 1: Title + time -->
         <div class="np-item-head">
           <span class="np-item-title">{{ notif.notificationTitle || 'Notification' }}</span>
           <span class="np-time">{{ getTimeAgo(notif.notificationSentAt) }}</span>
         </div>
+
+        <!-- Row 2: Message -->
         <p class="np-msg">{{ notif.message }}</p>
+
+        <!-- Row 3: Type tag + Process ID (only when fields are present) -->
+        <div class="np-meta" *ngIf="notif.type || notif.processId">
+          <span class="np-type-tag" *ngIf="notif.type">{{ notif.type }}</span>
+          <span class="np-process-id" *ngIf="notif.processId">
+            <i class="fa-solid fa-hashtag"></i>{{ notif.processId }}
+          </span>
+        </div>
+
       </div>
 
       <!-- Unread dot -->
@@ -57,8 +70,10 @@
 
   <!-- Footer -->
   <div class="np-footer">
-    <button class="np-link-btn np-clear-btn" (click)="clearAll()" [disabled]="notifications.length === 0"
-      title="Clear all">
+    <button class="np-link-btn np-clear-btn"
+            (click)="clearAll()"
+            [disabled]="mergedNotifications.length === 0"
+            title="Clear all">
       <i class="fa-solid fa-trash-can"></i>
       Clear all
     </button>

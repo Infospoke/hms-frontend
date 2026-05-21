@@ -17,4 +17,9 @@ export class SupplyService {
         this.api.hrmspost(API.SUPPLY.KANBAN,payload)
       );
     }
+   async myAssignedCounts(){
+      return await firstValueFrom(
+        this.api.hrmsget(API.SUPPLY.ASSIGNED_COUNT)
+      );
+    }
 }

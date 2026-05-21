@@ -48,31 +48,31 @@
 
 // ── Filters strip ─────────────────────────────────────────────────────────────
 .ra-filters {
-  padding: 14px 16px;
+  padding: 14px 0px;
   border-bottom: 1px solid var(--color-border);
   background: #fafafa;
 
-  // Make the filter bar fill width and not show tabs section
-  ::ng-deep .filter-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+ 
+  // ::ng-deep .filter-bar {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 12px;
+  //   flex-wrap: wrap;
 
-    .search-box {
-      flex: 1;
-      min-width: 240px;
-    }
+  //   .search-box {
+  //     flex: 1;
+  //     min-width: 240px;
+  //   }
 
-    .dropdown-wrapper {
-      flex-shrink: 0;
-    }
-  }
+  //   .dropdown-wrapper {
+  //     flex-shrink: 0;
+  //   }
+  // }
 
-  // Hide tabs row (not needed here)
-  ::ng-deep .acc-tabs-wrap {
-    display: none;
-  }
+  // // Hide tabs row (not needed here)
+  // ::ng-deep .acc-tabs-wrap {
+  //   display: none;
+  // }
 }
 
 // ── Checkbox ──────────────────────────────────────────────────────────────────

@@ -1,43 +1,33 @@
 <div class="rt-container">
 
- 
+
   <div class="rt-header" *ngIf="title">
     <h2 class="rt-title">{{ title }}</h2>
   </div>
 
- 
+
   <div class="rt-scroll-wrapper">
     <table class="rt-table" role="table">
 
-     
+
       <thead *ngIf="showHeader">
         <tr>
-          <th
-            *ngFor="let col of columns"
-            [style.width]="col.width || 'auto'"
-            [class.rt-th--sortable]="isSortable(col.key)"
-            [class.rt-th--sorted]="activeSortCol === col.key"
-            [class.hide-mobile]="col.hideOnMobile"
-            [class.rt-td--center]="col.align === 'center'"
+          <th *ngFor="let col of columns" [style.width]="col.width || 'auto'"
+            [class.rt-th--sortable]="isSortable(col.key)" [class.rt-th--sorted]="activeSortCol === col.key"
+            [class.hide-mobile]="col.hideOnMobile" [class.rt-td--center]="col.align === 'center'"
             [class.rt-td--right]="col.align === 'right'"
-            [attr.aria-sort]="activeSortCol === col.key ? activeSortDir : null"
-            (click)="onSort(col.key)"
-          >
-            <span class="rt-th-inner" [class.rt-th-inner--right]="col.align === 'right'" [class.rt-th-inner--center]="col.align === 'center'">
+            [attr.aria-sort]="activeSortCol === col.key ? activeSortDir : null" (click)="onSort(col.key)">
+            <span class="rt-th-inner" [class.rt-th-inner--right]="col.align === 'right'"
+              [class.rt-th-inner--center]="col.align === 'center'">
               {{ col.label }}
 
               <span class="rt-sort-icon" *ngIf="isSortable(col.key)" aria-hidden="true">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M6 2L9 5H3L6 2Z"
-                    [class.rt-sort-active]="activeSortCol === col.key && activeSortDir === 'asc'"
-                    fill="currentColor"
-                  />
-                  <path
-                    d="M6 10L3 7H9L6 10Z"
+                  <path d="M6 2L9 5H3L6 2Z"
+                    [class.rt-sort-active]="activeSortCol === col.key && activeSortDir === 'asc'" fill="currentColor" />
+                  <path d="M6 10L3 7H9L6 10Z"
                     [class.rt-sort-active]="activeSortCol === col.key && activeSortDir === 'desc'"
-                    fill="currentColor"
-                  />
+                    fill="currentColor" />
                 </svg>
               </span>
             </span>
@@ -45,43 +35,80 @@
         </tr>
       </thead>
 
-    
+
       <tbody>
 
 
         <tr *ngIf="data && data.length === 0" class="rt-empty-row">
           <td [attr.colspan]="columns && columns.length">
             <div class="rt-empty-state">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-                <rect x="6" y="10" width="28" height="22" rx="3" stroke="#cbd5e1" stroke-width="1.5" fill="none"/>
-                <path d="M6 16h28" stroke="#cbd5e1" stroke-width="1.5"/>
-                <path d="M13 23h6M13 27h10" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/>
+
+              <svg width="100" height="75" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- Blob -->
+                <path
+                  d="M175 320 Q120 265 148 185 Q172 115 255 98 Q330 82 400 92 Q470 102 520 138 Q572 178 558 248 Q544 308 498 335 Q442 364 360 368 Q268 374 220 352 Z"
+                  fill="#eef0fb" />
+                <!-- Left plant -->
+                <line x1="300" y1="340" x2="300" y2="290" stroke="#6ecf90" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M300 318 Q278 305 272 284 Q292 288 300 308 Z" fill="#6ecf90" />
+                <path d="M300 300 Q322 288 326 267 Q306 272 300 292 Z" fill="#8ee0a8" />
+                <path d="M300 335 Q280 325 276 308 Q294 312 300 328 Z" fill="#8ee0a8" />
+                <!-- Right plant -->
+                <line x1="398" y1="340" x2="398" y2="296" stroke="#b0bcee" stroke-width="2.5" stroke-linecap="round" />
+                <path d="M398 322 Q420 310 424 290 Q404 295 398 314 Z" fill="#b0bcee" />
+                <path d="M398 306 Q376 294 372 274 Q392 280 398 298 Z" fill="#c5ccf2" />
+                <path d="M398 338 Q418 328 422 312 Q402 316 398 332 Z" fill="#c5ccf2" />
+                <!-- Box shadow -->
+                <ellipse cx="420" cy="348" rx="110" ry="10" fill="#dde0f5" />
+                <!-- Box body -->
+                <path d="M318 258 L318 342 Q318 348 324 348 L516 348 Q522 348 522 342 L522 258 Z" fill="#8090d8" />
+                <path d="M318 258 L318 342 Q318 348 324 348 L420 348 L420 258 Z" fill="#7080cc" />
+                <!-- Flaps -->
+                <path d="M318 258 L280 218 L380 210 L420 258 Z" fill="#a0aee8" />
+                <path d="M522 258 L562 218 L462 210 L420 258 Z" fill="#b0bcee" />
+                <!-- Back wall -->
+                <path d="M318 258 L420 238 L522 258 L420 278 Z" fill="#c5ccf2" />
+                <!-- Inner shadow -->
+                <path d="M330 268 L420 250 L510 268 L420 284 Z" fill="#b0bcee" opacity="0.5" />
+                <!-- Center line -->
+                <line x1="420" y1="258" x2="420" y2="348" stroke="#6070b8" stroke-width="1.5" stroke-linecap="round"
+                  opacity="0.4" />
+                <!-- Paper plane -->
+                <g transform="translate(530,168) rotate(-28)">
+                  <polygon points="0,-14 26,6 0,2" fill="#8090d8" />
+                  <polygon points="0,-14 -22,8 0,2" fill="#a0aee8" />
+                  <polygon points="0,2 10,14 0,8" fill="#b0bcee" />
+                </g>
+                <!-- Trail -->
+                <path d="M445 252 Q470 230 500 210 Q516 198 528 182" fill="none" stroke="#b0bcee" stroke-width="1.5"
+                  stroke-dasharray="4 5" stroke-linecap="round" />
+                <!-- Ding lines -->
+                <line x1="572" y1="158" x2="582" y2="148" stroke="#b0bcee" stroke-width="2" stroke-linecap="round" />
+                <line x1="578" y1="170" x2="590" y2="166" stroke="#b0bcee" stroke-width="2" stroke-linecap="round" />
+                <line x1="566" y1="150" x2="566" y2="138" stroke="#b0bcee" stroke-width="2" stroke-linecap="round" />
+                <!-- Sparkles -->
+                <path d="M348 188 L352 200 L364 200 L355 207 L358 219 L348 212 L338 219 L341 207 L332 200 L344 200 Z"
+                  fill="#f5c842" />
+                <path d="M276 290 L278 297 L285 297 L280 301 L282 308 L276 304 L270 308 L272 301 L267 297 L274 297 Z"
+                  fill="#4ecf90" />
+                <path d="M556 268 L558 274 L564 274 L559 278 L561 284 L556 280 L551 284 L553 278 L548 274 L554 274 Z"
+                  fill="#9b8dd4" />
+                <circle cx="468" cy="138" r="4" fill="#8090d8" />
               </svg>
-              <p>{{ emptyMessage }}</p>
+
+              <p class="empty-title">No data to display</p>
+              <p class="empty-sub">{{ emptyMessage }}</p>
             </div>
           </td>
         </tr>
 
-        <tr
-          *ngFor="let row of data; let even = even"
-          class="rt-row"
-          [class.rt-row--even]="even"
-          (click)="rowClick.emit(row)"
-          role="row"
-        >
-          <td
-            *ngFor="let col of columns"
-            [class.hide-mobile]="col.hideOnMobile"
-            [class.rt-td--center]="col.align === 'center'"
-            [class.rt-td--right]="col.align === 'right'"
-            role="cell"
-          >
-           
-            <ng-container
-              *ngIf="col.custom && cellTemplate; else defaultCell"
-              [ngTemplateOutlet]="cellTemplate"
-              [ngTemplateOutletContext]="{ $implicit: { row: row, col: col } }"
-            ></ng-container>
+        <tr *ngFor="let row of data; let even = even" class="rt-row" [class.rt-row--even]="even"
+          (click)="rowClick.emit(row)" role="row">
+          <td *ngFor="let col of columns" [class.hide-mobile]="col.hideOnMobile"
+            [class.rt-td--center]="col.align === 'center'" [class.rt-td--right]="col.align === 'right'" role="cell">
+
+            <ng-container *ngIf="col.custom && cellTemplate; else defaultCell" [ngTemplateOutlet]="cellTemplate"
+              [ngTemplateOutletContext]="{ $implicit: { row: row, col: col } }"></ng-container>
 
 
             <ng-template #defaultCell>
@@ -97,14 +124,8 @@
 
   <div class="rt-footer" *ngIf="showPagination || totalItems > 0">
 
-    <app-pagination
-      *ngIf="showPagination"
-      [totalItems]="totalItems"
-      [pageSize]="pageSize"
-      [currentPage]="currentPage"
-      [maxVisiblePages]="maxVisiblePages"
-      (pageChange)="onPageChange($event)"
-    ></app-pagination>
+    <app-pagination *ngIf="showPagination" [totalItems]="totalItems" [pageSize]="pageSize" [currentPage]="currentPage"
+      [maxVisiblePages]="maxVisiblePages" (pageChange)="onPageChange($event)"></app-pagination>
   </div>
 
 </div>

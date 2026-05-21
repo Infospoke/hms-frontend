@@ -78,10 +78,12 @@ export const API = {
         ALL_SRS: `/hms/staffing-requisition/sr-list`,
         BY_SR_ID: `/hms/staffing-requisition/by-sr-id`,
         MY_SRS_COUNT:`/hms/staffing-requisition/get-all-sr-list-count`,
-        REQUESTED_BY:`/hms/configurations/role-users`
+        REQUESTED_BY:`/hms/configurations/role-users`,
+        APPROVED_SRS:`/hms/staffing-requisition/approved-srs`
     },
     SUPPLY: {
-        KANBAN: `/hms/kanban/filter`
+        KANBAN: `/hms/kanban/filter`,
+        ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`
     },
     APPROVALS: {
         CREATE_CHAIN: `/hms/approval-chains/create`,
@@ -103,5 +105,10 @@ export const API = {
         COUNT: `/hms/staffing-requisition/sr-counts`,
         LIST: `/hms/staffing-requisition/assigned-srs-for-approvals`,
         FUNCATNALITIES:    `/hms/configurations/functionality`,
+    },
+    RECRUITER_TRACKING:{
+        RECRUITER_COUNT:`/hms/recruiter/counts`,
+        LIST:`/hms/recruiter/job-assignment-list`,
+        DETAILS_BY_ID:(id:any)=>`/hms/recruiter/job-assignment-details/${id}`
     }
 };

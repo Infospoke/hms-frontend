@@ -8,10 +8,15 @@
     [cards]="cards"
     [showBtn]="false"
     [showBackButton]="true"
-    [buttonText]="'Back to All Jobs'">
+    [buttonText]="'Back to All Jobs'"
+    [buttonUrl]="'/demand/all-jobs'"
+    [showBtn]="true"
+    (handle)="addAssignees()"
+    [buttonType]="'Add Assigness'"
+    >
   </app-approval-layout>
 
-  <div class="info-banner">
+  <div class="info-banner card-dd">
     <i class="fa-solid fa-circle-info"></i>
     <span>Responses are updated in real-time as recruiters accept or decline the job.</span>
   </div>
@@ -30,24 +35,10 @@
   </div>
 
   <!-- Add More Assignees -->
-  <div class="card-dd add-assignees-bar">
-    <div class="add-assignees-bar__left">
-      <div class="add-assignees-bar__icon">
-        <i class="fa-solid fa-user-group"></i>
-      </div>
-      <div class="add-assignees-bar__text">
-        <span class="add-assignees-bar__title">Add More Assignees</span>
-        <span class="add-assignees-bar__sub">You can add more recruiters to help with the assignment.</span>
-      </div>
-    </div>
-    <button class="add-assignees-bar__btn" (click)="addAssignees()">
-      <i class="fa-solid fa-plus"></i> Add Assignees
-    </button>
-  </div>
+  
 
 </div>
 
-<!-- ── Cell Template ────────────────────────────────────── -->
 <ng-template #jobCellTemplate let-ctx>
 
   <!-- Recruiter: name + email -->

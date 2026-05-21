@@ -9,9 +9,10 @@
     [totalElements]="totalElements"
     [pageSize]="pageSize"
     [currentPage]="currentPage"
-   
+    [typeOfPermission]="'DEMAND:ALLAPPROVEDSRS:CREATE'"
     (filtersChange)="filtersResponse($event)"
     (pageChange)="onPageChange($event)"
+    [url]="'/supply/jobs/create-job'"
     >
   </app-approved-srs-layout>
 </div>

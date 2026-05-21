@@ -4,6 +4,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { ReusableTableComponent, TableColumn } from '../../../../../../shared/components/reusable-table/reusable-table.component';
 import { CommonFilterComponent } from '../../../../../../shared/components/common-filter/common-filter.component';
+import { roles } from '../../../../../../shared/constants/reusbale-filter';
+import { HeadingComponent } from '../../../../../../shared/components/heading/heading.component';
 
 export interface Recruiter {
   id: number;
@@ -19,69 +21,62 @@ export interface Recruiter {
 @Component({
   selector: 'app-recruiter-assignment-step',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ReusableTableComponent, CommonFilterComponent],
+  imports: [CommonModule, ReactiveFormsModule, ReusableTableComponent, CommonFilterComponent, HeadingComponent],
   templateUrl: './recruiter-assignment.component.html',
   styleUrl: './recruiter-assignment.component.scss',
 })
 export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() form!: FormGroup;
+  @Input() showInfo: any;
+  @Input() infoTooltip: any;
+  @Input() showBackButton: boolean = false;
+  @Input() buttonText: any;
+  @Input() buttonUrl: any;
 
-  // ── Master recruiter list ─────────────────────────────────────────────────
   recruiters: Recruiter[] = [
-    { id: 1, name: 'Rahul Sharma',  initials: 'RS', avatarColor: '#ef4444', email: 'rahul.sharma@nexushms.com',  role: 'Talent Acquisition Specialist', activeAssignments: 6,  assigned: false },
-    { id: 2, name: 'Pooja Patel',   initials: 'PP', avatarColor: '#a855f7', email: 'pooja.patel@nexushms.com',   role: 'Senior Recruiter',               activeAssignments: 8,  assigned: false },
-    { id: 3, name: 'Amit Mishra',   initials: 'AM', avatarColor: '#3b82f6', email: 'amit.mishra@nexushms.com',   role: 'Recruiter',                      activeAssignments: 4,  assigned: false },
-    { id: 4, name: 'Neha Kapoor',   initials: 'NK', avatarColor: '#f59e0b', email: 'neha.kapoor@nexushms.com',   role: 'Talent Acquisition Specialist',  activeAssignments: 5,  assigned: false },
-    { id: 5, name: 'Vikas Kumar',   initials: 'VK', avatarColor: '#10b981', email: 'vikas.kumar@nexushms.com',   role: 'Technical Recruiter',            activeAssignments: 7,  assigned: false },
-    { id: 6, name: 'Shreya Nair',   initials: 'SN', avatarColor: '#ec4899', email: 'shreya.nair@nexushms.com',   role: 'Senior Recruiter',               activeAssignments: 3,  assigned: false },
-    { id: 7, name: 'Rohan Gupta',   initials: 'RG', avatarColor: '#06b6d4', email: 'rohan.gupta@nexushms.com',   role: 'Recruiter',                      activeAssignments: 9,  assigned: false },
+    { id: 1, name: 'Rahul Sharma', initials: 'RS', avatarColor: '#ef4444', email: 'rahul.sharma@nexushms.com', role: 'Talent Acquisition Specialist', activeAssignments: 6, assigned: false },
+    { id: 2, name: 'Pooja Patel', initials: 'PP', avatarColor: '#a855f7', email: 'pooja.patel@nexushms.com', role: 'Senior Recruiter', activeAssignments: 8, assigned: false },
+    { id: 3, name: 'Amit Mishra', initials: 'AM', avatarColor: '#3b82f6', email: 'amit.mishra@nexushms.com', role: 'Recruiter', activeAssignments: 4, assigned: false },
+    { id: 4, name: 'Neha Kapoor', initials: 'NK', avatarColor: '#f59e0b', email: 'neha.kapoor@nexushms.com', role: 'Talent Acquisition Specialist', activeAssignments: 5, assigned: false },
+    { id: 5, name: 'Vikas Kumar', initials: 'VK', avatarColor: '#10b981', email: 'vikas.kumar@nexushms.com', role: 'Technical Recruiter', activeAssignments: 7, assigned: false },
+    { id: 6, name: 'Shreya Nair', initials: 'SN', avatarColor: '#ec4899', email: 'shreya.nair@nexushms.com', role: 'Senior Recruiter', activeAssignments: 3, assigned: false },
+    { id: 7, name: 'Rohan Gupta', initials: 'RG', avatarColor: '#06b6d4', email: 'rohan.gupta@nexushms.com', role: 'Recruiter', activeAssignments: 9, assigned: false },
   ];
 
   filteredRecruiters: Recruiter[] = [];
 
-  // ── Table columns ─────────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'select',            label: '',                        width: '48px',  custom: true },
-    { key: 'name',              label: 'Recruiter',               width: '240px', custom: true },
-    { key: 'email',             label: 'Email ID' },
-    { key: 'role',              label: 'Role' },
+    { key: 'select', label: '', width: '48px', custom: true },
+    { key: 'name', label: 'Recruiter', width: '240px', custom: true },
+    { key: 'email', label: 'Email ID' },
+    { key: 'role', label: 'Role' },
     { key: 'activeAssignments', label: 'Total Active Assignments', align: 'center' },
-    { key: 'action',            label: 'Action',                  align: 'center', custom: true },
+    { key: 'action', label: 'Action', align: 'center', custom: true },
   ];
 
-  // ── Filter config for CommonFilterComponent ───────────────────────────────
-  filterDropdowns = [
-    {
-      key: 'role',
-      options: [
-        { value: '',                            label: 'All Roles' },
-        { value: 'Recruiter',                   label: 'Recruiter' },
-        { value: 'Senior Recruiter',            label: 'Senior Recruiter' },
-        { value: 'Technical Recruiter',         label: 'Technical Recruiter' },
-        { value: 'Talent Acquisition Specialist', label: 'Talent Acquisition Specialist' },
-      ],
-      selected: '',
-    },
-  ];
+  filterDropdowns = roles;
 
+  // ── FIX 1: restore private state fields ──────────────────────────────────
   private currentSearch = '';
-  private currentRole   = '';
+  private currentRole = '';
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit(): void {
-    if (!this.form.get('assignedRecruiters')) {
-      this.form.addControl('assignedRecruiters', new FormControl<number[]>([]));
+    if (this.form) {
+      if (!this.form.get('assignedRecruiters')) {
+        this.form.addControl('assignedRecruiters', new FormControl<number[]>([]));
+      }
     }
-    this.applyFilter();
+    this.applyFilter(); // now works — filteredRecruiters gets populated on load
   }
 
-  // ── Filter handler ────────────────────────────────────────────────────────
+  // ── FIX 2: restore filter state capture ──────────────────────────────────
   onFilterChange(event: any): void {
     this.currentSearch = (event.search || '').toLowerCase();
-    this.currentRole   = event.filters?.role || '';
+    this.currentRole = event.filters?.role || '';
     this.applyFilter();
   }
 
+  // ── FIX 3: restore actual filter logic ───────────────────────────────────
   private applyFilter(): void {
     this.filteredRecruiters = this.recruiters.filter(r => {
       const matchSearch =
@@ -96,7 +91,6 @@ export class RecruiterAssignmentStepComponent implements OnInit {
     });
   }
 
-  // ── Selection helpers ─────────────────────────────────────────────────────
   get allSelected(): boolean {
     return this.filteredRecruiters.length > 0 &&
       this.filteredRecruiters.every(r => r.assigned);

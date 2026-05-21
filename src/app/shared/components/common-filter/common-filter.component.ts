@@ -61,8 +61,8 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.destroy$?.next();
+    this.destroy$?.complete();
   }
 
 
@@ -191,7 +191,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
       payload.fromDate = this.fromDate || undefined;
       payload.toDate = this.toDate || undefined;
     }
-
+    console.log(payload);
     this.filterChange.emit(payload);
   }
 

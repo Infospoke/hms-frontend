@@ -33,6 +33,18 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/demand/my-jds',
         permissionName: 'MYJRS',
       },
+      {
+        label: "All Approved SR's",
+        icon: 'fa-solid fa-file-circle-check',
+        path: '/demand/all-approved-srs',
+        permissionName: 'ALLAPPROVEDSRS',
+      },
+      {
+        label: "All Jobs",
+        icon: "fa-solid fa-briefcase",
+        path: "/demand/all-jobs",
+        permissionName: "ALLJOBS",
+      }
     ],
   },
   {
@@ -59,6 +71,12 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/supply/kanban',
         permissionName: 'KANBAN',
       },
+      {
+        label: "My Job Assignments",
+        icon: "fa-solid fa-briefcase",
+        path: "/supply/my-assignend-jobs",
+        permissionName: "MYJOBASSIGNMENTS",
+      }
     ],
   },
   {
@@ -79,8 +97,8 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/users/role-permissions',
         permissionName: 'ROLES&PERMISSIONS',
       },
-       {
-        label: 'Approval Chain Configuration',  
+      {
+        label: 'Approval Chain Configuration',
         icon: 'fa-solid fa-network-wired',
         path: '/approval/chain-config',
         permissionName: 'APPROVALCHAINCONFIGURATION',
@@ -105,7 +123,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/approval/chains',
         permissionName: 'HIERARCHYAPPROVALS',
       },
-    
+
     ],
   }
 ];

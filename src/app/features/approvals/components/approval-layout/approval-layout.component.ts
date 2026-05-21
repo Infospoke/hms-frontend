@@ -29,7 +29,7 @@ export class ApprovalLayoutComponent {
   @Output() handle=new EventEmitter<any>();
   @Output() tabChange = new EventEmitter<any>();
   @Output() filterChange = new EventEmitter<any>();
-
+  @Input() buttonUrl:string='';
 
   handleNavigate(){
     this.handle.emit();
@@ -38,6 +38,7 @@ export class ApprovalLayoutComponent {
 
 
    onFilterChange(event: any): void {
+    console.log(event);
     const payload: any = {
       chainName: event.search || undefined,
       status: event.filters['status'] || undefined,

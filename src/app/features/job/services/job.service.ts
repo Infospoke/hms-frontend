@@ -185,4 +185,16 @@ export class JobService {
       this.api.aiPost(API.JOBS.INTERVIEW_ANALYSIS,payload)
     );
   }
+
+  async fetchRoles(payload:any){
+    return await firstValueFrom(
+      this.api.hrmspost(API.JOBS.LOAD_ROLES,payload)
+    );
+  }
+
+  async getRecruiters(payload:any){
+     return await firstValueFrom(
+      this.api.hrmspost(API.JOBS.LOAD_RECRUITERS,payload)
+    );
+  }
 }

@@ -13,7 +13,7 @@ export class CommonTableActionsComponent {
 
   @Input() viewPermission = '';
   @Input() editPermission = '';
- 
+  @Input() isCreate:boolean=false;
 
  
   @Output() view = new EventEmitter<void>();

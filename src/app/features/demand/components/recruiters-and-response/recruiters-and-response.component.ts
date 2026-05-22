@@ -30,80 +30,95 @@ export class RecruitersAndResponseComponent implements OnInit {
 
   private staffingService = inject(StaffingServiceService);
 
- 
+
   cards = [
-    { id: 'totalAssigned', label: 'Total Assigned', subLabel: 'Recruiters', value: 0, iconClass: 'fa-solid fa-user-check',      iconBgColor: '#eaf2ff', iconColor: '#3b82f6' },
-    { id: 'acceptedCount', label: 'Accepted',       subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-circle-check',  iconBgColor: '#ecfdf5', iconColor: '#22c55e' },
-    { id: 'pendingCount',  label: 'Pending',         subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-clock',         iconBgColor: '#fff7ed', iconColor: '#f59e0b' },
-    { id: 'declinedCount', label: 'Declined',        subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-circle-xmark',  iconBgColor: '#fef2f2', iconColor: '#ef4444' },
+    { id: 'totalAssigned', label: 'Total Assigned', subLabel: 'Recruiters', value: 0, iconClass: 'fa-solid fa-user-check', iconBgColor: '#eaf2ff', iconColor: '#3b82f6' },
+    { id: 'acceptedCount', label: 'Accepted', subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-circle-check', iconBgColor: '#ecfdf5', iconColor: '#22c55e' },
+    { id: 'pendingCount', label: 'Pending', subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-clock', iconBgColor: '#fff7ed', iconColor: '#f59e0b' },
+    { id: 'declinedCount', label: 'Declined', subLabel: 'Recruiters', value: 0, iconClass: 'fa-regular fa-circle-xmark', iconBgColor: '#fef2f2', iconColor: '#ef4444' },
   ];
 
   tableColumns: TableColumn[] = [
-    { key: 'recruiter',   label: 'Recruiter',    custom: true, width: '200px'                  },
-    { key: 'role',        label: 'Role',                       width: '150px'                  },
-    { key: 'assignedOn',  label: 'Assigned On',  custom: true, width: '140px'                  },
-    { key: 'status',      label: 'Status',       custom: true, width: '130px', align: 'center' },
-    { key: 'respondedOn', label: 'Responded On', custom: true, width: '140px'                  },
-    { key: 'comments',    label: 'Comments',     custom: true                                  },
+    { key: 'recruiter', label: 'Recruiter', custom: true, width: '200px' },
+    { key: 'role', label: 'Role', width: '150px' },
+    { key: 'assignedOn', label: 'Assigned On', custom: true, width: '140px' },
+    { key: 'status', label: 'Status', custom: true, width: '130px', align: 'center' },
+    { key: 'respondedOn', label: 'Responded On', custom: true, width: '140px' },
+    { key: 'comments', label: 'Comments', custom: true },
   ];
-  private router=inject(Router);
+  private router = inject(Router);
   filteredData: RecruiterRecord[] = [];
-  totalItems  = 0;
-  pageSize    = 10;
+  totalItems = 0;
+  pageSize = 10;
   currentPage = 1;
-  isLoading   = false;
+  isLoading = false;
   id: any;
 
   ngOnInit(): void {
     this.id = history?.state?.id;
     console.log(history);
-    this.loadItems();
+    Promise.all([this.loadItems(), this.loadCount()])
   }
 
-
-  private loadItems(): void {
+  private loadCount(): void {
     if (!this.id) return;
-    this.isLoading = true;
-    let obj={}
-    this.staffingService.getAssignmentListById(this.id,obj)
+    this.staffingService.getCount(this.id)
       .then((res: any) => {
         if (res?.responsecode !== '00') return;
 
         const data = res.data;
 
-       
+
         this.cards = this.cards.map(card => ({
           ...card,
           value: data[card.id] ?? 0,
         }));
+      })
+      .catch((error: any) => {
 
-     
+      })
+  }
+  private loadItems(): void {
+    if (!this.id) return;
+    this.isLoading = true;
+    let obj = {
+      page: this.currentPage - 1,
+      size: this.pageSize,
+      sortBy: 'id',
+      direction: 'ASC',
+    }
+    this.staffingService.getAssignmentListById(this.id, obj)
+      .then((res: any) => {
+        if (res?.responsecode !== '00') return;
+
+        const data = res.data;
+
         this.filteredData = (data?.content ?? []).map((r: any): RecruiterRecord => {
-          const assigned  = this.splitDateTime(r.assignedOn);
+          const assigned = this.splitDateTime(r.assignedOn);
           const responded = this.splitDateTime(r.respondedOn);
 
           return {
-            id:            String(r.id),
-            name:          r.recruiterName ?? '—',
-            email:         r.email         ?? '—',
-            role:          r.role          ?? '—',
-            assignedDate:  assigned.date,
-            assignedTime:  assigned.time,
+            id: String(r.id),
+            name: r.recruiterName ?? '—',
+            email: r.email ?? '—',
+            role: r.role ?? '—',
+            assignedDate: assigned.date,
+            assignedTime: assigned.time,
             // Normalise API values (ACCEPTED → Accepted) to match the union type
-            status:        this.normaliseStatus(r.status),
+            status: this.normaliseStatus(r.status),
             respondedDate: responded.date,
             respondedTime: responded.time,
-            comments:      r.comments      ?? '',
+            comments: r.comments ?? '',
           };
         });
 
-        this.totalItems = this.filteredData.length;
+        this.totalItems = data?.totalElements;
       })
       .catch((err: any) => console.error('loadItems error', err))
       .finally(() => (this.isLoading = false));
   }
 
- 
+
   private splitDateTime(iso: string | null | undefined): { date: string; time: string } {
     if (!iso) return { date: '—', time: '—' };
     const d = new Date(iso);
@@ -114,11 +129,11 @@ export class RecruitersAndResponseComponent implements OnInit {
     return { date, time };
   }
 
- 
+
   private normaliseStatus(raw: string): RecruiterRecord['status'] {
     const map: Record<string, RecruiterRecord['status']> = {
       ACCEPTED: 'Accepted',
-      PENDING:  'Pending',
+      PENDING: 'Pending',
       DECLINED: 'Declined',
     };
     return map[raw?.toUpperCase()] ?? 'Pending';
@@ -127,6 +142,7 @@ export class RecruitersAndResponseComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadItems();
   }
 
   addAssignees(): void {

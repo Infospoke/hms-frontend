@@ -28,7 +28,13 @@
     [data]="filteredRecruiters"
     [showPagination]="false"
     emptyMessage="No recruiters match your search."
-    [cellTemplate]="recruiterCellTpl">
+    [cellTemplate]="recruiterCellTpl"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    [showPagination]="true"
+    (pageChange)="onPageChange($event)"
+    >
   </app-reusable-table>
 
 </div>

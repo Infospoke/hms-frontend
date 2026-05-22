@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-approved-srs-layout',
-  imports: [ApprovalLayoutComponent, ReusableTableComponent, CommonModule,DateFormatPipe,CanDirective],
+  imports: [ApprovalLayoutComponent, ReusableTableComponent, CommonModule, DateFormatPipe, CanDirective],
   templateUrl: './approved-srs.component.html',
   styleUrl: './approved-srs.component.scss',
 })
@@ -61,10 +61,42 @@ export class ApprovedSrsComponent {
       .join('');
   }
 
+  statusClass(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'pending':  return 'status-pending';
+      case 'accepted': return 'status-accepted';
+      case 'declined': return 'status-declined';
+      default:         return 'status-pending';
+    }
+  }
   avatarColor(name: string): string {
     const palette = ['#2563eb', '#7c3aed', '#0891b2', '#059669', '#d97706', '#dc2626'];
     if (!name) return palette[0];
     const idx = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) % palette.length;
     return palette[idx];
+  }
+   onViewDetails(row: any): void {}
+
+
+   formatDate(iso: string): string {
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+      });
+    } catch {
+      return iso.split('T')[0];
+    }
+  }
+ 
+   formatTime(iso: string): string {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true,
+      });
+    } catch {
+      return '';
+    }
   }
 }

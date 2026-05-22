@@ -67,6 +67,7 @@ export class TokenService {
   clearTokens(): void {
     this.accessToken.set(null);
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem("np_ws_notifications");
     sessionStorage.removeItem('accessToken');
   }
 

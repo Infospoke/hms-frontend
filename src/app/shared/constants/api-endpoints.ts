@@ -35,7 +35,9 @@ export const API = {
         DELETE_JOB: (id: any) => `/hms/jobs/delete-job-by-id/${id}`,
         VIEW_RESUME: (type: any, user: any, action: any) => `/job/download/${type}?appId=${user}&action=${action}`,
         ANALYSIS_RESUME: `/api/resume/analyze/batch`,
-        INTERVIEW_ANALYSIS: `/api/interview/fetch-interview-analysis`
+        INTERVIEW_ANALYSIS: `/api/interview/fetch-interview-analysis`,
+        LOAD_ROLES:`/hms/configurations/roles/by-departments`,
+        LOAD_RECRUITERS:`/hms/create-job/get-recruiters`
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -83,7 +85,8 @@ export const API = {
     },
     SUPPLY: {
         KANBAN: `/hms/kanban/filter`,
-        ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`
+        ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`,
+        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`
     },
     APPROVALS: {
         CREATE_CHAIN: `/hms/approval-chains/create`,
@@ -109,6 +112,7 @@ export const API = {
     RECRUITER_TRACKING:{
         RECRUITER_COUNT:`/hms/recruiter/counts`,
         LIST:`/hms/recruiter/job-assignment-list`,
-        DETAILS_BY_ID:(id:any)=>`/hms/recruiter/job-assignment-details/${id}`
+        DETAILS_BY_ID:(id:any)=>`/hms/recruiter/job-assignment-details-list/${id}`,
+        COUNT:(id:any)=>`/hms/recruiter/job-assignment-summary/${id}`
     }
 };

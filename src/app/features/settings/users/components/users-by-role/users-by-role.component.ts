@@ -187,9 +187,14 @@ export class UsersByRoleComponent implements OnInit, OnChanges {
 
     this.isLoading = true;
     this.cdr.markForCheck();
-    let obj={};
+    const payload = {
+        page: this.currentPage - 1,
+        size: this.pageSize,
+        sortBy: 'id',
+        direction: 'ASC',
+      };
     this.staffingService
-      .getAssignmentListById(this.id,obj)
+      .getAssignmentListById(this.id,payload)
       .then((res: any) => {
         if (res?.responsecode !== '00') return;
 
@@ -216,7 +221,7 @@ export class UsersByRoleComponent implements OnInit, OnChanges {
           } as UserRow & Record<string, any>;
         });
 
-        this.totalItems = this.allRows.length;
+        this.totalItems =data?.totalElements;
       })
       .catch((err: any) => console.error('loadUsersByAssignment error:', err))
       .finally(() => {

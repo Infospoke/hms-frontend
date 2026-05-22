@@ -22,4 +22,10 @@ export class SupplyService {
         this.api.hrmsget(API.SUPPLY.ASSIGNED_COUNT)
       );
     }
+
+  async getAssginedList(payload:any){
+    return await firstValueFrom(
+        this.api.hrmspost(API.SUPPLY.ASSIGNED_LIST,payload)
+      );
+  }
 }

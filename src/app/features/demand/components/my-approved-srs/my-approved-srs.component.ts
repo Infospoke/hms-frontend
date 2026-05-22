@@ -27,7 +27,7 @@ export class MyApprovedSrsComponent implements OnInit{
     { key: 'department', label: 'Department',     width: '140px', custom: true },
     { key: 'requestby',  label: 'Requested By',   width: '140px', custom: true },
     { key: 'date',       label: 'Date Range',     width: '140px', custom: true },
-    { key: 'action',     label: 'Actions',        width: '140px', custom: true },
+    { key: 'action',     label: 'Job Actions',        width: '140px', custom: true ,align:"center"},
   ];
 
  

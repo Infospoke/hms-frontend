@@ -101,14 +101,14 @@ export class NotificationWebsocketService implements OnDestroy {
 
     // Build the stored entry — pull processId & notificationType from payload
     const entry: StoredNotification = {
-      id:                payload?.id                ?? null,
+      id:                payload?.id    ?? payload?.notificationId             ?? null,
       processId:         payload?.processId         ?? "",
       notificationTitle: payload?.NotificationTitle ?? payload?.notificationTitle ?? "Notification",
       message:           payload?.message           ?? "",
       type:              payload?.type              ?? "info",
       deptName:          payload?.deptName          ?? "",
       roleId:            payload?.roleId            ?? null,
-      receivedAt:        new Date().toISOString(),
+      receivedAt:        payload?.triggeredAt,
     };
 
     this._appendToStorage(entry);

@@ -3,6 +3,8 @@ import { approvedSrs } from '../../../../shared/constants/reusbale-filter';
 import { ApprovedSrsComponent } from "../approved-srs-layout/approved-srs.component";
 import { StaffingServiceService } from '../../services/staffing-service.service';
 import { ApprovalService } from '../../../approvals/services/approval-service';
+import { Router } from '@angular/router';
+import { JobService } from '../../../job/services/job.service';
 
 @Component({
   selector: 'app-my-approved-srs',
@@ -17,6 +19,8 @@ export class MyApprovedSrsComponent implements OnInit{
   dropDownData = approvedSrs;
   private staffingService=inject(StaffingServiceService);
   private approvalService=inject(ApprovalService);
+  private router = inject(Router);
+  private jobService = inject(JobService);
   currentPage = 1;
   activeFilters: any={ chainName: '', filters: {},dateFilter: 'thisMonth' };
   searchPlaceholder = 'Search by SR Id, Title..';
@@ -175,5 +179,10 @@ export class MyApprovedSrsComponent implements OnInit{
       direction: 'DESC',
       filters,
     };
+  }
+
+  createNewJob(details : any){
+    this.jobService.jobDetailsBySrId(details);
+    this.router.navigateByUrl('/demand/all-approved-srs/create-job');
   }
 }

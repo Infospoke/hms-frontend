@@ -30,23 +30,39 @@
               More AI Options
               <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
             </button>
-            <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Make it concise')">
-                <i class="fa-solid fa-compress"></i> Make it concise
-              </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Make it detailed')">
-                <i class="fa-solid fa-expand"></i> Make it detailed
-              </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Formal tone')">
-                <i class="fa-solid fa-briefcase"></i> Formal tone
-              </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Friendly tone')">
-                <i class="fa-solid fa-face-smile"></i> Friendly tone
-              </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Add DEI statement')">
-                <i class="fa-solid fa-handshake-angle"></i> Add DEI statement
-              </button>
-            </div>
+<div class="ajd-dropdown" *ngIf="showMoreAIOptions">
+
+  <button class="ajd-dropdown-item"
+    (click)="applyAIOption('Rewrite for senior levels')">
+    <i class="fa-solid fa-arrow-trend-up"></i>
+    Rewrite for senior levels
+  </button>
+
+  <button class="ajd-dropdown-item"
+    (click)="applyAIOption('Rewrite for junior levels')">
+    <i class="fa-solid fa-arrow-trend-down"></i>
+    Rewrite for junior levels
+  </button>
+
+  <button class="ajd-dropdown-item"
+    (click)="applyAIOption('Expand Responsibilities')">
+    <i class="fa-solid fa-list-check"></i>
+    Expand Responsibilities
+  </button>
+
+  <button class="ajd-dropdown-item"
+    (click)="applyAIOption('Make more techinical')">
+    <i class="fa-solid fa-microchip"></i>
+    Make more techinical
+  </button>
+
+  <button class="ajd-dropdown-item"
+    (click)="applyAIOption('Make concise')">
+    <i class="fa-solid fa-compress"></i>
+    Make concise
+  </button>
+
+</div>
           </div>
 
           <button class="ajd-btn ajd-btn--outline" (click)="regenerate()"

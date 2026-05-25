@@ -22,10 +22,6 @@ export const JOB_ROUTES: Routes = [
   {
     path:"recruiters-and-response",
     loadComponent: () => import('../../demand/components/recruiters-and-response/recruiters-and-response.component').then(c => c.RecruitersAndResponseComponent)
-  },
-  {
-    path : 'create-job',
-    loadComponent: () => import('../components/create-job/create-job.component').then(c => c.CreateJobComponent)
-  },
+  }
   
 ];

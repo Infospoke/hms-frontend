@@ -37,7 +37,9 @@ export const API = {
         ANALYSIS_RESUME: `/api/resume/analyze/batch`,
         INTERVIEW_ANALYSIS: `/api/interview/fetch-interview-analysis`,
         LOAD_ROLES:`/hms/configurations/roles/by-departments`,
-        LOAD_RECRUITERS:`/hms/create-job/get-recruiters`
+        LOAD_RECRUITERS:`/hms/create-job/get-recruiters`,
+        CREATE_JOB_BY_SR_ID : (id : any) => `/hms/create-job/details/${id}`,
+        CREATE_NEW_JOB : '/hms/create-job/new-job'
     },
     USERS: {
         CREATE: '/hms/user/create',

@@ -18,6 +18,7 @@ export class JobService {
   private candidateSignal = signal<any>(null);
   private applicantByIdSignal = signal<any>(null);
   private analysisSignal = signal<any>(null);
+  jobDetailsBySrIdSignal = signal<any>(null);
 
 
   jobs$ = this.jobsListSignal;
@@ -195,6 +196,28 @@ export class JobService {
   async getRecruiters(payload:any){
      return await firstValueFrom(
       this.api.hrmspost(API.JOBS.LOAD_RECRUITERS,payload)
+    );
+  }
+
+  jobDetailsBySrId(srDetails:any){  
+    this.jobDetailsBySrIdSignal.set(srDetails);
+   }
+
+   async getJobDetailsBySrId(srId:any){
+     return await firstValueFrom(
+      this.api.hrmsget(API.JOBS.CREATE_JOB_BY_SR_ID(srId))
+     );
+    }
+
+    async createNewJob(payload : any){
+      return await firstValueFrom(
+        this.api.hrmspost(API.JOBS.CREATE_NEW_JOB,payload)
+      );
+    }
+
+      async generateJobDescription(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost('/api/admin/generate-job-description', payload)
     );
   }
 }

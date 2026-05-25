@@ -47,8 +47,7 @@ export class ApprovedSrsComponent {
   }
 
   onCreateJob(row: any): void {
-    // this.createJob.emit(row);
-    this.router.navigateByUrl(this.url);
+    this.createJob.emit(row);
   }
 
 

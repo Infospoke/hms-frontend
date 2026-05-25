@@ -305,7 +305,7 @@ export class JobOverview {
   }
 
   handleCreateJob() {
-    this.router.navigate(['/supply/jobs/create-job']);
+    this.router.navigate(['/demand/all-approved-srs/create-job']);
   }
   private syncChips() {
     this.tempActiveChips = [];

@@ -33,9 +33,8 @@
         <!-- Requested By — avatar + name -->
         <ng-container *ngIf="ctx.col.key === 'requestby'">
             <div class="cell-person">
-                <span class="cell-avatar" [style.background]="ctx.row.avatarBg || '#dbeafe'"
-                    [style.color]="ctx.row.avatarColor || '#1d4ed8'">
-                    {{ (ctx.row.requestby || '') | uppercase }}
+                <span class="cell-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])">
+                    {{ initials(ctx.row.requestby) | uppercase }}
                 </span>
                 <span class="cell-person-name">{{ ctx.row.requestby }}</span>
             </div>
@@ -44,20 +43,70 @@
         <!-- Date — two lines: date + time -->
         <ng-container *ngIf="ctx.col.key === 'date'">
             <div class="cell-date">
-                <span class="cell-date-main">{{ ctx.row.dateLabel }}</span>
-                <span class="cell-date-sub">{{ ctx.row.timeLabel }}</span>
+                <span class="cell-date-main">{{ ctx.row.dateLabel | dateFormat:'date' }}</span>
+                <span class="cell-date-sub">{{ ctx.row.timeLabel| dateFormat:'time' }}</span>
             </div>
         </ng-container>
 
         <!-- Action — Create Job -->
-        <ng-container *ngIf="ctx.col.key === 'action'">
-            <div class="rt-actions" (click)="$event.stopPropagation()">
+       <ng-container *ngIf="ctx.col.key === 'action'">
+            <div class="rt-actions" (click)="$event.stopPropagation()" *appCan="typeOfPermission">
                 <button class="btn-create-job" (click)="onCreateJob(ctx.row)">
-                    <i class="fa-regular fa-circle-plus"></i>
+                    <i class="fa-solid fa-plus"></i>
                     Create Job
                 </button>
             </div>
         </ng-container>
 
+        <ng-container *ngIf="ctx.col.key === 'jobTitleName'">
+            <div class="cell-job">
+                <span class="cell-job-avatar" [style.background]="avatarColor(ctx.row.jobTitleName)">
+                    {{initials(ctx.row.jobTitleName) }}
+                </span>
+                <span class="cell-text-primary">{{ ctx.row.jobTitleName }}</span>
+            </div>
+        </ng-container>
+
+        <!-- Department -->
+        <ng-container *ngIf="ctx.col.key === 'departmentName'">
+            <span class="cell-text-secondary">{{ ctx.row.departmentName }}</span>
+        </ng-container>
+
+        <!-- Requested By: colored circle avatar + name -->
+        <ng-container *ngIf="ctx.col.key === 'requestbyName'">
+            <div class="cell-person">
+                <span class="cell-avatar" [style.background]="avatarColor(ctx.row.requestbyName)">
+                    {{ initials(ctx.row.requestbyName) }}
+                </span>
+                <span class="cell-person-name">{{ ctx.row.requestbyName }}</span>
+            </div>
+        </ng-container>
+
+        <!-- Requested On: date on top, time below -->
+        <ng-container *ngIf="ctx.col.key === 'dateName'">
+            <div class="cell-date">
+                <span class="cell-date-main">{{ formatDate(ctx?.row?.dateName) }}</span>
+                <span class="cell-date-sub">{{ formatTime(ctx?.row?.dateName) }}</span>
+            </div>
+        </ng-container>
+
+        <!-- Openings -->
+        <ng-container *ngIf="ctx.col.key === 'openings'">
+            <span class="cell-openings">{{ ctx.row.openings }}</span>
+        </ng-container>
+
+        <!-- Status: colored pill badge -->
+        <ng-container *ngIf="ctx.col.key === 'status'">
+            <span class="status-badge" [ngClass]="statusClass(ctx.row.status)">
+                {{ ctx.row.status }}
+            </span>
+        </ng-container>
+
+        <!-- Action: View Details link -->
+        <ng-container *ngIf="ctx.col.key === 'actionName'">
+            <button class="action-btn" (click)="onViewDetails(ctx.row)">
+                View Details <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </ng-container>
     </ng-template>
 </div>

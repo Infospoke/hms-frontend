@@ -18,17 +18,10 @@ export const JOB_ROUTES: Routes = [
     path : 'edit-job/:id',
     loadComponent: () => import('../components/add-job/add-job.component').then(c => c.AddJobComponent)
   },
-  {
-    path:'all-jobs',
-    loadComponent: () => import('../components/all-jobs/all-jobs.component').then(c => c.AllJobsComponent)
-  },
+ 
   {
     path:"recruiters-and-response",
-    loadComponent: () => import('../components/recruiters-and-response/recruiters-and-response.component').then(c => c.RecruitersAndResponseComponent)
-  },
-  {
-    path : 'create-job',
-    loadComponent: () => import('../components/create-job/create-job.component').then(c => c.CreateJobComponent)
-  },
+    loadComponent: () => import('../../demand/components/recruiters-and-response/recruiters-and-response.component').then(c => c.RecruitersAndResponseComponent)
+  }
   
 ];

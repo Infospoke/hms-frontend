@@ -35,7 +35,11 @@ export const API = {
         DELETE_JOB: (id: any) => `/hms/jobs/delete-job-by-id/${id}`,
         VIEW_RESUME: (type: any, user: any, action: any) => `/job/download/${type}?appId=${user}&action=${action}`,
         ANALYSIS_RESUME: `/api/resume/analyze/batch`,
-        INTERVIEW_ANALYSIS: `/api/interview/fetch-interview-analysis`
+        INTERVIEW_ANALYSIS: `/api/interview/fetch-interview-analysis`,
+        LOAD_ROLES:`/hms/configurations/roles/by-departments`,
+        LOAD_RECRUITERS:`/hms/create-job/get-recruiters`,
+        CREATE_JOB_BY_SR_ID : (id : any) => `/hms/create-job/details/${id}`,
+        CREATE_NEW_JOB : '/hms/create-job/new-job'
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -78,10 +82,13 @@ export const API = {
         ALL_SRS: `/hms/staffing-requisition/sr-list`,
         BY_SR_ID: `/hms/staffing-requisition/by-sr-id`,
         MY_SRS_COUNT:`/hms/staffing-requisition/get-all-sr-list-count`,
-        REQUESTED_BY:`/hms/configurations/role-users`
+        REQUESTED_BY:`/hms/configurations/role-users`,
+        APPROVED_SRS:`/hms/staffing-requisition/approved-srs`
     },
     SUPPLY: {
-        KANBAN: `/hms/kanban/filter`
+        KANBAN: `/hms/kanban/filter`,
+        ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`,
+        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`
     },
     APPROVALS: {
         CREATE_CHAIN: `/hms/approval-chains/create`,
@@ -103,5 +110,11 @@ export const API = {
         COUNT: `/hms/staffing-requisition/sr-counts`,
         LIST: `/hms/staffing-requisition/assigned-srs-for-approvals`,
         FUNCATNALITIES:    `/hms/configurations/functionality`,
+    },
+    RECRUITER_TRACKING:{
+        RECRUITER_COUNT:`/hms/recruiter/counts`,
+        LIST:`/hms/recruiter/job-assignment-list`,
+        DETAILS_BY_ID:(id:any)=>`/hms/recruiter/job-assignment-details-list/${id}`,
+        COUNT:(id:any)=>`/hms/recruiter/job-assignment-summary/${id}`
     }
 };

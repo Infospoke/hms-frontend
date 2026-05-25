@@ -22,11 +22,11 @@ export interface StageStatusDef {
 }
 
 export const STAGE_STATUS_CONFIG: Record<StageStatus, StageStatusDef> = {
-  APPROVED:    { icon: 'fa-solid fa-circle-check',  color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Approved'    },
-  IN_PROGRESS: { icon: 'fa-solid fa-clock',          color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', label: 'In Progress' },
-  PENDING:     { icon: 'fa-regular fa-circle',        color: '#9ca3af', bg: '#f9fafb', border: '#e5e7eb', label: 'Waiting for previous approval'     },
-  REJECTED:    { icon: 'fa-solid fa-circle-xmark',   color: '#dc2626', bg: '#fef2f2', border: '#fca5a5', label: 'Rejected'    },
-  CREATED:     { icon: 'fa-solid fa-paper-plane',  color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Created'     },
+  APPROVED: { icon: 'fa-solid fa-circle-check', color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Approved' },
+  IN_PROGRESS: { icon: 'fa-solid fa-clock', color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', label: 'In Progress' },
+  PENDING: { icon: 'fa-regular fa-circle', color: '#9ca3af', bg: '#f9fafb', border: '#e5e7eb', label: 'Waiting for previous approval' },
+  REJECTED: { icon: 'fa-solid fa-circle-xmark', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5', label: 'Rejected' },
+  CREATED: { icon: 'fa-solid fa-paper-plane', color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Created' },
 };
 
 // ─── SR overall-status ────────────────────────────────────────────────────────
@@ -36,26 +36,26 @@ export interface SrStatusDef { label: string; color: string; bg: string; border:
 
 export const SR_STATUS_CONFIG: Record<SrStatus, SrStatusDef> = {
   'Pending Approval': { label: 'Pending Approval', color: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
-  Approved:           { label: 'Approved',          color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-  Rejected:           { label: 'Rejected',           color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
+  Approved: { label: 'Approved', color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
+  Rejected: { label: 'Rejected', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
 };
 
 export const PRIORITY_COLOR: Record<string, string> = {
-  High:   '#f97316',
+  High: '#f97316',
   Medium: '#3b82f6',
-  Low:    '#22c55e',
+  Low: '#22c55e',
 };
 
 export interface ApprovalStage {
-  id:               number;
-  role:             string;
-  approverName:     string;
+  id: number;
+  role: string;
+  approverName: string;
   approverInitials: string;
-  status:           StageStatus;
-  timestamp?:       string;
-  comments?:        string;
+  status: StageStatus;
+  timestamp?: string;
+  comments?: string;
   /** True for every PENDING stage that follows a REJECTED stage in the chain. */
-  prevRejected?:    boolean;
+  prevRejected?: boolean;
 }
 
 // ─── API response shape ───────────────────────────────────────────────────────
@@ -71,6 +71,7 @@ interface PositionBasicsResponse {
   dateOfApproval1: string | null; dateOfApproval2: string | null; dateOfApproval3: string | null;
   commentsByApprover1: string | null; commentsByApprover2: string | null; commentsByApprover3: string | null;
   approver1Role: string | null; approver2Role: string | null; approver3Role: string | null;
+  submittedOn:string | null;
 }
 
 interface BusinessJustificationResponse {
@@ -104,11 +105,11 @@ interface SourcingStrategyResponse {
 
 interface SrApiResponse {
   data: {
-    positonBasicsResponse:         PositionBasicsResponse;
+    positonBasicsResponse: PositionBasicsResponse;
     businessJustificationResponse: BusinessJustificationResponse;
-    budgetAndCompensationResponse:  BudgetAndCompensationResponse;
-    rolesAndRequirementsResponse:   RolesAndRequirementsResponse;
-    sourcingStrategyResponse:       SourcingStrategyResponse;
+    budgetAndCompensationResponse: BudgetAndCompensationResponse;
+    rolesAndRequirementsResponse: RolesAndRequirementsResponse;
+    sourcingStrategyResponse: SourcingStrategyResponse;
   };
   message: string;
   responsecode: string;
@@ -130,15 +131,15 @@ interface SrApiResponse {
 })
 export class ViewSrComponent implements OnInit {
 
-  private router              = inject(Router);
-  private cdr                 = inject(ChangeDetectorRef);
-  private approvalSvc         = inject(ApprovalService);
-  private userSvc             = inject(UserService);
-  private demandSvc           = inject(StaffingServiceService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private approvalSvc = inject(ApprovalService);
+  private userSvc = inject(UserService);
+  private demandSvc = inject(StaffingServiceService);
   private notificationService = inject(NotificationService);
 
-  
-  isLoading    = true;
+
+  isLoading = true;
   isSubmitting = false;
   isFullSrOpen = false;
 
@@ -153,21 +154,22 @@ export class ViewSrComponent implements OnInit {
   get allSectionsReviewed(): boolean { return this.reviewedCount >= this.TOTAL_SECTIONS; }
 
 
-  srId            = '';
-  jobTitle        = '';
+  srId = '';
+  jobTitle = '';
   overallStatus: SrStatus = 'Pending Approval';
-  createdBy       = '';
-  department      = '';
-  dateCreated     = '';
-  priority        = '';
+  createdBy = '';
+  department = '';
+  dateCreated = '';
+  priority = '';
   targetStartDate = '';
-
+  submittedOn:any;
   get metaItems() {
     return [
-      { icon: 'fa-regular fa-user',          label: 'Created By',        value: this.createdBy,       isPriority: false },
-      { icon: 'fa-regular fa-building',       label: 'Department',        value: this.department,      isPriority: false },
-      { icon: 'fa-regular fa-calendar',       label: 'Date Created',      value: this.dateCreated,     isPriority: false },
-      { icon: 'fa-solid fa-flag',             label: 'Priority',          value: this.priority,        isPriority: true  },
+      { icon: 'fa-regular fa-user', label: 'Created By', value: this.createdBy, isPriority: false },
+      { icon: 'fa-regular fa-building', label: 'Department', value: this.department, isPriority: false },
+      { icon: 'fa-regular fa-calendar', label: 'Date Created', value: this.dateCreated, isPriority: false },
+      { icon: 'fa-regular fa-paper-plane',   label: 'Submitted On',      value: this.submittedOn,     isPriority: false },
+      { icon: 'fa-solid fa-flag', label: 'Priority', value: this.priority, isPriority: true },
       { icon: 'fa-regular fa-calendar-check', label: 'Target Start Date', value: this.targetStartDate, isPriority: false },
     ];
   }
@@ -179,49 +181,49 @@ export class ViewSrComponent implements OnInit {
   get progressPercent(): number {
     if (!this.pipelineStages.length) return 0;
     console.log(this.pipelineStages);
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status==='CREATED').length;
+    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status === 'CREATED').length;
     return Math.round((done / this.pipelineStages.length) * 100);
   }
 
   get progressStep(): string {
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status==='CREATED').length;
+    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status === 'CREATED').length;
     return `Step ${done} of ${this.pipelineStages.length}`;
   }
 
- 
+
   get timelineStages(): ApprovalStage[] {
     return this.pipelineStages.filter(s => s.role !== 'HM Manager');
   }
 
 
-  showCommentModal    = false;
+  showCommentModal = false;
   commentModalAction: CommentModalAction | null = null;
 
 
   get modalConfig(): Partial<CommentModalConfig> | null {
     if (!this.commentModalAction) return null;
     const map: Record<CommentModalAction, Partial<CommentModalConfig>> = {
-      approve:    { title: 'Approve SR',  description: 'Please provide a comment before approving this Staffing Requisition.'  },
-      reject:     { title: 'Reject SR',   description: 'Please provide a reason for rejecting this Staffing Requisition.'      },
-      deactivate: { title: 'Deactivate',  description: 'Please provide a reason for deactivating.' },
-      activate:   { title: 'Activate',    description: 'Please provide a reason for activating.'   },
+      approve: { title: 'Approve SR', description: 'Please provide a comment before approving this Staffing Requisition.' },
+      reject: { title: 'Reject SR', description: 'Please provide a reason for rejecting this Staffing Requisition.' },
+      deactivate: { title: 'Deactivate', description: 'Please provide a reason for deactivating.' },
+      activate: { title: 'Activate', description: 'Please provide a reason for activating.' },
     };
     return map[this.commentModalAction] ?? null;
   }
 
- 
+
   step0: any = null; step1: any = null; step2: any = null;
   step3: any = null; step4: any = null;
-  mustSkills: string[] = []; niceSkills: string[]     = [];
-  certs: string[]      = []; langs: string[]           = [];
-  jobBoards: string[]  = []; assessmentTypes: string[] = [];
+  mustSkills: string[] = []; niceSkills: string[] = [];
+  certs: string[] = []; langs: string[] = [];
+  jobBoards: string[] = []; assessmentTypes: string[] = [];
   diversityBoards: string[] = []; selectedManagers: any[] = [];
   replaceEmployee: any = null; supportDoc: any = null;
 
 
   readonly stageStatusCfg = STAGE_STATUS_CONFIG;
-  readonly srStatusCfg    = SR_STATUS_CONFIG;
-  readonly priorityColor  = PRIORITY_COLOR;
+  readonly srStatusCfg = SR_STATUS_CONFIG;
+  readonly priorityColor = PRIORITY_COLOR;
 
   get currentSrStatus(): SrStatusDef {
     return this.srStatusCfg[this.overallStatus] ?? this.srStatusCfg['Pending Approval'];
@@ -240,7 +242,7 @@ export class ViewSrComponent implements OnInit {
     const c = this.stageStatusCfg[status];
     return { color: c.color, background: c.bg, border: `1px solid ${c.border}` };
   }
-  
+
   getAvatarStyle(status: StageStatus) {
     return { background: this.stageStatusCfg[status].color };
   }
@@ -252,7 +254,7 @@ export class ViewSrComponent implements OnInit {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
 
- 
+
   sanitizeComment(raw: string): string {
     if (!raw) return '';
     return raw
@@ -264,14 +266,14 @@ export class ViewSrComponent implements OnInit {
       .replace(/\s+/g, ' ')
       .trim();
   }
- url:any;
+  url: any;
 
   ngOnInit(): void {
     const state = history.state ?? {};
-    console.log(state,history.state);
-    this.srId     = state.srId  ?? '';
-    this.url=history.state?.url;
-    this.pageType = state.type  === 'view' ? 'view' : 'approve';
+    console.log(state, history.state);
+    this.srId = state.srId ?? '';
+    this.url = history.state?.url;
+    this.pageType = state.type === 'view' ? 'view' : 'approve';
     this.loadSrDetails();
   }
 
@@ -290,7 +292,7 @@ export class ViewSrComponent implements OnInit {
 
       if (res?.responsecode !== '00') { console.error('SR details fetch failed:', res?.message); return; }
 
-      let managersList: any[]    = firstPage?.data?.users ?? firstPage?.content ?? [];
+      let managersList: any[] = firstPage?.data?.users ?? firstPage?.content ?? [];
       const totalElements: number = firstPage?.data?.totalElements ?? 0;
       if (totalElements > 10) {
         const fullRes: any = await this.userSvc.getList({ ...pageParams, size: totalElements });
@@ -310,21 +312,22 @@ export class ViewSrComponent implements OnInit {
   }
 
   private mapApiResponse(res: SrApiResponse, managersList: any[], getTravelName: (id: string) => string): void {
-    const basics   = res.data.positonBasicsResponse;
-    const bizJust  = res.data.businessJustificationResponse;
-    const budget   = res.data.budgetAndCompensationResponse;
-    const roles    = res.data.rolesAndRequirementsResponse;
+    const basics = res.data.positonBasicsResponse;
+    const bizJust = res.data.businessJustificationResponse;
+    const budget = res.data.budgetAndCompensationResponse;
+    const roles = res.data.rolesAndRequirementsResponse;
     const sourcing = res.data.sourcingStrategyResponse;
 
-    this.srId            = basics.srId;
-    this.jobTitle        = basics.jobTitle;
-    this.createdBy       = basics.createdBy;
-    this.department      = basics.departmentName;
-    this.dateCreated     = this.formatDate(basics.createdOn);
-    this.priority        = basics.priority;
+    this.srId = basics.srId;
+    this.jobTitle = basics.jobTitle;
+    this.createdBy = basics.createdBy;
+    this.department = basics.departmentName;
+    this.submittedOn =basics?.submittedOn ? this.formatDate( basics?.submittedOn):'-';
+    this.dateCreated = this.formatDate(basics.createdOn);
+    this.priority = basics.priority;
     this.targetStartDate = this.formatDate(basics.targetStartDate);
-    this.overallStatus   = this.deriveOverallStatus(basics);
-    this.pipelineStages  = this.buildPipelineStages(basics);
+    this.overallStatus = this.deriveOverallStatus(basics);
+    this.pipelineStages = this.buildPipelineStages(basics);
 
     this.step0 = {
       jobTitle: basics.jobTitle, dept: basics.departmentName, bu: basics.businessUnitName,
@@ -335,8 +338,8 @@ export class ViewSrComponent implements OnInit {
 
     this.selectedManagers = Array.isArray(basics.reportingManagerInfo)
       ? basics.reportingManagerInfo
-          .map((id: any) => managersList.find((u: any) => String(u.id) === String(id)))
-          .filter(Boolean)
+        .map((id: any) => managersList.find((u: any) => String(u.id) === String(id)))
+        .filter(Boolean)
       : [];
 
     this.step1 = {
@@ -378,10 +381,10 @@ export class ViewSrComponent implements OnInit {
       diversityOn: sourcing.diversityEnabled,
     };
 
-    this.mustSkills      = this.splitCsv(roles.skillsMustHave);
-    this.niceSkills      = this.splitCsv(roles.niceToHaveSkills);
-    this.certs           = this.splitCsv(roles.certificationsRequired);
-    this.langs           = this.splitCsv(roles.languages);
+    this.mustSkills = this.splitCsv(roles.skillsMustHave);
+    this.niceSkills = this.splitCsv(roles.niceToHaveSkills);
+    this.certs = this.splitCsv(roles.certificationsRequired);
+    this.langs = this.splitCsv(roles.languages);
     this.diversityBoards = this.splitCsv(sourcing.diversityTags);
     this.assessmentTypes = [];
 
@@ -402,7 +405,7 @@ export class ViewSrComponent implements OnInit {
   }
 
   private deriveOverallStatus(basics: PositionBasicsResponse): SrStatus {
-    if ((basics.approver1 === false && basics.approver1By!==null) || (basics.approver2 === false && basics?.approver2By!==null) || (basics.approver3 === false && basics?.approver2By!==null)) {
+    if ((basics.approver1 === false && basics.approver1By !== null) || (basics.approver2 === false && basics?.approver2By !== null) || (basics.approver3 === false && basics?.approver2By !== null)) {
       return 'Rejected';
     }
     return basics.approved ? 'Approved' : 'Pending Approval';
@@ -420,7 +423,7 @@ export class ViewSrComponent implements OnInit {
 
     this.hasRealApproverData = true;
     let foundInProgress = false;
-    let foundRejected   = false;
+    let foundRejected = false;
 
     const approverStages: ApprovalStage[] = defined.map((slot, i) => {
       let status: StageStatus;
@@ -442,8 +445,8 @@ export class ViewSrComponent implements OnInit {
         id: i + 2, role: slot.approverRole ?? `Approver ${i + 1}`,
         approverName: name, approverInitials: this.getInitials(name),
         status,
-        timestamp:    slot.dateApproval ? this.formatDateTime(slot.dateApproval) : undefined,
-        comments:     slot.comments ?? '',
+        timestamp: slot.dateApproval ? this.formatDateTime(slot.dateApproval) : undefined,
+        comments: slot.comments ?? '',
         prevRejected: status === 'PENDING' && foundRejected,
       };
     });
@@ -489,17 +492,17 @@ export class ViewSrComponent implements OnInit {
   // ── Comment Modal ─────────────────────────────────────────────────────────
   openCommentModal(action: CommentModalAction): void {
     this.commentModalAction = action;
-    this.showCommentModal   = true;
+    this.showCommentModal = true;
     this.cdr.markForCheck();
   }
 
   closeCommentModal(): void {
-    this.showCommentModal   = false;
+    this.showCommentModal = false;
     this.commentModalAction = null;
     this.cdr.markForCheck();
   }
 
- 
+
   async onModalConfirmed(result: CommentModalResult): Promise<void> {
     if (!this.allSectionsReviewed) return;
 
@@ -508,7 +511,7 @@ export class ViewSrComponent implements OnInit {
 
     try {
       const res: any = await this.approvalSvc.approveOrReject({
-        srId:     this.srId,
+        srId: this.srId,
         approved: result.action === 'approve',
         comments: result.comment,
       });
@@ -528,7 +531,7 @@ export class ViewSrComponent implements OnInit {
     }
   }
 
- 
+
   onApprove(): void {
     if (!this.allSectionsReviewed || this.isSubmitting) return;
     this.openCommentModal('approve');
@@ -539,7 +542,7 @@ export class ViewSrComponent implements OnInit {
     this.openCommentModal('reject');
   }
 
-  openFullSr():  void { this.isFullSrOpen = true;  }
+  openFullSr(): void { this.isFullSrOpen = true; }
   closeFullSr(): void { this.isFullSrOpen = false; }
 
   goBack(): void {

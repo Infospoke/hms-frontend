@@ -2,7 +2,11 @@
   [heading]="'Create Job'"
   [subHeading]="'Create a new job from approved service request'"
   [showInfo]="false"
-  [infoTooltip]="''" />
+  [infoTooltip]="''"
+  [showBackButton]="true" 
+  [backButtonUrl]="'/demand/all-approved-srs'"
+  [buttonText]="'Back To Approved SRs'"
+  />
 
 <!-- ── Stepper ──────────────────────────────────────────────────────────── -->
 <div class="cj-stepper-wrap">
@@ -57,10 +61,6 @@
     <button class="cj-btn cj-btn--back" type="button"
       *ngIf="!isFirstStep" (click)="onBack()">
       <i class="fa-solid fa-arrow-left"></i> Back
-    </button>
-
-    <button class="cj-btn cj-btn--draft" type="button" (click)="onSaveAsDraft()">
-      Save as Draft
     </button>
 
     <button class="cj-btn cj-btn--primary" type="button" (click)="onNext()">

@@ -146,7 +146,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   selectedManagers: any[] = [];
   filteredManagers: any[] = [];
   replaceEmployee: any = null;
-  hideNext:boolean=true;
+  hideNext: boolean = true;
 
   mustSuggestions: any[] = [];
   niceSuggestions: any[] = [];
@@ -482,14 +482,14 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         this.isSaving = false;
 
         if (res?.responsecode === '00') {
-          
+
           const status = res?.data?.status;
           this.compValidationStatus = res?.data;
           if (status === 'RED') {
-            this.hideNext=true;
+            this.hideNext = true;
             return;
           }
-          this.hideNext=false;
+          this.hideNext = false;
 
 
           // if (status === 'GREEN') {
@@ -646,7 +646,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   validateStep5(type: any): void {
-   
+
     this.isSaving = true;
     const payload = {
       positonBascicsRequest: this.buildPositionBasicsRequest(),
@@ -881,7 +881,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         impactNote: bj.impactIfNotFilled ?? '',
         replacesEmp: bj.replacesEmployee ?? ''
       });
-      this.replaceEmployee=this.managersList?.find((item:any)=>item.id==bj.replacesEmployee)
+      this.replaceEmployee = this.managersList?.find((item: any) => item.id == bj.replacesEmployee)
       // --- Step 2: Budget & Compensation ---
       this.step2Form.patchValue({
         proposedComp: bc.proposedTotalCompensation ? bc.proposedTotalCompensation : 0,
@@ -1007,8 +1007,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   get minPercent(): number { return ((this.expMin - this.min) / (this.max - this.min)) * 100; }
   get maxPercent(): number { return ((this.expMax - this.min) / (this.max - this.min)) * 100; }
   get rangeWidth(): number { return this.maxPercent - this.minPercent; }
-  get minInterview(): number { return ((this.minInterviewData - this.min) / (this.max - this.min)) * 100; }
-  get maxInterview(): number { return ((this.maxInterviewData - this.min) / (this.max - this.min)) * 100; }
+  get minInterview(): number { return ((this.minInterviewData - 1) / (4 - 1)) * 100; }
+  get maxInterview(): number { return ((this.maxInterviewData - 1) / (4 - 1)) * 100; }
   get rangeInterview(): number { return this.maxInterview - this.minInterview; }
 
 
@@ -1044,7 +1044,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       case 'RED':
         return {
           color: 'red',
-          msg: message?.message + ' '+' Please reduce it and move forward'
+          msg: message?.message + ' ' + ' Please reduce it and move forward'
         };
 
       case 'YELLOW':
@@ -1075,11 +1075,15 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     if (this.expMax <= this.expMin) this.step3Form.patchValue({ expMax: this.expMin + 1 });
   }
   onMinInterview() {
-    if (this.minInterviewData >= this.maxInterviewData)
+    if (this.minInterviewData < 1)
+      this.step3Form.patchValue({ interviewMin: 1 });
+    else if (this.minInterviewData >= this.maxInterviewData)
       this.step3Form.patchValue({ interviewMin: this.maxInterviewData - 1 });
   }
   onMaxInterview() {
-    if (this.maxInterviewData <= this.minInterviewData)
+    if (this.maxInterviewData > 4)
+      this.step3Form.patchValue({ interviewMax: 4 });
+    else if (this.maxInterviewData <= this.minInterviewData)
       this.step3Form.patchValue({ interviewMax: this.minInterviewData + 1 });
   }
 
@@ -1287,8 +1291,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     console.log(this.mustSuggestions);
     if (this.modalType === 'must') this.mustSuggestions.push({ skill_title: val });
     if (this.modalType === 'nice') this.niceSuggestions.push({ skill_title: val });
-    if (this.modalType === 'cert') this.certSuggestions.push({ name: val });     
-    if (this.modalType === 'lang') this.langSuggestions.push({ language: val });   
+    if (this.modalType === 'cert') this.certSuggestions.push({ name: val });
+    if (this.modalType === 'lang') this.langSuggestions.push({ language: val });
     this.modalForm.reset();
   }
 
@@ -1464,8 +1468,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     const seniorityId = this.step0Form.get('seniority')?.value;
     return this.seniorityIC.find(s => s?.id == seniorityId)?.name || seniorityId || '—';
   }
-   get tavelName(): string {
+  get tavelName(): string {
     const seniorityId = this.step3Form.get('travel')?.value;
-    return this.travelOpts.find((s:any) => s?.id == seniorityId)?.name || seniorityId || '—';
+    return this.travelOpts.find((s: any) => s?.id == seniorityId)?.name || seniorityId || '—';
   }
 }

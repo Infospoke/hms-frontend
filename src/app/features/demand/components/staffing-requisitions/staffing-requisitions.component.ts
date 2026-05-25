@@ -69,8 +69,8 @@ export class StaffingRequisitionsComponent implements OnInit {
   totalElements = 0;
   isLoading = false;
 
-  /** Holds the last emitted filter payload so pagination can reuse it */
-  private lastFilterPayload: any = { chainName: '', filters: {} };
+ 
+  private lastFilterPayload: any = { chainName: '', filters: {},dateFilter: 'thisMonth' };
 
   // ── Column definitions ──────────────────────────────────────────────────────
   columns: TableColumn[] = [

@@ -10,6 +10,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { Router } from '@angular/router';
 import { NotificationPanelComponent } from '../../../features/notification-panel/components/notification-panel/notification-panel.component';
 import { NotificationAllService } from '../../../features/notification-panel/services/notification-service';
+import { NotificationWebsocketService } from '../../../features/notification-panel/services/notification-websocket-service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class HeaderComponent implements OnInit {
   private authService = inject(AuthService);
   private tokenService = inject(TokenService);
   private notificationService = inject(NotificationAllService);
+  private wsNotificationService = inject(NotificationWebsocketService);
   private router = inject(Router);
   ngOnInit(): void {
     this.notificationService.getNotificationCountsUnRead();
@@ -46,7 +48,22 @@ export class HeaderComponent implements OnInit {
 
   toggleDropdown() { this.isDropdownOpen = !this.isDropdownOpen; }
 
-  openNotifications() { this.notifPanelOpen = !this.notifPanelOpen; }
+  openNotifications(): void {
+    // Read the current WS localStorage cache synchronously via the BehaviorSubject value
+    let storedCount: any;
+    this.wsNotificationService.storedNotifications$.subscribe((res: any) => {
+      storedCount = res?.length;
+    });
+
+    if (storedCount <= 0) {
+      // Not enough local notifications — go straight to the full list page
+      this.notifPanelOpen = false;
+      this.router.navigateByUrl('/notifications/all-notifications');
+    } else {
+      // Enough notifications to show the panel
+      this.notifPanelOpen = !this.notifPanelOpen;
+    }
+  }
 
   onNotifCountChange(count: number) { this.notificationCount = count; }
 

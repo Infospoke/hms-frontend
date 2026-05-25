@@ -1,9 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { ReusableTableComponent, TableColumn } from '../../../../../../shared/components/reusable-table/reusable-table.component';
 import { CommonFilterComponent } from '../../../../../../shared/components/common-filter/common-filter.component';
+import { roles } from '../../../../../../shared/constants/reusbale-filter';
+import { HeadingComponent } from '../../../../../../shared/components/heading/heading.component';
+import { ApprovalService } from '../../../../../approvals/services/approval-service';
+import { JobService } from '../../../../services/job.service';
 
 export interface Recruiter {
   id: number;
@@ -16,90 +20,211 @@ export interface Recruiter {
   assigned: boolean;
 }
 
+/** Cycles through these colours for avatars */
+const AVATAR_COLORS = [
+  '#4F46E5', '#0891B2', '#059669', '#D97706',
+  '#DC2626', '#7C3AED', '#DB2777', '#EA580C',
+];
+
 @Component({
   selector: 'app-recruiter-assignment-step',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ReusableTableComponent, CommonFilterComponent],
+  imports: [CommonModule, ReactiveFormsModule, ReusableTableComponent, CommonFilterComponent, HeadingComponent],
   templateUrl: './recruiter-assignment.component.html',
   styleUrl: './recruiter-assignment.component.scss',
 })
 export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() form!: FormGroup;
+  @Input() showInfo: any;
+  @Input() infoTooltip: any;
+  @Input() showBackButton: boolean = false;
+  @Input() buttonText: any;
+  @Input() buttonUrl: any;
 
-  // ── Master recruiter list ─────────────────────────────────────────────────
-  recruiters: Recruiter[] = [
-    { id: 1, name: 'Rahul Sharma',  initials: 'RS', avatarColor: '#ef4444', email: 'rahul.sharma@nexushms.com',  role: 'Talent Acquisition Specialist', activeAssignments: 6,  assigned: false },
-    { id: 2, name: 'Pooja Patel',   initials: 'PP', avatarColor: '#a855f7', email: 'pooja.patel@nexushms.com',   role: 'Senior Recruiter',               activeAssignments: 8,  assigned: false },
-    { id: 3, name: 'Amit Mishra',   initials: 'AM', avatarColor: '#3b82f6', email: 'amit.mishra@nexushms.com',   role: 'Recruiter',                      activeAssignments: 4,  assigned: false },
-    { id: 4, name: 'Neha Kapoor',   initials: 'NK', avatarColor: '#f59e0b', email: 'neha.kapoor@nexushms.com',   role: 'Talent Acquisition Specialist',  activeAssignments: 5,  assigned: false },
-    { id: 5, name: 'Vikas Kumar',   initials: 'VK', avatarColor: '#10b981', email: 'vikas.kumar@nexushms.com',   role: 'Technical Recruiter',            activeAssignments: 7,  assigned: false },
-    { id: 6, name: 'Shreya Nair',   initials: 'SN', avatarColor: '#ec4899', email: 'shreya.nair@nexushms.com',   role: 'Senior Recruiter',               activeAssignments: 3,  assigned: false },
-    { id: 7, name: 'Rohan Gupta',   initials: 'RG', avatarColor: '#06b6d4', email: 'rohan.gupta@nexushms.com',   role: 'Recruiter',                      activeAssignments: 9,  assigned: false },
-  ];
+  // ── Pagination state ──────────────────────────────────────────────────────
+  currentPage: number = 1;
+  pageSize:    number = 10;       // Fixed: was incorrectly set to 1
+  totalItems:  number = 0;
 
+  // ── Data ──────────────────────────────────────────────────────────────────
   filteredRecruiters: Recruiter[] = [];
 
-  // ── Table columns ─────────────────────────────────────────────────────────
+  /**
+   * Tracks assigned user IDs across ALL pages so selections survive
+   * page navigation. Key = userId, Value = true (assigned).
+   */
+  private assignedIds = new Set<number>();
+
+  // ── Filter state (sent to server) ─────────────────────────────────────────
+  private searchTerm:      string   = '';
+  private selectedRoleIds: number[] = [];
+
+  // ── Stored IDs from departments API ──────────────────────────────────────
+  departmentIds: number[] = [];
+
+  private jobService      = inject(JobService);
+  private approvalService = inject(ApprovalService);
+
   columns: TableColumn[] = [
-    { key: 'select',            label: '',                        width: '48px',  custom: true },
-    { key: 'name',              label: 'Recruiter',               width: '240px', custom: true },
+    { key: 'select',            label: '',                         width: '48px',  custom: true },
+    { key: 'name',              label: 'Recruiter',                width: '240px', custom: true },
     { key: 'email',             label: 'Email ID' },
     { key: 'role',              label: 'Role' },
     { key: 'activeAssignments', label: 'Total Active Assignments', align: 'center' },
-    { key: 'action',            label: 'Action',                  align: 'center', custom: true },
+    { key: 'action',            label: 'Action',                   align: 'center', custom: true },
   ];
 
-  // ── Filter config for CommonFilterComponent ───────────────────────────────
-  filterDropdowns = [
-    {
-      key: 'role',
-      options: [
-        { value: '',                            label: 'All Roles' },
-        { value: 'Recruiter',                   label: 'Recruiter' },
-        { value: 'Senior Recruiter',            label: 'Senior Recruiter' },
-        { value: 'Technical Recruiter',         label: 'Technical Recruiter' },
-        { value: 'Talent Acquisition Specialist', label: 'Talent Acquisition Specialist' },
-      ],
-      selected: '',
-    },
-  ];
-
-  private currentSearch = '';
-  private currentRole   = '';
+  filterDropdowns = roles;
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
+
   ngOnInit(): void {
-    if (!this.form.get('assignedRecruiters')) {
-      this.form.addControl('assignedRecruiters', new FormControl<number[]>([]));
+if (this.form && !this.form.get('selectedRecruiterDetails')) {
+  this.form.addControl(
+    'selectedRecruiterDetails',
+    new FormControl([])
+  );
+}
+    this.loadDepartments();
+  }
+
+  // ── Data loading ──────────────────────────────────────────────────────────
+
+  private loadDepartments(): void {
+    this.approvalService.departments()
+      .then((res: any) => {
+        const data: any[] = res?.data ?? [];
+        const allowedNames = ['Recruiting Operations', 'Talent Acquisition'];
+
+        const ids: number[] = data
+          .filter((item: any) => allowedNames.includes(item.name))
+          .map((item: any) => item.id);
+
+        this.departmentIds = ids;
+
+        // Load role-dropdown options and first page of recruiters in parallel
+        Promise.all([
+          this.loadRoles(ids),
+          this.loadRolesAndUsers(),
+        ]);
+      })
+      .catch((err: any) => console.error('loadDepartments error:', err));
+  }
+
+ 
+  private loadRolesAndUsers(): void {
+    const body = this.buildRequestBody();
+
+    this.jobService.getRecruiters(body)
+      .then((res: any) => {
+        if (res?.responsecode === '00') {
+          const data = res.data;
+          // Use totalElements from API response for pagination
+          this.totalItems         = data?.totalElements ?? 0;
+          this.filteredRecruiters = this.mapApiResponseToRecruiters(data);
+        }
+      })
+      .catch((err: any) => console.error('loadRolesAndUsers error:', err));
+  }
+
+ 
+  private mapApiResponseToRecruiters(data: any): Recruiter[] {
+    const departments: any[] = data?.departments ?? [];
+    const recruiters: Recruiter[] = [];
+    let colorIndex = 0;
+
+    for (const dept of departments) {
+      for (const role of (dept.roles ?? [])) {
+        for (const user of (role.users ?? [])) {
+          recruiters.push({
+            id:                user.userId,
+            name:              user.recruiterName,
+            initials:          this.getInitials(user.recruiterName),
+            avatarColor:       AVATAR_COLORS[colorIndex % AVATAR_COLORS.length],
+            email:             user.email,
+            role:              user.roleName,
+            activeAssignments: user.totalAssignments ?? 0,
+            // Restore assigned state from the persistent Set
+            assigned:          this.assignedIds.has(user.userId),
+          });
+          colorIndex++;
+        }
+      }
     }
-    this.applyFilter();
+
+    return recruiters;
   }
 
-  // ── Filter handler ────────────────────────────────────────────────────────
+  private loadRoles(ids: number[]): void {
+    this.jobService.fetchRoles({ departmentsIds: ids })
+      .then((res: any) => {
+        const d       = res?.data ?? [];
+        const options = this.mapForDepartment(d);
+        this.filterDropdowns = this.filterDropdowns.map((item: any) =>
+          item.key === 'roles' ? { ...item, options } : item
+        );
+      })
+      .catch((err: any) => console.error('loadRoles error:', err));
+  }
+
+  // ── Request builder ───────────────────────────────────────────────────────
+
+  /**
+   * Builds the server request body matching the required shape:
+   * {
+   *   page, size, sortBy, direction,
+   *   filters: { departmentIds, roleIds, search }
+   * }
+   */
+  private buildRequestBody(): object {
+    const filters: Record<string, any> = {};
+
+    // Always send department IDs
+    if (this.departmentIds.length) {
+      filters['departmentIds'] = this.departmentIds;
+    }
+
+    // Send selected roleIds to server
+    if (this.selectedRoleIds.length) {
+      filters['roleIds'] = this.selectedRoleIds;
+    }
+
+    // Send search string to server
+    if (this.searchTerm.trim()) {
+      filters['search'] = this.searchTerm.trim();
+    }
+
+    return {
+      page:      this.currentPage - 1,   // API is 0-indexed
+      size:      this.pageSize,
+      sortBy:    'id',
+      direction: 'DESC',
+      filters,
+    };
+  }
+
+ 
   onFilterChange(event: any): void {
-    this.currentSearch = (event.search || '').toLowerCase();
-    this.currentRole   = event.filters?.role || '';
-    this.applyFilter();
+    this.searchTerm = (event.search || '');
+    console.log(event);
+    const roleValue      = event.filters?.roles;
+    this.selectedRoleIds = roleValue ? [Number(roleValue)] : [];
+    this.currentPage = 1;
+    this.loadRolesAndUsers();
   }
 
-  private applyFilter(): void {
-    this.filteredRecruiters = this.recruiters.filter(r => {
-      const matchSearch =
-        !this.currentSearch ||
-        r.name.toLowerCase().includes(this.currentSearch) ||
-        r.email.toLowerCase().includes(this.currentSearch) ||
-        r.role.toLowerCase().includes(this.currentSearch);
+  // ── Pagination ────────────────────────────────────────────────────────────
 
-      const matchRole = !this.currentRole || r.role === this.currentRole;
-
-      return matchSearch && matchRole;
-    });
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadRolesAndUsers();
   }
 
   // ── Selection helpers ─────────────────────────────────────────────────────
+
   get allSelected(): boolean {
     return this.filteredRecruiters.length > 0 &&
-      this.filteredRecruiters.every(r => r.assigned);
+           this.filteredRecruiters.every(r => r.assigned);
   }
 
   get someSelected(): boolean {
@@ -107,26 +232,72 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   }
 
   toggleAll(checked: boolean): void {
-    this.filteredRecruiters.forEach(r => r.assigned = checked);
+    this.filteredRecruiters.forEach(r => {
+      r.assigned = checked;
+      this.updateAssignedSet(r);
+    });
     this.syncForm();
   }
 
   toggleRow(recruiter: Recruiter): void {
     recruiter.assigned = !recruiter.assigned;
+    this.updateAssignedSet(recruiter);
     this.syncForm();
   }
 
   toggleAssign(recruiter: Recruiter): void {
     recruiter.assigned = !recruiter.assigned;
+    this.updateAssignedSet(recruiter);
     this.syncForm();
   }
 
-  private syncForm(): void {
-    const ids = this.recruiters.filter(r => r.assigned).map(r => r.id);
-    this.form.get('assignedRecruiters')?.setValue(ids);
+  /**
+   * Keeps the cross-page Set in sync after every toggle so that navigating
+   * away and back to a page restores the correct checkbox state.
+   */
+  private updateAssignedSet(recruiter: Recruiter): void {
+    if (recruiter.assigned) {
+      this.assignedIds.add(recruiter.id);
+    } else {
+      this.assignedIds.delete(recruiter.id);
+    }
   }
 
+  /** Writes the full list of assigned IDs (all pages) into the form control */
+private syncForm(): void {
+  const selectedRecruiters = this.filteredRecruiters
+    .filter(r => r.assigned)
+    .map(r => ({
+      userId: r.id,
+      email: r.email,
+      userName: r.name,
+      roleId: '42',
+      roleName: r.role
+    }));
+
+  this.form
+    .get('selectedRecruiterDetails')
+    ?.setValue(selectedRecruiters);
+}
+
   get assignedCount(): number {
-    return this.recruiters.filter(r => r.assigned).length;
+    return this.assignedIds.size;    // Counts across all pages
+  }
+
+  // ── Utilities ─────────────────────────────────────────────────────────────
+
+  private getInitials(name: string): string {
+    if (!name?.trim()) return '?';
+    const parts = name.trim().split(/\s+/);
+    return parts.length === 1
+      ? parts[0][0].toUpperCase()
+      : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  private mapForDepartment(data: any[]): any[] {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({ value: item.id, label: item.name })),
+    ];
   }
 }

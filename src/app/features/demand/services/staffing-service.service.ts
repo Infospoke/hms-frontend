@@ -9,77 +9,77 @@ import { API } from '../../../shared/constants/api-endpoints';
   providedIn: 'root',
 })
 export class StaffingServiceService {
-  private apiUrl=environment.hrmsApiUrl;
-  private atsURL=environment.atsUrl;
-  private api=inject(ApiService);
+  private apiUrl = environment.hrmsApiUrl;
+  private atsURL = environment.atsUrl;
+  private api = inject(ApiService);
 
-  async createStaffing(payload:any){
-      return await firstValueFrom(
-        this.api.hrmspost(API.SRS.STAFFING_CREATION,payload)
-      );
+  async createStaffing(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.SRS.STAFFING_CREATION, payload)
+    );
   }
 
 
-   async mustHaveSkills(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.MUST_HAVE_SKILLS,payload)
-      );
+  async mustHaveSkills(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.MUST_HAVE_SKILLS, payload)
+    );
   }
 
 
-    async niceHaveSkills(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.NICE_SKILLS,payload)
-      );
+  async niceHaveSkills(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.NICE_SKILLS, payload)
+    );
   }
 
-  async certificate(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.CERTIFICATE,payload)
-      );
+  async certificate(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.CERTIFICATE, payload)
+    );
   }
 
-   async language(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.LANGUAGE,payload)
-      );
+  async language(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.LANGUAGE, payload)
+    );
   }
 
-   async CTC(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.CTC,payload)
-      );
+  async CTC(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.CTC, payload)
+    );
   }
-    async qualification(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.QUALIFICATION,payload)
-      );
+  async qualification(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.QUALIFICATION, payload)
+    );
   }
-   async education(payload:any){
-      return await firstValueFrom(
-        this.api.aiPost(API.ROLE_AND_REQUIREMENTS.EDUCATION_REQUIREMENTS,payload)
-      );
+  async education(payload: any) {
+    return await firstValueFrom(
+      this.api.aiPost(API.ROLE_AND_REQUIREMENTS.EDUCATION_REQUIREMENTS, payload)
+    );
   }
 
-  async  getSeniority(){
+  async getSeniority() {
     return await firstValueFrom(
       this.api.hrmsget(API.SRS.SENIORITY)
     )
   }
-   async  getTravel(){
+  async getTravel() {
     return await firstValueFrom(
       this.api.hrmsget(API.SRS.TRAVEL)
     )
   }
-   async  getAllSRS(payload:any){
+  async getAllSRS(payload: any) {
     return await firstValueFrom(
-      this.api.hrmspost(API.SRS.ALL_SRS,payload)
+      this.api.hrmspost(API.SRS.ALL_SRS, payload)
     )
   }
 
-  async  getSrById(payload:any){
+  async getSrById(payload: any) {
     return await firstValueFrom(
-      this.api.hrmspost(API.SRS.ALL_SRS,payload)
+      this.api.hrmspost(API.SRS.ALL_SRS, payload)
     )
   }
 
@@ -89,15 +89,49 @@ export class StaffingServiceService {
     );
   }
 
-  async getMySrsCount(){
-     return await firstValueFrom(
+  async getMySrsCount() {
+    return await firstValueFrom(
       this.api.hrmsget(API.SRS.MY_SRS_COUNT)
     );
   }
 
-  async getRequestedBy(){
-     return await firstValueFrom(
+  async getRequestedBy() {
+    return await firstValueFrom(
       this.api.hrmsget(API.SRS.REQUESTED_BY)
     );
   }
+
+
+  async getAllApprovedSRS(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.SRS.APPROVED_SRS, payload)
+    )
+  }
+
+  async getRecruiterList(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.RECRUITER_TRACKING.LIST, payload)
+    )
+  }
+
+  async getRecruiterCount() {
+    return await firstValueFrom(
+      this.api.hrmsget(API.RECRUITER_TRACKING.RECRUITER_COUNT)
+    );
+  }
+
+
+  async getAssignmentListById(id: any, payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.RECRUITER_TRACKING.DETAILS_BY_ID(id), payload)
+    );
+  }
+
+  async getCount(id: any) {
+
+    return await firstValueFrom(
+      this.api.hrmsget(API.RECRUITER_TRACKING.COUNT(id))
+    );
+  }
+
 }

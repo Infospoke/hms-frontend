@@ -2,9 +2,8 @@
 
     <app-approval-layout [heading]="'My SRs — Approval Status'"
         subHeading="Track the progress of all your staffing requisitions" [showInfo]="true"
-        infoTooltip="More details about approval status" 
-        [searchPlaceholder]="'Search by SR ID or Job Title'" [dropDownData]="dropDownData"
-         (filterChange)="filtersResponse($event)" />
+        infoTooltip="More details about approval status" [searchPlaceholder]="'Search by SR ID or Job Title'"
+        [dropDownData]="dropDownData" (filterChange)="filtersResponse($event)" />
 
     <div class="">
         <app-reusable-table [columns]="columns" [data]="data" [totalItems]="totalItems" [pageSize]="pageSize"
@@ -55,7 +54,11 @@
     <!-- Created On -->
     <ng-container *ngIf="ctx.col.key === 'createdOn'">
         <span class="date-text">
-            {{ ctx.row['createdOn'] | date:'d MMM yyyy' }}
+            {{
+            ctx.row['createdOn'] && ctx.row['createdOn'] !== '—'
+            ? (ctx.row['createdOn'] | date:'d MMM yyyy')
+            : '—'
+            }}
         </span>
     </ng-container>
 
@@ -66,8 +69,7 @@
                 viewPermission="MYAPPROVAL:SRAPPROVALS:VIEW" [editPermission]="
                 currentUserRole === ctx.row['currentRole'] && ctx.row['overallStatus'] !== 'Rejected'
                     ? 'MYAPPROVAL:SRAPPROVALS:EDIT'
-                    : '' "
-            />
+                    : '' " />
         </div>
     </ng-container>
 

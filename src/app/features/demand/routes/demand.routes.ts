@@ -27,5 +27,9 @@ export const DEMAND_ROUTES: Routes = [
   {
     path:"all-jobs/recruiter-assignment/:id",
     loadComponent:()=>import("../components/assigning-recruiter/assigning-recruiter.component").then(m=>m.AssigningRecruiterComponent)
+  },
+  {
+    path: 'all-approved-srs/create-job',
+    loadComponent: () => import('../../job/components/create-job/create-job.component').then(c => c.CreateJobComponent)
   }
 ];

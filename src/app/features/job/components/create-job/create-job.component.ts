@@ -11,6 +11,7 @@ import { SourcingStrategyStepComponent } from './steps/sourcing-strategy/sourcin
 import { RecruiterAssignmentStepComponent } from './steps/recruiter-assignment/recruiter-assignment.component';
 import { ReviewSubmitStepComponent } from './steps/review-submit/review-submit.component';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-create-job',
@@ -30,10 +31,10 @@ import { NotificationService } from '../../../../core/services/notification.serv
   styleUrl: './create-job.component.scss',
 })
 export class CreateJobComponent implements OnInit {
-
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
+  private jobService = inject(JobService);
 
   // ── Stepper
   currentStep = 0;
@@ -62,11 +63,21 @@ export class CreateJobComponent implements OnInit {
   // ── Form
   form!: FormGroup;
 
-  get step1Form(): FormGroup { return this.form.get('step1') as FormGroup; }
-  get step2Form(): FormGroup { return this.form.get('step2') as FormGroup; }
-  get step3Form(): FormGroup { return this.form.get('step3') as FormGroup; }
-  get step4Form(): FormGroup { return this.form.get('step4') as FormGroup; }
-  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+  get step1Form(): FormGroup {
+    return this.form.get('step1') as FormGroup;
+  }
+  get step2Form(): FormGroup {
+    return this.form.get('step2') as FormGroup;
+  }
+  get step3Form(): FormGroup {
+    return this.form.get('step3') as FormGroup;
+  }
+  get step4Form(): FormGroup {
+    return this.form.get('step4') as FormGroup;
+  }
+  get step5Form(): FormGroup {
+    return this.form.get('step5') as FormGroup;
+  }
 
   get currentStepForm(): FormGroup {
     return this.form.get('step' + (this.currentStep + 1)) as FormGroup;
@@ -75,34 +86,76 @@ export class CreateJobComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       step1: this.fb.group({
-        jobTitle:        ['', [Validators.required, Validators.maxLength(255)]],
-        jobCode:         [{ value: this.generateJobCode(), disabled: true }],
-        department:      ['', Validators.required],
-        businessUnit:    ['', Validators.required],
-        location:        ['', Validators.required],
-        workMode:        ['', Validators.required],
-        employmentType:  ['', Validators.required],
-        experience:      ['', Validators.required],
-        openings:        [null, [Validators.required, Validators.min(1)]],
-        startDate:       [null, Validators.required],
-        mustHaveSkills:  [['Java', 'Spring Boot', 'REST API', 'SQL', 'Microservices'], [Validators.required, this.nonEmptyArray]],
-        niceToHaveSkills:[['Docker', 'AWS', 'Kafka', 'Kubernetes']],
-        notes:           ['', Validators.maxLength(250)],
+        jobTitle: ['', [Validators.required, Validators.maxLength(255)]],
+        jobCode: ['', Validators.required],
+        department: ['', Validators.required],
+        businessUnit: ['', Validators.required],
+        location: ['', Validators.required],
+        workMode: ['', Validators.required],
+        employmentType: ['', Validators.required],
+        experience: ['', Validators.required],
+        openings: [null, [Validators.required, Validators.min(1)]],
+        startDate: [null, Validators.required],
+        mustHaveSkills: [
+          ['Java', 'Spring Boot', 'REST API', 'SQL', 'Microservices'],
+          [Validators.required, this.nonEmptyArray],
+        ],
+        niceToHaveSkills: [['Docker', 'AWS', 'Kafka', 'Kubernetes']],
+        notes: ['', Validators.maxLength(250)],
       }),
       step2: this.fb.group({}),
       step3: this.fb.group({}),
       step4: this.fb.group({}),
       step5: this.fb.group({}),
     });
+
+    this.getJobDetailsFromSr();
   }
 
   nonEmptyArray(control: any) {
-    return Array.isArray(control.value) && control.value.length > 0
-      ? null : { required: true };
+    return Array.isArray(control.value) && control.value.length > 0 ? null : { required: true };
+  }
+
+  getJobDetailsFromSr() {
+    const srId = this.jobService.jobDetailsBySrIdSignal();
+    if (srId?.srId) {
+      this.jobService
+        .getJobDetailsBySrId(srId?.srId)
+        .then((res: any) => {
+          if (res?.responsecode == '00') {
+            const data = res?.data;
+            if (data) {
+              this.step1Form.patchValue({
+                jobTitle: data?.jobTitle || '',
+                jobCode: data?.jobCode || '',
+                department: data?.departmentId || '',
+                businessUnit: data?.businessUnitId || '',
+                location: data?.location || '',
+                workMode: data?.workMode || '',
+                employmentType: data?.employmentType || '',
+                experience: data?.maxExperience ?? data?.minExperience ?? '',
+                openings: data?.openings ?? null,
+                startDate: data?.targetStartDate || null,
+                mustHaveSkills: data?.skillsMustHave ? data.skillsMustHave.split(',') : [],
+                niceToHaveSkills: data?.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
+              });
+            }
+            return;
+          }
+          this.notificationService.error(res?.message ?? 'Failed to fetch job details from SR');
+        })
+        .catch((error: any) => {
+          console.log('Error fetching job details by SR ID:', error);
+          this.notificationService.error(error?.message ?? 'Failed to fetch job details from SR');
+        });
+    }
   }
 
   onNext(): void {
-    if (this.isLastStep) { this.onSubmit(); return; }
+    if (this.isLastStep) {
+      this.onSubmit();
+      return;
+    }
     const stepForm = this.currentStepForm;
     if (stepForm && stepForm.invalid) {
       stepForm.markAllAsTouched();
@@ -119,24 +172,97 @@ export class CreateJobComponent implements OnInit {
     this.router.navigateByUrl('/supply/jobs/job-details');
   }
 
-  onSaveAsDraft(): void {
-    this.notificationService.success('Job saved as draft');
+onSubmit(): void {
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const payload = this.form.getRawValue();
-    console.log('Create Job payload:', payload);
-    this.notificationService.success('Job created successfully');
-    this.router.navigateByUrl('/supply/jobs/job-details');
-  }
+  const step1 = this.step1Form.getRawValue();
+  const step2 = this.step2Form.getRawValue();
+  const step3 = this.step3Form.getRawValue();
+  const step4 = this.step4Form.getRawValue();
 
-  private generateJobCode(): string {
-    const prefixes = ['ENG', 'HR', 'FIN', 'OPS', 'MKT'];
-    const depts    = ['BE', 'FE', 'DS', 'QA', 'PM'];
-    const p = prefixes[Math.floor(Math.random() * prefixes.length)];
-    const d = depts[Math.floor(Math.random() * depts.length)];
-    const n = Math.floor(1000 + Math.random() * 9000);
-    return p + '-' + d + '-' + String(n).padStart(4, '0');
-  }
+  const referralChannel = step3.selectedChannels?.find(
+    (c: any) =>
+      c.channelName?.toLowerCase().includes('referral')
+  );
+
+  const channelsObject =
+    step3.selectedChannels?.reduce(
+      (acc: any, channel: any) => {
+        const key = channel.channelName
+          .replace(/\s+/g, '')
+          .replace('.com', '');
+
+        acc[key] = channel.postJob;
+        return acc;
+      },
+      {}
+    ) || {};
+
+  const payload = {
+    srId: this.jobService.jobDetailsBySrIdSignal()?.srId || '',
+    submit: 'true',
+
+    createJobDetailsRequest: {
+      jobTitle: step1.jobTitle,
+      businessUnitId: step1.businessUnit,
+      departmentId: step1.department,
+      location: step1.location,
+      jobCode: step1.jobCode,
+      openings: step1.openings,
+      targetStartDate: step1.startDate,
+      workMode: step1.workMode,
+      employmentType: step1.employmentType,
+      skillsMustHave: step1.mustHaveSkills?.join(','),
+      niceToHaveSkills: step1.niceToHaveSkills?.join(','),
+      minExperience: step1.experience?.min || step1.experience || 1,
+      maxExperience: step1.experience?.max || step1.experience || 5,
+      additionalNotes: step1.notes
+    },
+
+    jobDescriptionRequest: {
+      description:
+        step2.jobDescription || ''
+    },
+
+    sourcingChannelRequest: {
+      referral: !!referralChannel,
+      referralAmount:
+        referralChannel?.referralAmount || 0,
+      channels: channelsObject
+    },
+
+recuriterAssignmentRequest: {
+  recruiterInfoDtos:
+    step4.selectedRecruiterDetails || []
+}
+  };
+
+  console.log('Final Payload:', payload);
+
+  this.jobService.createNewJob(payload)
+    .then((res: any) => {
+      if (res?.responsecode === '00') {
+        this.notificationService.success(
+          'Job created successfully'
+        );
+        this.router.navigateByUrl(
+          '/supply/jobs/job-details'
+        );
+      } else {
+        this.notificationService.error(
+          res?.message || 'Failed to create job'
+        );
+      }
+    })
+    .catch((error: any) => {
+      console.error(error);
+
+      this.notificationService.error(
+        error?.message || 'Failed to create job'
+      );
+    });
+}
 }

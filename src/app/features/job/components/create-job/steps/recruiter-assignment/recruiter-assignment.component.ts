@@ -79,9 +79,12 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-    if (this.form && !this.form.get('assignedRecruiters')) {
-      this.form.addControl('assignedRecruiters', new FormControl<number[]>([]));
-    }
+if (this.form && !this.form.get('selectedRecruiterDetails')) {
+  this.form.addControl(
+    'selectedRecruiterDetails',
+    new FormControl([])
+  );
+}
     this.loadDepartments();
   }
 
@@ -261,9 +264,21 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   }
 
   /** Writes the full list of assigned IDs (all pages) into the form control */
-  private syncForm(): void {
-    this.form.get('assignedRecruiters')?.setValue([...this.assignedIds]);
-  }
+private syncForm(): void {
+  const selectedRecruiters = this.filteredRecruiters
+    .filter(r => r.assigned)
+    .map(r => ({
+      userId: r.id,
+      email: r.email,
+      userName: r.name,
+      roleId: '42',
+      roleName: r.role
+    }));
+
+  this.form
+    .get('selectedRecruiterDetails')
+    ?.setValue(selectedRecruiters);
+}
 
   get assignedCount(): number {
     return this.assignedIds.size;    // Counts across all pages

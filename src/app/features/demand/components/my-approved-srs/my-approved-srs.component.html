@@ -12,7 +12,7 @@
     [typeOfPermission]="'DEMAND:ALLAPPROVEDSRS:CREATE'"
     (filtersChange)="filtersResponse($event)"
     (pageChange)="onPageChange($event)"
-    [url]="'/supply/jobs/create-job'"
+    (createJob)="createNewJob($event)"
     >
   </app-approved-srs-layout>
 </div>

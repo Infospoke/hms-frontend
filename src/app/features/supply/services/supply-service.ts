@@ -28,4 +28,15 @@ export class SupplyService {
         this.api.hrmspost(API.SUPPLY.ASSIGNED_LIST,payload)
       );
   }
+  async getJobDetailsByID(id:any){
+    return await firstValueFrom(
+        this.api.hrmsget(API.SUPPLY.ASSIGNED_JOB_BY_ID(id))
+      );
+  }
+
+  async submitJobDecision(payload:any){
+      return await firstValueFrom(
+        this.api.hrmspost(API.SUPPLY.JOB_DECISION,payload)
+      );
+  }
 }

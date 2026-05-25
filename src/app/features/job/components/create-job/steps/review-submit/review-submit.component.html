@@ -36,19 +36,32 @@
 
     <div class="rv-section-body" *ngIf="open.jobDetails">
       <div class="rv-grid">
-        <div class="rv-field"><span class="rv-label">Job Title</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobTitle || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Employment Type</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.employmentType || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Job Code</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobCode || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Experience</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.experience || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Department</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.department || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Number of Openings</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.openings || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Business Unit</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.businessUnit || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Target Start Date</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.startDate ? (s1.startDate | date:'dd MMM yyyy') : '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Location</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.location || '—' }}</span></div>
-        <div class="rv-field rv-field--skills"><span class="rv-label">Must Have Skills</span><span class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.mustHaveSkills) }}</span></div>
-        <div class="rv-field"><span class="rv-label">Work Mode</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.workMode || '—' }}</span></div>
-        <div class="rv-field rv-field--skills"><span class="rv-label">Nice to Have Skills</span><span class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.niceToHaveSkills) }}</span></div>
-        <div class="rv-field rv-field--full" *ngIf="s1.notes"><span class="rv-label">Additional Notes</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.notes || 'None' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Job Title</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.jobTitle || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Employment Type</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.employmentType || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Job Code</span><span class="rv-sep">:</span><span class="rv-val">{{
+            s1.jobCode || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Experience</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.experience || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Department</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.department || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Number of Openings</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.openings || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Business Unit</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.businessUnit || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Target Start Date</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.startDate ? (s1.startDate | date:'dd MMM yyyy') : '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Location</span><span class="rv-sep">:</span><span class="rv-val">{{
+            s1.location || '—' }}</span></div>
+        <div class="rv-field rv-field--skills"><span class="rv-label">Must Have Skills</span><span
+            class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.mustHaveSkills) }}</span></div>
+        <div class="rv-field"><span class="rv-label">Work Mode</span><span class="rv-sep">:</span><span
+            class="rv-val">{{ s1.workMode || '—' }}</span></div>
+        <div class="rv-field rv-field--skills"><span class="rv-label">Nice to Have Skills</span><span
+            class="rv-sep">:</span><span class="rv-val">{{ formatList(s1.niceToHaveSkills) }}</span></div>
+        <div class="rv-field rv-field--full" *ngIf="s1.notes"><span class="rv-label">Additional Notes</span><span
+            class="rv-sep">:</span><span class="rv-val">{{ s1.notes || 'None' }}</span></div>
       </div>
     </div>
   </div>
@@ -85,7 +98,9 @@
 
       <div class="rv-jd-content">
         <h4>About the Role</h4>
-        <p>We are looking for a skilled Backend Developer to design, build, and maintain scalable server-side applications and APIs. You will collaborate with cross-functional teams to deliver high-quality solutions that drive business impact.</p>
+        <p>We are looking for a skilled Backend Developer to design, build, and maintain scalable server-side
+          applications and APIs. You will collaborate with cross-functional teams to deliver high-quality solutions that
+          drive business impact.</p>
 
         <h4>Key Responsibilities</h4>
         <ul>
@@ -159,7 +174,8 @@
           <tr *ngFor="let ch of reviewChannels">
             <td>
               <div class="rv-ch-cell">
-                <span class="rv-ch-icon" [style.background]="ch.iconBg" [style.color]="ch.iconColor">{{ ch.iconText }}</span>
+                <span class="rv-ch-icon" [style.background]="ch.iconBg" [style.color]="ch.iconColor">{{ ch.iconText
+                  }}</span>
                 {{ ch.name }}
               </div>
             </td>
@@ -170,7 +186,8 @@
                 {{ ch.enabled ? 'Enabled' : 'Disabled' }}
               </span>
             </td>
-            <td>{{ (ch.id === 'referral' && ch.enabled && ch.referralAmount) ? formatAmount(ch.referralAmount) : '—' }}</td>
+            <td>{{ (ch.id === 'referral' && ch.enabled && ch.referralAmount) ? formatAmount(ch.referralAmount) : '—' }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -185,7 +202,8 @@
         <span class="rv-src-summary__sep">|</span>
         <span>Referral Amount: <strong>{{ referralAmount ? formatAmount(referralAmount) : '—' }}</strong></span>
         <span class="rv-src-summary__sep">|</span>
-        <span>Internal Posting: <strong [style.color]="internalPosting ? '#16a34a' : '#64748b'">{{ internalPosting ? 'Enabled' : 'Disabled' }}</strong></span>
+        <span>Internal Posting: <strong [style.color]="internalPosting ? '#16a34a' : '#64748b'">{{ internalPosting ?
+            'Enabled' : 'Disabled' }}</strong></span>
       </div>
     </div>
   </div>
@@ -225,12 +243,12 @@
           <tr *ngFor="let r of reviewRecruiters">
             <td>
               <div class="rv-rec-cell">
-                <span class="rv-rec-avatar" [style.background]="r.avatarColor">{{ r.initials }}</span>
-                <span class="rv-rec-name">{{ r.name }}</span>
+                <span class="rv-rec-avatar" [style.background]="r.avatarColor">{{ r.initials  }}</span>
+                <span class="rv-rec-name">{{ r.userName }}</span>
               </div>
             </td>
             <td class="rv-rec-email">{{ r.email }}</td>
-            <td>{{ r.role }}</td>
+            <td>{{ r.roleName }}</td>
           </tr>
           <tr *ngIf="reviewRecruiters.length === 0">
             <td colspan="3" class="rv-rec-empty">No recruiters assigned yet.</td>

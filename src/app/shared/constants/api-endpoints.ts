@@ -88,7 +88,9 @@ export const API = {
     SUPPLY: {
         KANBAN: `/hms/kanban/filter`,
         ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`,
-        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`
+        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`,
+        ASSIGNED_JOB_BY_ID:(id:any)=>`/hms/create-job/get-job-details/${id}`,
+        JOB_DECISION:`/hms/recruiter/update-recruiter-assignment`
     },
     APPROVALS: {
         CREATE_CHAIN: `/hms/approval-chains/create`,

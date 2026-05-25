@@ -6,6 +6,7 @@ import { SupplyService } from '../../services/supply-service';
 import { ApprovalService } from '../../../approvals/services/approval-service';
 import { StaffingServiceService } from '../../../demand/services/staffing-service.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-jobs-assignments',
@@ -85,7 +86,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
   data: any[] = [];
   totalElements = 0;
   pageSize = 10;
-
+  private router=inject(Router);
   columns = [
     { key: 'jobTitleName', label: 'Job Title', width: '200px', custom: true },
     { key: 'departmentName', label: 'Department', width: '140px', custom: true },
@@ -287,5 +288,9 @@ export class MyJobsAssignmentsComponent implements OnInit {
   onPageChange(page: number): void {
     this.currentPage = page;
     this.loadList();
+  }
+  handleView($event:any){
+    console.log($event?._raw?.id);
+    this.router.navigateByUrl(`/supply/my-assigned-jobs/job-details/${$event?._raw?.id}`)
   }
 }

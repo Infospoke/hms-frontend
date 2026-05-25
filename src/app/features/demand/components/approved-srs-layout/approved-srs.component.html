@@ -22,12 +22,12 @@
 
         <!-- SR Title -->
         <ng-container *ngIf="ctx.col.key === 'jobTitle'">
-            <span class="cell-text-primary">{{ ctx.row.jobTitle }}</span>
+            <span class="cell-text-primary">{{ truncate(ctx.row.jobTitle,50) }}</span>
         </ng-container>
 
         <!-- Department -->
         <ng-container *ngIf="ctx.col.key === 'department'">
-            <span class="cell-text-secondary">{{ ctx.row.department }}</span>
+            <span class="cell-text-secondary">{{ truncate(ctx.row.department,50) }}</span>
         </ng-container>
 
         <!-- Requested By — avatar + name -->
@@ -36,7 +36,7 @@
                 <span class="cell-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])">
                     {{ initials(ctx.row.requestby) | uppercase }}
                 </span>
-                <span class="cell-person-name">{{ ctx.row.requestby }}</span>
+                <span class="cell-person-name">{{ truncate(ctx.row.requestby,30) }}</span>
             </div>
         </ng-container>
 
@@ -63,13 +63,13 @@
                 <span class="cell-job-avatar" [style.background]="avatarColor(ctx.row.jobTitleName)">
                     {{initials(ctx.row.jobTitleName) }}
                 </span>
-                <span class="cell-text-primary">{{ ctx.row.jobTitleName }}</span>
+                <span class="cell-text-primary">{{ truncate(ctx.row.jobTitleName,40) }}</span>
             </div>
         </ng-container>
 
         <!-- Department -->
         <ng-container *ngIf="ctx.col.key === 'departmentName'">
-            <span class="cell-text-secondary">{{ ctx.row.departmentName }}</span>
+            <span class="cell-text-secondary">{{truncate( ctx.row.departmentName,30) }}</span>
         </ng-container>
 
         <!-- Requested By: colored circle avatar + name -->
@@ -78,7 +78,7 @@
                 <span class="cell-avatar" [style.background]="avatarColor(ctx.row.requestbyName)">
                     {{ initials(ctx.row.requestbyName) }}
                 </span>
-                <span class="cell-person-name">{{ ctx.row.requestbyName }}</span>
+                <span class="cell-person-name">{{ truncate(ctx.row.requestbyName,30) }}</span>
             </div>
         </ng-container>
 

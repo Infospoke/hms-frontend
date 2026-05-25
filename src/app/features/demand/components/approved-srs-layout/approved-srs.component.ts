@@ -33,6 +33,7 @@ export class ApprovedSrsComponent {
   @Output() tabChange = new EventEmitter<string>();
   @Output() createJob = new EventEmitter<any>();
 
+  @Output() viewJob=new EventEmitter<any>();
   filtersResponse(filters: any): void {
     this.filtersChange.emit(filters);
   }
@@ -74,7 +75,9 @@ export class ApprovedSrsComponent {
     const idx = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) % palette.length;
     return palette[idx];
   }
-   onViewDetails(row: any): void {}
+   onViewDetails(row: any): void {
+    this.viewJob.emit(row);
+   }
 
 
    formatDate(iso: string): string {
@@ -97,5 +100,10 @@ export class ApprovedSrsComponent {
     } catch {
       return '';
     }
+  }
+
+  truncate(value: string, limit = 10): string {
+    if (!value || value === '—') return value;
+    return value.length > limit ? value.slice(0, limit) + '..' : value;
   }
 }

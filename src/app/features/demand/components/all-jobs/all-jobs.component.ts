@@ -90,12 +90,12 @@ export class AllJobsComponent implements OnInit {
 
   ableColumns: any[] = [
     { key: 'jobDetails',      label: 'Job Details',       custom: true, width: '220px' },
-    { key: 'department',      label: 'Department',                      width: '140px' },
+    { key: 'department',      label: 'Department',         custom: true,             width: '140px' },
     { key: 'targetStartDate', label: 'Target Start Date',               width: '150px' },
     { key: 'assignees',       label: 'Assignees',         custom: true, width: '120px', align: 'center' },
-    { key: 'accepted',        label: 'Accepted',          custom: true, width: '100px', align: 'center' },
-    { key: 'pending',         label: 'Pending',           custom: true, width: '100px', align: 'center' },
-    { key: 'declined',        label: 'Declined',          custom: true, width: '100px', align: 'center' },
+    { key: 'accepted',        label: 'Accepted',          custom: true, width: '50px', align: 'center' },
+    { key: 'pending',         label: 'Pending',           custom: true, width: '50px', align: 'center' },
+    { key: 'declined',        label: 'Declined',          custom: true, width: '50px', align: 'center' },
     { key: 'action',          label: 'Action',            custom: true, width: '120px', align: 'center' },
   ];
 

@@ -60,7 +60,7 @@ export class RolePermissionsComponent implements OnInit {
         this.data = content?.map((item: any, index: number) => {
           return {
             ...item,
-            description:item?.description + item?.description,
+            description:item?.description,
             abbr: getInitials(item?.roleName),
             abbrColor: AVATAR_COLORS[index % AVATAR_COLORS.length]
           };

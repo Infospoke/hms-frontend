@@ -144,7 +144,7 @@
       <input
         class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('experience')"
-        formControlName="experience"
+        [value]="exp"
         placeholder="Enter experience"
         readonly />
       <span class="jd-err" *ngIf="isInvalid('experience')">Experience is required</span>

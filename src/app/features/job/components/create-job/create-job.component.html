@@ -21,7 +21,8 @@
 
   <app-job-details-step
     *ngIf="currentStep === 0"
-    [form]="step1Form">
+    [form]="step1Form"
+    [exp]="experienceDisplay">
   </app-job-details-step>
 
   <app-ai-job-description-step

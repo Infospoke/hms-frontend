@@ -43,8 +43,10 @@ export class CreateJobComponent implements OnInit {
   private userService = inject(UserService);
 
   currentStep = 0;
-  departments: any[] = [];
-  bussinessUnits: any[] = [];
+
+  // IDs sourced directly from the SR response — no separate lookup arrays needed
+  private srDepartmentId: number | string = '';
+  private srBusinessUnitId: number | string = '';
 
   readonly steps = [
     { title: 'Job Details' },
@@ -58,6 +60,12 @@ export class CreateJobComponent implements OnInit {
     if (this.currentStep === this.steps.length - 1) return 'Submit';
     return 'Next: ' + this.steps[this.currentStep + 1].title;
   }
+  get experienceDisplay(): string {
+  const min = this.step1Form.get('minExp')?.value;
+  const max = this.step1Form.get('maxExp')?.value;
+  if (min === null && max === null) return '';
+  return `${min ?? 0} - ${max ?? 0} Years`;
+}
   get isLastStep(): boolean { return this.currentStep === this.steps.length - 1; }
   get isFirstStep(): boolean { return this.currentStep === 0; }
 
@@ -80,6 +88,8 @@ export class CreateJobComponent implements OnInit {
         workMode: ['', Validators.required],
         employmentType: ['', Validators.required],
         experience: ['', Validators.required],
+        minExp:['',Validators.required],
+        maxExp:['',Validators.required],
         openings: [null, [Validators.required, Validators.min(1)]],
         startDate: [null, Validators.required],
         mustHaveSkills: [[], [Validators.required, this.nonEmptyArray]],
@@ -100,29 +110,14 @@ export class CreateJobComponent implements OnInit {
       localStorage.setItem(SR_ID_KEY, signalData.srId);
     }
 
-    Promise.all([this.getBussinesUnits(), this.getDepartments()]).then(() => {
-      this.getJobDetailsFromSr();
-    });
-  }
-
-  getDepartments() {
-    return this.approvalService.departments()
-      .then((res: any) => { if (res?.data) this.departments = res.data; })
-      .catch(() => {});
-  }
-
-  getBussinesUnits() {
-    return this.userService.getBussinessUnits()
-      .then((res: any) => { if (res?.data) this.bussinessUnits = res.data; })
-      .catch(() => {});
+    this.getJobDetailsFromSr();
   }
 
   nonEmptyArray(control: any) {
     return Array.isArray(control.value) && control.value.length > 0 ? null : { required: true };
   }
 
-  getJobDetailsFromSr() {
-    // Signal is alive on normal nav; localStorage survives reload
+  getJobDetailsFromSr(): void {
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY);
 
@@ -130,27 +125,31 @@ export class CreateJobComponent implements OnInit {
 
     this.jobService.getJobDetailsBySrId(srId)
       .then((res: any) => {
-        if (res?.responsecode == '00') {
+        if (res?.responsecode === '00') {
           const data = res?.data;
-          const departmentName = this.departments.find(d => d.id == data?.departmentId)?.name ?? '';
-          const businessUnitName = this.bussinessUnits.find(b => b.id == data?.businessUnitId)?.name ?? '';
-
           if (data) {
+            // ── Store IDs for use at submit time ──────────────────────────────
+            this.srDepartmentId  = data.departmentId  ?? '';
+            this.srBusinessUnitId = data.businessUnitId ?? '';
+
+            // ── Patch display names into the form ─────────────────────────────
             this.step1Form.patchValue({
-              jobTitle: data?.jobTitle || '',
-              jobCode: data?.jobCode || '',
-              department: departmentName || '',
-              businessUnit: businessUnitName || '',
-              location: data?.location || '',
-              workMode: data?.workMode || '',
-              employmentType: data?.employmentType || '',
-              experience: data?.maxExperience ?? data?.minExperience ?? '',
-              openings: data?.openings ?? null,
-              startDate: data?.targetStartDate || null,
-              mustHaveSkills: data?.skillsMustHave ? data.skillsMustHave.split(',') : [],
-              niceToHaveSkills: data?.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
-              educationRequirement: data?.educationRequirement || '',
-              country: data?.country || '',
+              jobTitle:             data.jobTitle            || '',
+              jobCode:              data.jobCode             || '',
+              department:           data.departmentName      || '',   // display name
+              businessUnit:         data.businessName        || '',   // display name  ← note: API returns "businessName"
+              location:             data.location            || '',
+              workMode:             data.workMode            || '',
+              employmentType:       data.employmentType      || '',
+              experience:           data.maxExperience ?? data.minExperience ?? '',
+              minExp:data?.minExperience,
+              maxExp:data?.maxExperience,
+              openings:             data.openings            ?? null,
+              startDate:            data.targetStartDate     || null,
+              mustHaveSkills:       data.skillsMustHave  ? data.skillsMustHave.split(',')  : [],
+              niceToHaveSkills:     data.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
+              educationRequirement: data.educationRequirement || '',
+              country:              data.country             || '',
             });
           }
           return;
@@ -206,9 +205,6 @@ export class CreateJobComponent implements OnInit {
       return acc;
     }, {}) || {};
 
-    const departmentId = this.departments.find(d => d.name === step1.department)?.id ?? '';
-    const businessUnitId = this.bussinessUnits.find(b => b.name === step1.businessUnit)?.id ?? '';
-
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY) || '';
 
@@ -216,41 +212,41 @@ export class CreateJobComponent implements OnInit {
       srId,
       submit: 'true',
       createJobDetailsRequest: {
-        jobTitle: step1.jobTitle,
-        businessUnitId,
-        departmentId,
-        location: step1.location,
-        jobCode: step1.jobCode,
-        openings: step1.openings,
-        targetStartDate: step1.startDate,
-        workMode: step1.workMode,
-        employmentType: step1.employmentType,
-        skillsMustHave: step1.mustHaveSkills?.join(','),
-        niceToHaveSkills: step1.niceToHaveSkills?.join(','),
-        minExperience: step1.experience?.min || step1.experience || 1,
-        maxExperience: step1.experience?.max || step1.experience || 5,
-        additionalNotes: step1.notes,
+        jobTitle:             step1.jobTitle,
+        // ── Use IDs captured from SR response, not name-based lookups ─────────
+        businessUnitId:       this.srBusinessUnitId,
+        departmentId:         this.srDepartmentId,
+        // ─────────────────────────────────────────────────────────────────────
+        location:             step1.location,
+        jobCode:              step1.jobCode,
+        openings:             step1.openings,
+        targetStartDate:      step1.startDate,
+        workMode:             step1.workMode,
+        employmentType:       step1.employmentType,
+        skillsMustHave:       step1.mustHaveSkills?.join(','),
+        niceToHaveSkills:     step1.niceToHaveSkills?.join(','),
+        minExperience:        step1.minExp || step1.experience || 1,
+        maxExperience:        step1.maxExp || step1.experience || 5,
+        additionalNotes:      step1.notes,
         educationRequirement: step1.educationRequirement,
-        country: step1.country,
+        country:              step1.country,
       },
       jobDescriptionRequest: { description: step2.jobDescription || '' },
       sourcingChannelRequest: {
-        referral: !!referralChannel,
-        referralAmount: referralChannel?.referralAmount || 0,
-        channels: channelsObject,
+        referral:        !!referralChannel,
+        referralAmount:  referralChannel?.referralAmount || 0,
+        channels:        channelsObject,
       },
-
       recuriterAssignmentRequest: {
-        srId: this.jobService.jobDetailsBySrIdSignal()?.srId || '',
-        recruiterInfoDtos:
-          step4.selectedRecruiterDetails || []
-      }
+        srId:                srId,
+        recruiterInfoDtos:   step4.selectedRecruiterDetails || [],
+      },
     };
 
     this.jobService.createNewJob(payload)
       .then((res: any) => {
         if (res?.responsecode === '00') {
-          this.clearSrIdStorage();  // ← clean up on success
+          this.clearSrIdStorage();
           this.notificationService.success(res?.message || 'Job created successfully');
           this.onCancel();
         } else {

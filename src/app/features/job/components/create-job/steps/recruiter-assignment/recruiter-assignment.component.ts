@@ -43,6 +43,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() buttonText: any;
   @Input() buttonUrl: any;
   @Input() id: any;
+  @Input() srId:any;
   private router=inject(Router);
   // ── Pagination state ──────────────────────────────────────────────────────
   currentPage: number = 1;
@@ -338,7 +339,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
 
     // srId and jobId come from the shared signal on JobService
     const signal = this.jobService.jobDetailsBySrIdSignal();
-    const srId: string = signal?.srId || '';
+    const srId: string = this.srId;
     const jobId: number = this.id || signal?.jobId || 0;
 
     const payload = {
@@ -356,7 +357,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
         this.assignedIds.clear();
         this.form.get('selectedRecruiterDetails')?.setValue([]);
         this.loadRolesAndUsers();
-        this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${this.id}`)
+        this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${this.id}/${this.srId}`)
       } else {
         this.notificationService.error(res?.message || 'Failed to assign recruiters.');
       }

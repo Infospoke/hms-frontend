@@ -161,7 +161,7 @@ export class AllJobsComponent implements OnInit {
           return {
             // identity
             id:              item.jobId,
-
+            srId:item?.srId,
             // jobDetails column (custom cell uses these)
             title:           item.jobTitle,
             code:            item.jobCode,
@@ -247,7 +247,7 @@ export class AllJobsComponent implements OnInit {
 
   viewDetails(row:any){
     console.log(row);
-    this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${row?.id}`,{
+    this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${row?.id}/${row?.srId}`,{
       state:{id:row?.id,srId:row?.srId}
     })
   }

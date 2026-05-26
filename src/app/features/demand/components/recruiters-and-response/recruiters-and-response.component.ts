@@ -54,9 +54,12 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
   currentPage = 1;
   isLoading = false;
   id: any;
+  srId:any;
   ngOnInit(): void {
+    
     this.route.params.subscribe((params: any) => {
       this.id = params['id'];
+      this.srId=params['srId'];
       Promise.all([this.loadItems(), this.loadCount()]);
     });
   }
@@ -152,6 +155,6 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
 
   addAssignees(): void {
     // localStorage.setItem('alreadyAssgined',this.filteredData)
-    this.router.navigateByUrl(`/demand/all-jobs/recruiter-assignment/${this.id}`)
+    this.router.navigateByUrl(`/demand/all-jobs/recruiter-assignment/${this.id}/${this.srId}`)
   }
 }

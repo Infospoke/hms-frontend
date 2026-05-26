@@ -20,7 +20,6 @@ export interface Recruiter {
   assigned: boolean;
 }
 
-/** Cycles through these colours for avatars */
 const AVATAR_COLORS = [
   '#4F46E5', '#0891B2', '#059669', '#D97706',
   '#DC2626', '#7C3AED', '#DB2777', '#EA580C',
@@ -41,25 +40,22 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() buttonText: any;
   @Input() buttonUrl: any;
 
-  // ── Pagination state ──────────────────────────────────────────────────────
   currentPage: number = 1;
-  pageSize:    number = 10;       // Fixed: was incorrectly set to 1
+  pageSize:    number = 10;
   totalItems:  number = 0;
 
-  // ── Data ──────────────────────────────────────────────────────────────────
   filteredRecruiters: Recruiter[] = [];
 
   /**
-   * Tracks assigned user IDs across ALL pages so selections survive
-   * page navigation. Key = userId, Value = true (assigned).
+   * Cross-page assignment state.
+   * assignedIds  → Set of userId for checkbox state restoration
+   * assignedMap  → Map of userId → full dto (keeps latest data for syncForm)
    */
   private assignedIds = new Set<number>();
+  private assignedMap = new Map<number, any>();
 
-  // ── Filter state (sent to server) ─────────────────────────────────────────
   private searchTerm:      string   = '';
   private selectedRoleIds: number[] = [];
-
-  // ── Stored IDs from departments API ──────────────────────────────────────
   departmentIds: number[] = [];
 
   private jobService      = inject(JobService);
@@ -76,50 +72,40 @@ export class RecruiterAssignmentStepComponent implements OnInit {
 
   filterDropdowns = roles;
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
-
   ngOnInit(): void {
-if (this.form && !this.form.get('selectedRecruiterDetails')) {
-  this.form.addControl(
-    'selectedRecruiterDetails',
-    new FormControl([])
-  );
-}
+    if (this.form && !this.form.get('selectedRecruiterDetails')) {
+      this.form.addControl('selectedRecruiterDetails', new FormControl([]));
+    }
+
+    // Restore assignedMap from form if user navigates back to this step
+    const existing: any[] = this.form.get('selectedRecruiterDetails')?.value || [];
+    existing.forEach(r => {
+      this.assignedIds.add(r.userId);
+      this.assignedMap.set(r.userId, r);
+    });
+
     this.loadDepartments();
   }
-
-  // ── Data loading ──────────────────────────────────────────────────────────
 
   private loadDepartments(): void {
     this.approvalService.departments()
       .then((res: any) => {
         const data: any[] = res?.data ?? [];
-        const allowedNames = ['Recruiting Operations', 'Talent Acquisition'];
-
         const ids: number[] = data
-          .filter((item: any) => allowedNames.includes(item.name))
+          .filter((item: any) => ['Recruiting Operations', 'Talent Acquisition'].includes(item.name))
           .map((item: any) => item.id);
 
         this.departmentIds = ids;
-
-        // Load role-dropdown options and first page of recruiters in parallel
-        Promise.all([
-          this.loadRoles(ids),
-          this.loadRolesAndUsers(),
-        ]);
+        Promise.all([this.loadRoles(ids), this.loadRolesAndUsers()]);
       })
       .catch((err: any) => console.error('loadDepartments error:', err));
   }
 
- 
   private loadRolesAndUsers(): void {
-    const body = this.buildRequestBody();
-
-    this.jobService.getRecruiters(body)
+    this.jobService.getRecruiters(this.buildRequestBody())
       .then((res: any) => {
         if (res?.responsecode === '00') {
           const data = res.data;
-          // Use totalElements from API response for pagination
           this.totalItems         = data?.totalElements ?? 0;
           this.filteredRecruiters = this.mapApiResponseToRecruiters(data);
         }
@@ -127,7 +113,6 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
       .catch((err: any) => console.error('loadRolesAndUsers error:', err));
   }
 
- 
   private mapApiResponseToRecruiters(data: any): Recruiter[] {
     const departments: any[] = data?.departments ?? [];
     const recruiters: Recruiter[] = [];
@@ -144,22 +129,19 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
             email:             user.email,
             role:              user.roleName,
             activeAssignments: user.totalAssignments ?? 0,
-            // Restore assigned state from the persistent Set
-            assigned:          this.assignedIds.has(user.userId),
+            assigned:          this.assignedIds.has(user.userId),  // restore from Set
           });
           colorIndex++;
         }
       }
     }
-
     return recruiters;
   }
 
   private loadRoles(ids: number[]): void {
     this.jobService.fetchRoles({ departmentsIds: ids })
       .then((res: any) => {
-        const d       = res?.data ?? [];
-        const options = this.mapForDepartment(d);
+        const options = this.mapForDepartment(res?.data ?? []);
         this.filterDropdowns = this.filterDropdowns.map((item: any) =>
           item.key === 'roles' ? { ...item, options } : item
         );
@@ -167,141 +149,90 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
       .catch((err: any) => console.error('loadRoles error:', err));
   }
 
-  // ── Request builder ───────────────────────────────────────────────────────
-
-  /**
-   * Builds the server request body matching the required shape:
-   * {
-   *   page, size, sortBy, direction,
-   *   filters: { departmentIds, roleIds, search }
-   * }
-   */
   private buildRequestBody(): object {
     const filters: Record<string, any> = {};
-
-    // Always send department IDs
-    if (this.departmentIds.length) {
-      filters['departmentIds'] = this.departmentIds;
-    }
-
-    // Send selected roleIds to server
-    if (this.selectedRoleIds.length) {
-      filters['roleIds'] = this.selectedRoleIds;
-    }
-
-    // Send search string to server
-    if (this.searchTerm.trim()) {
-      filters['search'] = this.searchTerm.trim();
-    }
-
-    return {
-      page:      this.currentPage - 1,   // API is 0-indexed
-      size:      this.pageSize,
-      sortBy:    'id',
-      direction: 'DESC',
-      filters,
-    };
+    if (this.departmentIds.length)    filters['departmentIds'] = this.departmentIds;
+    if (this.selectedRoleIds.length)  filters['roleIds']       = this.selectedRoleIds;
+    if (this.searchTerm.trim())       filters['search']        = this.searchTerm.trim();
+    return { page: this.currentPage - 1, size: this.pageSize, sortBy: 'id', direction: 'DESC', filters };
   }
 
- 
   onFilterChange(event: any): void {
-    this.searchTerm = (event.search || '');
-    console.log(event);
+    this.searchTerm      = event.search || '';
     const roleValue      = event.filters?.roles;
     this.selectedRoleIds = roleValue ? [Number(roleValue)] : [];
-    this.currentPage = 1;
+    this.currentPage     = 1;
     this.loadRolesAndUsers();
   }
-
-  // ── Pagination ────────────────────────────────────────────────────────────
 
   onPageChange(page: number): void {
     this.currentPage = page;
     this.loadRolesAndUsers();
   }
 
-  // ── Selection helpers ─────────────────────────────────────────────────────
-
   get allSelected(): boolean {
-    return this.filteredRecruiters.length > 0 &&
-           this.filteredRecruiters.every(r => r.assigned);
+    return this.filteredRecruiters.length > 0 && this.filteredRecruiters.every(r => r.assigned);
   }
-
   get someSelected(): boolean {
     return this.filteredRecruiters.some(r => r.assigned) && !this.allSelected;
   }
 
   toggleAll(checked: boolean): void {
-    this.filteredRecruiters.forEach(r => {
-      r.assigned = checked;
-      this.updateAssignedSet(r);
-    });
+    this.filteredRecruiters.forEach(r => { r.assigned = checked; this.updateAssignedState(r); });
     this.syncForm();
   }
 
   toggleRow(recruiter: Recruiter): void {
     recruiter.assigned = !recruiter.assigned;
-    this.updateAssignedSet(recruiter);
+    this.updateAssignedState(recruiter);
     this.syncForm();
   }
 
   toggleAssign(recruiter: Recruiter): void {
     recruiter.assigned = !recruiter.assigned;
-    this.updateAssignedSet(recruiter);
+    this.updateAssignedState(recruiter);
     this.syncForm();
   }
 
   /**
-   * Keeps the cross-page Set in sync after every toggle so that navigating
-   * away and back to a page restores the correct checkbox state.
+   * Keeps both the Set (for checkbox restore) and the Map (for full dto)
+   * in sync after every toggle.
    */
-  private updateAssignedSet(recruiter: Recruiter): void {
+  private updateAssignedState(recruiter: Recruiter): void {
     if (recruiter.assigned) {
       this.assignedIds.add(recruiter.id);
+      this.assignedMap.set(recruiter.id, {
+        userId:   recruiter.id,
+        email:    recruiter.email,
+        userName: recruiter.name,
+        roleId:   '42',
+        roleName: recruiter.role,
+      });
     } else {
       this.assignedIds.delete(recruiter.id);
+      this.assignedMap.delete(recruiter.id);
     }
   }
 
-  /** Writes the full list of assigned IDs (all pages) into the form control */
-private syncForm(): void {
-  const selectedRecruiters = this.filteredRecruiters
-    .filter(r => r.assigned)
-    .map(r => ({
-      userId: r.id,
-      email: r.email,
-      userName: r.name,
-      roleId: '42',
-      roleName: r.role
-    }));
-
-  this.form
-    .get('selectedRecruiterDetails')
-    ?.setValue(selectedRecruiters);
-}
-
-  get assignedCount(): number {
-    return this.assignedIds.size;    // Counts across all pages
+  /**
+   * Writes ALL assigned recruiters (all pages) into the form control
+   * using the Map — not just the current page.
+   */
+  private syncForm(): void {
+    this.form.get('selectedRecruiterDetails')?.setValue(Array.from(this.assignedMap.values()));
   }
 
-  // ── Utilities ─────────────────────────────────────────────────────────────
+  get assignedCount(): number { return this.assignedIds.size; }
 
   private getInitials(name: string): string {
     if (!name?.trim()) return '?';
     const parts = name.trim().split(/\s+/);
-    return parts.length === 1
-      ? parts[0][0].toUpperCase()
-      : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return parts.length === 1 ? parts[0][0].toUpperCase() : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
   private mapForDepartment(data: any[]): any[] {
-    return [
-      { value: '', label: 'All' },
-      ...data.map((item: any) => ({ value: item.id, label: item.name })),
-    ];
+    return [{ value: '', label: 'All' }, ...data.map((item: any) => ({ value: item.id, label: item.name }))];
   }
 
-  HandlebackToAssing(){
-    
-  }
+  HandlebackToAssing() {}
 }

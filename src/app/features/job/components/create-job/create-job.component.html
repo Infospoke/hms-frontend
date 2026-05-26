@@ -3,9 +3,10 @@
   [subHeading]="'Create a new job from approved service request'"
   [showInfo]="false"
   [infoTooltip]="''"
-  [showBackButton]="true" 
-  [backButtonUrl]="'/demand/all-approved-srs'"
+  [showBackButton]="true"
+  [backButtonUrl]="'/'"
   [buttonText]="'Back To Approved SRs'"
+  (backClick)="goBack()"
   />
 
 <!-- ── Stepper ──────────────────────────────────────────────────────────── -->

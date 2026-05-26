@@ -36,7 +36,7 @@ export class HeadingComponent implements OnInit {
 
 
   goBack(){
-    if(this.backButtonUrl ==='/'){
+    if(this.backButtonUrl =='/'){
       this.handlebackClick();
       return;
     }

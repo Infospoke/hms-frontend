@@ -68,6 +68,32 @@
       <span class="jd-err" *ngIf="isInvalid('businessUnit')">Business unit is required</span>
     </div>
 
+        <div class="jd-field">
+      <label class="jd-label">
+        Education Requirement <span class="jd-req">*</span>
+      </label>
+      <input
+        class="jd-input jd-input--readonly"
+        [class.jd-input--err]="isInvalid('educationRequirement')"
+        formControlName="educationRequirement"
+        placeholder="Enter education requirement"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('educationRequirement')">Education requirement is required</span>
+    </div>
+
+        <div class="jd-field">
+      <label class="jd-label">
+        Country <span class="jd-req">*</span>
+      </label>
+      <input
+        class="jd-input jd-input--readonly"
+        [class.jd-input--err]="isInvalid('country')"
+        formControlName="country"
+        placeholder="Enter country"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('country')">Country is required</span>
+    </div>
+
     <div class="jd-field">
       <label class="jd-label">
         Location <span class="jd-req">*</span>

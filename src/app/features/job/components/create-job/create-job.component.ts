@@ -169,7 +169,7 @@ export class CreateJobComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigateByUrl('/supply/jobs/job-details');
+    this.router.navigateByUrl('/demand/all-approved-srs');
   }
 
 onSubmit(): void {
@@ -249,7 +249,7 @@ recuriterAssignmentRequest: {
           'Job created successfully'
         );
         this.router.navigateByUrl(
-          '/supply/jobs/job-details'
+          '/demand/all-approved-srs'
         );
       } else {
         this.notificationService.error(

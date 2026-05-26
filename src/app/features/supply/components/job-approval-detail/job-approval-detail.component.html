@@ -235,14 +235,14 @@
       <div class="jad-dec-btns">
         <button
           class="jad-dec-btn jad-dec-btn--accept"
-          [class.active]="decision === 'approve'"
-          (click)="setDecision('approve')">
+          [class.active]="decision === 'Accepted'"
+          (click)="setDecision('Accepted')">
           <i class="fa-solid fa-check"></i> Accept
         </button>
         <button
           class="jad-dec-btn jad-dec-btn--decline"
-          [class.active]="decision === 'rejected'"
-          (click)="setDecision('rejected')">
+          [class.active]="decision === 'Rejected'"
+          (click)="setDecision('Rejected')">
           <i class="fa-solid fa-xmark"></i> Decline
         </button>
       </div>

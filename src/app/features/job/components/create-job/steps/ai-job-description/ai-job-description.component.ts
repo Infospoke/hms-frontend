@@ -6,7 +6,8 @@ import {
   ElementRef,
   ViewChild,
   ChangeDetectorRef,
-  inject
+  inject,
+  AfterViewInit
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -35,7 +36,7 @@ interface JdVersion {
   templateUrl: './ai-job-description.component.html',
   styleUrl: './ai-job-description.component.scss'
 })
-export class AiJobDescriptionStepComponent implements OnInit, OnDestroy {
+export class AiJobDescriptionStepComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() form!: FormGroup;
   @ViewChild('editor', { static: false })
   editorRef!: ElementRef<HTMLDivElement>;
@@ -58,34 +59,34 @@ export class AiJobDescriptionStepComponent implements OnInit, OnDestroy {
   private saveTimer: any;
 
   ngOnInit(): void {
-    if (!this.form.get('jobDescription')) {
-      this.form.addControl(
-        'jobDescription',
-        new FormControl('', Validators.required)
-      );
-    }
-
-    this.loadStoredVersions();
+    localStorage.removeItem(this.STORAGE_KEY);
+  this.versions = [];
+  if (!this.form.get('jobDescription')) {
+    this.form.addControl('jobDescription', new FormControl('', Validators.required));
   }
 
-  ngOnDestroy(): void {
-    clearTimeout(this.saveTimer);
+    // this.loadStoredVersions();
   }
 
-private loadStoredVersions(): void {
-  const stored = localStorage.getItem(this.STORAGE_KEY);
-
-  if (!stored) return;
-
-  this.versions = JSON.parse(stored).map((v: any) => ({
-    ...v,
-    generatedAt: new Date(v.generatedAt)
-  }));
-
-  if (this.versions.length) {
-    this.loadVersion(this.versions[0]);
-  }
+ngOnDestroy(): void {
+  clearTimeout(this.saveTimer);
+  localStorage.removeItem(this.STORAGE_KEY);
 }
+
+// private loadStoredVersions(): void {
+//   const stored = localStorage.getItem(this.STORAGE_KEY);
+
+//   if (!stored) return;
+
+//   this.versions = JSON.parse(stored).map((v: any) => ({
+//     ...v,
+//     generatedAt: new Date(v.generatedAt)
+//   }));
+
+//   if (this.versions.length) {
+//     this.loadVersion(this.versions[0]);
+//   }
+// }
 
   async generateJD(): Promise<void> {
     await this.callGenerateApi('');
@@ -160,21 +161,19 @@ private addVersion(jobDescription: string): void {
 
   this.versions.unshift(version);
 
-  if (this.versions.length > 3) {
-    this.versions.pop();
-  }
+  if (this.versions.length > 3) this.versions.pop();
 
+  const total = this.versions.length;
   this.versions.forEach((v, i) => {
-    v.label = `Version ${i + 1}`;
+    v.label = `Version ${total - i}`;
     v.isCurrent = i === 0;
   });
 
-  localStorage.setItem(
-    this.STORAGE_KEY,
-    JSON.stringify(this.versions)
-  );
-
+  localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.versions));
   this.loadVersion(this.versions[0]);
+}
+
+ngAfterViewInit(): void {
 }
 
   private persistVersions(): void {
@@ -186,23 +185,18 @@ private addVersion(jobDescription: string): void {
 
 loadVersion(v: JdVersion): void {
   this.selectedVersionId = v.id;
-
-  this.versions.forEach(ver => {
-    ver.isCurrent = ver.id === v.id;
-  });
-
-  // THIS LINE makes selected version visible in editor
-  if (this.editorRef?.nativeElement) {
-    this.editorRef.nativeElement.innerHTML = v.content;
-  }
-
-  // sync form
+  this.versions.forEach(ver => ver.isCurrent = ver.id === v.id);
   this.form.get('jobDescription')?.setValue(v.content);
-
-  // update footer
   this.updateWordCount();
-
   this.cdr.detectChanges();
+
+  setTimeout(() => {
+    if (this.editorRef?.nativeElement) {
+      this.editorRef.nativeElement.innerHTML = v.content;
+      this.updateWordCount();
+    }
+    this.cdr.detectChanges();
+  }, 0);
 }
 
   deleteVersion(v: JdVersion): void {

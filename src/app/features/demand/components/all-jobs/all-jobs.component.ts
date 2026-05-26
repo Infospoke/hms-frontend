@@ -160,7 +160,7 @@ export class AllJobsComponent implements OnInit {
           const iconCfg = resolveJobIcon(item.jobTitle ?? '', item.departmentName ?? '');
           return {
             // identity
-            id:              item.id,
+            id:              item.jobId,
 
             // jobDetails column (custom cell uses these)
             title:           item.jobTitle,
@@ -232,7 +232,7 @@ export class AllJobsComponent implements OnInit {
     return {
       page:    this.currentPage - 1,   // API is 0-indexed
       size:    this.pageSize,
-      sortBy:  'id',
+      sortBy:  'jobId',
       direction: 'DESC',
       filters,
     };
@@ -246,8 +246,9 @@ export class AllJobsComponent implements OnInit {
   }
 
   viewDetails(row:any){
+    console.log(row);
     this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${row?.id}`,{
-      state:{id:row?.id}
+      state:{id:row?.id,srId:row?.srId}
     })
   }
 

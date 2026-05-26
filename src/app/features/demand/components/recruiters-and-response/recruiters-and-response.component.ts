@@ -89,7 +89,7 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
     let obj = {
       page: this.currentPage - 1,
       size: this.pageSize,
-      sortBy: 'id',
+      sortBy: 'jobId',
       direction: 'ASC',
     }
     this.staffingService.getAssignmentListById(this.id, obj)

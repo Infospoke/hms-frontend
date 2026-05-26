@@ -8,6 +8,8 @@ import { roles } from '../../../../../../shared/constants/reusbale-filter';
 import { HeadingComponent } from '../../../../../../shared/components/heading/heading.component';
 import { ApprovalService } from '../../../../../approvals/services/approval-service';
 import { JobService } from '../../../../services/job.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
+import { Router } from '@angular/router';
 
 // ADD:
 export interface Recruiter {
@@ -41,7 +43,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() buttonText: any;
   @Input() buttonUrl: any;
   @Input() id: any;
-
+  private router=inject(Router);
   // ── Pagination state ──────────────────────────────────────────────────────
   currentPage: number = 1;
   pageSize: number = 10;
@@ -71,6 +73,8 @@ export class RecruiterAssignmentStepComponent implements OnInit {
 
   private jobService = inject(JobService);
   private approvalService = inject(ApprovalService);
+  private notificationService = inject(NotificationService);
+  isAssigning = false;
 
   columns: TableColumn[] = [
     { key: 'select', label: '', width: '48px', custom: true },
@@ -319,5 +323,48 @@ export class RecruiterAssignmentStepComponent implements OnInit {
     ];
   }
 
-  HandlebackToAssing(): void { }
+  /** Called when the "Assign Recruiter" button is clicked (showBackButton mode). */
+  async onAssignRecruiters(): Promise<void> {
+    if (this.assignedCount === 0 || this.isAssigning) return;
+
+    // Collect currently assigned recruiters from the form
+    const selectedRecruiters: any[] =
+      this.form?.get('selectedRecruiterDetails')?.value || [];
+
+    if (!selectedRecruiters.length) {
+      this.notificationService.error('Please assign at least one recruiter.');
+      return;
+    }
+
+    // srId and jobId come from the shared signal on JobService
+    const signal = this.jobService.jobDetailsBySrIdSignal();
+    const srId: string = signal?.srId || '';
+    const jobId: number = this.id || signal?.jobId || 0;
+
+    const payload = {
+      srId,
+      jobId,
+      recruiterInfoDtos: selectedRecruiters,
+    };
+
+    this.isAssigning = true;
+    try {
+      const res: any = await this.jobService.updateAssigness(payload);
+      if (res?.responsecode === '00') {
+        this.notificationService.success('Recruiters assigned successfully.');
+        // Clear local selection state after a successful save
+        this.assignedIds.clear();
+        this.form.get('selectedRecruiterDetails')?.setValue([]);
+        this.loadRolesAndUsers();
+        this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${this.id}`)
+      } else {
+        this.notificationService.error(res?.message || 'Failed to assign recruiters.');
+      }
+    } catch (err: any) {
+      console.error('onAssignRecruiters error:', err);
+      this.notificationService.error(err?.message || 'Failed to assign recruiters.');
+    } finally {
+      this.isAssigning = false;
+    }
+  }
 }

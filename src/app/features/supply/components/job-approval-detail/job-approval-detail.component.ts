@@ -41,7 +41,7 @@ export class JobApprovalDetailComponent implements OnInit {
   businessUnitName = '';
   private route = inject(ActivatedRoute);
   // ── Decision form
-  decision: 'approve' | 'rejected' | null = null;
+  decision: 'Accepted' | 'Rejected' | null = null;
   comment = '';
   isSubmitting = false;
 
@@ -181,7 +181,7 @@ export class JobApprovalDetailComponent implements OnInit {
 
   // ── Decision
 
-  setDecision(d: 'approve' | 'rejected'): void {
+  setDecision(d: 'Accepted' | 'Rejected'): void {
     this.decision = this.decision === d ? null : d;
   }
 
@@ -199,11 +199,11 @@ export class JobApprovalDetailComponent implements OnInit {
       .then((res: any) => {
         if (res?.responsecode === '00') {
           this.notificationService.success(
-            this.decision === 'approve'
+            this.decision === 'Accepted'
               ? 'Job accepted successfully'
               : 'Job declined successfully'
           );
-          this.router.navigateByUrl('/demand/my-job-assignments');
+          this.router.navigateByUrl('/supply/my-assignend-jobs');
         } else {
           this.notificationService.error(res?.message ?? 'Failed to submit decision');
         }

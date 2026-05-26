@@ -135,6 +135,11 @@ body {
   &:hover {
     background: var(--brand-color);
   }
+  &:disabled{
+    background:var(--color-muted);
+    opacity: 0.4;
+    cursor:not-allowed;
+  }
 }
 .sr-header {
   display: flex;

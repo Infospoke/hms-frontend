@@ -19,7 +19,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
   heading: string = 'My Job Assignments';
   subHeading: string = 'Review and respond to job assignments allocated to you';
   searchPlaceholder = 'Search by Job Title..';
-  activeTab = 'pending';
+  activeTab = 'all';
   currentPage = 1;
   activeFilters: any = {};
   isLoading = false;
@@ -28,10 +28,11 @@ export class MyJobsAssignmentsComponent implements OnInit {
   private approvalService = inject(ApprovalService);
   private staffingService = inject(StaffingServiceService)
   tabs = [
+    { key: 'all', label: 'All', count: 0 },
     { key: 'pending', label: 'Pending', count: 0 },
     { key: 'accepted', label: 'Accepted', count: 0 },
-    { key: 'declined', label: 'Declined', count: 0 },
-    { key: 'all', label: 'All', count: 0 },
+    { key: 'rejected', label: 'Rejected', count: 0 },
+    
   ];
 
   cards: any[] = [
@@ -64,7 +65,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
     },
     {
       id: 'declined',
-      label: 'Declined',
+      label: 'Rejected',
       subLabel: '',
       value: 0,
       iconClass: 'fa-solid fa-xmark',

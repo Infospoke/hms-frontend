@@ -2,7 +2,7 @@
 
   <div class="sr-header">
     <app-heading [heading]="'My Staffing Requisitions'" [subHeading]="'Create & Manage your staffing requisitions'" />
-    <button class="btn-new" (click)="newSR()" *appCan="'DEMAND:MYJRS:CREATE'">+ New SR</button>
+    <button class="btn-new" (click)="newSR()" *appCan="'DEMAND:MYSRS:CREATE'">+ New SR</button>
   </div>
 
   <app-approval-layout [showInfo]="false" [infoTooltip]="false" [cards]="cards" [tabs]="tabs"

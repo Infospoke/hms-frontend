@@ -209,6 +209,12 @@ export class JobService {
      );
     }
 
+    async getAssiendUsers(srId:any){
+     return await firstValueFrom(
+      this.api.hrmsget(API.JOBS.CREATE_ASSIGNED_USERS(srId))
+     );
+    }
+
     async createNewJob(payload : any){
       return await firstValueFrom(
         this.api.hrmspost(API.JOBS.CREATE_NEW_JOB,payload)

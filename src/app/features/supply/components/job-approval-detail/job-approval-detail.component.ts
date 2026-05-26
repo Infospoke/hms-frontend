@@ -41,7 +41,7 @@ export class JobApprovalDetailComponent implements OnInit {
   businessUnitName = '';
   private route = inject(ActivatedRoute);
   // ── Decision form
-  decision: 'accept' | 'decline' | null = null;
+  decision: 'approve' | 'rejected' | null = null;
   comment = '';
   isSubmitting = false;
 
@@ -141,13 +141,11 @@ export class JobApprovalDetailComponent implements OnInit {
 
     // Job description
     this.jobDescription = data.jobDescription?.description ?? '';
-
-    // Sourcing channels
-    const channelMeta: Record<string, { icon: string; iconBg: string; type: string }> = {
-      LinkedIn: { icon: 'in', iconBg: '#0A66C2', type: 'Paid' },
-      Naukri: { icon: 'N', iconBg: '#FF6633', type: 'Paid' },
-      Indeed: { icon: 'In', iconBg: '#6366F1', type: 'Paid' },
-      Referral: { icon: 'R', iconBg: '#16A34A', type: 'Internal' },
+    const channelMeta: Record<string, { icon: string; iconBg: string }> = {
+      LinkedIn: { icon: 'in', iconBg: '#0A66C2', },
+      Naukri: { icon: 'N', iconBg: '#FF6633', },
+      Indeed: { icon: 'In', iconBg: '#6366F1' },
+      Referral: { icon: 'R', iconBg: '#16A34A' },
     };
 
     const rawChannels: Record<string, boolean> = data.sourcingStrategy?.sourcingChannels ?? {};
@@ -156,7 +154,7 @@ export class JobApprovalDetailComponent implements OnInit {
       enabled,
       icon: channelMeta[name]?.icon ?? name[0],
       iconBg: channelMeta[name]?.iconBg ?? '#64748B',
-      type: channelMeta[name]?.type ?? 'Paid',
+
     }));
 
     this.referralEnabled = data.sourcingStrategy?.referral ?? false;
@@ -168,7 +166,7 @@ export class JobApprovalDetailComponent implements OnInit {
         enabled: true,
         icon: 'ER',
         iconBg: '#16A34A',
-        type: 'Internal',
+        // type: 'Internal',
       });
     }
 
@@ -183,7 +181,7 @@ export class JobApprovalDetailComponent implements OnInit {
 
   // ── Decision
 
-  setDecision(d: 'accept' | 'decline'): void {
+  setDecision(d: 'approve' | 'rejected'): void {
     this.decision = this.decision === d ? null : d;
   }
 
@@ -201,7 +199,7 @@ export class JobApprovalDetailComponent implements OnInit {
       .then((res: any) => {
         if (res?.responsecode === '00') {
           this.notificationService.success(
-            this.decision === 'accept'
+            this.decision === 'approve'
               ? 'Job accepted successfully'
               : 'Job declined successfully'
           );
@@ -278,7 +276,7 @@ export interface ChannelDisplay {
   enabled: boolean;
   icon: string;
   iconBg: string;
-  type: string;
+  // type: string;
 }
 
 export interface RecruiterDisplay {

@@ -227,6 +227,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       bu: ['', Validators.required],
       manager: [[], [Validators.required, minItemsValidator(1)]],
       location: ['', Validators.required],
+      country: ['', Validators.required],
       workMode: ['', Validators.required],
       empType: ['', Validators.required],
       seniority: ['', Validators.required],
@@ -332,6 +333,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       department: this.department,
       seniority: this.seniority,
       location: this.location,
+      country:this.country,
       employment_type: this.empType,
       business_justification: this.bizCase,
     }
@@ -715,6 +717,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       businessUnitId: f.bu,
       reportingManagerInfo: f.manager,
       location: f.location,
+      country:f.country,
       seniorityLevel: f.seniority,
       openings: f.openings,
       targetStartDate: f.startDate,
@@ -856,7 +859,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.step0Form.patchValue({
         jobTitle: p.jobTitle ?? '',
         bu: buss?.id ?? '',
-
+        country:p.country??'',
         location: p.location ?? '',
         workMode: p.workMode ?? '',
         empType: p.employmentType ?? '',
@@ -985,6 +988,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     return this.deptKeys.find(d => d?.id === deptId)?.name || '';
   }
   get location(): string { return this.step0Form.get('location')?.value; }
+  get country(): string { return this.step0Form.get('country')?.value; }
   get seniority(): string {
     const ser = this.seniorityIC.find(item => item.id == this.step0Form.get('seniority')?.value);
     return ser?.name;
@@ -1371,6 +1375,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       location: f.location,
       workMode: f.workMode,
       empType: f.empType,
+      country: f.country,
       seniority: f.seniority,
       openings: f.openings,
       priority: f.priority,

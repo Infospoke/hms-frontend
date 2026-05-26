@@ -249,6 +249,7 @@ export class KanbanComponent implements OnInit {
   closeJrDropdown(): void { this.showJrDropdown = false; }
 
   toggleJrSelection(jobId: any, event: Event): void {
+    console.log(jobId,event);
     event.stopPropagation();
 
     // Use loose equality (==) to handle string vs number mismatch from API

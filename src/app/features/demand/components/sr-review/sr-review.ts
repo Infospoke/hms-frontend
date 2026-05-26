@@ -10,18 +10,19 @@ import { CommonModule } from '@angular/common';
 })
 export class SrReviewComponent implements OnInit {
 
- 
+
   @Input() srId: string | null = null;
   @Input() jobTitle = '';
   @Input() isSaving = false;
   @Input() viewOnly = false;
 
- 
+
   @Input() step0: {
     jobTitle: string;
     dept: string | number;
     bu: string | number;
     location: string;
+    country: string;
     workMode: string;
     empType: string;
     seniority: string | number;
@@ -80,7 +81,7 @@ export class SrReviewComponent implements OnInit {
   @Input() replaceEmployee: any = null;
   @Input() supportDoc: any = null;
 
-  
+
   @Output() onEdit = new EventEmitter<number>();
   @Output() onBack = new EventEmitter<void>();
   @Output() onSaveDraft = new EventEmitter<void>();
@@ -151,7 +152,7 @@ export class SrReviewComponent implements OnInit {
     return jt === 'Backfill' || jt === 'Replacement';
   }
 
-  
+
   get totalCompensation(): number {
     if (!this.step2) return 0;
     const s = this.step2;
@@ -167,9 +168,9 @@ export class SrReviewComponent implements OnInit {
       salaryMid = (mn + mx) / 2 / 100000;
     }
 
-    const signing    = s.signingBonus  ? toLPA(s.signingAmt) : 0;
-    const equity     = s.equity        ? toLPA(s.equityAmt)  : 0;
-    const relocation = s.relocation    ? toLPA(s.relocAmt)   : 0;
+    const signing = s.signingBonus ? toLPA(s.signingAmt) : 0;
+    const equity = s.equity ? toLPA(s.equityAmt) : 0;
+    const relocation = s.relocation ? toLPA(s.relocAmt) : 0;
 
     return +(base + salaryMid + signing + equity + relocation).toFixed(2);
   }

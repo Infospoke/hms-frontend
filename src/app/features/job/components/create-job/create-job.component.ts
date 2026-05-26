@@ -275,6 +275,7 @@ export class CreateJobComponent implements OnInit {
       },
 
       recuriterAssignmentRequest: {
+        srId: this.jobService.jobDetailsBySrIdSignal()?.srId || '',
         recruiterInfoDtos:
           step4.selectedRecruiterDetails || []
       }

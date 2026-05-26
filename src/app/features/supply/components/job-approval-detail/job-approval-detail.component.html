@@ -172,7 +172,7 @@
           <div class="jad-ch-logo" [style.background]="ch.iconBg">{{ ch.icon }}</div>
           <div class="jad-ch-body">
             <span class="jad-ch-name">{{ ch.name }}</span>
-            <span class="jad-ch-type">@ {{ ch.type }}</span>
+            <!-- <span class="jad-ch-type">@ {{ ch.type }}</span> -->
           </div>
           <span class="jad-ch-pill" [class.jad-ch-pill--on]="ch.enabled" [class.jad-ch-pill--off]="!ch.enabled">
             {{ ch.enabled ? 'On' : 'Off' }}
@@ -235,14 +235,14 @@
       <div class="jad-dec-btns">
         <button
           class="jad-dec-btn jad-dec-btn--accept"
-          [class.active]="decision === 'accept'"
-          (click)="setDecision('accept')">
+          [class.active]="decision === 'approve'"
+          (click)="setDecision('approve')">
           <i class="fa-solid fa-check"></i> Accept
         </button>
         <button
           class="jad-dec-btn jad-dec-btn--decline"
-          [class.active]="decision === 'decline'"
-          (click)="setDecision('decline')">
+          [class.active]="decision === 'rejected'"
+          (click)="setDecision('rejected')">
           <i class="fa-solid fa-xmark"></i> Decline
         </button>
       </div>

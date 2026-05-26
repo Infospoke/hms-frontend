@@ -41,12 +41,8 @@
 
                 <div class="field">
                     <label class="lbl">Business Unit <span class="astrick">*</span></label>
-                    <nz-select
-                        formControlName="bu"
-                        nzPlaceHolder="Select Business Unit"
-                        [nzOptionOverflowSize]="5"
-                        [class.err]="hasError(step0Form, 'bu')"
-                        class="bu-select">
+                    <nz-select formControlName="bu" nzPlaceHolder="Select Business Unit" [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step0Form, 'bu')" class="bu-select">
                         <nz-option *ngFor="let d of bussiness" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
                     </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'bu')">
@@ -57,8 +53,8 @@
                 <!-- Department -->
                 <div class="field">
                     <label class="lbl">Department <span class="astrick">*</span></label>
-                    <nz-select formControlName="dept" nzPlaceHolder="Select department"
-                        [nzOptionOverflowSize]="5" [class.err]="hasError(step0Form, 'dept')" class="nz-field-select">
+                    <nz-select formControlName="dept" nzPlaceHolder="Select department" [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step0Form, 'dept')" class="nz-field-select">
                         <nz-option *ngFor="let d of deptKeys" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
                     </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'dept')">
@@ -100,18 +96,26 @@
                 <!-- Location -->
                 <div class="field">
                     <label class="lbl">Location <span class="astrick">*</span></label>
-                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad, India"
+                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad"
                         [class.err]="hasError(step0Form, 'location')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
                         {{ getError(step0Form, 'location','Location') }}
                     </span>
                 </div>
 
+                <div class="field">
+                    <label class="lbl">Country <span class="astrick">*</span></label>
+                    <input type="text" formControlName="country" placeholder="e.g. India,"
+                        [class.err]="hasError(step0Form, 'country')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'country')">
+                        {{ getError(step0Form, 'country','Country') }}
+                    </span>
+                </div>
                 <!-- Seniority -->
                 <div class="field">
                     <label class="lbl">Seniority Level <span class="astrick">*</span></label>
-                    <nz-select formControlName="seniority" nzPlaceHolder="Select level"
-                        [nzOptionOverflowSize]="5" [class.err]="hasError(step0Form, 'seniority')" class="nz-field-select">
+                    <nz-select formControlName="seniority" nzPlaceHolder="Select level" [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step0Form, 'seniority')" class="nz-field-select">
                         <nz-option *ngFor="let s of seniorityIC" [nzValue]="s?.id" [nzLabel]="s?.name"></nz-option>
                     </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'seniority')">
@@ -572,9 +576,10 @@
 
                         <span class="ai-chip">✦ AI-suggest</span>
                     </div>
-                    <nz-select formControlName="eduReq" nzPlaceHolder="Select education"
-                        [nzOptionOverflowSize]="5" [class.err]="hasError(step3Form, 'eduReq')" class="nz-field-select">
-                        <nz-option *ngFor="let e of educationOpts" [nzValue]="e?.degree" [nzLabel]="e?.degree"></nz-option>
+                    <nz-select formControlName="eduReq" nzPlaceHolder="Select education" [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step3Form, 'eduReq')" class="nz-field-select">
+                        <nz-option *ngFor="let e of educationOpts" [nzValue]="e?.degree"
+                            [nzLabel]="e?.degree"></nz-option>
                     </nz-select>
                     <span class="err-msg" *ngIf="hasError(step3Form, 'eduReq')">
                         {{ getError(step3Form, 'eduReq','Education') }}
@@ -584,8 +589,8 @@
                 <!-- Travel -->
                 <div class="field" style="margin-top:5px">
                     <label class="lbl">Travel Requirement <span class="lbl-sub"></span></label>
-                    <nz-select formControlName="travel" nzPlaceHolder="Select travel %"
-                        [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-select formControlName="travel" nzPlaceHolder="Select travel %" [nzOptionOverflowSize]="5"
+                        class="nz-field-select">
                         <nz-option *ngFor="let t of travelOpts" [nzValue]="t?.id" [nzLabel]="t?.name"></nz-option>
                     </nz-select>
                 </div>
@@ -764,8 +769,7 @@
                         </div> -->
                     </div>
                 </div>
-               <div class="banner" *ngIf="banner"
-                    [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
+                <div class="banner" *ngIf="banner" [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
                     {{ banner.text }}
                 </div>
             </div>
@@ -894,6 +898,10 @@
                     <div class="review-row">
                         <span class="review-label">Location</span>
                         <span class="review-val">{{ step0Form.get('location')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Country</span>
+                        <span class="review-val">{{ reviewStep0.country || '—' }}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Work Mode</span>

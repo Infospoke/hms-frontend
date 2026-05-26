@@ -9,6 +9,7 @@ import { HeadingComponent } from '../../../../../../shared/components/heading/he
 import { ApprovalService } from '../../../../../approvals/services/approval-service';
 import { JobService } from '../../../../services/job.service';
 
+// ADD:
 export interface Recruiter {
   id: number;
   name: string;
@@ -16,11 +17,10 @@ export interface Recruiter {
   avatarColor: string;
   email: string;
   role: string;
+  roleId: number;          // ← added
   activeAssignments: number;
   assigned: boolean;
 }
-
-/** Cycles through these colours for avatars */
 const AVATAR_COLORS = [
   '#4F46E5', '#0891B2', '#059669', '#D97706',
   '#DC2626', '#7C3AED', '#DB2777', '#EA580C',
@@ -40,11 +40,12 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   @Input() showBackButton: boolean = false;
   @Input() buttonText: any;
   @Input() buttonUrl: any;
+  @Input() id: any;
 
   // ── Pagination state ──────────────────────────────────────────────────────
   currentPage: number = 1;
-  pageSize:    number = 10;       // Fixed: was incorrectly set to 1
-  totalItems:  number = 0;
+  pageSize: number = 10;
+  totalItems: number = 0;
 
   // ── Data ──────────────────────────────────────────────────────────────────
   filteredRecruiters: Recruiter[] = [];
@@ -55,23 +56,29 @@ export class RecruiterAssignmentStepComponent implements OnInit {
    */
   private assignedIds = new Set<number>();
 
+  /**
+   * Holds user IDs that are already assigned to the job (fetched from API).
+   * These users are excluded from the recruiter list entirely.
+   */
+  private preAssignedIds = new Set<number>();
+
   // ── Filter state (sent to server) ─────────────────────────────────────────
-  private searchTerm:      string   = '';
+  private searchTerm: string = '';
   private selectedRoleIds: number[] = [];
 
   // ── Stored IDs from departments API ──────────────────────────────────────
   departmentIds: number[] = [];
 
-  private jobService      = inject(JobService);
+  private jobService = inject(JobService);
   private approvalService = inject(ApprovalService);
 
   columns: TableColumn[] = [
-    { key: 'select',            label: '',                         width: '48px',  custom: true },
-    { key: 'name',              label: 'Recruiter',                width: '240px', custom: true },
-    { key: 'email',             label: 'Email ID' },
-    { key: 'role',              label: 'Role' },
+    { key: 'select', label: '', width: '48px', custom: true },
+    { key: 'name', label: 'Recruiter', width: '240px', custom: true },
+    { key: 'email', label: 'Email ID' },
+    { key: 'role', label: 'Role' },
     { key: 'activeAssignments', label: 'Total Active Assignments', align: 'center' },
-    { key: 'action',            label: 'Action',                   align: 'center', custom: true },
+    { key: 'action', label: 'Action', align: 'center', custom: true },
   ];
 
   filterDropdowns = roles;
@@ -79,12 +86,12 @@ export class RecruiterAssignmentStepComponent implements OnInit {
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-if (this.form && !this.form.get('selectedRecruiterDetails')) {
-  this.form.addControl(
-    'selectedRecruiterDetails',
-    new FormControl([])
-  );
-}
+    if (this.form && !this.form.get('selectedRecruiterDetails')) {
+      this.form.addControl(
+        'selectedRecruiterDetails',
+        new FormControl([])
+      );
+    }
     this.loadDepartments();
   }
 
@@ -102,16 +109,36 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
 
         this.departmentIds = ids;
 
-        // Load role-dropdown options and first page of recruiters in parallel
         Promise.all([
           this.loadRoles(ids),
-          this.loadRolesAndUsers(),
+          this.loadPreAssignedUsers(),
         ]);
       })
       .catch((err: any) => console.error('loadDepartments error:', err));
   }
 
- 
+  /**
+   * If an ID is present (edit mode), fetch already-assigned user IDs first.
+   * Those users will be excluded from the recruiter table entirely.
+   */
+  private async loadPreAssignedUsers(): Promise<void> {
+    if (this.id) {
+      try {
+        const res: any = await this.jobService.getAssiendUsers(this.id);
+
+        if (res?.responsecode === '00') {
+          const userIds: number[] = res?.data?.userIds ?? [];
+          userIds.forEach(uid => this.preAssignedIds.add(uid));
+        }
+      } catch (err) {
+        console.error('loadPreAssignedUsers error:', err);
+      }
+    }
+
+    // Always load recruiters after — with or without pre-assigned IDs
+    this.loadRolesAndUsers();
+  }
+
   private loadRolesAndUsers(): void {
     const body = this.buildRequestBody();
 
@@ -119,15 +146,13 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
       .then((res: any) => {
         if (res?.responsecode === '00') {
           const data = res.data;
-          // Use totalElements from API response for pagination
-          this.totalItems         = data?.totalElements ?? 0;
+          this.totalItems = data?.totalElements ?? 0;
           this.filteredRecruiters = this.mapApiResponseToRecruiters(data);
         }
       })
       .catch((err: any) => console.error('loadRolesAndUsers error:', err));
   }
 
- 
   private mapApiResponseToRecruiters(data: any): Recruiter[] {
     const departments: any[] = data?.departments ?? [];
     const recruiters: Recruiter[] = [];
@@ -136,16 +161,23 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
     for (const dept of departments) {
       for (const role of (dept.roles ?? [])) {
         for (const user of (role.users ?? [])) {
+
+          // Skip users who are already assigned to this job
+          if (this.preAssignedIds.has(user.userId)) {
+            colorIndex++;
+            continue;
+          }
+
           recruiters.push({
-            id:                user.userId,
-            name:              user.recruiterName,
-            initials:          this.getInitials(user.recruiterName),
-            avatarColor:       AVATAR_COLORS[colorIndex % AVATAR_COLORS.length],
-            email:             user.email,
-            role:              user.roleName,
+            id: user.userId,
+            name: user.recruiterName,
+            initials: this.getInitials(user.recruiterName),
+            avatarColor: AVATAR_COLORS[colorIndex % AVATAR_COLORS.length],
+            email: user.email,
+            role: user.roleName,
+            roleId: role.roleId,     // ← from parent role object
             activeAssignments: user.totalAssignments ?? 0,
-            // Restore assigned state from the persistent Set
-            assigned:          this.assignedIds.has(user.userId),
+            assigned: this.assignedIds.has(user.userId),
           });
           colorIndex++;
         }
@@ -158,7 +190,7 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
   private loadRoles(ids: number[]): void {
     this.jobService.fetchRoles({ departmentsIds: ids })
       .then((res: any) => {
-        const d       = res?.data ?? [];
+        const d = res?.data ?? [];
         const options = this.mapForDepartment(d);
         this.filterDropdowns = this.filterDropdowns.map((item: any) =>
           item.key === 'roles' ? { ...item, options } : item
@@ -169,45 +201,35 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
 
   // ── Request builder ───────────────────────────────────────────────────────
 
-  /**
-   * Builds the server request body matching the required shape:
-   * {
-   *   page, size, sortBy, direction,
-   *   filters: { departmentIds, roleIds, search }
-   * }
-   */
   private buildRequestBody(): object {
     const filters: Record<string, any> = {};
 
-    // Always send department IDs
     if (this.departmentIds.length) {
       filters['departmentIds'] = this.departmentIds;
     }
 
-    // Send selected roleIds to server
     if (this.selectedRoleIds.length) {
       filters['roleIds'] = this.selectedRoleIds;
     }
 
-    // Send search string to server
     if (this.searchTerm.trim()) {
       filters['search'] = this.searchTerm.trim();
     }
 
     return {
-      page:      this.currentPage - 1,   // API is 0-indexed
-      size:      this.pageSize,
-      sortBy:    'id',
+      page: this.currentPage - 1,
+      size: this.pageSize,
+      sortBy: 'id',
       direction: 'DESC',
       filters,
     };
   }
 
- 
+  // ── Filter ────────────────────────────────────────────────────────────────
+
   onFilterChange(event: any): void {
-    this.searchTerm = (event.search || '');
-    console.log(event);
-    const roleValue      = event.filters?.roles;
+    this.searchTerm = event.search || '';
+    const roleValue = event.filters?.roles;
     this.selectedRoleIds = roleValue ? [Number(roleValue)] : [];
     this.currentPage = 1;
     this.loadRolesAndUsers();
@@ -224,7 +246,7 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
 
   get allSelected(): boolean {
     return this.filteredRecruiters.length > 0 &&
-           this.filteredRecruiters.every(r => r.assigned);
+      this.filteredRecruiters.every(r => r.assigned);
   }
 
   get someSelected(): boolean {
@@ -251,10 +273,6 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
     this.syncForm();
   }
 
-  /**
-   * Keeps the cross-page Set in sync after every toggle so that navigating
-   * away and back to a page restores the correct checkbox state.
-   */
   private updateAssignedSet(recruiter: Recruiter): void {
     if (recruiter.assigned) {
       this.assignedIds.add(recruiter.id);
@@ -263,25 +281,25 @@ if (this.form && !this.form.get('selectedRecruiterDetails')) {
     }
   }
 
-  /** Writes the full list of assigned IDs (all pages) into the form control */
-private syncForm(): void {
-  const selectedRecruiters = this.filteredRecruiters
-    .filter(r => r.assigned)
-    .map(r => ({
+  private syncForm(): void {
+    // Collect from ALL assigned IDs (cross-page), not just current page
+    const allAssigned = this.filteredRecruiters.filter(r => r.assigned);
+
+    const selectedRecruiters = allAssigned.map(r => ({
       userId: r.id,
       email: r.email,
       userName: r.name,
-      roleId: '42',
-      roleName: r.role
+      roleId: String(r.roleId),   // ← actual roleId from API
+      roleName: r.role,
     }));
 
-  this.form
-    .get('selectedRecruiterDetails')
-    ?.setValue(selectedRecruiters);
-}
+    this.form
+      .get('selectedRecruiterDetails')
+      ?.setValue(selectedRecruiters);
+  }
 
   get assignedCount(): number {
-    return this.assignedIds.size;    // Counts across all pages
+    return this.assignedIds.size;
   }
 
   // ── Utilities ─────────────────────────────────────────────────────────────
@@ -301,7 +319,5 @@ private syncForm(): void {
     ];
   }
 
-  HandlebackToAssing(){
-    
-  }
+  HandlebackToAssing(): void { }
 }

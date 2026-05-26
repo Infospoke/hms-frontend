@@ -44,16 +44,17 @@ export class ReviewSubmitStepComponent implements OnInit {
   }
 
   // ── Channel master list (mirrors sourcing-strategy) ───────────────────────
+  // ⚠️ Names must exactly match the `name` field in sourcing-strategy.component.ts channels array
   private allChannels: ReviewChannel[] = [
-    { id: 'linkedin', name: 'LinkedIn Jobs', iconText: 'in', iconBg: '#0a66c2', iconColor: '#fff', bestFor: 'Professional & experienced candidates', cost: 'Paid', enabled: false },
-    { id: 'indeed', name: 'Indeed', iconText: 'i', iconBg: '#003a9b', iconColor: '#fff', bestFor: 'Large volume of active job seekers', cost: 'Paid', enabled: false },
-    { id: 'naukri', name: 'Naukri.com', iconText: 'N', iconBg: '#ff7555', iconColor: '#fff', bestFor: 'Active job seekers across India', cost: 'Paid', enabled: false },
-    { id: 'internal', name: 'Internal Career Site', iconText: '🏢', iconBg: '#e0f2fe', iconColor: '#0369a1', bestFor: 'Internal & past applicants', cost: 'Free', enabled: false },
-    { id: 'referral', name: 'Employee Referral', iconText: '👥', iconBg: '#dcfce7', iconColor: '#16a34a', bestFor: 'Quality hires through employee network', cost: 'Internal', enabled: false, referralAmount: 5000 },
-    { id: 'monster', name: 'Monster', iconText: 'M', iconBg: '#6d28d9', iconColor: '#fff', bestFor: 'Diverse talent pool', cost: 'Paid', enabled: false },
-    { id: 'shine', name: 'Shine.com', iconText: 'S', iconBg: '#fbbf24', iconColor: '#fff', bestFor: 'Mid-level professionals', cost: 'Paid', enabled: false },
-    { id: 'timesjobs', name: 'TimesJobs', iconText: 'T', iconBg: '#dc2626', iconColor: '#fff', bestFor: 'Experienced professionals', cost: 'Paid', enabled: false },
-    { id: 'apna', name: 'Apna', iconText: 'A', iconBg: '#0891b2', iconColor: '#fff', bestFor: 'Blue collar & local candidates', cost: 'Free', enabled: false },
+    { id: 'linkedin',  name: 'LinkedIn',             iconText: 'in', iconBg: '#0a66c2', iconColor: '#fff',    bestFor: 'Professional & experienced candidates',  cost: 'Paid',     enabled: false },
+    { id: 'indeed',    name: 'Indeed',               iconText: 'i',  iconBg: '#003a9b', iconColor: '#fff',    bestFor: 'Large volume of active job seekers',      cost: 'Paid',     enabled: false },
+    { id: 'naukri',    name: 'Naukri',               iconText: 'N',  iconBg: '#ff7555', iconColor: '#fff',    bestFor: 'Active job seekers across India',         cost: 'Paid',     enabled: false },
+    { id: 'internal',  name: 'Internal Career Site', iconText: '🏢', iconBg: '#e0f2fe', iconColor: '#0369a1', bestFor: 'Internal & past applicants',              cost: 'Free',     enabled: false },
+    { id: 'referral',  name: 'Employee Referral',    iconText: '👥', iconBg: '#dcfce7', iconColor: '#16a34a', bestFor: 'Quality hires through employee network',  cost: 'Internal', enabled: false, referralAmount: 0 },
+    { id: 'monster',   name: 'Monster',              iconText: 'M',  iconBg: '#6d28d9', iconColor: '#fff',    bestFor: 'Diverse talent pool',                    cost: 'Paid',     enabled: false },
+    { id: 'shine',     name: 'Shine.com',            iconText: 'S',  iconBg: '#fbbf24', iconColor: '#fff',    bestFor: 'Mid-level professionals',                cost: 'Paid',     enabled: false },
+    { id: 'timesjobs', name: 'TimesJobs',            iconText: 'T',  iconBg: '#dc2626', iconColor: '#fff',    bestFor: 'Experienced professionals',              cost: 'Paid',     enabled: false },
+    { id: 'apna',      name: 'Apna',                 iconText: 'A',  iconBg: '#0891b2', iconColor: '#fff',    bestFor: 'Blue collar & local candidates',          cost: 'Free',     enabled: false },
   ];
 
   // ── Recruiter master list (mirrors recruiter-assignment) ──────────────────
@@ -70,14 +71,19 @@ export class ReviewSubmitStepComponent implements OnInit {
   }
 
   private buildChannels(): void {
-    const selectedIds: string[] = this.step3Form?.get('selectedChannels')?.value || [];
-    const referralAmt: number = this.step3Form?.get('referralAmount')?.value || 5000;
+    // step3 stores an array of { channelName: string, postJob: boolean, referralAmount?: string }
+    const savedChannels: { channelName: string; postJob: boolean; referralAmount?: string }[] =
+      this.step3Form?.get('selectedChannels')?.value || [];
 
-    this.reviewChannels = this.allChannels.map(ch => ({
-      ...ch,
-      enabled: selectedIds.includes(ch.id),
-      referralAmount: ch.id === 'referral' ? referralAmt : ch.referralAmount,
-    }));
+    this.reviewChannels = this.allChannels.map(ch => {
+      const saved = savedChannels.find(sc => sc.channelName === ch.name);
+      const isEnabled = saved?.postJob ?? false;
+      const referralAmt = ch.id === 'referral'
+        ? (saved?.referralAmount ? Number(saved.referralAmount) : (ch.referralAmount ?? 0))
+        : ch.referralAmount;
+
+      return { ...ch, enabled: isEnabled, referralAmount: referralAmt };
+    });
   }
 
   private buildRecruiters(): void {

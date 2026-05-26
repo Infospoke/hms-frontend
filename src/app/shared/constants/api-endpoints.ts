@@ -39,7 +39,8 @@ export const API = {
         LOAD_ROLES:`/hms/configurations/roles/by-departments`,
         LOAD_RECRUITERS:`/hms/create-job/get-recruiters`,
         CREATE_JOB_BY_SR_ID : (id : any) => `/hms/create-job/details/${id}`,
-        CREATE_NEW_JOB : '/hms/create-job/new-job'
+        CREATE_NEW_JOB : '/hms/create-job/new-job',
+        CREATE_ASSIGNED_USERS:(id:any)=>`/hms/recruiter/assigned-recruiters/${id}`
     },
     USERS: {
         CREATE: '/hms/user/create',

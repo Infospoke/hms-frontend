@@ -159,3 +159,34 @@ export const approvedSrs: any = [
     ],
   },
 ];
+
+
+
+
+
+export const interview: any = [
+ 
+  {
+    key: 'createdby',
+    label: 'Created By',
+    selected: '',
+    options: [
+
+   
+    ],
+
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',
+    isDateFilter: true,
+    options: [
+      { value: '',        label: 'All Time'    },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];

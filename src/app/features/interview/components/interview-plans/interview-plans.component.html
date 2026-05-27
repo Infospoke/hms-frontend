@@ -1,0 +1,64 @@
+<div class="interview-plans">
+  <app-approval-layout
+    heading="Interview Plans"
+    subHeading="View and manage all interview plans. You can create, edit, duplicate, activate or deactivate plans."
+    [infoTooltip]="false"
+    [cards]="cards"
+    [buttonType]="'Create Plan'"
+    [showBtn]="true"
+    searchPlaceholder="Search plans by name or description"
+    (handle)="handleCreateNewPlan()"
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    (tabChange)="handleTabChange($event)"
+    [dropDownData]="dropDownData"
+    (filtersChange)="filtersChange($event)"
+  >
+  </app-approval-layout>
+
+  <div class=" card-dd">
+    <app-reusable-table
+      [columns]="columns"
+      [data]="pagedPlans"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [showPagination]="true"
+      [showHeader]="true"
+      [sortableColumns]="['planName', 'rounds', 'status', 'createdOn']"
+      emptyMessage="No interview plans found. Create your first plan to get started."
+      [cellTemplate]="customCell"
+      (pageChange)="handlePageChange($event)"
+    ></app-reusable-table>
+  </div>
+</div>
+
+<!-- Custom cell template for Status and Actions columns -->
+<ng-template #customCell let-ctx>
+
+  <!-- Status badge -->
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="ip-status-badge"
+      [class.ip-status-badge--active]="ctx.row['status'] === 'Active'"
+      [class.ip-status-badge--inactive]="ctx.row['status'] === 'Inactive'">
+      <span class="ip-status-dot"></span>
+      {{ ctx.row['status'] }}
+    </span>
+  </ng-container>
+
+  <!-- Description — wraps instead of overflowing -->
+  <ng-container *ngIf="ctx.col.key === 'description'">
+    <span class="ip-description">{{ ctx.row['description'] }}</span>
+  </ng-container>
+
+  <!-- Plan name as a link -->
+  <ng-container *ngIf="ctx.col.key === 'planName'">
+    <span class="ip-plan-name">{{ ctx.row['planName'] }}</span>
+  </ng-container>
+
+  <!-- Actions icons -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <app-common-table-actions [viewPermission]="'INTERVIEW'" [editPermission]="'INTERVIEW'" (view)="handleView(ctx?.row)" (edit)="handleEdit(ctx?.row)"/>
+  </ng-container>
+
+</ng-template>

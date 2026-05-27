@@ -1,4 +1,3 @@
-
 .jad-back {
   display: inline-flex;
   align-items: center;
@@ -488,4 +487,55 @@
 @media (max-width: 600px) {
   .jad-ov-grid { grid-template-columns: 1fr; }
   .jad-section { padding: 1rem; }
+}
+
+// ── Read-only decision banner ─────────────────────────────────────────────────
+.jad-decision-readonly {
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  border: 1.5px solid transparent;
+  margin-bottom: 1.25rem;
+
+  &--accepted {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+
+    .jad-dr-header i { color: #16a34a; }
+    .jad-dr-status   { color: #15803d; }
+  }
+
+  &--rejected {
+    background: #fef2f2;
+    border-color: #fecaca;
+
+    .jad-dr-header i { color: #dc2626; }
+    .jad-dr-status   { color: #b91c1c; }
+  }
+}
+
+.jad-dr-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: .75rem;
+
+  i { font-size: 18px; }
+}
+
+.jad-dr-status {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.jad-dr-comments {
+  margin-top: .5rem;
+
+  .jad-ov-label { margin-bottom: 4px; }
+}
+
+.jad-dr-comment-text {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  white-space: pre-wrap;
 }

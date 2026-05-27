@@ -39,6 +39,14 @@ export class JobApprovalDetailComponent implements OnInit {
   referralAmount: number | null = null;
   departmentName = '';
   businessUnitName = '';
+
+  // ── Existing response (read-only mode when already submitted)
+  existingResponse: { status: string; comments: string } | null = null;
+
+ get hasExistingResponse(): boolean {
+  return this.existingResponse !== null && this.existingResponse.status !== 'PENDING';
+}
+
   private route = inject(ActivatedRoute);
   // ── Decision form
   decision: 'Accepted' | 'Rejected' | null = null;
@@ -87,29 +95,12 @@ export class JobApprovalDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.jobId = this.route.snapshot.params['id'];
-    Promise.all([
-      this.loadDepartments(),
-      this.loadBusinessUnits(),
-    ]).then(() => this.loadJobDetail());
+    this.loadJobDetail();
   }
 
   // ── Data loaders
 
-  private loadDepartments(): Promise<void> {
-    return this.approvalService.departments()
-      .then((res: any) => {
-        if (res?.data) this.departments = res.data;
-      })
-      .catch(() => { });
-  }
-
-  private loadBusinessUnits(): Promise<void> {
-    return this.userService.getBussinessUnits()
-      .then((res: any) => {
-        if (res?.data) this.businessUnits = res.data;
-      })
-      .catch(() => { });
-  }
+ 
 
   private loadJobDetail(): void {
     this.isLoading = true;
@@ -134,10 +125,8 @@ export class JobApprovalDetailComponent implements OnInit {
     this.overview = data.jobOverview;
 
     // Resolve names from lookup arrays
-    this.departmentName = this.departments
-      .find(d => d.id === this.overview?.departmentId)?.name ?? '—';
-    this.businessUnitName = this.businessUnits
-      .find(b => b.id === this.overview?.businessUnitId)?.name ?? '—';
+    this.departmentName =this.overview?.department ?? '-';
+    this.businessUnitName = this.overview.businessUnit??'-';
 
     // Job description
     this.jobDescription = data.jobDescription?.description ?? '';
@@ -168,6 +157,18 @@ export class JobApprovalDetailComponent implements OnInit {
         iconBg: '#16A34A',
         // type: 'Internal',
       });
+    }
+
+    // Existing response (already-submitted decision)
+    const myResponse = data.recruiters?.myResponse;
+    if (Array.isArray(myResponse) && myResponse.length > 0) {
+      const latest = myResponse[myResponse.length - 1];
+      if (latest?.status && latest.status !== 'PENDING') {
+        this.existingResponse = {
+          status: latest.status,
+          comments: latest.comments ?? '',
+        };
+      }
     }
 
     // Recruiters

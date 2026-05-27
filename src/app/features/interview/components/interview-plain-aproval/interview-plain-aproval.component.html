@@ -1,0 +1,70 @@
+<div class="interview-plans">
+  <app-approval-layout
+    heading="Interview Plan Approvals"
+    subHeading="Review and take action on interview plans awaiting your approval."
+    [infoTooltip]="false"
+    searchPlaceholder="Search plans by name or description"
+  >
+  </app-approval-layout>
+
+  <div class="ipa-table-wrapper">
+    <app-reusable-table
+      [columns]="columns"
+      [data]="pagedPlans"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [showPagination]="true"
+      [showHeader]="true"
+      emptyMessage="No approval requests found."
+      [cellTemplate]="approvalCell"
+      (pageChange)="handlePageChange($event)"
+    ></app-reusable-table>
+  </div>
+</div>
+
+<!-- Custom cell template -->
+<ng-template #approvalCell let-ctx>
+
+  <!-- Plan Name + type sub-label -->
+  <ng-container *ngIf="ctx.col.key === 'planName'">
+    <div class="ipa-plan">
+      <span class="ipa-plan__name">{{ ctx.row['planName'] }}</span>
+      <span class="ipa-plan__type">{{ ctx.row['planType'] }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Requested By + role sub-label -->
+  <ng-container *ngIf="ctx.col.key === 'requestedBy'">
+    <div class="ipa-requester">
+      <span class="ipa-requester__name">{{ ctx.row['requestedBy'] }}</span>
+      <span class="ipa-requester__role">{{ ctx.row['requestedByRole'] }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Status badge -->
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="ipa-status-badge"
+      [class.ipa-status-badge--pending]="ctx.row['status'] === 'Pending'"
+      [class.ipa-status-badge--approved]="ctx.row['status'] === 'Approved'"
+      [class.ipa-status-badge--rejected]="ctx.row['status'] === 'Rejected'">
+      {{ ctx.row['status'] }}
+    </span>
+  </ng-container>
+
+  <!-- Action: Review & Approve button + arrow -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <div class="ipa-action">
+      <button class="ipa-review-btn"
+        (click)="handleReviewApprove(ctx.row); $event.stopPropagation()">
+        <i class="fa-regular fa-shield-check"></i>
+        Review &amp; Approve
+      </button>
+      <button class="ipa-arrow-btn"
+        (click)="handleRowArrow(ctx.row); $event.stopPropagation()">
+        <!-- <i class="fa-regular fa-chevron-right"></i> -->
+      </button>
+    </div>
+  </ng-container>
+
+</ng-template>

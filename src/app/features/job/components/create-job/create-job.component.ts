@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { InterviewPlanStepComponent } from './steps/interview-plan-step/interview-plan-step.component';;
 
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { JobDetailsStepComponent } from './steps/job-details/job-details.component';
@@ -30,6 +31,7 @@ const SR_ID_KEY = 'create_job_sr_id';
     SourcingStrategyStepComponent,
     RecruiterAssignmentStepComponent,
     ReviewSubmitStepComponent,
+    InterviewPlanStepComponent,
   ],
   templateUrl: './create-job.component.html',
   styleUrl: './create-job.component.scss',
@@ -48,13 +50,14 @@ export class CreateJobComponent implements OnInit {
   private srDepartmentId: number | string = '';
   private srBusinessUnitId: number | string = '';
 
-  readonly steps = [
-    { title: 'Job Details' },
-    { title: 'AI Job Description' },
-    { title: 'Sourcing Strategy' },
-    { title: 'Recruiter Assignment' },
-    { title: 'Review & Submit' },
-  ];
+readonly steps = [
+  { title: 'Job Details' },
+  { title: 'AI Job Description' },
+  { title: 'Sourcing Strategy' },
+  { title: 'Recruiter Assignment' },
+  { title: 'Interview Plan' },       // ← add this
+  { title: 'Review & Submit' },
+];
 
   get nextButtonLabel(): string {
     if (this.currentStep === this.steps.length - 1) return 'Submit';
@@ -74,7 +77,8 @@ export class CreateJobComponent implements OnInit {
   get step2Form(): FormGroup { return this.form.get('step2') as FormGroup; }
   get step3Form(): FormGroup { return this.form.get('step3') as FormGroup; }
   get step4Form(): FormGroup { return this.form.get('step4') as FormGroup; }
-  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
   get currentStepForm(): FormGroup { return this.form.get('step' + (this.currentStep + 1)) as FormGroup; }
 
   ngOnInit(): void {
@@ -101,7 +105,8 @@ export class CreateJobComponent implements OnInit {
       step2: this.fb.group({}),
       step3: this.fb.group({}),
       step4: this.fb.group({}),
-      step5: this.fb.group({}),
+      step5: this.fb.group({}),   // ← new: interview plan
+      step6: this.fb.group({}), 
     });
 
     // Persist SR ID to localStorage when coming fresh from signal
@@ -194,6 +199,7 @@ export class CreateJobComponent implements OnInit {
     const step2 = this.step2Form.getRawValue();
     const step3 = this.step3Form.getRawValue();
     const step4 = this.step4Form.getRawValue();
+    const step5 = this.step5Form.getRawValue();
 
     const referralChannel = step3.selectedChannels?.find((c: any) =>
       c.channelName?.toLowerCase().includes('referral')
@@ -241,6 +247,9 @@ export class CreateJobComponent implements OnInit {
         srId:                srId,
         recruiterInfoDtos:   step4.selectedRecruiterDetails || [],
       },
+      interviewPlanRequest: {
+  planId: step5.planId
+}
     };
 
     this.jobService.createNewJob(payload)

@@ -12,14 +12,14 @@
     [activeTab]="activeTab"
     (tabChange)="handleTabChange($event)"
     [dropDownData]="dropDownData"
-    (filtersChange)="filtersChange($event)"
+    (filterChange)="filtersChange($event)"
   >
   </app-approval-layout>
 
-  <div class=" card-dd">
+  <div class="card-dd">
     <app-reusable-table
       [columns]="columns"
-      [data]="pagedPlans"
+      [data]="allPlans"
       [totalItems]="totalItems"
       [pageSize]="pageSize"
       [currentPage]="currentPage"
@@ -40,9 +40,10 @@
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="ip-status-badge"
       [class.ip-status-badge--active]="ctx.row['status'] === 'Active'"
-      [class.ip-status-badge--inactive]="ctx.row['status'] === 'Inactive'">
+      [class.ip-status-badge--inactive]="ctx.row['status'] === 'Inactive'"
+      [class.ip-status-badge--in-progress]="ctx.row['status'] === 'InProgress'">
       <span class="ip-status-dot"></span>
-      {{ ctx.row['status'] }}
+      {{ ctx.row['status'] === 'In_Progress' ? 'In Progress' : ctx.row['status'] }}
     </span>
   </ng-container>
 
@@ -56,9 +57,21 @@
     <span class="ip-plan-name">{{ ctx.row['planName'] }}</span>
   </ng-container>
 
+   <ng-container *ngIf="ctx.col.key === 'createdOn'">
+    <div class="cell-date">
+        <span class="cell-date-main">{{ formatDate(ctx.row['createdOn']) }}</span>
+        <span class="cell-date-sub">{{ formatTime(ctx.row['createdOn']) }}</span>
+      </div>
+  </ng-container>
+
   <!-- Actions icons -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
-    <app-common-table-actions [viewPermission]="'INTERVIEW'" [editPermission]="'INTERVIEW'" (view)="handleView(ctx?.row)" (edit)="handleEdit(ctx?.row)"/>
+    <app-common-table-actions
+      [viewPermission]="'INTERVIEW:INTERVIEWPLAN:VIEW'"
+      [editPermission]="'INTERVIEW:INTERVIEWPLAN:EDIT'"
+      (view)="handleView(ctx?.row)"
+      (edit)="handleEdit(ctx?.row)"
+    />
   </ng-container>
 
 </ng-template>

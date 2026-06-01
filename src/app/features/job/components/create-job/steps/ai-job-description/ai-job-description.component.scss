@@ -62,9 +62,11 @@
   line-height: 1.5;
 }
 
-// ── Header action buttons ─────────────────────────────────────────────────────
+
 .ajd-actions {
   display: flex;
+  justify-content: flex-end;
+  margin-right: 50px;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
@@ -98,7 +100,10 @@
     background: #fff;
     color: var(--color-text);
     border-color: var(--color-border);
-    &:hover:not(:disabled) { background: #f8fafc; border-color: var(--color-border-strong); }
+    &:hover:not(:disabled) {
+      background: #f8fafc;
+      border-color: var(--color-border-strong);
+    }
   }
 }
 
@@ -115,7 +120,7 @@
   background: #fff;
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
   min-width: 200px;
   padding: 6px;
 }
@@ -135,7 +140,11 @@
   border-radius: 6px;
   text-align: left;
 
-  i { color: var(--color-text-secondary); font-size: 12px; width: 14px; }
+  i {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    width: 14px;
+  }
 
   &:hover { background: var(--color-bg-hover); }
 }
@@ -148,28 +157,33 @@
   justify-content: center;
   padding: 60px 32px;
   text-align: center;
-  gap: 10px;
-}
+  gap: 0;
 
-.ajd-empty__icon {
-  font-size: 44px;
-  color: #bfdbfe;
-  margin-bottom: 8px;
-}
+  &__icon-wrap {
+    margin-bottom: 18px;
 
-.ajd-empty__title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
-}
+    svg { display: block; }
+  }
 
-.ajd-empty__sub {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin: 0;
-  max-width: 320px;
-  line-height: 1.6;
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a2a4a;
+    margin: 0 0 8px;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: #6b7a99;
+    max-width: 320px;
+    line-height: 1.65;
+    margin: 0;
+
+    strong {
+      color: #1a2a4a;
+      font-weight: 600;
+    }
+  }
 }
 
 // ── Generating shimmer ────────────────────────────────────────────────────────
@@ -183,13 +197,18 @@
 .ajd-shimmer {
   height: 14px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+  background: linear-gradient(
+    90deg,
+    #f0f4f8 25%,
+    #e2e8f0 50%,
+    #f0f4f8 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   width: 100%;
 
-  &--sm  { width: 60%; }
-  &--lg  { height: 80px; }
+  &--sm { width: 60%; }
+  &--lg { height: 80px; }
 }
 
 @keyframes shimmer {
@@ -244,7 +263,6 @@
   transition: background 0.15s ease;
 
   &:hover { background: #e2e8f0; }
-
   &--active { background: #dbeafe; color: var(--color-primary); }
   &--italic { font-style: italic; }
   &--underline { text-decoration: underline; }
@@ -262,12 +280,150 @@
 
   &:focus { outline: none; }
 
+  // ── Styles for generated JD content rendered inside the editor ─────────
   ::ng-deep {
+
+    // Basic editor elements
     h2 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--color-text); }
     h3 { font-size: 14px; font-weight: 600; margin: 14px 0 6px; }
     p  { margin: 0 0 10px; }
     ul, ol { padding-left: 22px; margin: 0 0 10px; }
     li { margin-bottom: 4px; }
+
+    // ── JD root wrapper ──────────────────────────────────────────────────
+    .jd-root {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--color-text);
+    }
+
+    // ── Meta bar (location, mode, employment …) ──────────────────────────
+    .jd-meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      padding: 10px 14px;
+      background: #f4f7ff;
+      border: 1px solid #dce6fb;
+      border-radius: 8px;
+      margin-bottom: 22px;
+    }
+
+    .jd-meta__item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12.5px;
+    }
+
+    .jd-meta__label {
+      color: #6b7a99;
+      font-weight: 500;
+    }
+
+    .jd-meta__value {
+      color: #1e2d5a;
+      font-weight: 600;
+    }
+
+    // ── Section blocks ────────────────────────────────────────────────────
+    .jd-section {
+      margin-bottom: 22px;
+    }
+
+    .jd-section__title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #1e2d5a;
+      margin: 0 0 10px;
+      padding-bottom: 7px;
+      border-bottom: 1.5px solid #e8edf6;
+    }
+
+    // .jd-section__icon {
+    //   width: 24px;
+    //   height: 24px;
+    //   border-radius: 6px;
+    //   background: #eff3ff;
+    //   display: inline-flex;
+    //   align-items: center;
+    //   justify-content: center;
+    //   flex-shrink: 0;
+
+    //   i {
+    //     font-size: 11px;
+    //     color: #121212;
+    //   }
+    // }
+
+    // ── Summary paragraph ─────────────────────────────────────────────────
+    .jd-summary {
+      font-size: 13.5px;
+      color: #3a4a6b;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    // ── Bullet list ───────────────────────────────────────────────────────
+    .jd-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        font-size: 13.5px;
+        color: #3a4a6b;
+        line-height: 1.6;
+        margin: 0;
+
+        &::before {
+          content: '';
+          flex-shrink: 0;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #2e2e2e;
+          margin-top: 7px;
+        }
+      }
+    }
+
+    // ── Skill tags ────────────────────────────────────────────────────────
+    .jd-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .jd-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 11px;
+      border-radius: 20px;
+      line-height: 1.4;
+
+      &--must {
+        background: #e8eeff;
+        color: #2d4fd6;
+        border: 1px solid #c5d0f9;
+      }
+
+      &--nice {
+        background: #fff5e6;
+        color: #9a5f00;
+        border: 1px solid #fcdfa0;
+      }
+    }
   }
 }
 
@@ -450,7 +606,7 @@
   background: #fff;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
   min-width: 160px;
   padding: 4px;
 }

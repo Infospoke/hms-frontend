@@ -84,12 +84,12 @@
 
         <!-- Requested On: date on top, time below -->
         <ng-container *ngIf="ctx.col.key === 'dateName'">
-            <div class="cell-date">
+            <div class="">
                 <span class="cell-date-main">{{ formatDate(ctx?.row?.dateName) }}</span>
                 <span class="cell-date-sub">{{ formatTime(ctx?.row?.dateName) }}</span>
             </div>
         </ng-container>
-
+cell-date
         <!-- Openings -->
         <ng-container *ngIf="ctx.col.key === 'openings'">
             <span class="cell-openings">{{ ctx.row.openings }}</span>

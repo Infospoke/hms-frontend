@@ -101,3 +101,11 @@ span {
   background: var(--color-primary);
   color: #fff;
 }
+// Native inputs disabled
+input:disabled {
+  background: #ffffff !important;
+  color: #767575 !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}

@@ -97,6 +97,8 @@ export class CreateJobComponent implements OnInit {
         notes: ['', Validators.maxLength(250)],
         educationRequirement: ['', Validators.maxLength(100)],
         country: ['', Validators.maxLength(50)],
+        certificate:['',],
+        languages:[''],
       }),
       step2: this.fb.group({}),
       step3: this.fb.group({}),
@@ -150,6 +152,8 @@ export class CreateJobComponent implements OnInit {
               niceToHaveSkills:     data.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
               educationRequirement: data.educationRequirement || '',
               country:              data.country             || '',
+              certificate:data?.certificationsRequired,
+              languages:data?.languages || ''
             });
           }
           return;
@@ -230,6 +234,8 @@ export class CreateJobComponent implements OnInit {
         additionalNotes:      step1.notes,
         educationRequirement: step1.educationRequirement,
         country:              step1.country,
+        certificationsRequired:step1.certificate,
+        languages:step1?.languages
       },
       jobDescriptionRequest: { description: step2.jobDescription || '' },
       sourcingChannelRequest: {

@@ -1,0 +1,529 @@
+// ── CSS custom properties ─────────────────────────────────────────────────────
+:host {
+  --cr-blue:        #2563eb;
+  --cr-blue-light:  #eff6ff;
+  --cr-blue-dark:   #1d4ed8;
+  --cr-border:      #e2e8f0;
+  --cr-bg-muted:    #f8fafc;
+  --cr-bg-head:     #f1f5f9;
+  --cr-text:        #1e293b;
+  --cr-text-muted:  #64748b;
+  --cr-red:         #ef4444;
+  --cr-red-light:   #fee2e2;
+  --cr-input-h:     36px;   // ← single source of truth for all input/select heights
+}
+
+// ── Page wrapper ──────────────────────────────────────────────────────────────
+.cr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Section ───────────────────────────────────────────────────────────────────
+.cr-section {
+  background: #ffffff;
+  border: 1px solid var(--cr-border);
+  border-radius: 10px;
+  overflow: hidden;
+
+  &--eval {
+    padding: 20px 24px 24px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    gap: 12px;
+  }
+
+  &__title-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 24px 16px;
+  }
+
+  // when title-group is inside header, remove its padding
+  &__header &__title-group {
+    padding: 0;
+  }
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--cr-blue-light);
+    color: var(--cr-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &__title {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cr-text);
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 12px;
+    color: var(--cr-text-muted);
+  }
+}
+
+// ── Header right group (counter + button) ────────────────────────────────────
+.cr-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cr-round-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cr-text-muted);
+  background: var(--cr-bg-head);
+  border: 1px solid var(--cr-border);
+  border-radius: 20px;
+  padding: 3px 10px;
+
+  i { font-size: 11px; }
+
+  &--max {
+    color: #b45309;
+    background: #fffbeb;
+    border-color: #fde68a;
+  }
+}
+
+// ── Max rounds notice banner ──────────────────────────────────────────────────
+.cr-max-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 24px 12px;
+  padding: 8px 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #92400e;
+
+  i { color: #d97706; }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.cr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: var(--cr-input-h);    // same height as inputs
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &--outline {
+    background: #ffffff;
+    border: 1.5px solid var(--cr-blue);
+    color: var(--cr-blue);
+
+    &:hover { background: var(--cr-blue-light); }
+  }
+
+  &--primary {
+    background: var(--cr-blue);
+    color: #ffffff;
+    border: 1.5px solid var(--cr-blue);
+
+    &:hover { background: var(--cr-blue-dark); border-color: var(--cr-blue-dark); }
+  }
+
+  &--ghost {
+    background: transparent;
+    border: 1.5px solid var(--cr-border);
+    color: var(--cr-text-muted);
+
+    &:hover { background: var(--cr-bg-muted); color: var(--cr-text); }
+  }
+}
+
+// ── Required asterisk ─────────────────────────────────────────────────────────
+.cr-required {
+  color: var(--cr-red);
+  margin-left: 2px;
+}
+
+// ── Shared input / select sizing ──────────────────────────────────────────────
+.cr-input,
+.cr-select {
+  height: var(--cr-input-h);
+  width: 100%;           // fill the column
+  min-width: 0;          // allow flex shrink
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-size: 13px;
+  color: var(--cr-text);
+  background: #fff;
+  border: 1px solid var(--cr-border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+
+  &:focus {
+    border-color: var(--cr-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  &::placeholder { color: #94a3b8; }
+}
+
+// Remove number arrows (Chrome/Safari/Edge)
+.cr-input[type="number"]::-webkit-inner-spin-button,
+.cr-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.cr-input[type="number"] { -moz-appearance: textfield; }
+
+// ── Select wrapper (adds custom chevron) ──────────────────────────────────────
+.cr-select-wrap {
+  position: relative;
+  width: 100%;
+
+  .cr-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 30px;     // room for chevron
+    cursor: pointer;
+  }
+}
+
+.cr-select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--cr-text-muted);
+  pointer-events: none;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.cr-table {
+  width: 100%;
+  border-top: 1px solid var(--cr-border);
+}
+
+.cr-table__head {
+  display: flex;
+  align-items: center;
+  background: var(--cr-bg-head);
+  border-bottom: 1px solid var(--cr-border);
+  padding: 0 16px;
+
+  .cr-col {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 10px 8px;
+  }
+}
+
+// ── Column widths ─────────────────────────────────────────────────────────────
+.cr-col {
+  &--drag      { width: 32px;   flex-shrink: 0; }
+  &--order     { width: 64px;   flex-shrink: 0; }
+  &--stage     { flex: 1;       min-width: 130px; padding-right: 6px; }
+  &--type      { flex: 1.3;     min-width: 160px; padding-right: 6px; }
+  &--mode      { flex: 0.9;     min-width: 120px; padding-right: 6px; }
+  &--mandatory { width: 88px;   flex-shrink: 0; text-align: center; }
+  &--actions   { width: 56px;   flex-shrink: 0; text-align: center; }
+}
+
+// ── Row ───────────────────────────────────────────────────────────────────────
+.cr-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  transition: background 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  cursor: default;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: var(--cr-bg-muted); }
+
+  &--dragging {
+    opacity: 0.45;
+    background: var(--cr-blue-light) !important;
+  }
+
+  &--dragover {
+    background: var(--cr-blue-light) !important;
+    box-shadow: inset 0 2px 0 var(--cr-blue);
+  }
+
+  .cr-col { padding: 5px 8px; }
+}
+
+// ── Order badge ───────────────────────────────────────────────────────────────
+.cr-order-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--cr-blue-light);
+  color: var(--cr-blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+// ── Drag handle ───────────────────────────────────────────────────────────────
+.cr-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #cbd5e1;
+  cursor: grab;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: color 0.12s;
+
+  &:hover { color: #94a3b8; }
+  &:active { cursor: grabbing; }
+}
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+.cr-toggle {
+  display: inline-flex;
+  cursor: pointer;
+
+  input { display: none; }
+
+  &__track {
+    display: flex;
+    align-items: center;
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: #cbd5e1;
+    padding: 2px;
+    transition: background 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  &__thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+  }
+
+  &--on .cr-toggle__track { background: var(--cr-blue); }
+  &--on .cr-toggle__thumb { transform: translateX(18px); }
+}
+
+// ── Delete button ─────────────────────────────────────────────────────────────
+.cr-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--cr-red);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s;
+
+  &:hover { background: var(--cr-red-light); }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.cr-empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: #94a3b8;
+
+  &__icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+
+    strong { color: var(--cr-text-muted); }
+  }
+}
+
+// ── Evaluation grid ───────────────────────────────────────────────────────────
+.cr-eval-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+  margin-top: 16px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.cr-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cr-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.cr-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px 24px;
+}
+
+// ── View mode ─────────────────────────────────────────────────────────────────
+.cr-page--view {
+  margin: 0;
+  background: transparent;
+
+  .cr-section {
+    border: none;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  // Tighter header padding in view
+  .cr-section__header,
+  .cr-section__title-group {
+    padding-top: 14px;
+    padding-bottom: 10px;
+  }
+
+  // Compact eval section
+  .cr-section--eval {
+    padding: 14px 20px 16px;
+  }
+
+  // ── Fields look like plain text, no chrome ──
+  .cr-input,
+  .cr-select {
+    pointer-events: none;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: #1e293b;
+    cursor: default;
+    padding-left: 0;
+    font-weight: 500;
+  }
+
+  .cr-select-wrap { width: auto; }
+  .cr-select-arrow { display: none; }
+
+  // ── Hide drag column entirely ──
+  .cr-col--drag    { display: none; }
+
+  // ── Compact rows ──
+  .cr-row {
+    cursor: default;
+    padding: 4px 16px;
+
+    &:hover { background: transparent; }
+
+    .cr-col { padding: 3px 8px; }
+  }
+
+  // ── Tighter table head ──
+  .cr-table__head .cr-col {
+    padding: 7px 8px;
+  }
+
+  // ── Toggle non-interactive ──
+  .cr-toggle {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  // ── Eval grid compact ──
+  .cr-eval-grid {
+    margin-top: 10px;
+    gap: 10px 24px;
+  }
+
+  // ── Hidden elements ──
+
+  .cr-btn--outline  { display: none; }
+  .cr-required      { display: none; }
+  .cr-round-counter { display: none; }
+  .cr-max-notice    { display: none; }
+  .cr-header-right  { display: none; }
+}
+
+
+/* Evaluation view mode */
+.cr-eval-view {
+  display: flex;
+  gap: 3rem;
+  padding: 1.25rem 0 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cr-eval-view__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cr-eval-view__label {
+  font-size: 13px;
+  color: var(--color-text-secondary, #888);
+  font-weight: 400;
+}
+
+.cr-eval-view__value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1a1a1a);
+}

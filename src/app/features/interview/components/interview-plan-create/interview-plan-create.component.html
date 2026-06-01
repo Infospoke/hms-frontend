@@ -1,0 +1,102 @@
+<div class="ipc-page">
+
+  <app-heading
+    [heading]="'Create Interview Plan'"
+    [showBackButton]="true"
+    [backButtonUrl]="'/interview/interview-plan'"
+    [buttonText]="'Back to Interview Plans'"
+  />
+
+  
+
+  <!-- ── Plan Details card ───────────────────────────────────────────────── -->
+  <section class="ipc-card">
+    <div class="ipc-card__header">
+      <div class="ipc-section-icon">
+        <i class="fas fa-file-lines"></i>
+      </div>
+      <div>
+        <h2 class="ipc-section-title">Plan Details</h2>
+        <p class="ipc-section-sub">Provide the basic information for this interview plan.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="planForm" novalidate autocomplete="off">
+      <div class="ipc-form-grid">
+
+        <!-- ── Plan Name ──────────────────────────────────────────────────── -->
+        <div class="ipc-form-group">
+          <label class="ipc-label" for="planName">
+            Plan Name <span class="ipc-required">*</span>
+          </label>
+          <input
+            id="planName"
+            class="ipc-input"
+            [class.ipc-input--error]="planName.invalid && (planName.touched || planName.dirty)"
+            [class.ipc-input--success]="planName.valid && (planName.touched || planName.dirty)"
+            type="text"
+            formControlName="planName"
+            placeholder="e.g. Two Round Interview"
+          />
+
+          <!-- character counter -->
+          <span class="ipc-char-count" [class.ipc-char-count--warn]="planName.value?.length >= MAX_PLAN_NAME - 10">
+            {{ planName.value?.length ?? 0 }} / {{ MAX_PLAN_NAME }}
+          </span>
+
+          <!-- validation message -->
+          <span
+            class="ipc-field-error"
+            *ngIf="getPlanNameError()"
+            role="alert"
+          >
+            <i class="fas fa-triangle-exclamation"></i>
+            {{ getPlanNameError() }}
+          </span>
+        </div>
+
+        <!-- ── Description ────────────────────────────────────────────────── -->
+        <div class="ipc-form-group">
+          <label class="ipc-label" for="description">Description</label>
+          <textarea
+            id="description"
+            class="ipc-textarea"
+            [class.ipc-input--error]="description.invalid && (description.touched || description.dirty)"
+            rows="3"
+            formControlName="description"
+            placeholder="Brief description of this interview plan…"
+          ></textarea>
+
+          <!-- character counter -->
+          <span
+            class="ipc-char-count"
+            [class.ipc-char-count--warn]="descLength >= MAX_DESC - 50"
+            [class.ipc-char-count--error]="descLength >= MAX_DESC"
+          >
+            {{ descLength }} / {{ MAX_DESC }}
+          </span>
+
+          <!-- validation message -->
+          <span
+            class="ipc-field-error"
+            *ngIf="getDescriptionError()"
+            role="alert"
+          >
+            <i class="fas fa-triangle-exclamation"></i>
+            {{ getDescriptionError() }}
+          </span>
+        </div>
+
+      </div>
+    </form>
+  </section>
+
+  <!-- ── Configure Rounds (child component) ─────────────────────────────── -->
+  <app-configure-rounds
+    [initialRounds]="rounds"
+    [initialEvaluation]="evaluation"
+    (savePlan)="handleRoundsSaved($event)"
+    (discard)="onDiscard()"
+  ></app-configure-rounds>
+
+</div>

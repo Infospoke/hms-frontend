@@ -78,6 +78,9 @@
 
 --transition-fast: all 0.12s ease;
 --transition-base: all 0.18s ease;
+
+--color-border-tertiary: #e5e7eb;
+--color-background-secondary: #f9fafb;
 }
 
 @import 'ng-zorro-antd/ng-zorro-antd.min.css';
@@ -550,17 +553,17 @@ select {
   }
 }
 
-input:disabled,
-select:disabled {
-  background-color: #f3f4f6;
-  color: #6b7280;
-  border-color: #e5e7eb;
-  cursor: not-allowed;
-  opacity: 1;
-  -webkit-text-fill-color: #6b7280;
+// input:disabled,
+// select:disabled {
+//   background-color: #f3f4f6;
+//   color: #6b7280;
+//   border-color: #e5e7eb;
+//   cursor: not-allowed;
+//   opacity: 1;
+//   -webkit-text-fill-color: #6b7280;
   
-  appearance: none;
-}
+//   appearance: none;
+// }
 .card-dd{
   margin-top: 10px;
 }
@@ -758,7 +761,7 @@ nz-select.ng-invalid.ng-touched nz-select-top-control {
 
 // ── Disabled ─────────────────────────────────────────────────────────────────
 nz-select.ant-select-disabled nz-select-top-control {
-  background-color: #f3f4f6 !important;
+  background-color: #c8c8c8 !important;
   border-color: #e5e7eb !important;
   cursor: not-allowed !important;
   opacity: 1 !important;
@@ -849,4 +852,23 @@ nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
 // ── Hovered option ───────────────────────────────────────────────────────────
 .ant-select-dropdown .ant-select-item-option-active {
   background-color: #f3f4f6 !important;
+}
+
+
+
+.cell-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .cell-date-main {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .cell-date-sub {
+    font-size: 11px;
+    color: #9ca3af;
+  }
 }

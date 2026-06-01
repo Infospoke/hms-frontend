@@ -1,18 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApprovalLayoutComponent } from '../../../approvals/components/approval-layout/approval-layout.component';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
-
-export interface PlanApproval {
-  id: number;
-  planName: string;
-  planType: string;
-  rounds: number;
-  requestedBy: string;
-  requestedByRole: string;
-  requestedOn: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-}
+import { chainOptions } from '../../../../shared/constants/reusbale-filter';
+import { InterviewServiceService } from '../../service/interview-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-interview-plain-aproval',
@@ -21,46 +13,99 @@ export interface PlanApproval {
   templateUrl: './interview-plain-aproval.component.html',
   styleUrl: './interview-plain-aproval.component.scss',
 })
-export class InterviewPlainAprovalComponent {
-
+export class InterviewPlainAprovalComponent implements OnInit {
+  private activeFilters: Record<string, string> = {dateFilter: "thisWeek"};
+  private interviewService=inject(InterviewServiceService);
   columns: TableColumn[] = [
     { key: 'planName',     label: 'Plan Name',     width: '220px',  custom: true },
     { key: 'rounds',       label: 'Rounds',        width: '80px',   align: 'center' },
     { key: 'requestedBy',  label: 'Requested By',  width: '170px',  custom: true },
-    { key: 'requestedOn',  label: 'Requested On',  width: '170px' },
-    { key: 'status',       label: 'Status',        width: '100px',  align: 'center', custom: true },
-    { key: 'action',       label: 'Action',        width: '180px',  align: 'center', custom: true },
+    { key: 'requestedOn',  label: 'Requested On',  width: '170px',  custom: true  },
+    { key: 'status',       label: 'Status',        width: '120px',  align: 'center', custom: true },
+    { key: 'action',       label: 'Action',        width: '120px',  align: 'center', custom: true },
   ];
 
-  allPlans: PlanApproval[] = [
-    { id: 1, planName: 'Data Science Interview Plan',    planType: 'Technical + HR + Managerial', rounds: 3, requestedBy: 'Rohit Sharma',  requestedByRole: 'HR Business Partner',  requestedOn: '20 May 2024, 11:20 AM', status: 'Pending' },
-    { id: 2, planName: 'Sales Executive Interview Plan', planType: 'HR + Technical',              rounds: 2, requestedBy: 'Priya Mehta',   requestedByRole: 'Talent Acquisition',   requestedOn: '20 May 2024, 10:45 AM', status: 'Pending' },
-    { id: 3, planName: 'Product Manager Plan',           planType: 'Technical + Case Study + HR', rounds: 3, requestedBy: 'Ankit Verma',   requestedByRole: 'HR Business Partner',  requestedOn: '19 May 2024, 04:30 PM', status: 'Pending' },
-    { id: 4, planName: 'Backend Developer Plan',         planType: 'Technical + HR',              rounds: 2, requestedBy: 'Neha Kapoor',   requestedByRole: 'Talent Acquisition',   requestedOn: '19 May 2024, 02:15 PM', status: 'Pending' },
-    { id: 5, planName: 'UI/UX Designer Plan',            planType: 'Portfolio Review + HR',       rounds: 2, requestedBy: 'Karan Singh',   requestedByRole: 'HR Business Partner',  requestedOn: '18 May 2024, 05:10 PM', status: 'Pending' },
-  ];
-
+  allPlans:any[] = [];
+  totalPages = 0;
   pageSize    = 10;
   currentPage = 1;
+  chainOptions=chainOptions;
 
-  get pagedPlans(): PlanApproval[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.allPlans.slice(start, start + this.pageSize);
+  private router=inject(Router);
+
+  ngOnInit(): void {
+    this.loadData();
   }
-
-  get totalItems(): number {
-    return this.allPlans.length;
+  private async loadData(): Promise<void> {
+    const payload = this.buildRequestPayload();
+    const res:any=await this.interviewService.plansListForApproval(payload);
+    if(res?.responsecode=='00'){
+      this.allPlans=res?.data?.content ?? [];
+      this.totalPages=res?.data?.totalPages ?? 0;
+    }
   }
-
   handlePageChange(page: number): void {
     this.currentPage = page;
+    this.loadData();
   }
 
-  handleReviewApprove(plan: PlanApproval): void {
-    console.log('Review & Approve:', plan);
+  handleReviewApprove(plan: any): void {
+    console.log(plan);
+    this.router.navigateByUrl(`/interview/interview-approval-plans/review-and-approve/${plan.id}`)
   }
 
-  handleRowArrow(plan: PlanApproval): void {
-    console.log('Navigate to plan:', plan);
+  filtersResponse(event:any):void{
+    this.activeFilters=event;
+    this.currentPage=1;
+    this.loadData();
+  }
+
+   private buildRequestPayload(): object {
+    const filters: Record<string, string> = {};
+    console.log(this.activeFilters);
+
+    const search = this.activeFilters?.['chainName']?.trim();
+    if (search) {
+      filters['search'] = search;
+    }
+
+   
+     if (this.activeFilters?.['createdBy']) {
+      filters['createdBy'] = this.activeFilters?.['createdBy']; 
+    }
+    const dateFilter = this.activeFilters?.['dateFilter'];
+    if (dateFilter) {
+      filters['dateFilter'] = dateFilter;
+      if (dateFilter === 'CUSTOM') {
+        if (this.activeFilters['fromDate']) filters['fromDate'] = this.activeFilters['fromDate'];
+        if (this.activeFilters['toDate'])   filters['toDate']   = this.activeFilters['toDate'];
+      }
+    }
+
+    
+    
+    console.log(filters);
+    return {
+      page:      this.currentPage - 1, // API is 0-based
+      size:      this.pageSize,
+      sortBy:    'createdOn',
+      direction: 'DESC',
+      filters,
+    };
+  }
+
+
+  formatDate(iso: string): string {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  formatTime(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
   }
 }

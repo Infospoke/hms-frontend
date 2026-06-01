@@ -1,0 +1,195 @@
+<div class="cr-page" [class.cr-page--view]="viewMode">
+
+  <!-- ── Configure Rounds section ────────────────────────────────────────── -->
+  <section class="cr-section">
+    <div class="cr-section__header">
+      <div class="cr-section__title-group">
+        <div class="cr-section__icon">
+          <i class="fas fa-circle-nodes"></i>
+        </div>
+        <div>
+          <h3 class="cr-section__title">Configure Rounds</h3>
+          <p class="cr-section__sub">Define the sequence of rounds and their settings.</p>
+        </div>
+      </div>
+      <div class="cr-header-right">
+        <span class="cr-round-counter" [class.cr-round-counter--max]="rounds.length >= maxRounds">
+          <i class="fas fa-layer-group"></i>
+          {{ rounds.length }} / {{ maxRounds }} rounds
+        </span>
+        <button
+          class="cr-btn cr-btn--outline"
+          (click)="addRound()"
+          [disabled]="rounds.length >= maxRounds"
+          [title]="rounds.length >= maxRounds ? 'Maximum 4 rounds allowed' : 'Add a new round'"
+        >
+          <i class="fas fa-plus"></i> Add Round
+        </button>
+      </div>
+    </div>
+
+    <!-- Max rounds notice -->
+    
+
+    <!-- Table header -->
+    <div class="cr-table">
+      <div class="cr-table__head">
+        <div class="cr-col cr-col--drag" *ngIf="!viewMode"></div>
+        <div class="cr-col cr-col--order">Order</div>
+        <div class="cr-col cr-col--stage">Stage Name <span class="cr-required">*</span></div>
+        <div class="cr-col cr-col--type">Stage Type <span class="cr-required">*</span></div>
+        <div class="cr-col cr-col--mode">Interview Mode <span class="cr-required">*</span></div>
+        <div class="cr-col cr-col--mandatory">Mandatory</div>
+        <div class="cr-col cr-col--actions" *ngIf="!viewMode">Actions</div>
+      </div>
+
+      <!-- Rows -->
+      <div class="cr-table__body">
+        <div
+          *ngFor="let round of rounds; let i = index"
+          class="cr-row"
+          [class.cr-row--dragging]="!viewMode && dragIndex === i"
+          [class.cr-row--dragover]="!viewMode && dragOverIndex === i && dragIndex !== i"
+          [draggable]="!viewMode"
+          (dragstart)="!viewMode && onDragStart(i)"
+          (dragover)="!viewMode && onDragOver($event, i)"
+          (drop)="!viewMode && onDrop($event, i)"
+          (dragend)="!viewMode && onDragEnd()"
+        >
+          <!-- Drag handle (hidden in view mode via CSS) -->
+          <div class="cr-col cr-col--drag">
+            <span class="cr-drag-handle" title="Drag to reorder">
+              <i class="fas fa-grip-vertical"></i>
+            </span>
+          </div>
+
+          <!-- Order badge -->
+          <div class="cr-col cr-col--order">
+            <span class="cr-order-badge">{{ round.order || i + 1 }}</span>
+          </div>
+
+          <!-- Stage Name -->
+          <div class="cr-col cr-col--stage">
+            <input
+              class="cr-input"
+              type="text"
+              [(ngModel)]="round.stageName"
+              placeholder="Stage name"
+            />
+          </div>
+
+          <!-- Stage Type -->
+          <div class="cr-col cr-col--type">
+            <div class="cr-select-wrap">
+              <select class="cr-select" [(ngModel)]="round.stageType">
+                <option *ngFor="let opt of stageTypeOptions" [value]="opt">{{ opt }}</option>
+              </select>
+              <i class="fas fa-chevron-down cr-select-arrow"></i>
+            </div>
+          </div>
+
+          <!-- Interview Mode -->
+          <div class="cr-col cr-col--mode">
+            <div class="cr-select-wrap">
+              <select class="cr-select" [(ngModel)]="round.interviewMode">
+                <option *ngFor="let opt of interviewModeOptions" [value]="opt">{{ opt }}</option>
+              </select>
+              <i class="fas fa-chevron-down cr-select-arrow"></i>
+            </div>
+          </div>
+
+          <!-- Mandatory toggle -->
+          <div class="cr-col cr-col--mandatory">
+            <label class="cr-toggle" [class.cr-toggle--on]="round.mandatory">
+              <input type="checkbox" [(ngModel)]="round.mandatory" />
+              <span class="cr-toggle__track">
+                <span class="cr-toggle__thumb"></span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Delete -->
+          <div class="cr-col cr-col--actions" *ngIf="!viewMode">
+            <button class="cr-delete-btn" title="Remove round" (click)="deleteRound(i)">
+              <i class="fas fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="rounds.length === 0" class="cr-empty">
+          <i class="fas fa-inbox cr-empty__icon"></i>
+          <p>No rounds added yet. Click <strong>+ Add Round</strong> to begin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Evaluation Settings section ─────────────────────────────────────── -->
+  <!-- ── Evaluation Settings section ─────────────────────────────────────── -->
+<section class="cr-section cr-section--eval">
+  <div class="cr-section__title-group">
+    <div class="cr-section__icon">
+      <i class="fas fa-chart-bar"></i>
+    </div>
+    <div>
+      <h3 class="cr-section__title">Evaluation Settings</h3>
+      <p class="cr-section__sub">Define the evaluation criteria configuration for this plan.</p>
+    </div>
+  </div>
+
+
+  <div class="cr-eval-view" *ngIf="viewMode">
+    <div class="cr-eval-view__item">
+      <span class="cr-eval-view__label">Evaluation Criteria</span>
+      <span class="cr-eval-view__value">{{'Overall Assessment' }}</span>
+    </div>
+    <div class="cr-eval-view__item">
+      <span class="cr-eval-view__label">Rating Scale</span>
+      <span class="cr-eval-view__value">5 Point Scale </span>
+    </div>
+    <div class="cr-eval-view__item">
+      <span class="cr-eval-view__label">Minimum Passing Score (%)</span>
+      <span class="cr-eval-view__value">60</span>
+    </div>
+  </div>
+
+  <!-- ✅ EDIT MODE: form fields -->
+  <div class="cr-eval-grid" *ngIf="!viewMode">
+    <!-- Grading Scale -->
+    <div class="cr-form-group">
+      <label class="cr-label">Grading Scale <span class="cr-required">*</span></label>
+      <div class="cr-select-wrap">
+        <select class="cr-select" [(ngModel)]="evaluation.gradingScale">
+          <option *ngFor="let opt of gradingScaleOptions" [value]="opt">{{ opt }}</option>
+        </select>
+        <i class="fas fa-chevron-down cr-select-arrow"></i>
+      </div>
+    </div>
+
+    <!-- Minimum Percentage -->
+    <div class="cr-form-group">
+      <label class="cr-label">Minimum Percentage (%) <span class="cr-required">*</span></label>
+      <input
+        class="cr-input"
+        type="number"
+        min="0"
+        max="100"
+        [(ngModel)]="evaluation.minimumPercentage"
+        placeholder="e.g. 60"
+      />
+    </div>
+  </div>
+</section>
+
+  <!-- ── Footer actions ───────────────────────────────────────────────────── -->
+  <div class="cr-footer" *ngIf="!viewMode">
+    <button class="cr-btn cr-btn--ghost" (click)="onDiscard()">
+      <i class="fas fa-xmark"></i> Discard
+    </button>
+    <button class="cr-btn cr-btn--primary" (click)="onSave()">
+      <i class="fas fa-floppy-disk"></i> Save Plan
+    </button>
+  </div>
+
+</div>

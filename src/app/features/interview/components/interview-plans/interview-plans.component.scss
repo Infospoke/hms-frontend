@@ -1,4 +1,3 @@
-
 .ip-description {
   display: block;
   white-space: normal;
@@ -52,6 +51,16 @@
 
     .ip-status-dot {
       background: #dc2626;
+    }
+  }
+
+  // New: In Progress
+  &--in-progress {
+    background: #ede9fe;
+    color: #7c3aed;
+
+    .ip-status-dot {
+      background: #7c3aed;
     }
   }
 }
@@ -118,5 +127,23 @@
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+}
+
+
+.cell-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .cell-date-main {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .cell-date-sub {
+    font-size: 11px;
+    color: #9ca3af;
   }
 }

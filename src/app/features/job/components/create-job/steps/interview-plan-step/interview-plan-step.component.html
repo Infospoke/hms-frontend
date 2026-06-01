@@ -1,0 +1,199 @@
+<div class="ip-layout">
+
+  <!-- ── Left: Plan List ───────────────────────────────────────────────────── -->
+  <div class="ip-main">
+    <div class="ip-card">
+
+      <div class="ip-card-header">
+        <div>
+          <h3 class="ip-card-title">Select Approved Interview Plan</h3>
+          <p class="ip-card-sub">Choose an approved interview plan to use for this job. All plan details will be applied automatically.</p>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="ip-search-wrap">
+        <i class="fa-solid fa-magnifying-glass ip-search-icon"></i>
+        <input
+          class="ip-search-input"
+          type="text"
+          placeholder="Search interview plan by name or description..."
+          [value]="searchTerm"
+          (input)="onSearch($event)" />
+      </div>
+
+      <!-- Plan List -->
+      <div class="ip-plan-list">
+        <div
+          class="ip-plan-item"
+          *ngFor="let plan of plans"
+          [class.ip-plan-item--selected]="isSelected(plan)"
+          (click)="selectPlan(plan)">
+
+          <div class="ip-plan-num" [class.ip-plan-num--selected]="isSelected(plan)">
+            {{ plan.id }}
+          </div>
+
+          <div class="ip-plan-body">
+            <div class="ip-plan-top">
+              <span class="ip-plan-name">{{ plan.name }}</span>
+              <span class="ip-badge ip-badge--approved">Approved</span>
+            </div>
+            <div class="ip-plan-meta">
+              {{ plan.rounds }} Rounds &nbsp;•&nbsp; Last updated on {{ plan.lastUpdated }} by {{ plan.updatedBy }}
+            </div>
+            <div class="ip-plan-desc">{{ plan.description }}</div>
+          </div>
+
+          <div class="ip-plan-radio">
+            <span class="ip-radio" [class.ip-radio--checked]="isSelected(plan)">
+              <span class="ip-radio__dot" *ngIf="isSelected(plan)"></span>
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Empty -->
+        <div class="ip-empty" *ngIf="plans.length === 0">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <p>No interview plans found.</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="ip-pagination" *ngIf="totalItems > 0">
+        <span class="ip-pagination__text">{{ showingText }}</span>
+        <div class="ip-pagination__controls">
+          <button class="ip-pg-btn" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button
+            class="ip-pg-btn ip-pg-btn--num"
+            *ngFor="let p of pageNumbers"
+            [class.ip-pg-btn--active]="p === currentPage"
+            (click)="onPageChange(p)">
+            {{ p }}
+          </button>
+          <button class="ip-pg-btn" [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- What happens next -->
+      <div class="ip-info-note" *ngIf="!selectedPlan">
+        <i class="fa-solid fa-circle-info"></i>
+        <div>
+          <strong>What happens next?</strong>
+          <p>All the rounds, weightages, evaluation settings and plan details from the selected interview plan will be applied to this job.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Right: Selected Plan Detail ──────────────────────────────────────── -->
+  <div class="ip-side">
+    <div class="ip-detail-card" *ngIf="selectedPlan; else emptyDetail">
+
+      <h3 class="ip-detail-title">Selected Interview Plan Details</h3>
+
+      <!-- Plan Information -->
+      <div class="ip-detail-section">
+        <h4 class="ip-detail-section-title">Plan Information</h4>
+        <div class="ip-detail-grid">
+          <div class="ip-detail-row">
+            <span class="ip-detail-label">Plan Name</span>
+            <span class="ip-detail-val">{{ selectedPlan.name }}</span>
+          </div>
+          <div class="ip-detail-row">
+            <span class="ip-detail-label">Number of Rounds</span>
+            <span class="ip-detail-val">{{ selectedPlan.rounds }}</span>
+          </div>
+          <div class="ip-detail-row ip-detail-row--full">
+            <span class="ip-detail-label">Description</span>
+            <span class="ip-detail-val">{{ selectedPlan.description }}</span>
+          </div>
+          <div class="ip-detail-row">
+            <span class="ip-detail-label">Status</span>
+            <span class="ip-detail-val ip-detail-val--active">{{ selectedPlan.status }}</span>
+          </div>
+          <div class="ip-detail-row">
+            <span class="ip-detail-label">Applicable To</span>
+            <span class="ip-detail-val">{{ selectedPlan.applicableTo }}</span>
+          </div>
+          <div class="ip-detail-row ip-detail-row--full">
+            <span class="ip-detail-label">Applicable Departments</span>
+            <span class="ip-detail-val">{{ selectedPlan.applicableDepartments }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interview Rounds -->
+      <div class="ip-detail-section">
+        <h4 class="ip-detail-section-title">Interview Rounds ({{ selectedPlan.rounds }})</h4>
+        <table class="ip-rounds-table">
+          <thead>
+            <tr>
+              <th>Round Order</th>
+              <th>Stage Name</th>
+              <th>Stage Type</th>
+              <th>Interview Mode</th>
+              <th>Weightage (%)</th>
+              <th>Mandatory</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of selectedPlan.roundDetails">
+              <td>{{ r.order }}</td>
+              <td>{{ r.stageName }}</td>
+              <td>{{ r.stageType }}</td>
+              <td>{{ r.interviewMode }}</td>
+              <td>{{ r.weightage }}%</td>
+              <td>
+                <span class="ip-toggle-on" *ngIf="r.mandatory">
+                  <i class="fa-solid fa-toggle-on"></i>
+                </span>
+                <span class="ip-toggle-off" *ngIf="!r.mandatory">
+                  <i class="fa-solid fa-toggle-off"></i>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Evaluation Settings -->
+      <div class="ip-detail-section">
+        <h4 class="ip-detail-section-title">Evaluation Settings</h4>
+        <table class="ip-eval-table">
+          <thead>
+            <tr>
+              <th>Evaluation Criteria</th>
+              <th>Rating Scale</th>
+              <th>Minimum Passing Score (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ selectedPlan.evaluationCriteria }}</td>
+              <td>{{ selectedPlan.ratingScale }}</td>
+              <td>{{ selectedPlan.minPassingScore }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Empty right panel -->
+    <ng-template #emptyDetail>
+      <div class="ip-detail-empty">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <p>Select a plan from the left to view its details here.</p>
+      </div>
+    </ng-template>
+
+  </div>
+
+</div>

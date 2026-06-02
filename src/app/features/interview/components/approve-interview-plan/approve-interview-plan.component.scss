@@ -149,7 +149,7 @@ $check-color: #1d9e75;
 
   // Rejected / Inactive
   &.rejected,
-  &.inactive {
+  &.deactive {
     color: $red-text;
     background: $red-bg;
     .badge-dot { background: $red-border; }

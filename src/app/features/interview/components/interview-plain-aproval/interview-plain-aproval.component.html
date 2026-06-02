@@ -36,8 +36,7 @@
     </div>
   </ng-container>
 
-  <!-- Requested By + role sub-label -->
-
+  
    <ng-container *ngIf="ctx.col.key === 'requestedOn'">
     <div class="cell-date">
         <span class="cell-date-main">{{ formatDate(ctx.row['requestedOn']) }}</span>
@@ -50,11 +49,18 @@
       <span class="ipa-requester__role">{{ ctx.row['requestedRoleBy'] }}</span>
     </div>
   </ng-container>
-
+  <ng-container *ngIf="ctx.col.key === 'requestType'">
+    <span class="ipa-status-badge"
+      [class.ipa-status-badge--pending]="ctx.row['requestType'] === 'PLAN ACTIVE'"
+      [class.ipa-status-badge--approved]="ctx.row['requestType'] === 'PLAN CREATED'"
+      [class.ipa-status-badge--rejected]="ctx.row['requestType'] === 'PLAN DEACTIVE'">
+      {{ ctx.row['requestType'] }}
+    </span>
+  </ng-container>
   <!-- Status badge -->
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="ipa-status-badge"
-      [class.ipa-status-badge--pending]="ctx.row['status'] === 'InProgress'"
+      [class.ipa-status-badge--pending]="ctx.row['status'] === 'INPROGRESS'"
       [class.ipa-status-badge--approved]="ctx.row['status'] === 'Approved'"
       [class.ipa-status-badge--rejected]="ctx.row['status'] === 'Rejected'">
       {{ ctx.row['status'] }}

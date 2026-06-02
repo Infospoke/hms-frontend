@@ -128,5 +128,6 @@ export const API = {
         INTERVIEW_PLAN_LIST_FOR_APPROVAL:`/hms/interview-plan/interview-plan-approvals`,
         CREATED_BY_LIST:`/hms/configurations/create-permission-users`,
         PLAN_DETAILS_BY:(id:any)=>`/hms/interview-plan/interview-plan-details-by-id/${id}`,
+        UPDATE_CONFIG:`/hms/interview-plan/update`
     }
 };

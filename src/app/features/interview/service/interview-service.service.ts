@@ -42,4 +42,12 @@ export class InterviewServiceService {
         this.api.hrmsget(API.INTERVIEW.PLAN_DETAILS_BY(id))
       );
     }
+
+    
+
+     async updateInterviewPlanStatus(payload: any): Promise<any> {
+      return await firstValueFrom(
+        this.api.hrmsput(API.INTERVIEW.UPDATE_CONFIG, payload)
+      );
+    }
 }

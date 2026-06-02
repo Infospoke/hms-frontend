@@ -6,17 +6,7 @@
         [showBackButton]="true" [backButtonUrl]="'/interview/interview-approval-plans'"
         [buttonText]="'Back to Approvals'" />
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="state-box loading-box">
-        <span class="spinner"></span>
-        <span>Loading plan details...</span>
-    </div>
-
-    <!-- Error State -->
-    <div *ngIf="!isLoading && errorMessage" class="state-box error-box">
-        <span class="error-icon">&#9888;</span>
-        <span>{{ errorMessage }}</span>
-    </div>
+    
 
     <!-- Content -->
     <ng-container *ngIf="!isLoading && !errorMessage">

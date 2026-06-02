@@ -52,7 +52,7 @@ export class InterviewPlansComponent implements OnInit {
       iconColor: '#22c55e'
     },
     {
-      label: 'Inactive Plans',
+      label: 'Deactive Plans',
       subLabel: 'Plans not available',
       value: 0,
       percentage: 'Plans not available',
@@ -60,23 +60,15 @@ export class InterviewPlansComponent implements OnInit {
       iconBgColor: '#fff7ed',
       iconColor: '#f59e0b'
     },
-    {
-      label: 'In Progress Plans',
-      subLabel: 'Plans under review',
-      value: 0,
-      percentage: 'Plans under review',
-      iconClass: 'fa-regular fa-clock',
-      iconBgColor: '#f5f3ff',
-      iconColor: '#7c3aed'
-    }
+   
   ];
 
 
   tabs: { key: string; label: string; count: number }[] = [
     { key: 'all',         label: 'All Plans',         count: 0 },
     { key: 'Active',      label: 'Active Plans',      count: 0 },
-    { key: 'Inactive',    label: 'Inactive Plans',    count: 0 },
-    { key: 'InProgress', label: 'In Progress Plans', count: 0 },
+    { key: 'Inactive',    label: 'Deactive Plans',    count: 0 },
+   
   ];
 
   activeTab = 'all';
@@ -85,10 +77,11 @@ export class InterviewPlansComponent implements OnInit {
   columns: TableColumn[] = [
     { key: 'planName',    label: 'Plan Name',   width: '180px', custom: true },
     { key: 'description', label: 'Description', width: '220px', custom: true },
-    { key: 'rounds',      label: 'Rounds',      width: '80px',  align: 'center' },
+    { key: 'rounds',      label: 'Rounds',      width: '50px',  align: 'center' },
     { key: 'status',      label: 'Status',      width: '110px', align: 'center', custom: true },
-    { key: 'createdBy',   label: 'Created By',  width: '130px' },
-    { key: 'createdOn',   label: 'Created On',  width: '120px' ,custom: true},
+    { key: 'approvalStatus',label: 'Approval Status',      width: '110px', align: 'center', custom: true },
+    { key: 'createdBy',   label: 'Created By',  width: '100px' },
+    { key: 'createdOn',   label: 'Created On',  width: '80px' ,custom: true},
     { key: 'actions',     label: 'Actions',     width: '90px',  align: 'center', custom: true },
   ];
 
@@ -140,7 +133,7 @@ export class InterviewPlansComponent implements OnInit {
           { ...this.cards[0], value: allPlans ?? 0 },
           { ...this.cards[1], value: activePlans ?? 0 },
           { ...this.cards[2], value: inactivePlans ?? 0 },
-          { ...this.cards[3], value: inProgressPlans ?? 0 },
+         
         ];
 
        
@@ -165,14 +158,14 @@ export class InterviewPlansComponent implements OnInit {
 
         // ── Cards & tabs from counts returned by the list API ───────────────
         if (counts) {
-          const { allPlans, activePlans, inactivePlans, inProgressPlans } = counts;
+          const { allPlans, activePlans, deactivePlans, inProgressPlans } = counts;
 
           
           this.tabs = [
             { ...this.tabs[0], count: allPlans        ?? 0 },
             { ...this.tabs[1], count: activePlans     ?? 0 },
-            { ...this.tabs[2], count: inactivePlans   ?? 0 },
-            { ...this.tabs[3], count: inProgressPlans ?? 0 },
+            { ...this.tabs[2], count: deactivePlans   ?? 0 },
+           
           ];
         }
       }
@@ -246,7 +239,9 @@ export class InterviewPlansComponent implements OnInit {
   }
 
   handleEdit(row: any): void {
-    this.router.navigateByUrl(`/interview/interview-plan/edit/${row.id}`);
+    this.router.navigateByUrl(`/interview/interview-plan/create`,{
+      state: { id:row?.id }
+    });
   }
 
   filtersChange(data: any): void {

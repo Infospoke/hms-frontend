@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 export interface InterviewRoundResponse {
   roundOrder: number;
@@ -55,6 +56,14 @@ export interface RequestedDetails {
   comments: string;
 }
 
+/**
+ * Request types coming from the approvals list API.
+ * - null / undefined  → standard plan approval/rejection
+ * - 'PLAN DEACTIVE'   → deactivation approval/rejection
+ * - 'PLAN ACTIVE'     → activation approval/rejection
+ */
+export type RequestType = 'PLAN DEACTIVE' | 'PLAN ACTIVE' | null;
+
 @Component({
   selector: 'app-approve-interview-plan',
   standalone: true,
@@ -67,6 +76,8 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
   readonly commentsMaxLength = 500;
 
   planId: string | null = null;
+  requestType: RequestType = null;
+
   isLoading = false;
   errorMessage: string | null = null;
 
@@ -89,6 +100,8 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
   };
 
   private destroy$ = new Subject<void>();
+  private notificationService = inject(NotificationService);
+  private router = inject(Router);
 
   constructor(
     private route: ActivatedRoute,
@@ -100,6 +113,9 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.planId = params.get('id');
+        const rawType = this.route.snapshot.queryParamMap.get('requestType');
+        this.requestType = (rawType as RequestType) ?? null;
+
         if (this.planId) {
           this.loadPlanDetails(this.planId);
         }
@@ -171,29 +187,65 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
     return this.planDetails.description?.length ?? 0;
   }
 
+  // ── Payload Builder ───────────────────────────────────────────────────────────
+
+  
+  private buildPayload(isApprove: boolean): Record<string, unknown> {
+    const id = this.planId!;
+    const comments = this.requestedDetails.comments;
+
+    switch (this.requestType) {
+      case 'PLAN DEACTIVE':
+        return { id, deactiveApproval: isApprove, comments };
+
+      case 'PLAN ACTIVE':
+        return { id, activeApproval: isApprove, comments };
+
+      default:
+        // null or any unrecognised type → standard plan approval flow
+        return { id, approval: isApprove ? 'APPROVED' : 'REJECTED', comments };
+    }
+  }
+
   // ── Actions ───────────────────────────────────────────────────────────────────
 
   onApprovePlan(): void {
     if (!this.planId) return;
 
-    console.log('Plan approved', {
-      id: this.planId,
-      planName: this.planDetails.planName,
-      comments: this.requestedDetails.comments,
-    });
-    // TODO: call approval service endpoint
-    // this.interviewPlanService.approvePlan(this.planId, this.requestedDetails.comments)
+    const payload = this.buildPayload(true);
+
+    this.interviewPlanService.updateInterviewPlanStatus(payload)
+      .then((res: any) => {
+        this.notificationService.success(
+          res?.responsemessage || res?.message || 'Plan approved successfully'
+        );
+        this.goBack();
+      })
+      .catch((err: any) => {
+        this.notificationService.error('Failed to approve plan.');
+        console.error('Failed to approve plan:', err);
+      });
   }
 
   onRejectPlan(): void {
     if (!this.planId) return;
 
-    console.log('Plan rejected', {
-      id: this.planId,
-      planName: this.planDetails.planName,
-      comments: this.requestedDetails.comments,
-    });
-    // TODO: call rejection service endpoint
-    // this.interviewPlanService.rejectPlan(this.planId, this.requestedDetails.comments)
+    const payload = this.buildPayload(false);
+
+    this.interviewPlanService.updateInterviewPlanStatus(payload)
+      .then((res: any) => {
+        this.notificationService.success(
+          res?.responsemessage || res?.message || 'Plan rejected successfully'
+        );
+        this.goBack();
+      })
+      .catch((err: any) => {
+        this.notificationService.error('Failed to reject plan.');
+        console.error('Failed to reject plan:', err);
+      });
+  }
+
+  goBack(): void {
+    this.router.navigateByUrl('/interview/interview-approval-plans');
   }
 }

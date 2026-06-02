@@ -5,18 +5,24 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigureRoundsComponent, InterviewRound, EvaluationSettings } from '../configure-rounds/configure-rounds.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
 
-export type PlanStatus = 'Active' | 'Inactive' | 'Pending' | 'Approved' | 'Rejected' | 'InProgress';
+export type PlanStatus = 'ACTIVE' | 'DEACTIVE' | 'Pending' | 'Approved' | 'Rejected' | 'INPROGRESS';
 
 export type TimelineEventType =
-  | 'created' | 'submitted' | 'approved'
-  | 'rejected' | 'activated' | 'deactivated' | 'edited';
-
+  | 'CREATED'
+  | 'SUBMITTED'
+  | 'APPROVE'
+  | 'REJECTED'
+  | 'ACTIVATE'
+  | 'DEACTIVE'
+  | 'EDITED' | 'Created' | 'Submitted' | 'Approve' | 'Rejected' | 'Activate' | 'Deactive' | 'Edited';
 export interface TimelineEvent {
-  type: TimelineEventType;
+  action: TimelineEventType;
   title: string;
   description: string;
-  date: string;
+  comments: string,
+  createdAt: string;
   by: string;
+  createdBy: string,
   badge?: string;
   badgeType?: 'approved' | 'rejected' | 'pending';
 }
@@ -55,13 +61,13 @@ export class InterviewPlanViewComponent implements OnInit {
   breadcrumbs = ['Interview Plan Configuration', 'Interview Plans', '', 'Manage Plan'];
 
   // ── DI ───────────────────────────────────────────────────────────────────
-  private readonly route             = inject(ActivatedRoute);
-  private readonly router            = inject(Router);
-  private readonly interviewPlanSvc  = inject(InterviewServiceService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly interviewPlanSvc = inject(InterviewServiceService);
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   async ngOnInit(): Promise<void> {
-  
+
     if (this.plan) {
       this.setDisplayPlan(this.plan);
       return;
@@ -80,21 +86,21 @@ export class InterviewPlanViewComponent implements OnInit {
 
   // ── Private helpers ───────────────────────────────────────────────────────
   private async loadPlan(id: string): Promise<void> {
-    this.isLoading    = true;
+    this.isLoading = true;
     this.errorMessage = null;
 
     try {
-      const res:any= await this.interviewPlanSvc.planDetailsByID(id);
-      const response=res?.data;
+      const res: any = await this.interviewPlanSvc.planDetailsByID(id);
+      const response = res?.data;
       const plan: InterviewPlanDetail = {
-        planName:    response.planName   ?? response.plan_name   ?? '',
-        status:      response.status                              ?? 'Pending',
-        createdBy:   response.createdBy  ?? response.created_by  ?? '',
-        createdOn:   response.createdOn  ?? response.created_on  ?? '',
-        description: response.description                         ?? '',
-        rounds:      response.interviewRoundsResponse                              ?? [],
-        evaluation:  response.evaluation                          ?? { gradingScale: '', minimumPercentage: 0 },
-        timeline:    response.timeline                            ?? [],
+        planName: response.planName ?? response.plan_name ?? '',
+        status: response.status ?? 'Pending',
+        createdBy: response.createdBy ?? response.created_by ?? '',
+        createdOn: response.createdOn ?? response.created_on ?? '',
+        description: response.description ?? '',
+        rounds: response.interviewRoundsResponse ?? [],
+        evaluation: response.evaluation ?? { gradingScale: '', minimumPercentage: 0 },
+        timeline: response.commentTimeline ?? [],
       };
 
       this.setDisplayPlan(plan);
@@ -107,7 +113,8 @@ export class InterviewPlanViewComponent implements OnInit {
   }
 
   private setDisplayPlan(plan: InterviewPlanDetail): void {
-    this.displayPlan    = plan;
+    console.log(plan);
+    this.displayPlan = plan;
     this.breadcrumbs[2] = plan.planName;
   }
 
@@ -131,30 +138,45 @@ export class InterviewPlanViewComponent implements OnInit {
     }
   }
 
-  // ── Timeline helpers ──────────────────────────────────────────────────────
   timelineIcon(type: TimelineEventType): string {
     const map: Record<TimelineEventType, string> = {
-      created:     'fas fa-file-lines',
-      submitted:   'fas fa-paper-plane',
-      approved:    'fas fa-circle-check',
-      rejected:    'fas fa-circle-xmark',
-      activated:   'fas fa-toggle-on',
-      deactivated: 'fas fa-toggle-off',
-      edited:      'fas fa-pen-to-square',
+      CREATED: 'fas fa-file-lines',
+      SUBMITTED: 'fas fa-paper-plane',
+      APPROVE: 'fas fa-circle-check',
+      REJECTED: 'fas fa-circle-xmark',
+      ACTIVATE: 'fas fa-toggle-on',
+      DEACTIVE: 'fas fa-toggle-off',
+      EDITED: 'fas fa-pen-to-square',
+      Created: 'fas fa-file-lines',
+      Submitted: 'fas fa-paper-plane',
+      Approve: 'fas fa-circle-check',
+      Rejected: 'fas fa-circle-xmark',
+      Activate: 'fas fa-toggle-on',
+      Deactive: 'fas fa-toggle-off',
+      Edited: 'fas fa-pen-to-square',
     };
+
     return map[type] ?? 'fas fa-circle';
   }
 
   timelineColor(type: TimelineEventType): string {
     const map: Record<TimelineEventType, string> = {
-      created:     '#2563eb',
-      submitted:   '#f59e0b',
-      approved:    '#22c55e',
-      rejected:    '#ef4444',
-      activated:   '#2563eb',
-      deactivated: '#94a3b8',
-      edited:      '#8b5cf6',
+      CREATED: '#2563eb',
+      SUBMITTED: '#f59e0b',
+      APPROVE: '#22c55e',
+      REJECTED: '#ef4444',
+      ACTIVATE: '#2563eb',
+      DEACTIVE: '#94a3b8',
+      EDITED: '#8b5cf6',
+      Created: '#2563eb',
+      Submitted: '#f59e0b',
+      Approve: '#22c55e',
+      Rejected: '#ef4444',
+      Activate: '#2563eb',
+      Deactive: '#f59e0b',
+      Edited: '#8b5cf6',
     };
+
     return map[type] ?? '#94a3b8';
   }
 }

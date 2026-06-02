@@ -69,7 +69,7 @@
   <!-- Status badge -->
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="status-badge"
-      [ngClass]="ctx.row.status === 'Active' ? 'active' : 'deactivated'">
+      [ngClass]="ctx.row.status === 'ACTIVE' ? 'active' : 'deactivated'">
       {{ ctx.row.status }}
     </span>
   </ng-container>

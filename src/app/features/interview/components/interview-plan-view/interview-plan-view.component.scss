@@ -515,11 +515,11 @@
 
 .ipv-timeline__desc {
   margin: 0 0 4px;
-  font-size: 12px;
-  color: #64748b;
+  font-size: 14px;
+  color: #252525;
   line-height: 1.45;
+  overflow-wrap: anywhere;
 }
-
 .ipv-timeline__date {
   margin: 0 0 2px;
   font-size: 11.5px;
@@ -544,4 +544,105 @@
   &--approved { background: #dcfce7; color: #16a34a; }
   &--rejected { background: #fee2e2; color: #dc2626; }
   &--pending  { background: #fff7ed; color: #ea580c; }
+}
+
+
+.ipv-timeline {
+  position: relative;
+}
+
+.ipv-timeline__item {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  padding-bottom: 28px;
+}
+
+.ipv-timeline__line {
+  position: absolute;
+  left: 25px;
+  top: 50px;
+  width: 2px;
+  height: calc(100% - 10px);
+  background: #d8dee9;
+}
+
+.ipv-timeline__icon {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  z-index: 2;
+}
+
+.ipv-timeline__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ipv-timeline__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.ipv-timeline__date {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.ipv-timeline__user {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ipv-timeline__desc {
+  margin: 0;
+  color: #475569;
+  font-size: 11px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.ipv-timeline__status {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ipv-timeline__status.create {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.ipv-timeline__status.approve {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.ipv-timeline__status.reject {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.ipv-timeline__status.deactivate {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.ipv-timeline__status.activate {
+  background: #dbeafe;
+  color: #2563eb;
 }

@@ -14,34 +14,36 @@ import { Router } from '@angular/router';
   styleUrl: './interview-plain-aproval.component.scss',
 })
 export class InterviewPlainAprovalComponent implements OnInit {
-  private activeFilters: Record<string, string> = {dateFilter: "thisWeek"};
-  private interviewService=inject(InterviewServiceService);
+  private activeFilters: Record<string, string> = { dateFilter: "thisWeek" };
+  private interviewService = inject(InterviewServiceService);
   columns: TableColumn[] = [
-    { key: 'planName',     label: 'Plan Name',     width: '220px',  custom: true },
-    { key: 'rounds',       label: 'Rounds',        width: '80px',   align: 'center' },
-    { key: 'requestedBy',  label: 'Requested By',  width: '170px',  custom: true },
-    { key: 'requestedOn',  label: 'Requested On',  width: '170px',  custom: true  },
-    { key: 'status',       label: 'Status',        width: '120px',  align: 'center', custom: true },
-    { key: 'action',       label: 'Action',        width: '120px',  align: 'center', custom: true },
+    { key: 'planName', label: 'Plan Name', width: '220px', custom: true },
+    { key: 'rounds', label: 'Rounds', width: '80px', align: 'center' },
+
+    { key: 'requestedBy', label: 'Requested By', width: '170px', custom: true },
+    { key: 'requestedOn', label: 'Requested On', width: '170px', custom: true },
+    { key: 'requestType', label: 'Request Type', width: '120px', custom: true },
+    { key: 'status', label: 'Status', width: '120px', align: 'center', custom: true },
+    { key: 'action', label: 'Action', width: '120px', align: 'center', custom: true },
   ];
 
-  allPlans:any[] = [];
+  allPlans: any[] = [];
   totalPages = 0;
-  pageSize    = 10;
+  pageSize = 10;
   currentPage = 1;
-  chainOptions=chainOptions;
+  chainOptions = chainOptions;
 
-  private router=inject(Router);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.loadData();
   }
   private async loadData(): Promise<void> {
     const payload = this.buildRequestPayload();
-    const res:any=await this.interviewService.plansListForApproval(payload);
-    if(res?.responsecode=='00'){
-      this.allPlans=res?.data?.content ?? [];
-      this.totalPages=res?.data?.totalPages ?? 0;
+    const res: any = await this.interviewService.plansListForApproval(payload);
+    if (res?.responsecode == '00') {
+      this.allPlans = res?.data?.content ?? [];
+      this.totalPages = res?.data?.totalPages ?? 0;
     }
   }
   handlePageChange(page: number): void {
@@ -50,17 +52,21 @@ export class InterviewPlainAprovalComponent implements OnInit {
   }
 
   handleReviewApprove(plan: any): void {
-    console.log(plan);
-    this.router.navigateByUrl(`/interview/interview-approval-plans/review-and-approve/${plan.id}`)
+    this.router.navigate(
+      ['/interview/interview-approval-plans/review-and-approve', plan.id],
+      {
+        queryParams: { requestType: plan.requestType }
+      }
+    );
   }
 
-  filtersResponse(event:any):void{
-    this.activeFilters=event;
-    this.currentPage=1;
+  filtersResponse(event: any): void {
+    this.activeFilters = event;
+    this.currentPage = 1;
     this.loadData();
   }
 
-   private buildRequestPayload(): object {
+  private buildRequestPayload(): object {
     const filters: Record<string, string> = {};
     console.log(this.activeFilters);
 
@@ -69,26 +75,26 @@ export class InterviewPlainAprovalComponent implements OnInit {
       filters['search'] = search;
     }
 
-   
-     if (this.activeFilters?.['createdBy']) {
-      filters['createdBy'] = this.activeFilters?.['createdBy']; 
+
+    if (this.activeFilters?.['createdBy']) {
+      filters['createdBy'] = this.activeFilters?.['createdBy'];
     }
     const dateFilter = this.activeFilters?.['dateFilter'];
     if (dateFilter) {
       filters['dateFilter'] = dateFilter;
       if (dateFilter === 'CUSTOM') {
         if (this.activeFilters['fromDate']) filters['fromDate'] = this.activeFilters['fromDate'];
-        if (this.activeFilters['toDate'])   filters['toDate']   = this.activeFilters['toDate'];
+        if (this.activeFilters['toDate']) filters['toDate'] = this.activeFilters['toDate'];
       }
     }
 
-    
-    
+
+
     console.log(filters);
     return {
-      page:      this.currentPage - 1, // API is 0-based
-      size:      this.pageSize,
-      sortBy:    'createdOn',
+      page: this.currentPage - 1, // API is 0-based
+      size: this.pageSize,
+      sortBy: 'createdOn',
       direction: 'DESC',
       filters,
     };

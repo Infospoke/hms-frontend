@@ -25,20 +25,19 @@
   <div class="ipv-heading-row">
     <div class="ipv-title-group">
       <h1 class="ipv-title">{{ displayPlan.planName }}</h1>
-      <span class="ipv-status-pill"
-        [class.ipv-status-pill--active]="displayPlan.status === 'Active'"
-        [class.ipv-status-pill--inactive]="displayPlan.status === 'Inactive'"
-        [class.ipv-status-pill--pending]="displayPlan.status === 'InProgress'">
+      <span class="ipv-status-pill" [class.ipv-status-pill--active]="displayPlan.status === 'ACTIVE'"
+        [class.ipv-status-pill--inactive]="displayPlan.status === 'DEACTIVE'"
+        [class.ipv-status-pill--pending]="displayPlan.status === 'INPROGRESS'|| displayPlan.status === 'Pending'">
         <span class="ipv-status-dot"></span>
         {{ displayPlan.status }}
       </span>
     </div>
-    <button class="ipv-edit-btn" (click)="onEdit()">
+    <!-- <button class="ipv-edit-btn" (click)="onEdit()">
       <i class="fas fa-pen-to-square"></i> Edit Plan
-    </button>
+    </button> -->
   </div>
 
- 
+
 
   <!-- ── Main two-column layout ───────────────────────────────────────────── -->
   <div class="ipv-layout">
@@ -63,10 +62,9 @@
           <div class="ipv-meta-item">
             <span class="ipv-meta-label">Status</span>
             <span class="ipv-meta-value">
-              <span class="ipv-inline-status"
-                [class.ipv-inline-status--active]="displayPlan.status === 'Active'"
-                [class.ipv-inline-status--inactive]="displayPlan.status === 'Inactive'"
-                [class.ipv-inline-status--pending]="displayPlan.status === 'InProgress'">
+              <span class="ipv-inline-status" [class.ipv-inline-status--active]="displayPlan.status === 'ACTIVE'"
+                [class.ipv-inline-status--inactive]="displayPlan.status === 'DEACTIVE'"
+                [class.ipv-inline-status--pending]="displayPlan.status === 'INPROGRESS' || displayPlan.status === 'Pending'">
                 <span class="ipv-status-dot"></span>
                 {{ displayPlan.status }}
               </span>
@@ -80,7 +78,8 @@
 
         <div class="ipv-overview-row">
           <span class="ipv-meta-label">Created On</span>
-          <span class="ipv-meta-value ipv-meta-value--bold ipv-meta-value--lg">{{ displayPlan.createdOn }}</span>
+          <span class="ipv-meta-value ipv-meta-value--bold ipv-meta-value--lg">{{ displayPlan.createdOn | date:"medium"
+            }}</span>
         </div>
 
         <div class="ipv-overview-row ipv-overview-row--desc">
@@ -92,11 +91,8 @@
 
       <!-- ── Configure Rounds in view mode ── -->
       <div class="ipv-configure-rounds-wrapper">
-        <app-configure-rounds
-          [viewMode]="true"
-          [initialRounds]="displayPlan.rounds"
-          [initialEvaluation]="displayPlan.evaluation"
-        ></app-configure-rounds>
+        <app-configure-rounds [viewMode]="true" [initialRounds]="displayPlan.rounds"
+          [initialEvaluation]="displayPlan.evaluation"></app-configure-rounds>
       </div>
 
     </div>
@@ -108,32 +104,42 @@
         <p class="ipv-timeline-sub">Track the progress and status changes of this plan.</p>
 
         <div class="ipv-timeline">
-          <div
-            *ngFor="let event of displayPlan.timeline; let last = last"
-            class="ipv-timeline__item"
-          >
+          <div *ngFor="let event of displayPlan.timeline; let last = last" class="ipv-timeline__item">
             <!-- Connector line -->
             <div class="ipv-timeline__line" *ngIf="!last"></div>
 
             <!-- Icon -->
-            <div class="ipv-timeline__icon" [style.background]="timelineColor(event.type)">
-              <i [class]="timelineIcon(event.type)"></i>
+            <div class="ipv-timeline__icon" [style.background]="timelineColor(event.action)">
+              <i [class]="timelineIcon(event.action)"></i>
             </div>
 
             <!-- Content -->
             <div class="ipv-timeline__content">
-              <h4 class="ipv-timeline__event-title">{{ event.title }}</h4>
-              <p class="ipv-timeline__desc">{{ event.description }}</p>
-              <p class="ipv-timeline__date">{{ event.date }}</p>
-              <p class="ipv-timeline__by">By {{ event.by }}</p>
-              <span *ngIf="event.badge" class="ipv-timeline__badge"
-                [class.ipv-timeline__badge--approved]="event.badgeType === 'approved'"
-                [class.ipv-timeline__badge--rejected]="event.badgeType === 'rejected'"
-                [class.ipv-timeline__badge--pending]="event.badgeType === 'pending'">
-                <i class="fas fa-check" *ngIf="event.badgeType === 'approved'"></i>
-                <i class="fas fa-xmark" *ngIf="event.badgeType === 'rejected'"></i>
-                {{ event.badge }}
-              </span>
+
+              <div class="ipv-timeline__header">
+                <span class="ipv-timeline__date">
+                  {{ event.createdAt | date:"medium"}}
+                </span>
+
+                <span class="ipv-timeline__status" [ngClass]="{
+        'approve': event.action === 'APPROVE' || event.action==='Approve',
+        'create': event.action === 'CREATED' || event.action==='Created',
+        'reject': event.action === 'REJECTED' || event.action==='Rejected',
+        'deactivate': event.action === 'DEACTIVE' || event.action==='Deactive',
+        'activate': event.action === 'ACTIVATE' || event.action==='Activate'
+      }">
+                  {{ event.action | titlecase }}
+                </span>
+              </div>
+
+              <h4 class="ipv-timeline__user">
+                {{ event.createdBy }}
+              </h4>
+
+              <p class="ipv-timeline__desc">
+                {{ event.comments || event.description }}
+              </p>
+
             </div>
           </div>
         </div>

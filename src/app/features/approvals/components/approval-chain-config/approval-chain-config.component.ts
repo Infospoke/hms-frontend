@@ -231,7 +231,7 @@ export class ApprovalChainConfigComponent implements OnInit {
     const palette = CHAIN_ICON_PALETTE[index % CHAIN_ICON_PALETTE.length];
     const displayDate = chain.updatedAt ?? chain.createdAt ?? '—';
     const displayBy = chain.updatedBy ?? chain.createdBy ?? '—';
-    const statusLabel = chain.status?.toUpperCase() === 'ACTIVE' ? 'Active' : 'Deactivated';
+    const statusLabel = chain.status;
 
     return {
       id: chain.id,

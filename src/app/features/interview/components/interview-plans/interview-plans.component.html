@@ -39,11 +39,21 @@
   <!-- Status badge -->
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="ip-status-badge"
-      [class.ip-status-badge--active]="ctx.row['status'] === 'Active'"
-      [class.ip-status-badge--inactive]="ctx.row['status'] === 'Inactive'"
-      [class.ip-status-badge--in-progress]="ctx.row['status'] === 'InProgress'">
+      [class.ip-status-badge--active]="ctx.row['status'] === 'ACTIVE'"
+      [class.ip-status-badge--inactive]="ctx.row['status'] === 'DEACTIVE'"
+      [class.ip-status-badge--in-progress]="ctx.row['status'] === 'INPROGRESS' || ctx.row['status'] === 'INPROGRESS'">
       <span class="ip-status-dot"></span>
       {{ ctx.row['status'] === 'In_Progress' ? 'In Progress' : ctx.row['status'] }}
+    </span>
+  </ng-container>
+
+  <ng-container *ngIf="ctx.col.key === 'approvalStatus'">
+    <span class="ip-status-badge"
+      [class.ip-status-badge--active]="ctx.row['approvalStatus'] === 'APPROVED'"
+      [class.ip-status-badge--inactive]="ctx.row['approvalStatus'] === 'REJECTED' ||ctx.row['approvalStatus'] === 'Rejected'"
+      [class.ip-status-badge--in-progress]="ctx.row['approvalStatus'] == 'In_Progress' || ctx.row['approvalStatus'] === 'INPROGRESS' || ctx.row['approvalStatus'] === 'InProgress'">
+      <span class="ip-status-dot"></span>
+      {{ ctx.row['approvalStatus'] === 'In_Progress' ? 'IN PROGRESS' : ctx.row['approvalStatus']?.toUpperCase() }}
     </span>
   </ng-container>
 

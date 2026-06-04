@@ -40,7 +40,7 @@
               <span class="ip-badge ip-badge--approved">Approved</span>
             </div>
             <div class="ip-plan-meta">
-              {{ plan.rounds }} Rounds &nbsp;•&nbsp; Last updated on {{ plan.lastUpdated }} by {{ plan.updatedBy }}
+              {{ plan.rounds }} Rounds &nbsp;•&nbsp; Last updated on {{ plan.lastUpdated |date:'medium'}} by {{ plan.updatedBy }}
             </div>
             <div class="ip-plan-desc">{{ plan.description }}</div>
           </div>
@@ -118,14 +118,14 @@
             <span class="ip-detail-label">Status</span>
             <span class="ip-detail-val ip-detail-val--active">{{ selectedPlan.status }}</span>
           </div>
-          <div class="ip-detail-row">
+          <!-- <div class="ip-detail-row">
             <span class="ip-detail-label">Applicable To</span>
             <span class="ip-detail-val">{{ selectedPlan.applicableTo }}</span>
           </div>
           <div class="ip-detail-row ip-detail-row--full">
             <span class="ip-detail-label">Applicable Departments</span>
             <span class="ip-detail-val">{{ selectedPlan.applicableDepartments }}</span>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -139,7 +139,6 @@
               <th>Stage Name</th>
               <th>Stage Type</th>
               <th>Interview Mode</th>
-              <th>Weightage (%)</th>
               <th>Mandatory</th>
             </tr>
           </thead>
@@ -149,7 +148,7 @@
               <td>{{ r.stageName }}</td>
               <td>{{ r.stageType }}</td>
               <td>{{ r.interviewMode }}</td>
-              <td>{{ r.weightage }}%</td>
+              <!-- <td>{{ r.weightage }}%</td> -->
               <td>
                 <span class="ip-toggle-on" *ngIf="r.mandatory">
                   <i class="fa-solid fa-toggle-on"></i>
@@ -164,7 +163,7 @@
       </div>
 
       <!-- Evaluation Settings -->
-      <div class="ip-detail-section">
+      <!-- <div class="ip-detail-section">
         <h4 class="ip-detail-section-title">Evaluation Settings</h4>
         <table class="ip-eval-table">
           <thead>
@@ -182,7 +181,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> -->
 
     </div>
 

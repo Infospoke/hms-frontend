@@ -229,8 +229,8 @@
         <div class="rv-field"><span class="rv-label">Plan Name</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.name }}</span></div>
         <div class="rv-field"><span class="rv-label">Number of Rounds</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.rounds }}</span></div>
         <div class="rv-field"><span class="rv-label">Status</span><span class="rv-sep">:</span><span class="rv-val" style="color:#16a34a;font-weight:600">{{ selectedPlanDetail.status }}</span></div>
-        <div class="rv-field"><span class="rv-label">Applicable To</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableTo }}</span></div>
-        <div class="rv-field rv-field--full"><span class="rv-label">Applicable Departments</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableDepartments }}</span></div>
+        <!-- <div class="rv-field"><span class="rv-label">Applicable To</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableTo }}</span></div> -->
+        <!-- <div class="rv-field rv-field--full"><span class="rv-label">Applicable Departments</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableDepartments }}</span></div> -->
         <div class="rv-field rv-field--full"><span class="rv-label">Description</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.description }}</span></div>
       </div>
 
@@ -243,7 +243,6 @@
             <th>Stage Name</th>
             <th>Stage Type</th>
             <th>Mode</th>
-            <th>Weightage</th>
             <th>Mandatory</th>
           </tr>
         </thead>
@@ -253,7 +252,6 @@
             <td>{{ r.stageName }}</td>
             <td>{{ r.stageType }}</td>
             <td>{{ r.interviewMode }}</td>
-            <td>{{ r.weightage }}%</td>
             <td>
               <i class="fa-solid fa-toggle-on" style="color:#2563eb;font-size:16px" *ngIf="r.mandatory"></i>
               <i class="fa-solid fa-toggle-off" style="color:#cbd5e1;font-size:16px" *ngIf="!r.mandatory"></i>
@@ -263,7 +261,7 @@
       </table>
 
       <!-- Evaluation -->
-      <p class="rv-ip-sub" style="margin-top:16px">Evaluation Settings</p>
+      <!-- <p class="rv-ip-sub" style="margin-top:16px">Evaluation Settings</p>
       <table class="rv-src-table">
         <thead>
           <tr>
@@ -279,7 +277,7 @@
             <td>{{ selectedPlanDetail.minPassingScore }}</td>
           </tr>
         </tbody>
-      </table>
+      </table> -->
 
     </ng-container>
 

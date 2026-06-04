@@ -9,7 +9,7 @@
     [dropDownData]="dropDownData"
     [searchPlaceholder]="'Search by chain name...'"
     (handle)="onCreate()"
-    [showBtn]="true"
+    [showBtn]="'SYSTEM&ADMINS:APPROVALCHAINCONFIGURATION:CREATE'"
     [buttonType]="'Create Chain'"
     (filterChange)="filtersResponse($event)"
     [tabs]="tabs"
@@ -28,7 +28,8 @@
       [currentPage]="currentPage"
       [cellTemplate]="cellTpl"
       emptyMessage="No approval chains found."
-      (pageChange)="onPageChange($event)">
+      (pageChange)="onPageChange($event)"
+      [showPagination]="true">
     </app-reusable-table>
   </div>
 

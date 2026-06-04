@@ -65,7 +65,7 @@ export class ApprovedSrsComponent {
     switch (status?.toLowerCase()) {
       case 'pending':  return 'status-pending';
       case 'accepted': return 'status-accepted';
-      case 'declined': return 'status-declined';
+      case 'rejected': return 'status-declined';
       default:         return 'status-pending';
     }
   }

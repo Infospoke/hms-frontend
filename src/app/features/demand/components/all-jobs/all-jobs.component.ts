@@ -93,7 +93,7 @@ export class AllJobsComponent implements OnInit {
     { label: '', colspan: 1, blankGroup: true },
   ];
   ableColumns: any[] = [
-    { key: 'jobDetails', label: 'Job Details', custom: true, width: '220px' },
+    { key: 'jobDetails', label: 'Job Details', custom: true, width: '200px' },
     { key: 'department', label: 'Department', custom: true, width: '140px' },
     { key: 'targetStartDate', label: 'Target Start Date', width: '150px' },
     { key: 'assignees', label: 'Assignees', custom: true, width: '120px', align: 'center' },

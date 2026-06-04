@@ -84,7 +84,7 @@
 
         <!-- Requested On: date on top, time below -->
         <ng-container *ngIf="ctx.col.key === 'dateName'">
-            <div class="">
+            <div class="cell-date">
                 <span class="cell-date-main">{{ formatDate(ctx?.row?.dateName) }}</span>
                 <span class="cell-date-sub">{{ formatTime(ctx?.row?.dateName) }}</span>
             </div>

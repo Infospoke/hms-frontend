@@ -2,6 +2,7 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { JobService } from '../../../../services/job.service';
+import { InterviewServiceService } from '../../../../../interview/service/interview-service.service';
 
 export interface InterviewPlan {
   id: number;
@@ -11,12 +12,8 @@ export interface InterviewPlan {
   updatedBy: string;
   description: string;
   status: string;
-  applicableTo: string;
-  applicableDepartments: string;
+  approvalStatus: string;
   roundDetails: InterviewRound[];
-  evaluationCriteria: string;
-  ratingScale: string;
-  minPassingScore: number;
 }
 
 export interface InterviewRound {
@@ -24,9 +21,9 @@ export interface InterviewRound {
   stageName: string;
   stageType: string;
   interviewMode: string;
-  weightage: number;
   mandatory: boolean;
 }
+
 @Component({
   selector: 'app-interview-plan-step',
   imports: [CommonModule, ReactiveFormsModule],
@@ -36,165 +33,130 @@ export interface InterviewRound {
 export class InterviewPlanStepComponent implements OnInit {
   @Input() form!: FormGroup;
 
-  private jobService = inject(JobService);
+  private jobService       = inject(JobService);
+  private interviewService = inject(InterviewServiceService);
 
-  plans: InterviewPlan[] = [];
+  plans: InterviewPlan[]             = [];
   selectedPlan: InterviewPlan | null = null;
+  isLoadingDetail                    = false;
 
   currentPage = 1;
-  pageSize = 10;
-  totalItems = 0;
-  searchTerm = '';
+  pageSize    = 10;
+  totalItems  = 0;
+  searchTerm  = '';
 
-ngOnInit(): void {
-  if (this.form && !this.form.get('planId')) {
-    this.form.addControl('planId', new FormControl(null));
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  ngOnInit(): void {
+    if (this.form && !this.form.get('planId')) {
+      this.form.addControl('planId', new FormControl(null));
+    }
+    if (this.form && !this.form.get('selectedPlanDetail')) {
+      this.form.addControl('selectedPlanDetail', new FormControl(null));
+    }
+    this.loadPlans();
   }
-  if (this.form && !this.form.get('selectedPlanDetail')) {
-  this.form.addControl('selectedPlanDetail', new FormControl(null));
-}
-  this.loadPlans();
-}
 
-private loadPlans(): void {
-  // ── API call (uncomment when ready) ──────────────────────────────────
-  // this.jobService.getInterviewPlans({
-  //   page: this.currentPage - 1,
-  //   size: this.pageSize,
-  //   search: this.searchTerm.trim() || undefined,
-  // })
-  // .then((res: any) => {
-  //   if (res?.responsecode === '00') {
-  //     this.plans      = this.mapPlans(res.data?.content ?? res.data ?? []);
-  //     this.totalItems = res.data?.totalElements ?? this.plans.length;
-  //   }
-  // })
-  // .catch((err: any) => console.error('loadPlans error:', err));
+  // ── API: list ──────────────────────────────────────────────────────────────
+  // Response shape: res.data.interviewPlans[], res.data.totalElements
 
-  // ── Dummy data ────────────────────────────────────────────────────────
-  const dummy: InterviewPlan[] = [
-    {
-      id: 1,
-      name: 'Data Science Interview Plan',
-      rounds: 3,
-      lastUpdated: '10 May 2024',
-      updatedBy: 'Demo Admin',
-      description: 'Comprehensive interview plan for Data Science role covering technical, HR and managerial evaluation.',
-      status: 'Active',
-      applicableTo: 'All Job Roles',
-      applicableDepartments: 'Engineering, Analytics, Product',
-      roundDetails: [
-        { order: 1, stageName: 'Technical Interview',  stageType: 'Technical Interview',  interviewMode: 'Online',  weightage: 40, mandatory: true  },
-        { order: 2, stageName: 'HR Interview',          stageType: 'HR Interview',          interviewMode: 'Online',  weightage: 30, mandatory: true  },
-        { order: 3, stageName: 'Managerial Interview',  stageType: 'Managerial Interview',  interviewMode: 'Offline', weightage: 30, mandatory: true  },
-      ],
-      evaluationCriteria: 'Overall Assessment',
-      ratingScale: '5 Point Scale',
-      minPassingScore: 60,
-    },
-    {
-      id: 2,
-      name: 'Two Round Interview',
-      rounds: 2,
-      lastUpdated: '08 May 2024',
-      updatedBy: 'Demo Admin',
-      description: 'Basic screening and technical evaluation process.',
-      status: 'Active',
-      applicableTo: 'All Job Roles',
-      applicableDepartments: 'All Departments',
-      roundDetails: [
-        { order: 1, stageName: 'Screening Round',    stageType: 'HR Interview',          interviewMode: 'Online',  weightage: 40, mandatory: true  },
-        { order: 2, stageName: 'Technical Round',    stageType: 'Technical Interview',   interviewMode: 'Online',  weightage: 60, mandatory: true  },
-      ],
-      evaluationCriteria: 'Overall Assessment',
-      ratingScale: '5 Point Scale',
-      minPassingScore: 50,
-    },
-    {
-      id: 3,
-      name: 'Three Round Interview',
-      rounds: 3,
-      lastUpdated: '07 May 2024',
-      updatedBy: 'Demo Admin',
-      description: 'Comprehensive evaluation process with in-depth candidate assessment.',
-      status: 'Active',
-      applicableTo: 'Senior Roles',
-      applicableDepartments: 'Engineering, Product',
-      roundDetails: [
-        { order: 1, stageName: 'Aptitude Test',       stageType: 'Written Test',          interviewMode: 'Online',  weightage: 20, mandatory: true  },
-        { order: 2, stageName: 'Technical Interview', stageType: 'Technical Interview',   interviewMode: 'Online',  weightage: 50, mandatory: true  },
-        { order: 3, stageName: 'HR Interview',        stageType: 'HR Interview',          interviewMode: 'Offline', weightage: 30, mandatory: false },
-      ],
-      evaluationCriteria: 'Overall Assessment',
-      ratingScale: '10 Point Scale',
-      minPassingScore: 65,
-    },
-    {
-      id: 4,
-      name: 'Four Round Interview',
-      rounds: 4,
-      lastUpdated: '05 May 2024',
-      updatedBy: 'Demo Admin',
-      description: 'Complete evaluation and final assessment.',
-      status: 'Active',
-      applicableTo: 'Leadership Roles',
-      applicableDepartments: 'All Departments',
-      roundDetails: [
-        { order: 1, stageName: 'Screening',           stageType: 'HR Interview',          interviewMode: 'Online',  weightage: 15, mandatory: true  },
-        { order: 2, stageName: 'Technical Round 1',   stageType: 'Technical Interview',   interviewMode: 'Online',  weightage: 30, mandatory: true  },
-        { order: 3, stageName: 'Technical Round 2',   stageType: 'Technical Interview',   interviewMode: 'Online',  weightage: 30, mandatory: true  },
-        { order: 4, stageName: 'Final HR Round',      stageType: 'HR Interview',          interviewMode: 'Offline', weightage: 25, mandatory: true  },
-      ],
-      evaluationCriteria: 'Overall Assessment',
-      ratingScale: '5 Point Scale',
-      minPassingScore: 70,
-    },
-  ];
+  private async loadPlans(): Promise<void> {
+    const payload = {
+      page:           this.currentPage - 1,
+      size:           this.pageSize,
+      sortBy:         'createdOn',
+      direction:      'DESC',
+      
+      filters: {
+        status:     'Active',
+        dateFilter: 'thisWeek',
+        approvalStatus: 'APPROVED',
+        ...(this.searchTerm.trim() ? { search: this.searchTerm.trim() } : {}),
+      },
+    };
 
-  const search = this.searchTerm.trim().toLowerCase();
-  const filtered = search
-    ? dummy.filter(p => p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search))
-    : dummy;
+    try {
+      const res = await this.interviewService.plansList(payload);
 
-  this.totalItems = filtered.length;
-  const start = (this.currentPage - 1) * this.pageSize;
-  this.plans = filtered.slice(start, start + this.pageSize);
-}
+      if (res?.responsecode === '00') {
+        const list      = res.data?.interviewPlans ?? res.data?.content ?? res.data ?? [];
+        this.plans      = this.mapListPlans(list);
+        this.totalItems = res.data?.totalElements ?? this.plans.length;
+      } else {
+        console.warn('plansList – unexpected response code:', res?.responsecode);
+        this.plans      = [];
+        this.totalItems = 0;
+      }
+    } catch (err) {
+      console.error('loadPlans error:', err);
+      this.plans      = [];
+      this.totalItems = 0;
+    }
+  }
 
-  private mapPlans(data: any[]): InterviewPlan[] {
+  // ── API: detail by ID ──────────────────────────────────────────────────────
+  // Response shape: res.data.planName, res.data.interviewRoundsResponse[]
+  // commentTimeline is intentionally ignored
+
+  async selectPlan(plan: InterviewPlan): Promise<void> {
+    this.form.get('planId')?.setValue(plan.id);
+    this.selectedPlan    = null;
+    this.isLoadingDetail = true;
+
+    try {
+      const res = await this.interviewService.planDetailsByID(plan.id);
+
+      if (res?.responsecode === '00') {
+        const d = res.data;
+        const detail: InterviewPlan = {
+          id:             plan.id,
+          name:           d.planName        ?? plan.name,
+          rounds:         d.interviewRoundsResponse?.length ?? 0,
+          lastUpdated:    d.createdOn        ?? '',
+          updatedBy:      d.createdBy        ?? '',
+          description:    d.description      ?? '',
+          status:         d.status           ?? '',
+          approvalStatus: d.approvalStatus   ?? '',
+          roundDetails: (d.interviewRoundsResponse ?? []).map((r: any) => ({
+            order:         r.roundOrder,
+            stageName:     r.stageName,
+            stageType:     r.stageType,
+            interviewMode: r.interviewMode,
+            mandatory:     r.mandatory ?? true,
+          })),
+        };
+        this.selectedPlan = detail;
+        this.form.get('selectedPlanDetail')?.setValue(detail);
+      } else {
+        console.warn('planDetailsByID – unexpected response code:', res?.responsecode);
+      }
+    } catch (err) {
+      console.error('planDetailsByID error:', err);
+    } finally {
+      this.isLoadingDetail = false;
+    }
+  }
+
+  // ── Mapping: list items ────────────────────────────────────────────────────
+
+  private mapListPlans(data: any[]): InterviewPlan[] {
     return data.map((p: any) => ({
-      id:                    p.id ?? p.planId,
-      name:                  p.planName ?? p.name,
-      rounds:                p.numberOfRounds ?? p.rounds ?? 0,
-      lastUpdated:           p.lastUpdatedDate ?? p.lastUpdated ?? '',
-      updatedBy:             p.lastUpdatedBy ?? p.updatedBy ?? '',
-      description:           p.description ?? '',
-      status:                p.status ?? 'Active',
-      applicableTo:          p.applicableTo ?? 'All Job Roles',
-      applicableDepartments: Array.isArray(p.applicableDepartments)
-        ? p.applicableDepartments.join(', ')
-        : (p.applicableDepartments ?? '—'),
-      roundDetails: (p.interviewRounds ?? p.roundDetails ?? []).map((r: any) => ({
-        order:         r.roundOrder ?? r.order,
-        stageName:     r.stageName,
-        stageType:     r.stageType,
-        interviewMode: r.interviewMode,
-        weightage:     r.weightage,
-        mandatory:     r.mandatory ?? true,
-      })),
-      evaluationCriteria: p.evaluationCriteria ?? 'Overall Assessment',
-      ratingScale:        p.ratingScale ?? '5 Point Scale',
-      minPassingScore:    p.minPassingScore ?? 60,
+      id:             p.id ?? p.planId,
+      name:           p.planName ?? p.name,
+      rounds:         p.rounds ?? p.numberOfRounds ?? 0,
+      lastUpdated:    p.createdOn ?? p.lastUpdatedDate ?? '',
+      updatedBy:      p.createdBy ?? p.lastUpdatedBy ?? '',
+      description:    p.description ?? '',
+      status:         p.status ?? '',
+      approvalStatus: p.approvalStatus ?? '',
+      roundDetails:   [],   // not returned in list; loaded on select
     }));
   }
 
-selectPlan(plan: InterviewPlan): void {
-  this.selectedPlan = plan;
-  this.form.get('planId')?.setValue(plan.id);
-  this.form.get('selectedPlanDetail')?.setValue(plan);  // ← add this
-}
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
   isSelected(plan: InterviewPlan): boolean {
-    return this.selectedPlan?.id === plan.id;
+    return this.form.get('planId')?.value === plan.id;
   }
 
   onSearch(event: Event): void {
@@ -208,8 +170,16 @@ selectPlan(plan: InterviewPlan): void {
     this.loadPlans();
   }
 
-  get totalPages(): number { return Math.ceil(this.totalItems / this.pageSize); }
-  get pageNumbers(): number[] { return Array.from({ length: this.totalPages }, (_, i) => i + 1); }
+  // ── Pagination helpers ─────────────────────────────────────────────────────
+
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
   get showingText(): string {
     const from = (this.currentPage - 1) * this.pageSize + 1;
     const to   = Math.min(this.currentPage * this.pageSize, this.totalItems);

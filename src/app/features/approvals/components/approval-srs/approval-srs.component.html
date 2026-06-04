@@ -8,7 +8,7 @@
     <div class="">
         <app-reusable-table [columns]="columns" [data]="data" [totalItems]="totalItems" [pageSize]="pageSize"
             [currentPage]="currentPage" [cellTemplate]="cellTpl" emptyMessage="No staffing requisitions found."
-            (pageChange)="onPageChange($event)"></app-reusable-table>
+            (pageChange)="onPageChange($event)" [showPagination]="true"></app-reusable-table>
     </div>
 </div>
 
@@ -52,11 +52,11 @@
     </ng-container>
 
     <!-- Created On -->
-    <ng-container *ngIf="ctx.col.key === 'createdOn'">
+    <ng-container *ngIf="ctx.col.key === 'submittedOn'">
         <span class="date-text">
             {{
-            ctx.row['createdOn'] && ctx.row['createdOn'] !== '—'
-            ? (ctx.row['createdOn'] | date:'d MMM yyyy')
+            ctx.row['submittedOn'] && ctx.row['submittedOn'] !== '—'
+            ? (ctx.row['submittedOn'] | date:'d MMM yyyy')
             : '—'
             }}
         </span>

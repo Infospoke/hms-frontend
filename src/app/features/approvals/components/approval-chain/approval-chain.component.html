@@ -11,7 +11,7 @@
   <div class="card-dd">
     <app-reusable-table [columns]="columns" [data]="filteredData" [totalItems]="totalItems" [pageSize]="pageSize"
       [currentPage]="currentPage" [cellTemplate]="cellTpl" emptyMessage="No approval chains found."
-      (pageChange)="onPageChange($event)">
+      (pageChange)="onPageChange($event)" [showPagination]="true">
     </app-reusable-table>
   </div>
 

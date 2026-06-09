@@ -14,34 +14,32 @@ import { PermissionService } from './core/services/permission.service';
 })
 export class App implements OnInit {
   protected readonly title = signal('infospoke_website_2.0');
-  private authService=inject(AuthService);
-  private router=inject(Router);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   private tokenService = inject(TokenService);
   private permissionService = inject(PermissionService);
-  constructor(private websocketService: NotificationWebsocketService) {
 
-  }
-ngOnInit(): void {
-  Promise.all([this.websocketService.connect()]);
+  ngOnInit(): void {
 
-  this.router.events
-    .pipe(
-      filter(
-        (event): event is NavigationEnd =>
-          event instanceof NavigationEnd
+
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd =>
+            event instanceof NavigationEnd
+        )
       )
-    )
-    .subscribe((event) => {
+      .subscribe((event) => {
 
-      const currentUrl =
-        event.urlAfterRedirects;
+        const currentUrl =
+          event.urlAfterRedirects;
 
-      if (currentUrl.startsWith('/auth')) {
-        this.tokenService.clearTokens();
-        this.permissionService.clear();
-      }
-    });
-}
+        // if (currentUrl.startsWith('/auth/login')) {
+        //   this.tokenService.clearTokens();
+        //   this.permissionService.clear();
+        // }
+      });
+  }
 
 
   @HostListener('window:beforeunload', ['$event'])

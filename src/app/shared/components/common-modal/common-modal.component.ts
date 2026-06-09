@@ -88,12 +88,7 @@ export class CommonModalComponent implements OnChanges {
   /** Which action this modal represents */
   @Input() action: CommentModalAction | null = null;
  
-  /**
-   * Optional override config. If omitted the component derives config
-   * automatically from DEFAULT_MODAL_CONFIGS[action].
-   * Consumers can pass a partial or full CommentModalConfig to customise
-   * titles / descriptions per-use-case (e.g. "Approve Chain" vs "Approve SR").
-   */
+  
   @Input() config: Partial<CommentModalConfig> | null = null;
  
   /** While true the confirm button shows a spinner and both buttons are disabled */

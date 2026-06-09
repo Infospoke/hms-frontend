@@ -20,22 +20,25 @@ export class ReviewSubmitStepComponent implements OnInit {
   @Input() step2Form!: FormGroup;
   @Input() step3Form!: FormGroup;
   @Input() step4Form!: FormGroup;
+  @Input() step5Form!: FormGroup;
 
   @Output() goToStep = new EventEmitter<number>();
 
-  open = { jobDetails: true, aiJd: true, sourcing: true, recruiter: true };
+  open = { jobDetails: true, aiJd: true, sourcing: true, recruiter: true, interviewPlan: true };
 
-  get allCollapsed(): boolean {
-    return !this.open.jobDetails && !this.open.aiJd && !this.open.sourcing && !this.open.recruiter;
-  }
+get allCollapsed(): boolean {
+  return !this.open.jobDetails && !this.open.aiJd && !this.open.sourcing
+      && !this.open.recruiter && !this.open.interviewPlan;
+}
 
-  toggleAll(): void {
-    const collapse = !this.allCollapsed;
-    this.open.jobDetails = !collapse;
-    this.open.aiJd       = !collapse;
-    this.open.sourcing   = !collapse;
-    this.open.recruiter  = !collapse;
-  }
+toggleAll(): void {
+  const collapse = !this.allCollapsed;
+  this.open.jobDetails    = !collapse;
+  this.open.aiJd          = !collapse;
+  this.open.sourcing      = !collapse;
+  this.open.recruiter     = !collapse;
+  this.open.interviewPlan = !collapse;
+}
 
   reviewChannels: ReviewChannel[] = [];
   reviewRecruiters: any[] = [];
@@ -102,4 +105,8 @@ private buildChannels(): void {
     for (let i = 0; i < userName.length; i++) hash = userName.charCodeAt(i) + ((hash << 5) - hash);
     return colors[Math.abs(hash) % colors.length];
   }
+
+  get selectedPlanDetail(): any {
+  return this.step5Form?.get('selectedPlanDetail')?.value || null;
+}
 }

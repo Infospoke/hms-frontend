@@ -1,14 +1,21 @@
-<div [ngClass]="{'ra-card':!showBackButton}" >
+<div [ngClass]="{'ra-card':!showBackButton}">
 
   <!-- ── Card header ──────────────────────────────────────────────────────── -->
   <div [ngClass]="{ 'ra-card-header': !showBackButton }">
     <div class="heading-info sr-header">
-      <app-heading heading="Recruiter Assignment" subHeading="Assign one or more recruiters to own and manage this job." [showInfo]="showInfo" [infoTooltip]="infoTooltip" [showBackButton]="showBackButton" [buttonText]="buttonText" [backButtonUrl]="buttonUrl"/>
+      <app-heading
+        heading="Recruiter Assignment"
+        subHeading="Assign one or more recruiters to own and manage this job."
+        [showInfo]="showInfo"
+        [infoTooltip]="infoTooltip"
+        [showBackButton]="showBackButton"
+        [buttonText]="buttonText"
+        [backButtonUrl]="buttonUrl"/>
       <button class="btn-new" *ngIf="showBackButton"
         [disabled]="assignedCount === 0 || isAssigning"
         (click)="onAssignRecruiters()">
         <i class="fa-solid fa-spinner fa-spin" *ngIf="isAssigning"></i>
-        {{ isAssigning ? 'Assigning…' : 'Assign Recruiter' }}
+        {{ isAssigning ? 'Assigning…' : 'Assign Recruiters' }}
       </button>
     </div>
     <span class="ra-assigned-badge" *ngIf="assignedCount > 0">
@@ -30,18 +37,34 @@
   <app-reusable-table
     [columns]="columns"
     [data]="filteredRecruiters"
-    [showPagination]="false"
     emptyMessage="No recruiters match your search."
     [cellTemplate]="recruiterCellTpl"
+    [headerTemplate]="recruiterHeaderTpl"
     [currentPage]="currentPage"
     [pageSize]="pageSize"
     [totalItems]="totalItems"
     [showPagination]="true"
-    (pageChange)="onPageChange($event)"
-    >
+    (pageChange)="onPageChange($event)">
   </app-reusable-table>
 
 </div>
+
+<!-- ── Custom header template ────────────────────────────────────────────── -->
+<ng-template #recruiterHeaderTpl let-col>
+  <ng-container *ngIf="col.key === 'select'">
+    <label class="ra-checkbox" (click)="$event.stopPropagation()">
+      <input
+        type="checkbox"
+        [checked]="allSelected"
+        [indeterminate]="someSelected"
+        (change)="toggleAll($any($event.target).checked)"
+      />
+      <span class="ra-checkbox__box"
+        [class.ra-checkbox__box--indeterminate]="someSelected && !allSelected">
+      </span>
+    </label>
+  </ng-container>
+</ng-template>
 
 <!-- ── Custom cell template ──────────────────────────────────────────────── -->
 <ng-template #recruiterCellTpl let-ctx>

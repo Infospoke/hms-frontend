@@ -9,6 +9,7 @@ import { CommonFilterComponent } from '../../../../shared/components/common-filt
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { chainOptions } from '../../../../shared/constants/reusbale-filter';
 import { NotificationAllService } from '../../services/notification-service';
+import { NotificationWebsocketService } from '../../services/notification-websocket-service';
 
 export type TabKey = 'all' | 'unread' | 'read';
 
@@ -85,6 +86,7 @@ export class AllNotificationsComponent implements OnInit {
   goBack() {
     this.location.back(); // navigates to the actual previous history entry
   }
+  private notificationWebsocketService=inject(NotificationWebsocketService);
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.loadNotifications();
@@ -253,7 +255,8 @@ export class AllNotificationsComponent implements OnInit {
       this.displayData = this.displayData.map(n => ({ ...n, isRead: true }));
       this.selectedIds.clear();
       await this.loadNotifications();  
-      await this.notificationService.getNotificationCountsUnRead();  // refresh counts & current page
+      await this.notificationService.getNotificationCountsUnRead(); 
+      await this.notificationWebsocketService.clearStoredNotifications(); // refresh counts & current page
     } catch (err) {
       console.error('Failed to mark all as read', err);
     } finally {

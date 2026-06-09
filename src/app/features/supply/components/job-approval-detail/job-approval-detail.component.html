@@ -227,52 +227,79 @@
         <span class="jad-sh-icon jad-sh-icon--gray"><i class="fa-solid fa-circle-check"></i></span>
         Your Decision
       </h2>
-      <p class="jad-body-text jad-mb-16">
-        Please review the job details and let us know your decision.
-      </p>
 
-      <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
-      <div class="jad-dec-btns">
-        <button
-          class="jad-dec-btn jad-dec-btn--accept"
-          [class.active]="decision === 'Accepted'"
-          (click)="setDecision('Accepted')">
-          <i class="fa-solid fa-check"></i> Accept
-        </button>
-        <button
-          class="jad-dec-btn jad-dec-btn--decline"
-          [class.active]="decision === 'Rejected'"
-          (click)="setDecision('Rejected')">
-          <i class="fa-solid fa-xmark"></i> Decline
-        </button>
-      </div>
+      <!-- ── Already submitted: read-only view ── -->
+      <ng-container *ngIf="hasExistingResponse; else decisionForm">
+        <div class="jad-decision-readonly"
+          [class.jad-decision-readonly--accepted]="existingResponse!.status === 'Accepted'"
+          [class.jad-decision-readonly--rejected]="existingResponse!.status === 'Rejected'">
+          <div class="jad-dr-header">
+            <i class="fa-solid fa-check-circle" *ngIf="existingResponse!.status === 'Accepted'"></i>
+            <i class="fa-solid fa-times-circle" *ngIf="existingResponse!.status === 'Rejected'"></i>
+            <span class="jad-dr-status">
+              You have already {{ existingResponse!.status === 'Accepted' ? 'accepted' : 'declined' }} this job
+            </span>
+          </div>
+          <div class="jad-dr-comments" *ngIf="existingResponse!.comments">
+            <p class="jad-ov-label">Your Comments</p>
+            <p class="jad-dr-comment-text">{{ existingResponse!.comments }}</p>
+          </div>
+        </div>
 
-      <p class="jad-field-label">
-        Comments <span class="astrick ">*</span>
-      </p>
-      <p class="jad-field-hint">Provide a reason for your decision ( recommended).</p>
-      <div class="jad-ta-wrap">
-        <textarea
-          class="jad-textarea"
-          [(ngModel)]="comment"
-          [maxlength]="MAX_COMMENT"
-          rows="4"
-          placeholder="Write your comments here...">
-        </textarea>
-        <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
-      </div>
+        <div class="jad-footer">
+          <button class="jad-btn-cancel" (click)="onCancel()">Back</button>
+        </div>
+      </ng-container>
 
-      <div class="jad-footer">
-        <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
-        <button
-          class="jad-btn-submit"
-          [disabled]="!canSubmit"
-          (click)="onSubmit()">
-          <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
-          {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
-          <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
-        </button>
-      </div>
+      <!-- ── Not yet submitted: decision form ── -->
+      <ng-template #decisionForm>
+        <p class="jad-body-text jad-mb-16">
+          Please review the job details and let us know your decision.
+        </p>
+
+        <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
+        <div class="jad-dec-btns">
+          <button
+            class="jad-dec-btn jad-dec-btn--accept"
+            [class.active]="decision === 'Accepted'"
+            (click)="setDecision('Accepted')">
+            <i class="fa-solid fa-check"></i> Accept
+          </button>
+          <button
+            class="jad-dec-btn jad-dec-btn--decline"
+            [class.active]="decision === 'Rejected'"
+            (click)="setDecision('Rejected')">
+            <i class="fa-solid fa-xmark"></i> Decline
+          </button>
+        </div>
+
+        <p class="jad-field-label">
+          Comments <span class="astrick">*</span>
+        </p>
+        <p class="jad-field-hint">Provide a reason for your decision (recommended).</p>
+        <div class="jad-ta-wrap">
+          <textarea
+            class="jad-textarea"
+            [(ngModel)]="comment"
+            [maxlength]="MAX_COMMENT"
+            rows="4"
+            placeholder="Write your comments here...">
+          </textarea>
+          <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
+        </div>
+
+        <div class="jad-footer">
+          <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
+          <button
+            class="jad-btn-submit"
+            [disabled]="!canSubmit"
+            (click)="onSubmit()">
+            <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+            {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
+            <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
+          </button>
+        </div>
+      </ng-template>
     </div>
 
   </ng-container>

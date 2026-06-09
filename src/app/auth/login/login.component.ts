@@ -12,6 +12,7 @@ import { NavigationService } from '../../core/services/navigation.service';
 import { API } from '../../shared/constants/api-endpoints';
 import { CommonModule } from '@angular/common';
 import { HeadingComponent } from "../../shared/components/heading/heading.component";
+import { NotificationWebsocketService } from '../../features/notification-panel/services/notification-websocket-service';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ export class LoginComponent {
   private permissionService = inject(PermissionService);
   private navigationService = inject(NavigationService);
   private notification = inject(NotificationService);
+  private notificationWebsocket=inject(NotificationWebsocketService);
   private api = inject(ApiService);
   private modal = inject(NzModalService);
 
@@ -74,6 +76,7 @@ export class LoginComponent {
         // first route the user actually has access to
         this.permissionService.load();
         const firstRoute = this.navigationService.getFirstRoute();
+       await  this.notificationWebsocket.connect();
         this.router.navigateByUrl(firstRoute);
         // this.loadUserAndNavigate();
       }

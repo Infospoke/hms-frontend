@@ -6,9 +6,9 @@
       <!-- User Type -->
       <div class="field">
         <label>User Type <span class="astrick">*</span></label>
-        <nz-select formControlName="userType" nzPlaceHolder="Select user type"
+        <nz-select formControlName="userType" [nzDisabled]="isView" nzPlaceHolder="Select user type"
           [nzOptionOverflowSize]="5" class="nz-field-select">
-          <nz-option *ngIf="userTypes.length === 0" nzDisabled nzValue="" nzLabel="No user types available"></nz-option>
+          <!-- <nz-option *ngIf="userTypes.length === 0" nzDisabled nzValue="" nzLabel="No user types available"></nz-option> -->
           <nz-option *ngFor="let u of userTypes" [nzValue]="u?.id" [nzLabel]="u?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('userType')?.touched">
@@ -122,9 +122,9 @@
       <!-- Employment Type -->
       <div class="field">
         <label>Employment Type <span class="astrick">*</span></label>
-        <nz-select formControlName="employmentType" nzPlaceHolder="Select employment type"
-          [nzOptionOverflowSize]="5" class="nz-field-select">
-          <nz-option *ngIf="employmentTypes.length === 0" nzDisabled nzValue="" nzLabel="No employment types available"></nz-option>
+        <nz-select formControlName="employmentType" [nzDisabled]="isView" nzPlaceHolder="Select employment type"
+          [nzOptionOverflowSize]="5" class="nz-field-select" >
+         
           <nz-option *ngFor="let e of employmentTypes" [nzValue]="e?.id" [nzLabel]="e?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('employmentType')?.touched">
@@ -135,9 +135,9 @@
       <!-- Business Unit -->
       <div class="field">
         <label>Business Unit <span class="astrick">*</span></label>
-        <nz-select formControlName="businessUnit" nzPlaceHolder="Select business unit"
+        <nz-select formControlName="businessUnit" [nzDisabled]="isView" nzPlaceHolder="Select business unit"
           [nzOptionOverflowSize]="5" class="nz-field-select">
-          <nz-option *ngIf="businessUnits.length === 0" nzDisabled nzValue="" nzLabel="No business units available"></nz-option>
+          <!-- <nz-option *ngIf="businessUnits.length === 0" nzDisabled nzValue="" nzLabel="No business units available"></nz-option> -->
           <nz-option *ngFor="let b of businessUnits" [nzValue]="b?.id" [nzLabel]="b?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('businessUnit')?.touched">
@@ -148,10 +148,10 @@
       <!-- Department -->
       <div class="field">
         <label>Department / Team <span class="astrick">*</span></label>
-        <nz-select formControlName="department"
+        <nz-select formControlName="department" [nzDisabled]="isView"
           [nzPlaceHolder]="departments.length ? 'Select department' : 'Select business unit first'"
           [nzOptionOverflowSize]="5" class="nz-field-select">
-          <nz-option *ngIf="departments.length === 0 && c('businessUnit')?.value" nzDisabled nzValue="" nzLabel="No departments available"></nz-option>
+          <!-- <nz-option *ngIf="departments.length === 0 && c('businessUnit')?.value" nzDisabled nzValue="" nzLabel="No departments available"></nz-option> -->
           <nz-option *ngFor="let d of departments" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('department')?.touched">
@@ -162,10 +162,10 @@
       <!-- Role -->
       <div class="field">
         <label>Designation / Role <span class="astrick">*</span></label>
-        <nz-select formControlName="role"
+        <nz-select formControlName="role" [nzDisabled]="isView"
           [nzPlaceHolder]="roles.length ? 'Select role' : 'Select department first'"
           [nzOptionOverflowSize]="5" class="nz-field-select">
-          <nz-option *ngIf="roles.length === 0 && c('department')?.value" nzDisabled nzValue="" nzLabel="No roles available"></nz-option>
+          <!-- <nz-option *ngIf="roles.length === 0 && c('department')?.value" nzDisabled nzValue="" nzLabel="No roles available"></nz-option> -->
           <nz-option *ngFor="let r of roles" [nzValue]="r?.id" [nzLabel]="r?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('role')?.touched">

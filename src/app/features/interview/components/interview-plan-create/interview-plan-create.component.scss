@@ -1,0 +1,281 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// interview-plan-create.component.scss
+// ─────────────────────────────────────────────────────────────────────────────
+
+.ipc-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.ipc-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+}
+
+.ipc-section-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ipc-section-title {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.ipc-section-sub {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+// ── Form grid ─────────────────────────────────────────────────────────────────
+.ipc-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+  padding: 20px 24px 20px;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.ipc-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ipc-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+.ipc-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.ipc-input,
+.ipc-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #1e293b;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  &::placeholder { color: #94a3b8; }
+
+  &:disabled {
+    background: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  &--error   { border-color: #ff4d4f !important; }
+  &--success { border-color: #52c41a !important; }
+}
+
+.ipc-input    { height: 36px; }
+.ipc-textarea { resize: vertical; min-height: 80px; line-height: 1.5; padding-top: 8px; }
+
+// ── Char counter ──────────────────────────────────────────────────────────────
+.ipc-char-count {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #8c8c8c;
+  margin-top: 0.2rem;
+
+  &--warn  { color: #fa8c16; }
+  &--error { color: #ff4d4f; font-weight: 600; }
+}
+
+// ── Field error ───────────────────────────────────────────────────────────────
+.ipc-field-error {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: #ff4d4f;
+  i { font-size: 0.75rem; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ── Status section ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+.ipc-status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 24px 24px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 20px;
+}
+
+// ── Inactive locked badge (create mode) ───────────────────────────────────────
+.ipc-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  width: fit-content;
+
+  i { font-size: 10px; }
+
+  &--inactive {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+
+  &--active {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+}
+
+// ── Info box — matches the screenshot's blue rounded info panel ───────────────
+.ipc-status-infobox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1e40af;
+  line-height: 1.55;
+  max-width: 560px;
+
+  strong { font-weight: 600; }
+
+  &__icon {
+    font-size: 14px;
+    color: #2563eb;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+// ── Toggle button (edit mode) ─────────────────────────────────────────────────
+.ipc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  width: fit-content;
+
+  &:focus-visible .ipc-toggle__track {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  }
+
+  &__track {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: #cbd5e1;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+  }
+
+  &--on {
+    .ipc-toggle__track  { background: #2563eb; }
+    .ipc-toggle__thumb  { transform: translateX(18px); }
+    .ipc-toggle__label  { color: #1d4ed8; }
+  }
+
+  &:hover .ipc-toggle__track { filter: brightness(0.93); }
+}
+
+// ── Error banner ──────────────────────────────────────────────────────────────
+.ipc-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  background: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #cf1322;
+  font-size: 0.875rem;
+
+  i    { flex-shrink: 0; }
+  span { flex: 1; }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+    &:hover { opacity: 1; }
+  }
+}

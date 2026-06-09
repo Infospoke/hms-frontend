@@ -1,0 +1,155 @@
+<div class="review-page">
+
+    <!-- Page Heading -->
+    <app-heading heading="Review and Approve Interview Plan"
+        subHeading="Please review the interview plan details carefully before approving or rejecting."
+        [showBackButton]="true" [backButtonUrl]="'/interview/interview-approval-plans'"
+        [buttonText]="'Back to Approvals'" />
+
+    
+
+    <!-- Content -->
+    <ng-container *ngIf="!isLoading && !errorMessage">
+
+        <!-- Plan Details -->
+        <div class="section-card">
+            <h3 class="section-title">Plan Details</h3>
+
+            <div class="grid-2">
+                <div class="field">
+                    <span class="field-label">Plan Name</span>
+                    <span class="field-value">{{ planDetails.planName }}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Number of Rounds</span>
+                    <span class="field-value">{{ planDetails.numberOfRounds }}</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <span class="field-label">Status</span>
+                    <span class="badge-status" [ngClass]="planDetails.status | lowercase">
+                        <span class="badge-dot"></span>
+                        {{ planDetails.status }}
+                    </span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Description</span>
+                    <span class="field-value">{{ planDetails.description }}</span>
+                    <span class="char-hint">({{ descriptionLength }}/{{ planDetails.descriptionMaxLength }}
+                        characters)</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <span class="field-label">Created By</span>
+                    <span class="field-value">{{ planDetails.createdBy }}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Created On</span>
+                    <span class="field-value">{{ planDetails.createdOn | date: 'd MMM yyyy, h:mm a' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interview Rounds -->
+        <div class="section-card">
+            <h3 class="section-title">Interview Rounds ({{ planDetails.numberOfRounds }})</h3>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Round Order</th>
+                            <th>Stage Name</th>
+                            <th>Stage Type</th>
+                            <th>Interview Mode</th>
+                            <th>Mandatory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let round of interviewRounds">
+                            <td>{{ round.order }}</td>
+                            <td>{{ round.stageName }}</td>
+                            <td>{{ round.stageType }}</td>
+                            <td>{{ round.interviewMode }}</td>
+                            <td>
+                                <i *ngIf="round.mandatory" class="fa-solid fa-circle-check check-icon"
+                                    aria-label="Yes"></i>
+
+                                <i *ngIf="!round.mandatory" class="fa-solid fa-circle-xmark cross-icon"
+                                    aria-label="No"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">Evaluation Settings</div>
+            <div class="grid-3">
+                <div>
+                    <div class="field-label">Evaluation Criteria</div>
+                    <div class="field-value">Overall Assessment</div>
+                </div>
+                <div>
+                    <div class="field-label">Rating Scale</div>
+                    <div class="field-value">5 Point Scale</div>
+                </div>
+                <div>
+                    <div class="field-label">Minimum Passing Score (%)</div>
+                    <div class="field-value">60</div>
+                </div>
+            </div>
+            <div class="info-note">
+                  <i class="fa-solid fa-circle-info" style="font-size:15px;color:#3b82f6;"></i>
+                Description can be up to 500 characters.
+            </div>
+        </div>
+        <!-- Requested Details -->
+        <div class="section-card">
+            <h3 class="section-title">Requested Details</h3>
+
+            <div class="grid-2">
+                <div class="field">
+                    <span class="field-label">Requested for</span>
+                    <span class="field-value">{{ requestedDetails.requestedFor }}</span>
+                </div>
+                <div class="field">
+                    <span class="field-label">Requested on</span>
+                    <span class="field-value">{{ requestedDetails.requestedOn | date: 'd MMM yyyy, h:mm a' }}</span>
+                </div>
+            </div>
+
+            <div class="field comments-field">
+                <label class="field-label" for="comments">
+                    Requested Comments <span class="optional-tag">(Optional)</span>
+                </label>
+                <textarea id="comments" [(ngModel)]="requestedDetails.comments" [maxlength]="commentsMaxLength"
+                    placeholder="Enter your comments here..." rows="4"></textarea>
+                <span class="char-count">{{ commentsLength }}/{{ commentsMaxLength }} characters</span>
+            </div>
+        </div>
+
+        <!-- Approval Action -->
+        <div class="section-card">
+            <h3 class="section-title">Approval Action</h3>
+
+            <div class="action-row">
+                <button class="btn-approve" type="button" (click)="onApprovePlan()">
+                    <i class="fa-solid fa-check"></i>
+                    Approve Plan
+                </button>
+                <button class="btn-reject" type="button" (click)="onRejectPlan()">
+                    <i class="fa-solid fa-xmark"></i>
+                    Reject Plan
+                </button>
+            </div>
+        </div>
+
+    </ng-container>
+
+</div>

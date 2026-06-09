@@ -32,6 +32,7 @@ export class SideBarComponent implements OnInit {
   navItems: NavItem[] = NAV_ITEMS.map(item => ({ ...item }));
 
   ngOnInit() {
+
     this.permissionService.load();
     this.permissions = this.authService.getPermissions() ?? [];
     this.buildPermissionMap();
@@ -73,6 +74,7 @@ export class SideBarComponent implements OnInit {
         ),
       }))
       .filter(item => item.children && item.children.length > 0);
+      
   }
 
   private syncOpenMenu() {

@@ -35,7 +35,7 @@
         <div class="rv-field"><span class="rv-label">Job Title</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobTitle || '—' }}</span></div>
         <div class="rv-field"><span class="rv-label">Employment Type</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.employmentType || '—' }}</span></div>
         <div class="rv-field"><span class="rv-label">Job Code</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.jobCode || '—' }}</span></div>
-        <div class="rv-field"><span class="rv-label">Experience</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.experience || '—' }}</span></div>
+        <div class="rv-field"><span class="rv-label">Experience</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.minExp  || '—' }} - {{s1.maxExp}}</span></div>
         <div class="rv-field"><span class="rv-label">Department</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.department || '—' }}</span></div>
         <div class="rv-field"><span class="rv-label">Number of Openings</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.openings || '—' }}</span></div>
         <div class="rv-field"><span class="rv-label">Business Unit</span><span class="rv-sep">:</span><span class="rv-val">{{ s1.businessUnit || '—' }}</span></div>
@@ -203,6 +203,92 @@
     </div>
   </div>
 
+  <!-- 5. Interview Plan -->
+<div class="rv-section">
+  <div class="rv-section-header" (click)="open.interviewPlan = !open.interviewPlan">
+    <div class="rv-section-header__left">
+      <span class="rv-section-icon rv-section-icon--indigo"><i class="fa-solid fa-clipboard-list"></i></span>
+      <span class="rv-section-num">5.</span>
+      <span class="rv-section-title">Interview Plan</span>
+      <span class="rv-badge rv-badge--done">Completed</span>
+    </div>
+    <div class="rv-section-header__right">
+      <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(4)">
+        <i class="fa-regular fa-pen-to-square"></i> Edit
+      </button>
+      <i class="fa-solid rv-chevron" [ngClass]="open.interviewPlan ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+    </div>
+  </div>
+
+  <div class="rv-section-body" *ngIf="open.interviewPlan">
+
+    <ng-container *ngIf="selectedPlanDetail; else noPlan">
+
+      <!-- Plan info grid -->
+      <div class="rv-grid">
+        <div class="rv-field"><span class="rv-label">Plan Name</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.name }}</span></div>
+        <div class="rv-field"><span class="rv-label">Number of Rounds</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.rounds }}</span></div>
+        <div class="rv-field"><span class="rv-label">Status</span><span class="rv-sep">:</span><span class="rv-val" style="color:#16a34a;font-weight:600">{{ selectedPlanDetail.status }}</span></div>
+        <!-- <div class="rv-field"><span class="rv-label">Applicable To</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableTo }}</span></div> -->
+        <!-- <div class="rv-field rv-field--full"><span class="rv-label">Applicable Departments</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.applicableDepartments }}</span></div> -->
+        <div class="rv-field rv-field--full"><span class="rv-label">Description</span><span class="rv-sep">:</span><span class="rv-val">{{ selectedPlanDetail.description }}</span></div>
+      </div>
+
+      <!-- Rounds table -->
+      <p class="rv-ip-sub">Interview Rounds ({{ selectedPlanDetail.rounds }})</p>
+      <table class="rv-src-table">
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Stage Name</th>
+            <th>Stage Type</th>
+            <th>Mode</th>
+            <th>Mandatory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of selectedPlanDetail.roundDetails">
+            <td>{{ r.order }}</td>
+            <td>{{ r.stageName }}</td>
+            <td>{{ r.stageType }}</td>
+            <td>{{ r.interviewMode }}</td>
+            <td>
+              <i class="fa-solid fa-toggle-on" style="color:#2563eb;font-size:16px" *ngIf="r.mandatory"></i>
+              <i class="fa-solid fa-toggle-off" style="color:#cbd5e1;font-size:16px" *ngIf="!r.mandatory"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Evaluation -->
+      <!-- <p class="rv-ip-sub" style="margin-top:16px">Evaluation Settings</p>
+      <table class="rv-src-table">
+        <thead>
+          <tr>
+            <th>Evaluation Criteria</th>
+            <th>Rating Scale</th>
+            <th>Minimum Passing Score (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ selectedPlanDetail.evaluationCriteria }}</td>
+            <td>{{ selectedPlanDetail.ratingScale }}</td>
+            <td>{{ selectedPlanDetail.minPassingScore }}</td>
+          </tr>
+        </tbody>
+      </table> -->
+
+    </ng-container>
+
+    <ng-template #noPlan>
+      <div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">
+        No interview plan selected.
+      </div>
+    </ng-template>
+
+  </div>
+</div>
   <div class="rv-confirm-banner">
     <i class="fa-solid fa-shield-halved"></i>
     By submitting, you confirm that all the information provided is accurate and complete.

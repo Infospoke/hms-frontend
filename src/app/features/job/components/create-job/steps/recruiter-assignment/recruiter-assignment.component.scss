@@ -51,31 +51,9 @@
   padding: 14px 0px;
   border-bottom: 1px solid var(--color-border);
   background: #fafafa;
-
- 
-  // ::ng-deep .filter-bar {
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 12px;
-  //   flex-wrap: wrap;
-
-  //   .search-box {
-  //     flex: 1;
-  //     min-width: 240px;
-  //   }
-
-  //   .dropdown-wrapper {
-  //     flex-shrink: 0;
-  //   }
-  // }
-
-  // // Hide tabs row (not needed here)
-  // ::ng-deep .acc-tabs-wrap {
-  //   display: none;
-  // }
 }
 
-// ── Checkbox ──────────────────────────────────────────────────────────────────
+// ── Checkbox base ─────────────────────────────────────────────────────────────
 .ra-checkbox {
   display: inline-flex;
   cursor: pointer;
@@ -99,13 +77,9 @@
   align-items: center;
   justify-content: center;
   transition: background 0.15s, border-color 0.15s;
-
-  .ra-checkbox input:checked ~ & {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-  }
 }
 
+// ── Checked state ─────────────────────────────────────────────────────────────
 .ra-checkbox input:checked ~ .ra-checkbox__box {
   background: var(--color-primary);
   border-color: var(--color-primary);
@@ -119,6 +93,21 @@
     border-top: none;
     border-left: none;
     transform: rotate(45deg) translate(-1px, -1px);
+  }
+}
+
+// ── Indeterminate state ───────────────────────────────────────────────────────
+.ra-checkbox__box--indeterminate {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
   }
 }
 
@@ -186,7 +175,7 @@
   }
 }
 
-// ── Override table card border/radius to flush inside our card ────────────────
+// ── Override table card styles to flush inside our card ───────────────────────
 ::ng-deep app-reusable-table .rt-container {
   border: none;
   border-radius: 0;

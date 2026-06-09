@@ -21,11 +21,11 @@ export const DEMAND_ROUTES: Routes = [
     loadComponent:()=>import("../components/all-jobs/all-jobs.component").then(m=>m.AllJobsComponent)
   },
   {
-    path:'all-jobs/recruiter-and-response/:id',
+    path:'all-jobs/recruiter-and-response/:id/:srId',
     loadComponent:()=>import("../components/recruiters-and-response/recruiters-and-response.component").then(m=>m.RecruitersAndResponseComponent)
   },
   {
-    path:"all-jobs/recruiter-assignment/:id",
+    path:"all-jobs/recruiter-assignment/:id/:srId",
     loadComponent:()=>import("../components/assigning-recruiter/assigning-recruiter.component").then(m=>m.AssigningRecruiterComponent)
   },
   {

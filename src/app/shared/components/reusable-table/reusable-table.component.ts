@@ -1,74 +1,119 @@
-import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/core';
+import {
+  Component, Input, Output, EventEmitter,
+  ContentChild, TemplateRef, OnChanges, SimpleChanges
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-
 
 export interface TableColumn {
   key: string;
   label: string;
   width?: string;
   align?: 'left' | 'center' | 'right';
-  custom?: boolean;
+  sortable?: boolean;
   hideOnMobile?: boolean;
+  custom?: boolean;
+  group?: string;
 }
-export interface SortEvent {
-  column: string;
-  direction: 'asc' | 'desc';
+
+interface ColumnGroup {
+  label: string;
+  colspan: number;
 }
+
 @Component({
   selector: 'app-reusable-table',
   standalone: true,
-  imports: [PaginationComponent,CommonModule,NgTemplateOutlet],
+  imports: [CommonModule, PaginationComponent],
   templateUrl: './reusable-table.component.html',
   styleUrl: './reusable-table.component.scss',
 })
-export class ReusableTableComponent {
+export class ReusableTableComponent implements OnChanges {
 
-   @Input() columns: TableColumn[] = [];
-
+  // ── Inputs ────────────────────────────────────────────────────────────────
+  @Input() title?: string;
+  @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
-
-  @Input() title = '';
-
-  @Input() emptyMessage = 'No records found.';
-
-  @Input() showHeader = true;
- 
- 
-  @Input() cellTemplate?: TemplateRef<{ $implicit: { row: Record<string, unknown>; col: TableColumn } }>;
-
-  @Input() totalItems = 0;
-  @Input() pageSize = 10;
-  @Input() currentPage = 1;
-  @Input() maxVisiblePages = 5;
-  @Input() showPagination = true;
- 
-
+  @Input() showHeader: boolean = true;
+  @Input() emptyMessage: string = 'No records found.';
   @Input() sortableColumns: string[] = [];
- 
 
+  // ── Pagination ────────────────────────────────────────────────────────────
+  @Input() showPagination: boolean = false;
+  @Input() currentPage: number = 1;
+  @Input() pageSize: number = 10;
+  @Input() totalItems: number = 0;
+  @Input() maxVisiblePages: number = 5;
+
+  // ── Templates ─────────────────────────────────────────────────────────────
+  @Input() cellTemplate?: TemplateRef<any>;
+
+  /** Optional header template — rendered for any column whose key === 'select' */
+  @Input() headerTemplate?: TemplateRef<any>;
+
+  // ── Outputs ───────────────────────────────────────────────────────────────
+  @Output() rowClick = new EventEmitter<any>();
+  @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
   @Output() pageChange = new EventEmitter<number>();
-  @Output() sortChange = new EventEmitter<SortEvent>();
-  @Output() rowClick = new EventEmitter<Record<string, unknown>>();
- 
 
-  activeSortCol = '';
+  // ── Sort state ────────────────────────────────────────────────────────────
+  activeSortCol: string = '';
   activeSortDir: 'asc' | 'desc' = 'asc';
- 
 
-  getCellValue(row: Record<string, unknown>, key: string): unknown {
-    return key.split('.').reduce<unknown>((obj, k) => {
-      if (obj != null && typeof obj === 'object') {
-        return (obj as Record<string, unknown>)[k];
-      }
-      return undefined;
-    }, row);
+  // ── Group state ───────────────────────────────────────────────────────────
+  hasGroups: boolean = false;
+  columnGroups: ColumnGroup[] = [];
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['columns']) {
+      this.buildColumnGroups();
+    }
   }
- 
+
+  // ── Group builder ─────────────────────────────────────────────────────────
+  private buildColumnGroups(): void {
+    this.hasGroups = this.columns.some(c => !!c.group);
+    if (!this.hasGroups) {
+      this.columnGroups = [];
+      return;
+    }
+
+    const groups: ColumnGroup[] = [];
+    let i = 0;
+
+    while (i < this.columns.length) {
+      const col = this.columns[i];
+      if (!col.group) {
+        groups.push({ label: '', colspan: 1 });
+        i++;
+      } else {
+        const groupName = col.group;
+        let colspan = 0;
+        while (i < this.columns.length && this.columns[i].group === groupName) {
+          colspan++;
+          i++;
+        }
+        groups.push({ label: groupName, colspan });
+      }
+    }
+
+    this.columnGroups = groups;
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  getColumnKey(index: number): string {
+    return this.columns[index]?.key ?? '';
+  }
+
+  getCellValue(row: any, key: string): any {
+    return key.split('.').reduce((obj, k) => obj?.[k], row) ?? '—';
+  }
+
   isSortable(key: string): boolean {
     return this.sortableColumns.includes(key);
   }
- 
+
   onSort(key: string): void {
     if (!this.isSortable(key)) return;
     if (this.activeSortCol === key) {
@@ -77,18 +122,10 @@ export class ReusableTableComponent {
       this.activeSortCol = key;
       this.activeSortDir = 'asc';
     }
-    this.sortChange.emit({ column: this.activeSortCol, direction: this.activeSortDir });
+    this.sortChange.emit({ col: this.activeSortCol, dir: this.activeSortDir });
   }
- 
-  onPageChange(page: any): void {
-    this.pageChange.emit(page);
-  }
- 
 
-  get rangeLabel(): string {
-    if (this.totalItems === 0) return 'No records';
-    const start = (this.currentPage - 1) * this.pageSize + 1;
-    const end = Math.min(this.currentPage * this.pageSize, this.totalItems);
-    return `Showing ${start} to ${end} of ${this.totalItems} rows`;
+  onPageChange(page: number): void {
+    this.pageChange.emit(page);
   }
 }

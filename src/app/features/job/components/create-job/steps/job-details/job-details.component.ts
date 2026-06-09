@@ -18,7 +18,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 export class JobDetailsStepComponent {
   @Input() form!: FormGroup;
   @Input() submitted = false;
-
+  @Input() exp:any;
   f(name: string) {
     return this.form.get(name);
   }

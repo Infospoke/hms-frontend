@@ -59,7 +59,7 @@ export class ApprovalSrsComponent {
     { key: 'department', label: 'Department', width: '120px', custom: true, hideOnMobile: true },
     { key: 'currentStage', label: 'Current Stage', width: '150px', custom: true },
     { key: 'overallStatus', label: 'Overall Status', width: '130px', custom: true, align: 'center' },
-    { key: 'createdOn', label: 'Created On', width: '110px', custom: true, hideOnMobile: true },
+    { key: 'submittedOn', label: 'Submitted On', width: '110px', custom: true, hideOnMobile: true },
     { key: 'actions', label: 'Action', width: '90px', custom: true, align: 'center' },
   ];
 
@@ -127,7 +127,7 @@ export class ApprovalSrsComponent {
         currentRole: item.CurrentStage ?? '—',
         stagePerson: item.stagePerson ?? null,
         overallStatus: item.overAllStatus ?? '—',
-        createdOn: item.createdOn ?? '—',
+        submittedOn: item.submittedOn ?? '—',
       }));
 
       this.totalItems = d.totalItems ?? d.content?.length ?? 0;

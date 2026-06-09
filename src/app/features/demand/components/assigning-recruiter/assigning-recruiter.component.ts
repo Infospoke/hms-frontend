@@ -16,10 +16,10 @@ export class AssigningRecruiterComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
-
+  srId:any;
   ngOnInit(): void {
     this.jobId = this.route.snapshot.params['id'];
-
+    this.srId=this.route.snapshot.params['srId'];
     this.form = this.fb.group({
       selectedRecruiterDetails: new FormControl([]),
     });

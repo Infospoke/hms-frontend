@@ -120,5 +120,14 @@ export const API = {
         LIST:`/hms/recruiter/job-assignment-list`,
         DETAILS_BY_ID:(id:any)=>`/hms/recruiter/job-assignment-details-list/${id}`,
         COUNT:(id:any)=>`/hms/recruiter/job-assignment-summary/${id}`
+    },
+    INTERVIEW:{
+        CREATE_CONFIG:`/hms/interview-plan/create`,
+        INTERVIEW_PLAN_COUNT:`/hms/interview-plan/counts`,
+        INTERVIEW_PLAN_LIST:`/hms/interview-plan/list`,
+        INTERVIEW_PLAN_LIST_FOR_APPROVAL:`/hms/interview-plan/interview-plan-approvals`,
+        CREATED_BY_LIST:`/hms/configurations/create-permission-users`,
+        PLAN_DETAILS_BY:(id:any)=>`/hms/interview-plan/interview-plan-details-by-id/${id}`,
+        UPDATE_CONFIG:`/hms/interview-plan/update`
     }
 };

@@ -104,7 +104,7 @@
 
         <!-- Action: View Details link -->
         <ng-container *ngIf="ctx.col.key === 'actionName'">
-            <button class="action-btn" (click)="onViewDetails(ctx.row)">
+            <button class="action-btn" (click)="onViewDetails(ctx.row)" *appCan="'SUPPLY:MYJOBASSIGNMENTS:EDIT'"> 
                 View Details <i class="fa-solid fa-chevron-right"></i>
             </button>
         </ng-container>

@@ -3,10 +3,11 @@ import { HeadingComponent } from "../../../../shared/components/heading/heading.
 import { CommonModule } from '@angular/common';
 import { DashboardCountCardComponent } from "../../../../shared/components/dashboard-count-card/dashboard-count-card.component";
 import { CommonFilterComponent } from "../../../../shared/components/common-filter/common-filter.component";
+import { CanDirective } from "../../../../shared/directives/can.directive";
 
 @Component({
   selector: 'app-approval-layout',
-  imports: [HeadingComponent, CommonModule, DashboardCountCardComponent, CommonFilterComponent],
+  imports: [HeadingComponent, CommonModule, DashboardCountCardComponent, CommonFilterComponent, CanDirective],
   templateUrl: './approval-layout.component.html',
   styleUrl: './approval-layout.component.scss',
 })
@@ -19,7 +20,7 @@ export class ApprovalLayoutComponent {
   @Input() cards:any[]=[];
   @Input() buttonType:any;
 
-  @Input() showBtn:boolean=false;
+  @Input() showBtn:any='';
   @Input() searchPlaceholder:any
   @Input() dropDownData: any[] = [];
   @Input() tabs: { key: string; label: string; count: number }[] = [];
@@ -45,7 +46,8 @@ export class ApprovalLayoutComponent {
       approval: event.filters['approval'] || undefined,
       dateFilter: event.filters['dateFilter'] || undefined,
       department:event?.filters['department'] || undefined,
-      requestedBy:event?.filters['requestedBy'] || undefined
+      requestedBy:event?.filters['requestedBy'] || undefined,
+      createdBy:event?.filters['createdby'] || undefined,
     };
 
 

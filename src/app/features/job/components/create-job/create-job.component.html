@@ -21,7 +21,8 @@
 
   <app-job-details-step
     *ngIf="currentStep === 0"
-    [form]="step1Form">
+    [form]="step1Form"
+    [exp]="experienceDisplay">
   </app-job-details-step>
 
   <app-ai-job-description-step
@@ -34,20 +35,26 @@
     [form]="step3Form">
   </app-sourcing-strategy-step>
 
-  <app-recruiter-assignment-step
-    *ngIf="currentStep === 3"
-    [form]="step4Form">
-  </app-recruiter-assignment-step>
+ <app-recruiter-assignment-step
+  *ngIf="currentStep === 3"
+  [form]="step4Form">
+</app-recruiter-assignment-step>
 
-  <app-review-submit-step
-    *ngIf="currentStep === 4"
-    [form]="step5Form"
-    [step1Form]="step1Form"
-    [step2Form]="step2Form"
-    [step3Form]="step3Form"
-    [step4Form]="step4Form"
-    (goToStep)="currentStep = $event">
-  </app-review-submit-step>
+<app-interview-plan-step
+  *ngIf="currentStep === 4"
+  [form]="step5Form">
+</app-interview-plan-step>
+
+<app-review-submit-step
+  *ngIf="currentStep === 5"
+  [form]="step6Form"
+  [step1Form]="step1Form"
+  [step2Form]="step2Form"
+  [step3Form]="step3Form"
+  [step4Form]="step4Form"
+  [step5Form]="step5Form"
+  (goToStep)="currentStep = $event">
+</app-review-submit-step>
 </div>
 
 <!-- ── Action bar ────────────────────────────────────────────────────────── -->

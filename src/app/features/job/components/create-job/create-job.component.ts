@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { InterviewPlanStepComponent } from './steps/interview-plan-step/interview-plan-step.component';;
 
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { JobDetailsStepComponent } from './steps/job-details/job-details.component';
@@ -30,6 +31,7 @@ const SR_ID_KEY = 'create_job_sr_id';
     SourcingStrategyStepComponent,
     RecruiterAssignmentStepComponent,
     ReviewSubmitStepComponent,
+    InterviewPlanStepComponent,
   ],
   templateUrl: './create-job.component.html',
   styleUrl: './create-job.component.scss',
@@ -43,21 +45,30 @@ export class CreateJobComponent implements OnInit {
   private userService = inject(UserService);
 
   currentStep = 0;
-  departments: any[] = [];
-  bussinessUnits: any[] = [];
 
-  readonly steps = [
-    { title: 'Job Details' },
-    { title: 'AI Job Description' },
-    { title: 'Sourcing Strategy' },
-    { title: 'Recruiter Assignment' },
-    { title: 'Review & Submit' },
-  ];
+  // IDs sourced directly from the SR response — no separate lookup arrays needed
+  private srDepartmentId: number | string = '';
+  private srBusinessUnitId: number | string = '';
+
+readonly steps = [
+  { title: 'Job Details' },
+  { title: 'AI Job Description' },
+  { title: 'Sourcing Strategy' },
+  { title: 'Recruiter Assignment' },
+  { title: 'Interview Plan' },       // ← add this
+  { title: 'Review & Submit' },
+];
 
   get nextButtonLabel(): string {
     if (this.currentStep === this.steps.length - 1) return 'Submit';
     return 'Next: ' + this.steps[this.currentStep + 1].title;
   }
+  get experienceDisplay(): string {
+  const min = this.step1Form.get('minExp')?.value;
+  const max = this.step1Form.get('maxExp')?.value;
+  if (min === null && max === null) return '';
+  return `${min ?? 0} - ${max ?? 0} Years`;
+}
   get isLastStep(): boolean { return this.currentStep === this.steps.length - 1; }
   get isFirstStep(): boolean { return this.currentStep === 0; }
 
@@ -66,7 +77,8 @@ export class CreateJobComponent implements OnInit {
   get step2Form(): FormGroup { return this.form.get('step2') as FormGroup; }
   get step3Form(): FormGroup { return this.form.get('step3') as FormGroup; }
   get step4Form(): FormGroup { return this.form.get('step4') as FormGroup; }
-  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
   get currentStepForm(): FormGroup { return this.form.get('step' + (this.currentStep + 1)) as FormGroup; }
 
   ngOnInit(): void {
@@ -80,6 +92,8 @@ export class CreateJobComponent implements OnInit {
         workMode: ['', Validators.required],
         employmentType: ['', Validators.required],
         experience: ['', Validators.required],
+        minExp:['',Validators.required],
+        maxExp:['',Validators.required],
         openings: [null, [Validators.required, Validators.min(1)]],
         startDate: [null, Validators.required],
         mustHaveSkills: [[], [Validators.required, this.nonEmptyArray]],
@@ -87,11 +101,14 @@ export class CreateJobComponent implements OnInit {
         notes: ['', Validators.maxLength(250)],
         educationRequirement: ['', Validators.maxLength(100)],
         country: ['', Validators.maxLength(50)],
+        certificate:['',],
+        languages:[''],
       }),
       step2: this.fb.group({}),
       step3: this.fb.group({}),
       step4: this.fb.group({}),
-      step5: this.fb.group({}),
+      step5: this.fb.group({}),   // ← new: interview plan
+      step6: this.fb.group({}), 
     });
 
     // Persist SR ID to localStorage when coming fresh from signal
@@ -100,29 +117,14 @@ export class CreateJobComponent implements OnInit {
       localStorage.setItem(SR_ID_KEY, signalData.srId);
     }
 
-    Promise.all([this.getBussinesUnits(), this.getDepartments()]).then(() => {
-      this.getJobDetailsFromSr();
-    });
-  }
-
-  getDepartments() {
-    return this.approvalService.departments()
-      .then((res: any) => { if (res?.data) this.departments = res.data; })
-      .catch(() => {});
-  }
-
-  getBussinesUnits() {
-    return this.userService.getBussinessUnits()
-      .then((res: any) => { if (res?.data) this.bussinessUnits = res.data; })
-      .catch(() => {});
+    this.getJobDetailsFromSr();
   }
 
   nonEmptyArray(control: any) {
     return Array.isArray(control.value) && control.value.length > 0 ? null : { required: true };
   }
 
-  getJobDetailsFromSr() {
-    // Signal is alive on normal nav; localStorage survives reload
+  getJobDetailsFromSr(): void {
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY);
 
@@ -130,27 +132,33 @@ export class CreateJobComponent implements OnInit {
 
     this.jobService.getJobDetailsBySrId(srId)
       .then((res: any) => {
-        if (res?.responsecode == '00') {
+        if (res?.responsecode === '00') {
           const data = res?.data;
-          const departmentName = this.departments.find(d => d.id == data?.departmentId)?.name ?? '';
-          const businessUnitName = this.bussinessUnits.find(b => b.id == data?.businessUnitId)?.name ?? '';
-
           if (data) {
+            // ── Store IDs for use at submit time ──────────────────────────────
+            this.srDepartmentId  = data.departmentId  ?? '';
+            this.srBusinessUnitId = data.businessUnitId ?? '';
+
+            // ── Patch display names into the form ─────────────────────────────
             this.step1Form.patchValue({
-              jobTitle: data?.jobTitle || '',
-              jobCode: data?.jobCode || '',
-              department: departmentName || '',
-              businessUnit: businessUnitName || '',
-              location: data?.location || '',
-              workMode: data?.workMode || '',
-              employmentType: data?.employmentType || '',
-              experience: data?.maxExperience ?? data?.minExperience ?? '',
-              openings: data?.openings ?? null,
-              startDate: data?.targetStartDate || null,
-              mustHaveSkills: data?.skillsMustHave ? data.skillsMustHave.split(',') : [],
-              niceToHaveSkills: data?.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
-              educationRequirement: data?.educationRequirement || '',
-              country: data?.country || '',
+              jobTitle:             data.jobTitle            || '',
+              jobCode:              data.jobCode             || '',
+              department:           data.departmentName      || '',   // display name
+              businessUnit:         data.businessName        || '',   // display name  ← note: API returns "businessName"
+              location:             data.location            || '',
+              workMode:             data.workMode            || '',
+              employmentType:       data.employmentType      || '',
+              experience:           data.maxExperience ?? data.minExperience ?? '',
+              minExp:data?.minExperience,
+              maxExp:data?.maxExperience,
+              openings:             data.openings            ?? null,
+              startDate:            data.targetStartDate     || null,
+              mustHaveSkills:       data.skillsMustHave  ? data.skillsMustHave.split(',')  : [],
+              niceToHaveSkills:     data.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
+              educationRequirement: data.educationRequirement || '',
+              country:              data.country             || '',
+              certificate:data?.certificationsRequired,
+              languages:data?.languages || ''
             });
           }
           return;
@@ -195,6 +203,7 @@ export class CreateJobComponent implements OnInit {
     const step2 = this.step2Form.getRawValue();
     const step3 = this.step3Form.getRawValue();
     const step4 = this.step4Form.getRawValue();
+    const step5 = this.step5Form.getRawValue();
 
     const referralChannel = step3.selectedChannels?.find((c: any) =>
       c.channelName?.toLowerCase().includes('referral')
@@ -206,9 +215,6 @@ export class CreateJobComponent implements OnInit {
       return acc;
     }, {}) || {};
 
-    const departmentId = this.departments.find(d => d.name === step1.department)?.id ?? '';
-    const businessUnitId = this.bussinessUnits.find(b => b.name === step1.businessUnit)?.id ?? '';
-
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY) || '';
 
@@ -216,41 +222,46 @@ export class CreateJobComponent implements OnInit {
       srId,
       submit: 'true',
       createJobDetailsRequest: {
-        jobTitle: step1.jobTitle,
-        businessUnitId,
-        departmentId,
-        location: step1.location,
-        jobCode: step1.jobCode,
-        openings: step1.openings,
-        targetStartDate: step1.startDate,
-        workMode: step1.workMode,
-        employmentType: step1.employmentType,
-        skillsMustHave: step1.mustHaveSkills?.join(','),
-        niceToHaveSkills: step1.niceToHaveSkills?.join(','),
-        minExperience: step1.experience?.min || step1.experience || 1,
-        maxExperience: step1.experience?.max || step1.experience || 5,
-        additionalNotes: step1.notes,
+        jobTitle:             step1.jobTitle,
+        // ── Use IDs captured from SR response, not name-based lookups ─────────
+        businessUnitId:       this.srBusinessUnitId,
+        departmentId:         this.srDepartmentId,
+        // ─────────────────────────────────────────────────────────────────────
+        location:             step1.location,
+        jobCode:              step1.jobCode,
+        openings:             step1.openings,
+        targetStartDate:      step1.startDate,
+        workMode:             step1.workMode,
+        employmentType:       step1.employmentType,
+        skillsMustHave:       step1.mustHaveSkills?.join(','),
+        niceToHaveSkills:     step1.niceToHaveSkills?.join(','),
+        minExperience:        step1.minExp || step1.experience || 1,
+        maxExperience:        step1.maxExp || step1.experience || 5,
+        additionalNotes:      step1.notes,
         educationRequirement: step1.educationRequirement,
-        country: step1.country,
+        country:              step1.country,
+        certificationsRequired:step1.certificate,
+        languages:step1?.languages
       },
       jobDescriptionRequest: { description: step2.jobDescription || '' },
       sourcingChannelRequest: {
-        referral: !!referralChannel,
-        referralAmount: referralChannel?.referralAmount || 0,
-        channels: channelsObject,
+        referral:        !!referralChannel,
+        referralAmount:  referralChannel?.referralAmount || 0,
+        channels:        channelsObject,
       },
-
       recuriterAssignmentRequest: {
-        srId: this.jobService.jobDetailsBySrIdSignal()?.srId || '',
-        recruiterInfoDtos:
-          step4.selectedRecruiterDetails || []
-      }
+        srId:                srId,
+        recruiterInfoDtos:   step4.selectedRecruiterDetails || [],
+      },
+      interviewPlanRequest: {
+  planId: step5.planId
+}
     };
 
     this.jobService.createNewJob(payload)
       .then((res: any) => {
         if (res?.responsecode === '00') {
-          this.clearSrIdStorage();  // ← clean up on success
+          this.clearSrIdStorage();
           this.notificationService.success(res?.message || 'Job created successfully');
           this.onCancel();
         } else {

@@ -92,6 +92,7 @@ export class NotificationWebsocketService implements OnDestroy {
 
   private handleNotificationEvent(rawBody: any): void {
     // Parse JSON if the body is a string
+    console.log(rawBody,"this is a notification")
     let payload: any;
     try {
       payload = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody;

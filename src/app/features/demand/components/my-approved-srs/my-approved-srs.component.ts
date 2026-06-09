@@ -134,9 +134,9 @@ export class MyApprovedSrsComponent implements OnInit{
   private buildRequestBody(): object {
     const f = this.activeFilters;
     console.log(f);
-    const filters: Record<string, string> = {};
+    const filters: Record<string, any> = {};
 
-  
+    filters['jobSubmit']=false;
     if (f?.chainName?.trim()) {
       filters['search'] = f.chainName.trim();
     }

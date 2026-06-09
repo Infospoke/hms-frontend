@@ -29,6 +29,12 @@
     </div>
   </ng-container>
  
+   <ng-container *ngIf="ctx.col.key === 'department'">
+    <div class="aj">
+      <span class="">{{ ctx.row['department'] }}</span>
+
+    </div>
+  </ng-container>
   <ng-container *ngIf="ctx.col.key === 'assignees'">
     <div class="aj-assignees">
       <span class="aj-assignee-count">{{ ctx.row['assignees'] }}</span>

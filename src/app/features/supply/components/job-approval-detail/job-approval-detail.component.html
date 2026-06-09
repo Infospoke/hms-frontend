@@ -1,0 +1,279 @@
+<div class="jad-wrap">
+
+  <!-- ── Loading skeleton ──────────────────── -->
+  <div class="jad-skeleton" *ngIf="isLoading">
+    <div class="sk-line sk--w40"></div>
+    <div class="sk-line sk--w60 sk--h28"></div>
+    <div class="sk-line sk--w30"></div>
+    <div class="sk-card-skel">
+      <div class="sk-line" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+  </div>
+
+  <!-- ── Main ────────────────────────────── -->
+  <ng-container *ngIf="!isLoading && jobData">
+
+    <!-- Back -->
+    <button class="jad-back" (click)="onCancel()">
+      <i class="fa-solid fa-arrow-left"></i>
+      Back to My Job Assignments
+    </button>
+
+    <!-- Page heading -->
+    <div class="jad-heading">
+      <div class="jad-heading-row">
+        <h1 class="jad-title">{{ overview?.jobTitle || '—' }}</h1>
+        <span class="jad-badge--pending">Pending</span>
+      </div>
+      <p class="jad-meta">
+        Requested on {{ targetStartDate }}
+        &nbsp;·&nbsp;
+        Requested by
+        <span class="jad-meta-avatar"><i class="fa-solid fa-user"></i></span>
+        <span class="jad-meta-name">Admin Kumar</span>
+      </p>
+    </div>
+
+    <!-- ══ 1. Job Overview ═══════════════════ -->
+    <div class="jad-section">
+      <h2 class="jad-section-heading">
+        <span class="jad-sh-icon jad-sh-icon--blue"><i class="fa-solid fa-briefcase"></i></span>
+        Job Overview
+      </h2>
+
+      <div class="jad-ov-grid">
+
+        <!-- Left column -->
+        <div class="jad-ov-col">
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-hashtag jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Job Code</p>
+              <p class="jad-ov-val">{{ overview?.jobCode || '—' }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-building jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Department</p>
+              <p class="jad-ov-val">{{ departmentName }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-location-dot jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Location</p>
+              <p class="jad-ov-val">{{ overview?.location || '—' }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-file-contract jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Employment Type</p>
+              <p class="jad-ov-val">{{ overview?.employmentType || '—' }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-laptop-house jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Work Mode</p>
+              <p class="jad-ov-val">{{ overview?.workMode || '—' }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-calendar-day jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Target Start Date</p>
+              <p class="jad-ov-val">{{ targetStartDate }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-users jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Number of Openings</p>
+              <p class="jad-ov-val">{{ overview?.openings ?? '—' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="jad-ov-col">
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-chart-line jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Experience</p>
+              <p class="jad-ov-val">{{ experienceLabel }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row jad-ov-row--top">
+            <i class="fa-solid fa-star jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Skills (Must Have)</p>
+              <div class="jad-chips">
+                <span class="jad-chip jad-chip--must" *ngFor="let sk of mustHaveSkills">{{ sk }}</span>
+                <span class="jad-ov-val" *ngIf="mustHaveSkills.length === 0">None</span>
+              </div>
+            </div>
+          </div>
+          <div class="jad-ov-row jad-ov-row--top">
+            <i class="fa-solid fa-circle-plus jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Skills (Nice to Have)</p>
+              <div class="jad-chips">
+                <span class="jad-chip jad-chip--nice" *ngFor="let sk of niceToHaveSkills">{{ sk }}</span>
+                <span class="jad-ov-val" *ngIf="niceToHaveSkills.length === 0">None</span>
+              </div>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-note-sticky jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Additional Notes</p>
+              <p class="jad-ov-val">{{ overview?.additionalNotes || 'None' }}</p>
+            </div>
+          </div>
+          <div class="jad-ov-row">
+            <i class="fa-solid fa-sitemap jad-ov-icon"></i>
+            <div>
+              <p class="jad-ov-label">Business Unit</p>
+              <p class="jad-ov-val">{{ businessUnitName }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ 2. Job Description ════════════════ -->
+    <div class="jad-section">
+      <h2 class="jad-section-heading">
+        <span class="jad-sh-icon jad-sh-icon--purple"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+        Job Description
+      </h2>
+      <p class="jad-body-text">{{ jobDescription || 'No description provided.' }}</p>
+    </div>
+
+    <!-- ══ 3. Sourcing Strategy ══════════════ -->
+    <div class="jad-section">
+      <h2 class="jad-section-heading">
+        <span class="jad-sh-icon jad-sh-icon--orange"><i class="fa-solid fa-bullhorn"></i></span>
+        Sourcing Strategy
+      </h2>
+      <p class="jad-body-text jad-mb-12">
+        We will use a mix of paid and internal channels to source relevant candidates.
+      </p>
+
+      <p class="jad-sub-label">Sourcing Channels</p>
+      <div class="jad-channels">
+        <div
+          class="jad-ch-card"
+          [class.jad-ch-card--off]="!ch.enabled"
+          *ngFor="let ch of sourcingChannels">
+          <div class="jad-ch-logo" [style.background]="ch.iconBg">{{ ch.icon }}</div>
+          <div class="jad-ch-body">
+            <span class="jad-ch-name">{{ ch.name }}</span>
+            <!-- <span class="jad-ch-type">@ {{ ch.type }}</span> -->
+          </div>
+          <span class="jad-ch-pill" [class.jad-ch-pill--on]="ch.enabled" [class.jad-ch-pill--off]="!ch.enabled">
+            {{ ch.enabled ? 'On' : 'Off' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="jad-referral-tag" *ngIf="referralEnabled && referralAmount">
+        <i class="fa-solid fa-gift"></i>
+        Referral Bonus: <strong>{{ formatReferralAmount(referralAmount) }}</strong>
+      </div>
+    </div>
+
+    <!-- ══ 4. Assigned Recruiters ════════════ -->
+    <div class="jad-section">
+      <h2 class="jad-section-heading">
+        <span class="jad-sh-icon jad-sh-icon--green"><i class="fa-solid fa-user-tie"></i></span>
+        Assigned Recruiters
+      </h2>
+
+      <table class="jad-table" *ngIf="recruiters.length > 0">
+        <thead>
+          <tr>
+            <th>Recruiter</th>
+            <th>Email</th>
+            <th>Assigned On</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of recruiters">
+            <td>
+              <div class="jad-rec-cell">
+                <div class="jad-avatar"
+                  [style.background]="getAvatarBg(r.avatarBg)"
+                  [style.color]="getAvatarFg(r.avatarBg)">
+                  {{ r.initials }}
+                </div>
+                {{ r.userName }}
+              </div>
+            </td>
+            <td>{{ r.email }}</td>
+            <td>{{ r.assignedAtFormatted }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="jad-empty" *ngIf="recruiters.length === 0">No recruiters assigned yet.</p>
+    </div>
+
+    <!-- ══ 5. Your Decision ══════════════════ -->
+    <div class="jad-section">
+      <h2 class="jad-section-heading">
+        <span class="jad-sh-icon jad-sh-icon--gray"><i class="fa-solid fa-circle-check"></i></span>
+        Your Decision
+      </h2>
+      <p class="jad-body-text jad-mb-16">
+        Please review the job details and let us know your decision.
+      </p>
+
+      <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
+      <div class="jad-dec-btns">
+        <button
+          class="jad-dec-btn jad-dec-btn--accept"
+          [class.active]="decision === 'Accepted'"
+          (click)="setDecision('Accepted')">
+          <i class="fa-solid fa-check"></i> Accept
+        </button>
+        <button
+          class="jad-dec-btn jad-dec-btn--decline"
+          [class.active]="decision === 'Rejected'"
+          (click)="setDecision('Rejected')">
+          <i class="fa-solid fa-xmark"></i> Decline
+        </button>
+      </div>
+
+      <p class="jad-field-label">
+        Comments <span class="astrick ">*</span>
+      </p>
+      <p class="jad-field-hint">Provide a reason for your decision ( recommended).</p>
+      <div class="jad-ta-wrap">
+        <textarea
+          class="jad-textarea"
+          [(ngModel)]="comment"
+          [maxlength]="MAX_COMMENT"
+          rows="4"
+          placeholder="Write your comments here...">
+        </textarea>
+        <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
+      </div>
+
+      <div class="jad-footer">
+        <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
+        <button
+          class="jad-btn-submit"
+          [disabled]="!canSubmit"
+          (click)="onSubmit()">
+          <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+          {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
+          <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

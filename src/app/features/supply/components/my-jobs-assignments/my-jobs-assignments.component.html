@@ -13,6 +13,7 @@
     [activeTab]="activeTab"
     [columns]='columns'
     (filtersChange)="filtersResponse($event)"
-    (tabChange)="onTabChange($event)">
+    (tabChange)="onTabChange($event)"
+    (viewJob)="handleView($event)">
   </app-approved-srs-layout>
 </div>

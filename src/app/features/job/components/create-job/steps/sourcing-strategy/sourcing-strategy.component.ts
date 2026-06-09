@@ -97,21 +97,20 @@ private syncForm(): void {
   const payloadChannels = this.channels.map(channel => {
     const data: any = {
       channelName: channel.name,
-      postJob: channel.enabled
+      postJob:     channel.enabled,
+      iconText:    channel.iconText,
+      iconBg:      channel.iconBg,
+      iconColor:   channel.iconColor,
+      bestFor:     channel.bestFor,
+      cost:        channel.cost,
     };
-
     if (channel.hasReferralAmount && channel.referralAmount) {
       data.referralAmount = String(channel.referralAmount);
     }
-
     return data;
   });
-
   this.form.get('selectedChannels')?.setValue(payloadChannels);
 }
-  private getSelectedIds(): string[] {
-    return this.channels.filter(c => c.enabled).map(c => c.id);
-  }
 
   formatAmount(n: number): string {
     return n ? n.toLocaleString('en-IN') : '0';

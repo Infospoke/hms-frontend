@@ -62,7 +62,7 @@ export interface ApprovalStage {
 interface PositionBasicsResponse {
   id: number; srId: string; jobTitle: string; businessUnitName: string;
   departmentId: number; departmentName: string; reportingManagerInfo: number[];
-  location: string; seniorityLevelName: string; openings: number;
+  location: string; country:string,seniorityLevelName: string; openings: number;
   targetStartDate: string; workMode: string; employmentType: string;
   priority: string; approved: boolean; createdOn: string;
   createdBy: string; userId: number;
@@ -331,7 +331,7 @@ export class ViewSrComponent implements OnInit {
 
     this.step0 = {
       jobTitle: basics.jobTitle, dept: basics.departmentName, bu: basics.businessUnitName,
-      location: basics.location, workMode: basics.workMode, empType: basics.employmentType,
+      location: basics.location, country:basics?.country,workMode: basics.workMode, empType: basics.employmentType,
       seniority: basics.seniorityLevelName, openings: basics.openings,
       priority: basics.priority, startDate: basics.targetStartDate,
     };

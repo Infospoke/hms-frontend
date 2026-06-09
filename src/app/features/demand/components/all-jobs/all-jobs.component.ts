@@ -90,12 +90,12 @@ export class AllJobsComponent implements OnInit {
 
   ableColumns: any[] = [
     { key: 'jobDetails',      label: 'Job Details',       custom: true, width: '220px' },
-    { key: 'department',      label: 'Department',                      width: '140px' },
+    { key: 'department',      label: 'Department',         custom: true,             width: '140px' },
     { key: 'targetStartDate', label: 'Target Start Date',               width: '150px' },
     { key: 'assignees',       label: 'Assignees',         custom: true, width: '120px', align: 'center' },
-    { key: 'accepted',        label: 'Accepted',          custom: true, width: '100px', align: 'center' },
-    { key: 'pending',         label: 'Pending',           custom: true, width: '100px', align: 'center' },
-    { key: 'declined',        label: 'Declined',          custom: true, width: '100px', align: 'center' },
+    { key: 'accepted',        label: 'Accepted',          custom: true, width: '50px', align: 'center' },
+    { key: 'pending',         label: 'Pending',           custom: true, width: '50px', align: 'center' },
+    { key: 'declined',        label: 'Declined',          custom: true, width: '50px', align: 'center' },
     { key: 'action',          label: 'Action',            custom: true, width: '120px', align: 'center' },
   ];
 
@@ -160,7 +160,7 @@ export class AllJobsComponent implements OnInit {
           const iconCfg = resolveJobIcon(item.jobTitle ?? '', item.departmentName ?? '');
           return {
             // identity
-            id:              item.id,
+            id:              item.jobId,
 
             // jobDetails column (custom cell uses these)
             title:           item.jobTitle,
@@ -232,7 +232,7 @@ export class AllJobsComponent implements OnInit {
     return {
       page:    this.currentPage - 1,   // API is 0-indexed
       size:    this.pageSize,
-      sortBy:  'id',
+      sortBy:  'jobId',
       direction: 'DESC',
       filters,
     };
@@ -246,8 +246,9 @@ export class AllJobsComponent implements OnInit {
   }
 
   viewDetails(row:any){
+    console.log(row);
     this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${row?.id}`,{
-      state:{id:row?.id}
+      state:{id:row?.id,srId:row?.srId}
     })
   }
 

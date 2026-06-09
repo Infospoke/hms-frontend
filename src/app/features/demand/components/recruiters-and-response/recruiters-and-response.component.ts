@@ -1,9 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApprovalLayoutComponent } from '../../../approvals/components/approval-layout/approval-layout.component';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { StaffingServiceService } from '../../services/staffing-service.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 export interface RecruiterRecord {
   id: string;
@@ -26,7 +26,7 @@ export interface RecruiterRecord {
   templateUrl: './recruiters-and-response.component.html',
   styleUrl: './recruiters-and-response.component.scss',
 })
-export class RecruitersAndResponseComponent implements OnInit {
+export class RecruitersAndResponseComponent implements OnInit, OnChanges {
 
   private staffingService = inject(StaffingServiceService);
 
@@ -47,19 +47,24 @@ export class RecruitersAndResponseComponent implements OnInit {
     { key: 'comments', label: 'Comments', custom: true },
   ];
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   filteredData: RecruiterRecord[] = [];
   totalItems = 0;
   pageSize = 10;
   currentPage = 1;
   isLoading = false;
   id: any;
-
   ngOnInit(): void {
-    this.id = history?.state?.id;
-    console.log(history);
-    Promise.all([this.loadItems(), this.loadCount()])
+    this.route.params.subscribe((params: any) => {
+      this.id = params['id'];
+      Promise.all([this.loadItems(), this.loadCount()]);
+    });
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['id']) {
+      Promise.all([this.loadItems(), this.loadCount()])
+    }
+  }
   private loadCount(): void {
     if (!this.id) return;
     this.staffingService.getCount(this.id)
@@ -84,7 +89,7 @@ export class RecruitersAndResponseComponent implements OnInit {
     let obj = {
       page: this.currentPage - 1,
       size: this.pageSize,
-      sortBy: 'id',
+      sortBy: 'jobId',
       direction: 'ASC',
     }
     this.staffingService.getAssignmentListById(this.id, obj)
@@ -146,6 +151,7 @@ export class RecruitersAndResponseComponent implements OnInit {
   }
 
   addAssignees(): void {
+    // localStorage.setItem('alreadyAssgined',this.filteredData)
     this.router.navigateByUrl(`/demand/all-jobs/recruiter-assignment/${this.id}`)
   }
 }

@@ -39,7 +39,9 @@ export const API = {
         LOAD_ROLES:`/hms/configurations/roles/by-departments`,
         LOAD_RECRUITERS:`/hms/create-job/get-recruiters`,
         CREATE_JOB_BY_SR_ID : (id : any) => `/hms/create-job/details/${id}`,
-        CREATE_NEW_JOB : '/hms/create-job/new-job'
+        CREATE_NEW_JOB : '/hms/create-job/new-job',
+        CREATE_ASSIGNED_USERS:(id:any)=>`/hms/recruiter/assigned-recruiters/${id}`,
+        UPDATE_ASSIGN_USERS:`/hms/recruiter/assign-more-recruiters`
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -88,7 +90,9 @@ export const API = {
     SUPPLY: {
         KANBAN: `/hms/kanban/filter`,
         ASSIGNED_COUNT:`/hms/recruiter/my-job-assignments-count`,
-        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`
+        ASSIGNED_LIST:`/hms/recruiter/my-job-assignments`,
+        ASSIGNED_JOB_BY_ID:(id:any)=>`/hms/create-job/get-job-details/${id}`,
+        JOB_DECISION:`/hms/recruiter/update-recruiter-assignment`
     },
     APPROVALS: {
         CREATE_CHAIN: `/hms/approval-chains/create`,

@@ -31,7 +31,7 @@ export class JobService {
 
 
   async getJobsList(isOpen: boolean) {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_ALL_JOBS(isOpen))
     );
     this.jobsListSignal.set(res?.data);
@@ -39,7 +39,7 @@ export class JobService {
   }
 
   async getJobDashboardCount() {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_DASHBOARD_DATA)
     );
     this.dashboardSignal.set(res);
@@ -47,7 +47,7 @@ export class JobService {
   }
 
   async getJobDetailsById(jobId: any) {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_JOB_BY_ID(jobId))
     );
     this.jobDetailsSignal.set(res?.data);
@@ -87,7 +87,7 @@ export class JobService {
   }
 
   async getApplicants(status: any, id: any) {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_ALL_APPLICANTS(), {
         filter: status,
         jobId: id
@@ -98,7 +98,7 @@ export class JobService {
   }
 
   async getCandidateById(candidateId: any) {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.aiGet(API.JOBS.GET_CANDIDATE_BY_ID(), {
         applicationId: candidateId
       })
@@ -113,7 +113,7 @@ export class JobService {
     );
   }
   async getApplicantById(applicantId: any) {
-    const res:any = await firstValueFrom(
+    const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_APPLICANT_BY_ID(applicantId))
     );
     this.applicantByIdSignal.set(res?.data);
@@ -166,58 +166,73 @@ export class JobService {
   }
   async resumeAnalysis(payload: any) {
     return await firstValueFrom(
-      this.api.aiPost(API.JOBS.ANALYSIS_RESUME,payload)
+      this.api.aiPost(API.JOBS.ANALYSIS_RESUME, payload)
     );
   }
 
-   async exportByJobId(jobId:any) {
+  async exportByJobId(jobId: any) {
     return await firstValueFrom(
       this.api.aiGetBlob(API.USERS.JOB_BY_EXPORT(jobId))
     );
   }
-  async exportByCandidateId(id:any) {
+  async exportByCandidateId(id: any) {
     return await firstValueFrom(
       this.api.aiGetBlob(API.USERS.EXPORT_BY_APPLICANT(id))
     )
   }
 
-  async fetchInterViewAnalysis(payload:any){
+  async fetchInterViewAnalysis(payload: any) {
     return await firstValueFrom(
-      this.api.aiPost(API.JOBS.INTERVIEW_ANALYSIS,payload)
+      this.api.aiPost(API.JOBS.INTERVIEW_ANALYSIS, payload)
     );
   }
 
-  async fetchRoles(payload:any){
+  async fetchRoles(payload: any) {
     return await firstValueFrom(
-      this.api.hrmspost(API.JOBS.LOAD_ROLES,payload)
+      this.api.hrmspost(API.JOBS.LOAD_ROLES, payload)
     );
   }
 
-  async getRecruiters(payload:any){
-     return await firstValueFrom(
-      this.api.hrmspost(API.JOBS.LOAD_RECRUITERS,payload)
+  async getRecruiters(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.JOBS.LOAD_RECRUITERS, payload)
     );
   }
 
-  jobDetailsBySrId(srDetails:any){  
+  jobDetailsBySrId(srDetails: any) {
     this.jobDetailsBySrIdSignal.set(srDetails);
-   }
+  }
 
-   async getJobDetailsBySrId(srId:any){
-     return await firstValueFrom(
+  async getJobDetailsBySrId(srId: any) {
+    return await firstValueFrom(
       this.api.hrmsget(API.JOBS.CREATE_JOB_BY_SR_ID(srId))
-     );
-    }
+    );
+  }
 
-    async createNewJob(payload : any){
-      return await firstValueFrom(
-        this.api.hrmspost(API.JOBS.CREATE_NEW_JOB,payload)
-      );
-    }
+  async getAssiendUsers(srId: any) {
+    return await firstValueFrom(
+      this.api.hrmsget(API.JOBS.CREATE_ASSIGNED_USERS(srId))
+    );
+  }
 
-      async generateJobDescription(payload: any) {
+  async createNewJob(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.JOBS.CREATE_NEW_JOB, payload)
+    );
+  }
+
+   async updateAssigness(payload: any) {
+    return await firstValueFrom(
+      this.api.hrmspost(API.JOBS.UPDATE_ASSIGN_USERS, payload)
+    );
+  }
+
+  async generateJobDescription(payload: any) {
     return await firstValueFrom(
       this.api.aiPost('/api/admin/generate-job-description', payload)
     );
   }
+
+  
+
 }

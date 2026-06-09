@@ -11,23 +11,15 @@
       <label class="jd-label">
         Job Title <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('jobTitle')"
         formControlName="jobTitle"
-        placeholder="Enter job title" />
-
+        placeholder="Enter job title"
+        readonly />
       <span class="jd-err" *ngIf="isInvalid('jobTitle')">
-
-        <ng-container *ngIf="f('jobTitle')?.hasError('required')">
-          Job title is required
-        </ng-container>
-
-        <ng-container *ngIf="f('jobTitle')?.hasError('maxlength')">
-          Max 255 characters
-        </ng-container>
-
+        <ng-container *ngIf="f('jobTitle')?.hasError('required')">Job title is required</ng-container>
+        <ng-container *ngIf="f('jobTitle')?.hasError('maxlength')">Max 255 characters</ng-container>
       </span>
     </div>
 
@@ -35,18 +27,14 @@
       <label class="jd-label">
         Job Code <span class="jd-req">*</span>
       </label>
-
       <div class="jd-input-wrap">
-
         <input
           class="jd-input jd-input--readonly"
           formControlName="jobCode"
           readonly />
-
         <span class="jd-auto-badge">
           Auto generated &nbsp;<i class="fa-solid fa-circle-info"></i>
         </span>
-
       </div>
     </div>
 
@@ -58,48 +46,65 @@
       <label class="jd-label">
         Department <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('department')"
         formControlName="department"
-        placeholder="Enter department" />
-
-      <span class="jd-err" *ngIf="isInvalid('department')">
-        Department is required
-      </span>
+        placeholder="Enter department"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('department')">Department is required</span>
     </div>
 
     <div class="jd-field">
       <label class="jd-label">
         Business Unit <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('businessUnit')"
         formControlName="businessUnit"
-        placeholder="Enter business unit" />
+        placeholder="Enter business unit"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('businessUnit')">Business unit is required</span>
+    </div>
 
-      <span class="jd-err" *ngIf="isInvalid('businessUnit')">
-        Business unit is required
-      </span>
+        <div class="jd-field">
+      <label class="jd-label">
+        Education Requirement <span class="jd-req">*</span>
+      </label>
+      <input
+        class="jd-input jd-input--readonly"
+        [class.jd-input--err]="isInvalid('educationRequirement')"
+        formControlName="educationRequirement"
+        placeholder="Enter education requirement"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('educationRequirement')">Education requirement is required</span>
+    </div>
+
+        <div class="jd-field">
+      <label class="jd-label">
+        Country <span class="jd-req">*</span>
+      </label>
+      <input
+        class="jd-input jd-input--readonly"
+        [class.jd-input--err]="isInvalid('country')"
+        formControlName="country"
+        placeholder="Enter country"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('country')">Country is required</span>
     </div>
 
     <div class="jd-field">
       <label class="jd-label">
         Location <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('location')"
         formControlName="location"
-        placeholder="Enter location" />
-
-      <span class="jd-err" *ngIf="isInvalid('location')">
-        Location is required
-      </span>
+        placeholder="Enter location"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('location')">Location is required</span>
     </div>
 
   </div>
@@ -110,48 +115,39 @@
       <label class="jd-label">
         Work Mode <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('workMode')"
         formControlName="workMode"
-        placeholder="Enter work mode" />
-
-      <span class="jd-err" *ngIf="isInvalid('workMode')">
-        Work mode is required
-      </span>
+        placeholder="Enter work mode"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('workMode')">Work mode is required</span>
     </div>
 
     <div class="jd-field">
       <label class="jd-label">
         Employment Type <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('employmentType')"
         formControlName="employmentType"
-        placeholder="Enter employment type" />
-
-      <span class="jd-err" *ngIf="isInvalid('employmentType')">
-        Employment type is required
-      </span>
+        placeholder="Enter employment type"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('employmentType')">Employment type is required</span>
     </div>
 
     <div class="jd-field">
       <label class="jd-label">
         Experience <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('experience')"
         formControlName="experience"
-        placeholder="Enter experience" />
-
-      <span class="jd-err" *ngIf="isInvalid('experience')">
-        Experience is required
-      </span>
+        placeholder="Enter experience"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('experience')">Experience is required</span>
     </div>
 
   </div>
@@ -162,25 +158,17 @@
       <label class="jd-label">
         Number of Openings <span class="jd-req">*</span>
       </label>
-
       <input
-        class="jd-input"
+        class="jd-input jd-input--readonly"
         [class.jd-input--err]="isInvalid('openings')"
         type="number"
         min="1"
         formControlName="openings"
-        placeholder="e.g. 3" />
-
+        placeholder="e.g. 3"
+        readonly />
       <span class="jd-err" *ngIf="isInvalid('openings')">
-
-        <ng-container *ngIf="f('openings')?.hasError('required')">
-          Number of openings is required
-        </ng-container>
-
-        <ng-container *ngIf="f('openings')?.hasError('min')">
-          Must be at least 1
-        </ng-container>
-
+        <ng-container *ngIf="f('openings')?.hasError('required')">Number of openings is required</ng-container>
+        <ng-container *ngIf="f('openings')?.hasError('min')">Must be at least 1</ng-container>
       </span>
     </div>
 
@@ -188,79 +176,43 @@
       <label class="jd-label">
         Target Start Date <span class="jd-req">*</span>
       </label>
-
-      <nz-date-picker
-        class="jd-date-picker"
-        [class.jd-date-picker--err]="isInvalid('startDate')"
-        formControlName="startDate"
-        nzPlaceHolder="Select date"
-        nzFormat="dd MMM yyyy"
-        [nzDisabledDate]="disablePastDates">
-      </nz-date-picker>
-
-      <span class="jd-err" *ngIf="isInvalid('startDate')">
-        Target start date is required
-      </span>
+      <input
+        class="jd-input jd-input--readonly"
+        [class.jd-input--err]="isInvalid('startDate')"
+        [value]="f('startDate')?.value | date:'dd MMM yyyy'"
+        placeholder="Select date"
+        readonly />
+      <span class="jd-err" *ngIf="isInvalid('startDate')">Target start date is required</span>
     </div>
 
   </div>
 
   <div class="jd-field jd-field--full">
-
     <label class="jd-label">
       Must Have Skills <span class="jd-req">*</span>
     </label>
-
     <div
       class="jd-chips-area"
       [class.jd-chips-area--err]="isInvalid('mustHaveSkills')">
-
-      <span
-        class="jd-chip"
-        *ngFor="let skill of f('mustHaveSkills')?.value">
-
-        {{ skill }}
-
-      </span>
-
+      <span class="jd-chip" *ngFor="let skill of f('mustHaveSkills')?.value">{{ skill }}</span>
     </div>
-
-    <span class="jd-err" *ngIf="isInvalid('mustHaveSkills')">
-      At least one must-have skill is required
-    </span>
-
+    <span class="jd-err" *ngIf="isInvalid('mustHaveSkills')">At least one must-have skill is required</span>
   </div>
 
   <div class="jd-field jd-field--full">
-
     <label class="jd-label">
-      Nice to Have Skills
-      <span class="jd-optional">(Optional)</span>
+      Nice to Have Skills <span class="jd-optional">(Optional)</span>
     </label>
-
     <div class="jd-chips-area">
-
-      <span
-        class="jd-chip jd-chip--nice"
-        *ngFor="let skill of f('niceToHaveSkills')?.value">
-
-        {{ skill }}
-
-      </span>
-
+      <span class="jd-chip jd-chip--nice" *ngFor="let skill of f('niceToHaveSkills')?.value">{{ skill }}</span>
     </div>
-
   </div>
 
   <div class="jd-field jd-field--full">
-
     <label class="jd-label">
-      Additional Notes
-      <span class="jd-optional">(Optional)</span>
+      Additional Notes <span class="jd-optional">(Optional)</span>
     </label>
-
     <div class="jd-textarea-wrap">
-
       <textarea
         class="jd-textarea"
         formControlName="notes"
@@ -268,13 +220,8 @@
         placeholder="Add any additional information relevant to this job."
         maxlength="250">
       </textarea>
-
-      <span class="jd-char-count">
-        {{ notesLength }}/250
-      </span>
-
+      <span class="jd-char-count">{{ notesLength }}/250</span>
     </div>
-
   </div>
 
 </div>

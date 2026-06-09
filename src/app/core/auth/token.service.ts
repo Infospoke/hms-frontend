@@ -69,6 +69,7 @@ export class TokenService {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem("np_ws_notifications");
     sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('token');
   }
 
    isAccessTokenExpired(): boolean {

@@ -31,7 +31,7 @@ export const NAV_ITEMS: NavItem[] = [
         label: "My SR's",
         icon: 'fa-solid fa-file-contract',
         path: '/demand/my-jds',
-        permissionName: 'MYJRS',
+        permissionName: 'MYSRS',
       },
       {
         label: "All Approved SR's",

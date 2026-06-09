@@ -8,5 +8,9 @@ export const SUPPLY_ROUTES: Routes = [
   {
     path:"my-assignend-jobs",
     loadComponent:()=>import("../components/my-jobs-assignments/my-jobs-assignments.component").then(m=>m.MyJobsAssignmentsComponent)
+  },
+  {
+    path:'my-assigned-jobs/job-details/:id',
+    loadComponent:()=>import("../components/job-approval-detail/job-approval-detail.component").then(m=>m.JobApprovalDetailComponent)
   }
 ];

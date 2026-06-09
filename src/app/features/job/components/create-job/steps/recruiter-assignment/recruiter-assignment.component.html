@@ -2,11 +2,15 @@
 
   <!-- ── Card header ──────────────────────────────────────────────────────── -->
   <div [ngClass]="{ 'ra-card-header': !showBackButton }">
-    <app-heading heading="Recruiter Assignment" subHeading="Assign one or more recruiters to own and manage this job." [showInfo]="showInfo" [infoTooltip]="infoTooltip" [showBackButton]="showBackButton" [buttonText]="buttonText" [backButtonUrl]="buttonUrl"/>
-    <!-- <div>
-      <h3 class="ra-card-title">Recruiter Assignment</h3>
-      <p class="ra-card-sub"></p>
-    </div> -->
+    <div class="heading-info sr-header">
+      <app-heading heading="Recruiter Assignment" subHeading="Assign one or more recruiters to own and manage this job." [showInfo]="showInfo" [infoTooltip]="infoTooltip" [showBackButton]="showBackButton" [buttonText]="buttonText" [backButtonUrl]="buttonUrl"/>
+      <button class="btn-new" *ngIf="showBackButton"
+        [disabled]="assignedCount === 0 || isAssigning"
+        (click)="onAssignRecruiters()">
+        <i class="fa-solid fa-spinner fa-spin" *ngIf="isAssigning"></i>
+        {{ isAssigning ? 'Assigning…' : 'Assign Recruiter' }}
+      </button>
+    </div>
     <span class="ra-assigned-badge" *ngIf="assignedCount > 0">
       <i class="fa-solid fa-user-check"></i>
       {{ assignedCount }} assigned

@@ -901,9 +901,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         eduReq: rr.educationRequirement ?? '',
         travel: rr.travelRequirement ?? '',
         expMin: rr.minExperience ?? 0,
-        expMax: rr.maxExperience ?? 0,
-        interviewMin: rr.minInterviewRounds ?? 0,
-        interviewMax: rr.maxInterviewRounds ?? 0,
+        expMax: rr.maxExperience ?? 1,
+        interviewMin: rr.minInterviewRounds ?? 1,
+        interviewMax: rr.maxInterviewRounds ?? 2,
         assessmentOn: !!rr.assessmentRequired
       });
       this.mustSkills = this.splitCsv(rr.skillsMustHave);

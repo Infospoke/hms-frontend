@@ -48,6 +48,7 @@ export class ApprovalLayoutComponent {
       department:event?.filters['department'] || undefined,
       requestedBy:event?.filters['requestedBy'] || undefined,
       createdBy:event?.filters['createdby'] || undefined,
+      plan:event?.filters['plan'] || undefined
     };
 
 

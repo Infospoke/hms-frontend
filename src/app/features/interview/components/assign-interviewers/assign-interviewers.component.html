@@ -1,0 +1,61 @@
+<div class="assign-interviewers">
+
+  <app-approval-layout heading="Assign Interviewers"
+    subHeading="Manage interviewer assignments and track responses for all interview rounds"
+    searchPlaceholder="Search by Job Title, Plan Name, Department..." [dropDownData]="assignRecruters"
+    (filterChange)="filterChange($event)" />
+
+  <!-- ── Reusable Table ──────────────────────────────────────────────────── -->
+  <app-reusable-table [columns]="columns" [data]="tableData" emptyMessage="No interviewer assignments found."
+    [cellTemplate]="cellTpl" [showPagination]='true'>
+  </app-reusable-table>
+
+</div>
+
+<!-- ── Custom cell template ───────────────────────────────────────────────── -->
+<ng-template #cellTpl let-ctx>
+
+  <!-- Job Title -->
+  <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+    <div class="ai-job-cell">
+      <div class="ai-job-icon">
+        <i class="fa-regular fa-file-lines"></i>
+      </div>
+      <div class="ai-job-info">
+        <span class="ai-job-title">
+          {{ ctx.row.jobTitle }}
+          <span class="ai-badge-new" *ngIf="ctx.row.isNew">New</span>
+        </span>
+        <span class="ai-job-code">{{ ctx.row.jobCode }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="['r1','r2','r3','r4'].includes(ctx.col.key)">
+    <ng-container *ngIf="ctx.row.assignmentStatus?.[+ctx.col.key.substring(1) - 1] as round; else emptyRound">
+
+      <div [ngClass]="getStatusClass(round.status)">
+        <i [ngClass]="getStatusIcon(round.status)"></i>
+        <span>{{ getStatusLabel(round.status) }}</span>
+      </div>
+
+    </ng-container>
+
+    <ng-template #emptyRound>
+      <span class="ai-rs-empty-dash">—</span>
+    </ng-template>
+  </ng-container>
+
+  <!-- Action -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <div class="ai-action-cell" *appCan="'INTERVIEW:ASSIGNINTERVIEWERS:EDIT'">
+      <button class="ai-btn-view" (click)="$event.stopPropagation(); onViewResponses(ctx.row)">
+        Manage
+      </button>
+      <!-- <button class="ai-btn-more" (click)="$event.stopPropagation(); onMoreActions(ctx.row)">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button> -->
+    </div>
+  </ng-container>
+
+</ng-template>

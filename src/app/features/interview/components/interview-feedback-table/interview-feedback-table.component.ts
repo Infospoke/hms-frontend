@@ -1,0 +1,61 @@
+import { Component, ViewChild, TemplateRef, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
+
+export interface InterviewFeedback {
+  id: string;
+  candidateInitials: string;
+  candidateName: string;
+  candidateId: string;
+  jobTitle: string;
+  department: string;
+  round: string;
+  roundLabel: string;
+  interviewDate: string;
+  interviewTime: string;
+  priority: 'High' | 'Medium' | 'Low';
+}
+@Component({
+  selector: 'app-interview-feedback-table',
+  imports: [CommonModule, ReusableTableComponent],
+  templateUrl: './interview-feedback-table.component.html',
+  styleUrl: './interview-feedback-table.component.scss',
+})
+export class InterviewFeedbackTableComponent {
+
+  @Input() payload!: any;
+  @Output() pageChange = new EventEmitter<number>();
+  @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
+ 
+  columns: TableColumn[] = [
+    { key: 'candidate',     label: 'Candidate',       custom: true, width: '180px' },
+    { key: 'jobTitle',      label: 'Job Title',        custom: true, width: '190px' },
+    { key: 'round',         label: 'Round',            custom: true, width: '170px' },
+    { key: 'interviewDate', label: 'Interview Date',   custom: true, width: '150px', sortable: true },
+    { key: 'priority',      label: 'Priority',         custom: true, width: '110px' },
+    { key: 'action',        label: 'Action',           custom: true, width: '160px', align: 'center' },
+  ];
+ 
+  sortableColumns = ['interviewDate'];
+ 
+  feedbacks: InterviewFeedback[] = [
+    { id: '1', candidateInitials: 'RM', candidateName: 'Rahul Mehta',   candidateId: 'NXH-1026', jobTitle: 'Data Scientist',     department: 'Data Science',      round: 'Technical Round 1', roundLabel: 'Round 1 of 4', interviewDate: '20 May 2026', interviewTime: '11:30 AM', priority: 'High'   },
+    { id: '2', candidateInitials: 'PS', candidateName: 'Priya Sharma',  candidateId: 'NXH-1027', jobTitle: 'Backend Developer',  department: 'Engineering',       round: 'Technical Round 2', roundLabel: 'Round 2 of 3', interviewDate: '19 May 2026', interviewTime: '10:15 AM', priority: 'Medium' },
+    { id: '3', candidateInitials: 'AR', candidateName: 'Arjun Rao',     candidateId: 'NXH-1028', jobTitle: 'QA Engineer',        department: 'Quality Assurance', round: 'Manager Round',     roundLabel: 'Round 1 of 4', interviewDate: '18 May 2026', interviewTime: '04:20 PM', priority: 'High'   },
+    { id: '4', candidateInitials: 'SR', candidateName: 'Sneha Reddy',   candidateId: 'NXH-1029', jobTitle: 'Product Manager',    department: 'Product',           round: 'Final Round',       roundLabel: 'Round 5 of 5', interviewDate: '17 May 2026', interviewTime: '03:05 PM', priority: 'Low'    },
+    { id: '5', candidateInitials: 'VK', candidateName: 'Vikram Singh',  candidateId: 'NXH-1030', jobTitle: 'DevOps Engineer',    department: 'Engineering',       round: 'Technical Round 1', roundLabel: 'Round 1 of 4', interviewDate: '16 May 2026', interviewTime: '02:45 PM', priority: 'Low'    },
+    { id: '6', candidateInitials: 'AN', candidateName: 'Ananya Iyer',   candidateId: 'NXH-1031', jobTitle: 'UX Designer',        department: 'Design',            round: 'Technical Round 2', roundLabel: 'Round 2 of 3', interviewDate: '15 May 2026', interviewTime: '11:50 AM', priority: 'Medium' },
+  ];
+ 
+  totalItems  = 6;
+  currentPage = 1;
+  pageSize    = 10;
+ 
+  avatarClass(i: string): string {
+    const m: Record<string, string> = { RM:'av-rm', PS:'av-ps', AR:'av-ar', SR:'av-sr', VK:'av-vk', AN:'av-an' };
+    return m[i] ?? 'av-default';
+  }
+ 
+  onPageChange(p: number): void { this.currentPage = p; }
+  onRowClick(_r: InterviewFeedback): void {}
+}

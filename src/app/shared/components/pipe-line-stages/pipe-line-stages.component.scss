@@ -1,0 +1,61 @@
+.stage-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 1rem 0;
+}
+
+.stage-card {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { border-color: #cbd5e1; }
+
+  &.active {
+    border: 2px solid #286db7;
+    background: #edf7fe;
+
+    .stage-icon { color: #286db7 }
+  }
+}
+
+.stage-icon {
+  font-size: 22px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.stage-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stage-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stage-count {
+  font-size: 12px;
+  font-weight: 500;
+
+  &.count-purple { color: #534AB7; }
+  &.count-blue   { color: #185FA5; }
+  &.count-teal   { color: #0F6E56; }
+  &.count-amber  { color: #854F0B; }
+}

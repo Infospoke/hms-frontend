@@ -56,12 +56,6 @@ export interface RequestedDetails {
   comments: string;
 }
 
-/**
- * Request types coming from the approvals list API.
- * - null / undefined  → standard plan approval/rejection
- * - 'PLAN DEACTIVE'   → deactivation approval/rejection
- * - 'PLAN ACTIVE'     → activation approval/rejection
- */
 export type RequestType = 'PLAN DEACTIVE' | 'PLAN ACTIVE' | null;
 
 @Component({

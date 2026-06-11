@@ -66,7 +66,7 @@ export const statusOptionsForDepartment: any = [
     label: 'Department',
     selected: '',
     options: [],
-   
+
   },
 
   {
@@ -94,7 +94,7 @@ export const chainOptions: any = [
     selected: 'thisMonth',
     isDateFilter: true,
     options: [
-      { value: '',        label: 'All Time'    },
+      { value: '', label: 'All Time' },
       { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
       { value: 'thisMonth', label: 'This Month' },
@@ -113,7 +113,7 @@ export const roles: any = [
     selected: '',
     isDateFilter: true,
     options: [
-      
+
     ],
   },
 ];
@@ -128,8 +128,8 @@ export const approvedSrs: any = [
     label: 'Department',
     selected: '',
     options: [
-     
-      
+
+
     ],
 
 
@@ -141,7 +141,7 @@ export const approvedSrs: any = [
     selected: '',
     options: [
 
-   
+
     ],
 
   },
@@ -151,7 +151,7 @@ export const approvedSrs: any = [
     selected: 'thisMonth',
     isDateFilter: true,
     options: [
-      { value: '',        label: 'All Time'    },
+      { value: '', label: 'All Time' },
       { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
       { value: 'thisMonth', label: 'This Month' },
@@ -165,14 +165,14 @@ export const approvedSrs: any = [
 
 
 export const interview: any = [
- 
+
   {
     key: 'createdby',
     label: 'Created By',
     selected: '',
     options: [
 
-   
+
     ],
 
   },
@@ -182,11 +182,112 @@ export const interview: any = [
     selected: 'thisMonth',
     isDateFilter: true,
     options: [
-      { value: '',        label: 'All Time'    },
+      { value: '', label: 'All Time' },
       { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
       { value: 'thisMonth', label: 'This Month' },
       { value: 'CUSTOM', label: 'Custom Range' },
     ],
   },
+];
+
+export const aiInterview: any = [
+
+  {
+    key: 'allJobs',
+    label: 'All Jobs',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'allQuestion',
+    label: 'All Question Status',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+
+
+
+];
+
+export const assignRecruters: any = [
+  {
+    key: 'department',
+    label: 'All Departments',
+    selected: '',
+    options: [
+
+
+    ],
+
+
+
+  },
+  {
+    key: 'plan',
+    label: 'All Plans',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+
+];
+
+
+
+
+export const interviewPriority: any = [
+  {
+    key: 'priority',
+    label: 'Priority',
+    selected: "",
+    options: [
+      { value: "", label: 'All' },
+      { value: 'HIGH', label: "High" },
+      { value: 'MEDIUM', label: "Medium" },
+      { value: 'LOW', label: "Low" }
+
+    ],
+
+
+
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+
 ];

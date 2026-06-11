@@ -1,0 +1,86 @@
+<div class="job-info-card">
+
+    <!-- 1. Job Details -->
+    <div class="section">
+        <div class="section-header" (click)="toggle(sections[0])">
+            <span>{{ sections[0].label }}</span>
+            <i class="fa-solid" [ngClass]="sections[0].open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </div>
+        <div class="section-body" *ngIf="sections[0].open">
+            <div class="field-grid">
+                <div class="field"><label>Name of the Job</label><span>{{ job.nameOfJob }}</span></div>
+                <div class="field"><label>Job Code</label><span>{{ job.jobCode }}</span></div>
+                <div class="field"><label>Department</label><span>{{ job.department }}</span></div>
+                <div class="field"><label>Work Mode</label><span>{{ job.workMode }}</span></div>
+                <div class="field"><label>Employment Type</label><span>{{ job.employmentType }}</span></div>
+                <div class="field"><label>Experience Required</label><span>{{ job.experienceRequired }}</span></div>
+                <div class="field"><label>Location</label><span>{{ job.location }}</span></div>
+                <div class="field"><label>Salary Range</label><span>{{ job.salaryRange }}</span></div>
+                <div class="field"><label>Work Type</label><span>{{ job.workType }}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Job Description -->
+    <div class="section">
+        <div class="section-header" (click)="toggle(sections[1])">
+            <span>{{ sections[1].label }}</span>
+            <i class="fa-solid" [ngClass]="sections[1].open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </div>
+        <div class="section-body" *ngIf="sections[1].open">
+            <p class="desc-text">{{ job.description }}</p>
+        </div>
+    </div>
+
+    <!-- 3. Key Responsibilities -->
+    <div class="section">
+        <div class="section-header" (click)="toggle(sections[2])">
+            <span>{{ sections[2].label }}</span>
+            <i class="fa-solid" [ngClass]="sections[2].open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </div>
+        <div class="section-body" *ngIf="sections[2].open">
+            <ul class="bullet-list">
+                <li *ngFor="let item of job.responsibilities">{{ item }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 4. Required Qualifications -->
+    <div class="section">
+        <div class="section-header" (click)="toggle(sections[3])">
+            <span>{{ sections[3].label }}</span>
+            <i class="fa-solid" [ngClass]="sections[3].open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </div>
+        <div class="section-body" *ngIf="sections[3].open">
+            <ul class="bullet-list">
+                <li *ngFor="let item of job.qualifications">{{ item }}</li>
+            </ul>
+            <div class="skills-group" *ngIf="job.mustHaveSkills?.length">
+                <p class="skills-label">Must Have Skills</p>
+                <div class="skills-row">
+                    <span class="skill-tag must" *ngFor="let skill of job.mustHaveSkills">{{ skill }}</span>
+                </div>
+            </div>
+            <div class="skills-group" *ngIf="job.niceToHaveSkills?.length">
+                <p class="skills-label">Nice To Have Skills</p>
+                <div class="skills-row">
+                    <span class="skill-tag nice" *ngFor="let skill of job.niceToHaveSkills">{{ skill }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Certifications -->
+    <div class="section">
+        <div class="section-header" (click)="toggle(sections[4])">
+            <span>{{ sections[4].label }}</span>
+            <i class="fa-solid" [ngClass]="sections[4].open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        </div>
+        <div class="section-body" *ngIf="sections[4].open">
+            <div class="skills-row">
+                <span class="cert-tag" *ngFor="let cert of job.certifications">{{ cert }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>

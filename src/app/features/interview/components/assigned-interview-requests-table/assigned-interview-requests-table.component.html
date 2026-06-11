@@ -1,0 +1,88 @@
+<app-reusable-table
+  title="Interview Requests"
+  [columns]="columns"
+  [data]="requests"
+  [sortableColumns]="['candidate', 'jobTitle', 'priority', 'requestedOn']"
+  [showPagination]="true"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalItems]="totalItems"
+  [cellTemplate]="interviewCell"
+  emptyMessage="No interview requests found."
+  (rowClick)="onRowClick($event)"
+  (pageChange)="onPageChange($event)">
+</app-reusable-table>
+
+<!-- ─────────────────────────────────────────────────────────────────────────
+     Cell template — context is { $implicit: { row: InterviewRequest, col: TableColumn } }
+     ───────────────────────────────────────────────────────────────────────── -->
+<ng-template #interviewCell let-ctx>
+
+  <!-- ── CANDIDATE ──────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="ir-candidate">
+      <div class="ir-avatar">{{ ctx.row.initials }}</div>
+      <div class="ir-candidate__info">
+        <span class="ir-candidate__name">{{ ctx.row.name }}</span>
+        <span class="ir-candidate__id">{{ ctx.row.id }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ── JOB TITLE ──────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+    <div class="ir-job">
+      <span class="ir-job__title">{{ ctx.row.jobTitle }}</span>
+      <span class="ir-job__dept">{{ ctx.row.department }}</span>
+    </div>
+  </ng-container>
+
+  <!-- ── ROUND ──────────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'round'">
+    <div class="ir-round">
+      <span class="ir-round__label">{{ ctx.row.round }}</span>
+      <!-- <span class="ir-round__badge" [ngClass]="roundBadgeClass(ctx.row.roundCount)">
+        {{ roundLabel(ctx.row.roundCount) }}
+      </span> -->
+    </div>
+  </ng-container>
+
+  <!-- ── PRIORITY ───────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'priority'">
+    <span class="ir-priority" [ngClass]="priorityClass(ctx.row.priority)">
+      {{ ctx.row.priority }}
+    </span>
+  </ng-container>
+
+  <!-- ── REQUESTED ON ───────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'requestedOn'">
+    <div class="ir-date">
+      <span class="ir-date__main">{{ ctx.row.requestedDate }}</span>
+      <span class="ir-date__time">{{ ctx.row.requestedTime }}</span>
+    </div>
+  </ng-container>
+
+  <!-- ── ACTION ─────────────────────────────────────────────────────────── -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <div class="ir-action" (click)="$event.stopPropagation()">
+      <button
+        class="ir-btn-view"
+        type="button"
+        (click)="onViewDetails(ctx.row)"
+        *appCan="'INTERVIEW:ASSIGNEDINTERVIEWREQUESTS:EDIT'"
+        [attr.aria-label]="'View details for ' + ctx.row.name">
+        <!-- Eye icon -->
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+        </svg>
+        View Details
+      </button>
+
+      
+    </div>
+  </ng-container>
+
+</ng-template>

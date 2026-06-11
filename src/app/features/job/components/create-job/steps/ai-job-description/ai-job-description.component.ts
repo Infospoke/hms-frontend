@@ -26,7 +26,8 @@ interface JdVersion {
   label: string;
   isCurrent: boolean;
   generatedAt: Date;
-  content: string;       // stores formatted HTML
+  content: string;
+  rawResponse: JdApiResponse; // ← add this
   showMenu: boolean;
 }
 
@@ -65,15 +66,15 @@ export class AiJobDescriptionStepComponent
   @ViewChild('editor', { static: false })
   editorRef!: ElementRef<HTMLDivElement>;
 
-  private cdr        = inject(ChangeDetectorRef);
+  private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
 
   readonly STORAGE_KEY = 'ai_jd_versions';
 
-  versions: JdVersion[]       = [];
+  versions: JdVersion[] = [];
   selectedVersionId: number | null = null;
 
-  isGenerating   = false;
+  isGenerating = false;
   isRegenerating = false;
 
   saveStatus: 'idle' | 'saving' | 'saved' = 'idle';
@@ -96,7 +97,7 @@ export class AiJobDescriptionStepComponent
     }
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     clearTimeout(this.saveTimer);
@@ -123,30 +124,30 @@ export class AiJobDescriptionStepComponent
   private async callGenerateApi(updateParameter: string): Promise<void> {
     if (this.isGenerating || this.isRegenerating) return;
 
-    this.isGenerating   = !updateParameter;
+    this.isGenerating = !updateParameter;
     this.isRegenerating = !!updateParameter;
 
     const step1 = this.form.parent?.get('step1')?.getRawValue();
 
     const payload = {
-      job_title:              step1?.jobTitle            || 'Python Developer',
-      department:             String(step1?.department   || 'Engineering'),
-      location:               (step1?.location + step1?.country) || 'Hyderabad, Telangana, India',
-      seniority_level:        'Mid-Senior level',
-      num_openings:           step1?.openings            || 10,
-      target_start_date:      step1?.startDate           || '25-06-2026',
-      employment_type:        step1?.employmentType      || 'Full-time',
-      work_mode:              step1?.workMode            || 'Hybrid',
-      must_have_skills:       step1?.mustHaveSkills      || [],
-      nice_to_have_skills:    step1?.niceToHaveSkills    || [],
+      job_title: step1?.jobTitle || 'Python Developer',
+      department: String(step1?.department || 'Engineering'),
+      location: (step1?.location + step1?.country) || 'Hyderabad, Telangana, India',
+      seniority_level: 'Mid-Senior level',
+      num_openings: step1?.openings || 10,
+      target_start_date: step1?.startDate || '25-06-2026',
+      employment_type: step1?.employmentType || 'Full-time',
+      work_mode: step1?.workMode || 'Hybrid',
+      must_have_skills: step1?.mustHaveSkills || [],
+      nice_to_have_skills: step1?.niceToHaveSkills || [],
       education_requirements: step1?.educationRequirement
         || "Bachelor's degree in Computer Science or related field",
-      travel_requirement:       'N/A',
-      years_of_experience:      String(step1?.minExp + '-' + step1?.maxExp || '5'),
-      required_certifications:  step1?.certificate,
-      languages:                step1?.languages ||'English',
-      old_job_description:      this.editorRef?.nativeElement?.innerHTML || '',
-      update_parameter:         updateParameter
+      travel_requirement: 'N/A',
+      years_of_experience: String(step1?.minExp + '-' + step1?.maxExp || '5'),
+      required_certifications: step1?.certificate,
+      languages: step1?.languages || 'English',
+      old_job_description: this.editorRef?.nativeElement?.innerHTML || '',
+      update_parameter: updateParameter
     };
 
     try {
@@ -156,10 +157,10 @@ export class AiJobDescriptionStepComponent
       if (res) {
         // Convert structured JSON → formatted HTML and store as a version
         const html = this.formatJdResponse(res);
-        if (html) this.addVersion(html);
+        if (html) this.addVersion(html, res);
       }
     } finally {
-      this.isGenerating   = false;
+      this.isGenerating = false;
       this.isRegenerating = false;
       this.cdr.detectChanges();
     }
@@ -219,11 +220,11 @@ export class AiJobDescriptionStepComponent
 
     const metaBar = `
       <div class="jd-meta-bar">
-        ${metaItem('Location',   res.location)}
-        ${metaItem('Work Mode',  res.work_mode)}
+        ${metaItem('Location', res.location)}
+        ${metaItem('Work Mode', res.work_mode)}
         ${metaItem('Employment', res.employment_type)}
         ${metaItem('Experience', res.experience_requirements)}
-        ${metaItem('Language',   res.languages_required)}
+        ${metaItem('Language', res.languages_required)}
       </div>`;
 
     const summarySection = section(
@@ -290,14 +291,15 @@ export class AiJobDescriptionStepComponent
 
   // ── Version management ──────────────────────────────────────────────────────
 
-  private addVersion(html: string): void {
+  private addVersion(html: string, raw: JdApiResponse): void {
     const version: JdVersion = {
-      id:          Date.now(),
-      label:       '',
-      isCurrent:   true,
+      id: Date.now(),
+      label: '',
+      isCurrent: true,
       generatedAt: new Date(),
-      content:     html,
-      showMenu:    false
+      content: html,
+      rawResponse: raw, // ← store raw
+      showMenu: false
     };
 
     this.versions.unshift(version);
@@ -308,7 +310,7 @@ export class AiJobDescriptionStepComponent
     // Re-label all versions
     const total = this.versions.length;
     this.versions.forEach((v, i) => {
-      v.label     = `Version ${total - i}`;
+      v.label = `Version ${total - i}`;
       v.isCurrent = i === 0;
     });
 
@@ -319,13 +321,13 @@ export class AiJobDescriptionStepComponent
   loadVersion(v: JdVersion): void {
     this.selectedVersionId = v.id;
     this.versions.forEach(ver => (ver.isCurrent = ver.id === v.id));
-    this.form.get('jobDescription')?.setValue(v.content);
-    this.cdr.detectChanges();
 
-    // Defer DOM write until after Angular's render cycle
+    this.form.get('jobDescription')?.setValue(v.rawResponse); // ← raw JSON
+
+    this.cdr.detectChanges();
     setTimeout(() => {
       if (this.editorRef?.nativeElement) {
-        this.editorRef.nativeElement.innerHTML = v.content;
+        this.editorRef.nativeElement.innerHTML = v.content; // display only
         this.updateWordCount();
       }
       this.cdr.detectChanges();
@@ -361,9 +363,15 @@ export class AiJobDescriptionStepComponent
     catch { return false; }
   }
 
+  // onEditorInput(): void {
+  //   const content = this.editorRef?.nativeElement.innerHTML || '';
+  //   this.form.get('jobDescription')?.setValue(content);
+  //   this.updateWordCount();
+  //   this.triggerSave();
+  // }
+
   onEditorInput(): void {
-    const content = this.editorRef?.nativeElement.innerHTML || '';
-    this.form.get('jobDescription')?.setValue(content);
+    // removed: this.form.get('jobDescription')?.setValue(...)
     this.updateWordCount();
     this.triggerSave();
   }

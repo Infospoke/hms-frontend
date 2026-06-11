@@ -1,0 +1,125 @@
+.assign-interviewers {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Job Title cell ─────────────────────────────────────────────────────────
+.ai-job-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-job-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.ai-job-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-job-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-job-code {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.ai-badge-new {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+// ── Round status cell ──────────────────────────────────────────────────────
+.ai-rs {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+
+  i { font-size: 18px; }
+
+  &--accepted { color: #16a34a; }
+  &--rejected { color: #dc2626; }
+  &--pending  { color: #d97706; }
+
+  &--not-sent {
+    i    { color: #cbd5e1; font-size: 16px; }
+    span { color: #94a3b8; }
+  }
+
+  &--empty {
+    color: #cbd5e1;
+  }
+}
+
+.ai-rs-empty-dash {
+  color: #cbd5e1;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+// ── Action cell ────────────────────────────────────────────────────────────
+.ai-action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ai-btn-view {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  background: transparent;
+  border: 1.5px solid #2563eb;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+
+  &:hover { background: #eff6ff; }
+}
+
+.ai-btn-more {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover { border-color: #94a3b8; background: #f8fafc; }
+}

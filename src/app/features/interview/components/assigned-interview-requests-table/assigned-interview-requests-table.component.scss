@@ -1,0 +1,218 @@
+// ── Host ─────────────────────────────────────────────────────────────────────
+// All base table chrome (header, borders, row hover, pagination) comes from
+// reusable-table.component.scss.  This file only adds the custom-cell styles
+// that live inside the ng-template passed via [cellTemplate].
+
+:host {
+  display: block;
+}
+
+// ── Candidate cell ────────────────────────────────────────────────────────────
+
+.ir-candidate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ir-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #e8eaff;
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.ir-candidate__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ir-candidate__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ir-candidate__id {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+// ── Job-title cell ────────────────────────────────────────────────────────────
+
+.ir-job {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ir-job__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.ir-job__dept {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+// ── Round cell ────────────────────────────────────────────────────────────────
+
+.ir-round {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.ir-round__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.ir-round__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+
+  // 1 round — green
+  &.ir-round--one {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  // 2 rounds — indigo/blue
+  &.ir-round--two {
+    background: #e0e8ff;
+    color: #3730a3;
+  }
+
+  // 3+ rounds — pink/purple
+  &.ir-round--three {
+    background: #fce7f3;
+    color: #9d174d;
+  }
+}
+
+// ── Priority badge ────────────────────────────────────────────────────────────
+
+.ir-priority {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.ir-badge--high {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  &.ir-badge--medium {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+
+  &.ir-badge--low {
+    background: #dcfce7;
+    color: #166534;
+  }
+}
+
+// ── Requested-on cell ─────────────────────────────────────────────────────────
+
+.ir-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ir-date__main {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.ir-date__time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+// ── Action cell ───────────────────────────────────────────────────────────────
+
+.ir-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+// "View Details" button — outlined indigo
+.ir-btn-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid #c7d2fe;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #467ee5;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, border-color 0.12s ease;
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: #eef2ff;
+    border-color: #a5cefc;
+  }
+
+  &:active {
+    background: #e0e7ff;
+  }
+}
+
+// Chevron expand button
+.ir-btn-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #c7d2fe;
+    color: #4690e5;
+  }
+}

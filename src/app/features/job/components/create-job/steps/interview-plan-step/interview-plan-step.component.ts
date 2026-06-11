@@ -69,7 +69,7 @@ export class InterviewPlanStepComponent implements OnInit {
       
       filters: {
         status:     'Active',
-        dateFilter: 'thisWeek',
+        dateFilter: '',
         approvalStatus: 'APPROVED',
         ...(this.searchTerm.trim() ? { search: this.searchTerm.trim() } : {}),
       },

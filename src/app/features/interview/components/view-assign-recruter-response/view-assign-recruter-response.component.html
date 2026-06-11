@@ -1,0 +1,97 @@
+<div class="page-wrapper">
+
+  <!-- Heading -->
+  <app-heading heading="View Responses" subHeading="See interviewer responses and comments for each round"
+    [showBackButton]="true" backButtonUrl="/interview/assign-interviewers" />
+
+  <!-- Shared job card -->
+  <app-job-info-card [job]="job" />
+
+  <!-- Responses table -->
+  <app-reusable-table title="Interviewer Responses by Round" [columns]="columns" [data]="responses"
+    [cellTemplate]="cellTpl" />
+
+  <!-- Cell template -->
+  <ng-template #cellTpl let-ctx>
+
+    <!-- Round label + description + duration badge -->
+    <ng-container *ngIf="ctx.col.key === 'round'">
+      <div class="round-cell">
+        <span class="round-badge round-badge--{{ ctx.row.colorClass }}">{{ ctx.row.label }}</span>
+        <div>
+          <p class="round-name">
+            {{ ctx.row.name }}
+            <span class="dur-badge">{{ ctx.row.durationMins }} mins</span>
+          </p>
+          <p class="round-desc">{{ ctx.row.description }}</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Interviewer avatar + name + role -->
+    <ng-container *ngIf="ctx.col.key === 'interviewer'">
+      <div class="iv-info">
+        <span class="round-badge round-badge--{{ ctx.row.colorClass }}">{{
+          getInitials(ctx.row.interviewer.name)}}</span>
+
+        <div>
+          <p class="iv-name">{{ ctx.row.interviewer.name }}</p>
+          <p class="iv-role">{{ ctx.row.interviewer.role }}</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Response badge -->
+    <ng-container *ngIf="ctx.col.key === 'response'">
+      <span class="response-badge" [class.response-badge--accepted]="ctx.row.response === 'Accepted'"
+        [class.response-badge--rejected]="ctx.row.response === 'Rejected'"
+        [class.response-badge--pending]="ctx.row.response === 'Pending'">
+
+        <i [class]="
+        ctx.row.response === 'Accepted'
+          ? 'fas fa-circle-check'
+          : ctx.row.response === 'Rejected'
+            ? 'fas fa-circle-xmark'
+            : 'fas fa-clock'
+      " aria-hidden="true">
+        </i>
+
+        {{ ctx.row.response }}
+      </span>
+    </ng-container>
+
+    <!-- Responded on -->
+    <ng-container *ngIf="ctx.col.key === 'respondedOn'">
+      <p class="resp-date">{{ ctx.row.respondedOn }}</p>
+      <p class="resp-time">{{ ctx.row.respondedTime }}</p>
+    </ng-container>
+
+  </ng-template>
+
+  <!-- Reassignment banner -->
+  <div class="reassign-banner" *ngIf="hasRejection">
+    <div class="reassign-banner__left">
+      <div class="reassign-icon" aria-hidden="true">
+        <i class="fas fa-user-xmark"></i>
+      </div>
+      <div>
+        <p class="reassign-title">Reassignment Required</p>
+        <p class="reassign-sub">
+          {{ rejectedCount }} round{{ rejectedCount > 1 ? 's have' : ' has' }} been rejected.
+          Please reassign an interviewer to continue the process.
+        </p>
+      </div>
+    </div>
+    <button class="btn btn--reassign" (click)="onReassignInterviewer()">
+      <i class="fas fa-users" aria-hidden="true"></i>
+      Reassign Interviewer
+    </button>
+  </div>
+
+  <!-- Footnote -->
+  <p class="footnote">
+    <i class="fas fa-circle-info" aria-hidden="true"></i>
+    Responses are submitted by interviewers and cannot be edited.
+  </p>
+
+</div>

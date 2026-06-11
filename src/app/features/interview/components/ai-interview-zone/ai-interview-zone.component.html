@@ -1,0 +1,74 @@
+<div class="ai-interview-zone">
+  <app-pipeline-stages
+    [stages]="stages"
+    [activeStageId]="activeStageId"
+    (stageSelected)="onStageSelected($event)" />
+
+  <app-approval-layout
+    heading="Generate AI Questions"
+    subHeading="Create, manage and monitor AI generated questions before scheduling the interview."
+    searchPlaceholder="Search by name, email or job title..."
+    [dropDownData]="aiInterview"
+    (filterChange)="filterChange($event)" />
+
+  <div class="card-dd">
+    <app-reusable-table
+      [columns]="tableColumns"
+      [data]="tableData"
+      [sortableColumns]="sortableColumns"
+      [cellTemplate]="cellTpl"
+      (rowClick)="onRowClick($event)"
+      (sortChange)="onSortChange($event)">
+    </app-reusable-table>
+  </div>
+</div>
+
+<!-- ── Custom cell template ───────────────────────────────────────────────── -->
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate column -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="aiz-candidate">
+      <span class="aiz-avatar" [style.background-color]="ctx.row.initialsColor">
+        {{ ctx.row.initials }}
+      </span>
+      <div class="aiz-candidate-info">
+        <span class="aiz-name">{{ ctx.row.name }}</span>
+        <span class="aiz-email">{{ ctx.row.email }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Question Status column -->
+  <ng-container *ngIf="ctx.col.key === 'questionStatus'">
+    <span class="aiz-status-badge"
+      [class.aiz-status--generated]="ctx.row.statusType === 'generated'"
+      [class.aiz-status--generating]="ctx.row.statusType === 'generating'"
+      [class.aiz-status--draft]="ctx.row.statusType === 'draft'">
+      {{ ctx.row.questionStatus }}
+    </span>
+  </ng-container>
+
+  <!-- Last Updated column -->
+  <ng-container *ngIf="ctx.col.key === 'lastUpdated'">
+    <div class="aiz-date">
+      <span class="aiz-date-day">{{ ctx.row.lastUpdatedDate }}</span>
+      <span class="aiz-date-time">{{ ctx.row.lastUpdatedTime }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Actions column -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <div class="aiz-actions">
+      <button class="aiz-btn-manage"
+        [class.aiz-btn-manage--generating]="ctx.row.statusType === 'generating'"
+        (click)="$event.stopPropagation()">
+        {{ ctx.row.actionLabel }}
+      </button>
+      <!-- <button class="aiz-btn-more" (click)="$event.stopPropagation()" aria-label="More options">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button> -->
+    </div>
+  </ng-container>
+
+</ng-template>

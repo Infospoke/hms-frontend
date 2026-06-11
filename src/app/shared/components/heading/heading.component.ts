@@ -26,6 +26,11 @@ export class HeadingComponent implements OnInit {
   @Input() backButtonUrl:string='';
 
   @Input() buttonText:string='Back';
+
+
+  @Input() badge: any = '';
+
+  @Input() badgeStatus: any = '';
   
   @Output() backClick=new EventEmitter<any>();
   private router=inject(Router);
@@ -45,5 +50,21 @@ export class HeadingComponent implements OnInit {
 
   handlebackClick(){
     this.backClick.emit();
+  }
+
+
+  get badgeClass(): string {
+    const key = (this.badgeStatus || this.badge).toLowerCase().replace(/\s+/g, '-');
+    const map: Record<string, string> = {
+      'pending': 'badge--pending',
+      'pending-response': 'badge--pending',
+      'approved': 'badge--approved',
+      'rejected': 'badge--rejected',
+      'active': 'badge--active',
+      'inactive': 'badge--inactive',
+      'completed': 'badge--completed',
+      'cancelled': 'badge--cancelled',
+    };
+    return map[key] ?? 'badge--default';
   }
 }

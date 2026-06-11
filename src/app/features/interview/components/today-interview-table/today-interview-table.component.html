@@ -1,0 +1,98 @@
+<div class="ti-wrapper">
+
+<!--   
+  <div class="ti-section-header">
+    <div class="ti-section-header__left">
+      <h2 class="ti-section-title">Today's Interviews</h2>
+      <div class="ti-date-chip">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8"  y1="2" x2="8"  y2="6"/>
+          <line x1="3"  y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>{{ date }}</span>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- ── Reusable table ────────────────────────────────────────────────────── -->
+  <app-reusable-table
+  [title]="'Today Interviews'"
+    [columns]="columns"
+    [data]="interviews"
+    [showPagination]="showPagination"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    [cellTemplate]="todayCell"
+    emptyMessage="No interviews scheduled for today."
+    (rowClick)="onRowClick($event)"
+    (pageChange)="onPageChange($event)">
+  </app-reusable-table>
+
+</div>
+
+<!-- ── Cell template ──────────────────────────────────────────────────────── -->
+<!-- context: { $implicit: { row: TodayInterview, col: TableColumn } }        -->
+<ng-template #todayCell let-ctx>
+
+  <!-- TIME -->
+  <ng-container *ngIf="ctx.col.key === 'time'">
+    <span class="ti-time">{{ ctx.row.time }}</span>
+  </ng-container>
+
+  <!-- CANDIDATE -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="ti-candidate">
+      <div class="ti-avatar">{{ ctx.row.initials }}</div>
+      <div class="ti-candidate__info">
+        <span class="ti-candidate__name">{{ ctx.row.name }}</span>
+        <span class="ti-candidate__id">{{ ctx.row.id }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- JOB TITLE -->
+  <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+    <div class="ti-job">
+      <span class="ti-job__title">{{ ctx.row.jobTitle }}</span>
+      <span class="ti-job__dept">{{ ctx.row.department }}</span>
+    </div>
+  </ng-container>
+
+  <!-- ROUND -->
+  <ng-container *ngIf="ctx.col.key === 'round'">
+    <span class="ti-round">{{ ctx.row.round }}</span>
+  </ng-container>
+
+  <!-- TYPE -->
+  <ng-container *ngIf="ctx.col.key === 'type'">
+    <span class="ti-type-badge" [ngClass]="typeBadgeClass(ctx.row.type)">
+      {{ ctx.row.type }}
+    </span>
+  </ng-container>
+
+  <!-- ACTION -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <div class="ti-action" (click)="$event.stopPropagation()">
+      <button
+        class="ti-btn-view"
+        type="button"
+        (click)="onViewDetails(ctx.row)"
+        [attr.aria-label]="'View details for ' + ctx.row.name">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+        </svg>
+        View Details
+      </button>
+      
+    </div>
+  </ng-container>
+
+</ng-template>

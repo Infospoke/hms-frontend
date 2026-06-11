@@ -1,65 +1,134 @@
+// ── Original styles (unchanged) ───────────────────────────────────────────────
+
 .heading-component {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .heading-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 20px;
 
     &.center {
-        align-items: center;
-        text-align: center;
+      justify-content: center;
     }
+  }
 
-    .heading-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 6px;
+  .heading-h4 {
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1a1a2e;
+  }
 
-        &.center {
-            justify-content: center;
-            /* centers h4 + icon */
-        }
+  .sub-heading {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+
+  .info-icon {
+    font-size: 1rem;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #3b82f6;
     }
+  }
+}
 
-    .heading-h4 {
-        margin: 0;
-        font-weight: 600;
-        line-height: 1.4;
-        color: #1a1a2e;
-    }
+.cnc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  width: fit-content;
+  transition: gap 0.15s ease;
+  margin-bottom: 10px;
 
-    .sub-heading {
-        margin: 0;
-        color: #6b7280;
-        line-height: 1.5;
-    }
+  i { font-size: 12px; }
 
-    .info-icon {
-        font-size: 1rem;
-        color: #6b7280;
-        cursor: pointer;
-        transition: color 0.2s;
-
-        &:hover {
-            color: #3b82f6;
-        }
-    }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 
-.cnc-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #2563eb;
-    cursor: pointer;
-    width: fit-content;
-    transition: gap 0.15s ease;
-    margin-bottom: 10px;
-    i { font-size: 12px; }
+.heading-top-row {
+  display: flex;
+  align-items: flex-start;
+//   justify-content: space-between;
+  gap: 12px;
+}
 
-    &:hover {
-        // gap: 9px;
-        text-decoration: underline;
-    }
+// ── NEW: badge base + status variants ─────────────────────────────────────────
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  // ── Pending (lavender) ──
+  &.badge--pending {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+
+  // ── Approved (green) ──
+  &.badge--approved {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  // ── Rejected (red) ──
+  &.badge--rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  // ── Active (blue) ──
+  &.badge--active {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  // ── Inactive (grey) ──
+  &.badge--inactive {
+    background: #f3f4f6;
+    color: #6b7280;
+  }
+
+  // ── Completed (teal) ──
+  &.badge--completed {
+    background: #ccfbf1;
+    color: #0f766e;
+  }
+
+  // ── Cancelled (orange) ──
+  &.badge--cancelled {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+
+  // ── Fallback ──
+  &.badge--default {
+    background: #f3f4f6;
+    color: #374151;
+  }
 }

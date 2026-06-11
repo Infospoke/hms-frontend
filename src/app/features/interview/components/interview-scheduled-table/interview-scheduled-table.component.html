@@ -1,0 +1,93 @@
+<app-reusable-table
+  [columns]="columns"
+  [data]="pagedData"
+  [sortableColumns]="sortableColumns"
+  [showPagination]="true"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalItems]="totalItems"
+  [cellTemplate]="requestCellTemplate"
+  emptyMessage="No interview requests found."
+  (sortChange)="onSortChange($event)"
+  (pageChange)="onPageChange($event)"
+  (rowClick)="onRowClick($event)">
+</app-reusable-table>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CELL TEMPLATE  –  $implicit = { row: InterviewRequest, col: TableColumn }
+     ═══════════════════════════════════════════════════════════════════════ -->
+<ng-template #requestCellTemplate let-ctx>
+
+  <ng-container [ngSwitch]="ctx.col.key">
+
+    <!-- ── CANDIDATE ──────────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'candidate'">
+      <div class="cell-candidate">
+        <div class="avatar" [ngClass]="asRequest(ctx.row).candidate.avatarClass">
+          {{ asRequest(ctx.row).candidate.initials }}
+        </div>
+        <div class="cand-info">
+          <span class="cand-name">{{ asRequest(ctx.row).candidate.name }}</span>
+          <span class="cand-code">{{ asRequest(ctx.row).candidate.code }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ── JOB TITLE ──────────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'jobTitle'">
+      <div class="cell-job">
+        <span class="job-title">{{ asRequest(ctx.row).job.title }}</span>
+        <span class="job-dept">{{ asRequest(ctx.row).job.department }}</span>
+      </div>
+    </ng-container>
+
+    <!-- ── ROUND ──────────────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'round'">
+      <div class="cell-round">
+        <span class="round-type">{{ asRequest(ctx.row).round.interviewType }}</span>
+        <span class="round-pill"
+          [class.round-pill--multi]="asRequest(ctx.row).round.roundCount > 1">
+          {{ asRequest(ctx.row).round.roundLabel }}
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- ── PRIORITY ───────────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'priority'">
+      <span class="priority-badge"
+        [ngClass]="'priority-badge--' + asRequest(ctx.row).priority.toLowerCase()">
+        {{ asRequest(ctx.row).priority }}
+      </span>
+    </ng-container>
+
+    <!-- ── REQUESTED ON ───────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'requestedOn'">
+      <div class="cell-requested">
+        <span class="req-date">{{ asRequest(ctx.row).requestedOn.date }}</span>
+        <span class="req-time">{{ asRequest(ctx.row).requestedOn.time }}</span>
+      </div>
+    </ng-container>
+
+    <!-- ── ACTION ─────────────────────────────────────────────────────────── -->
+    <ng-container *ngSwitchCase="'action'">
+      <div class="cell-action">
+        <button class="btn-schedule"
+          (click)="scheduleInterview($event, asRequest(ctx.row))"
+          title="Schedule Interview">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8"  y1="2" x2="8"  y2="6"/>
+            <line x1="3"  y1="10" x2="21" y2="10"/>
+          </svg>
+          Schedule Interview
+        </button>
+        
+      </div>
+    </ng-container>
+
+  </ng-container>
+</ng-template>

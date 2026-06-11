@@ -196,7 +196,7 @@ export class ApprovalSrsComponent {
     return {
       page: this.currentPage - 1,
       size: this.pageSize,
-      sortBy: 'createdOn',
+      sortBy: 'submittedOn',
       direction: 'desc',
       filters,
     };

@@ -144,9 +144,12 @@ $radius:      8px;
   font-size: 13px;
   font-weight: 600;
   color: $text;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  max-width: 200px;
+
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .aj-job-code {

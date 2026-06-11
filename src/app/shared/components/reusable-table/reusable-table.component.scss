@@ -156,10 +156,11 @@ tbody {
 // ── Default cell text ─────────────────────────────────────────────────────────
 .rt-cell-text {
   display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
   max-width: 280px;
+  line-height: 1.4;
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────

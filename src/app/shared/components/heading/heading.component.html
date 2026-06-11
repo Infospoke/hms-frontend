@@ -1,23 +1,30 @@
 <div class="heading-component" [ngClass]="{ 'center': isCenter }">
-
+  <div class="heading-top-row">
     <div class="cnc-back" (click)="goBack()" *ngIf="showBackButton">
-        <i class="fa-solid fa-arrow-left"></i>
-        <span>{{ buttonText }}</span>
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>{{ buttonText }}</span>
     </div>
+    <!-- <span *ngIf="badge && showBackButton" class="status-badge" [ngClass]="badgeClass">
+      {{ badge }}
+    </span> -->
+  </div>
 
-    <div class="heading-wrapper" *ngIf="heading">
-        <h4 class="heading-h4" [style.font-size]="headingFontSize" [style.color]="headingColor">
-            {{ heading }}
-        </h4>
+  <!-- Heading + inline badge (when no back button) -->
+  <div class="heading-wrapper" *ngIf="heading">
+    <h4 class="heading-h4" [style.font-size]="headingFontSize" [style.color]="headingColor">
+      {{ heading }}
+    </h4>
 
+    <!-- Badge inline next to heading when there's no back button -->
+    <span *ngIf="badge" class="status-badge" [ngClass]="badgeClass">
+      {{ badge }}
+    </span>
 
-        <span *ngIf="showInfo" class="info-icon" [title]="infoTooltip">
-            &#9432;
-        </span>
-    </div>
+    <span *ngIf="showInfo" class="info-icon" [title]="infoTooltip">&#9432;</span>
+  </div>
 
-    <p class="sub-heading" *ngIf="subHeading" [style.font-size]="subHeadingFontSize" [style.color]="subHeadingColor">
-        {{ subHeading }}
-    </p>
-    
+  <p class="sub-heading" *ngIf="subHeading" [style.font-size]="subHeadingFontSize" [style.color]="subHeadingColor">
+    {{ subHeading }}
+  </p>
+
 </div>

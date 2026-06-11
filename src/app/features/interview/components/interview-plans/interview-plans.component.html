@@ -5,7 +5,7 @@
     [infoTooltip]="false"
     [cards]="cards"
     [buttonType]="'Create Plan'"
-    [showBtn]="true"
+    [showBtn]="'INTERVIEW:INTERVIEWPLAN:CREATE'"
     searchPlaceholder="Search plans by name or description"
     (handle)="handleCreateNewPlan()"
     [tabs]="tabs"
@@ -24,8 +24,7 @@
       [pageSize]="pageSize"
       [currentPage]="currentPage"
       [showPagination]="true"
-      [showHeader]="true"
-      [sortableColumns]="['planName', 'rounds', 'status', 'createdOn']"
+ 
       emptyMessage="No interview plans found. Create your first plan to get started."
       [cellTemplate]="customCell"
       (pageChange)="handlePageChange($event)"

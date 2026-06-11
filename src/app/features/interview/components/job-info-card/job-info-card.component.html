@@ -1,0 +1,96 @@
+<div class="job-card" [ngClass]="{ 'job-card--detail': isDetailMode }">
+
+  <div class="job-icon" aria-hidden="true">
+    <i class="fa-solid fa-briefcase"></i>
+  </div>
+
+  <ng-container *ngIf="!isDetailMode">
+
+    <div class="job-primary">
+      <span class="job-title">{{ job.title }}</span>
+      <span class="job-id" *ngIf="job.id">{{ job.id }}</span>
+      <span class="status-badge" *ngIf="job.status">{{ job.status }}</span>
+    </div>
+
+    <div class="job-meta">
+      <div class="meta-item">
+        <span class="meta-label">Department</span>
+        <span class="meta-value">{{ job.department }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Plan Name</span>
+        <span class="meta-value">{{ job.planName }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Total Rounds</span>
+        <span class="meta-value">{{ job.totalRounds }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Created On</span>
+        <span class="meta-value">{{ job.createdOn | date:'medium'}}</span>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ══════════════════════════════════════════════
+       MODE B — detail vertical layout (Image 1)
+       shown when roundTitle / interview fields exist
+       ══════════════════════════════════════════════ -->
+  <div class="job-body" *ngIf="isDetailMode">
+
+    <!-- Round title + type badge -->
+    <div class="extra-header" *ngIf="job.roundTitle">
+      <span class="round-title">{{ job.roundTitle }}</span>
+      <span class="round-badge" *ngIf="job.roundType">{{ job.roundType }}</span>
+    </div>
+
+    <!-- Row 1: Job Title · Department · Interview Type · Interview Mode -->
+    <div class="extra-meta">
+      <div class="meta-item">
+        <span class="meta-label">Job Title</span>
+        <span class="meta-value extra-bold">{{ job.title }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Department</span>
+        <span class="meta-value extra-bold">{{ job.department }}</span>
+      </div>
+      <div class="meta-item" *ngIf="job.interviewType">
+        <span class="meta-label">Interview Type</span>
+        <span class="meta-value extra-bold">{{ job.interviewType }}</span>
+      </div>
+      <div class="meta-item" *ngIf="job.interviewMode">
+        <span class="meta-label">Interview Mode</span>
+        <span class="meta-value extra-bold">{{ job.interviewMode }}</span>
+      </div>
+    </div>
+
+    <div class="extra-divider"></div>
+
+    <!-- Row 2: Assigned on · Response Due · Assigned by -->
+    <div class="extra-meta" *ngIf="job.assignedOn || job.responseDue || job.assignedBy">
+      <div class="meta-item" *ngIf="job.assignedOn">
+        <span class="meta-label">Assigned on</span>
+        <span class="meta-value">{{ job.assignedOn }}</span>
+      </div>
+      <div class="meta-item" *ngIf="job.responseDue">
+        <span class="meta-label">Response Due</span>
+        <span class="meta-value" [class.due-soon]="isDueSoon">
+          {{ job.responseDue }}{{ dueLabelSuffix }}
+        </span>
+      </div>
+      <div class="meta-item" *ngIf="job.assignedBy">
+        <span class="meta-label">Assigned by</span>
+        <div class="assigned-by">
+          <div class="avatar">{{ getInitials(job.assignedBy.name) }}</div>
+          <div class="assigned-info">
+            <span class="assigned-name">{{ job.assignedBy.name }}</span>
+            <span class="assigned-role">{{ job.assignedBy.role }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

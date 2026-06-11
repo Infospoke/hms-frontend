@@ -128,6 +128,14 @@ export const API = {
         INTERVIEW_PLAN_LIST_FOR_APPROVAL:`/hms/interview-plan/interview-plan-approvals`,
         CREATED_BY_LIST:`/hms/configurations/create-permission-users`,
         PLAN_DETAILS_BY:(id:any)=>`/hms/interview-plan/interview-plan-details-by-id/${id}`,
-        UPDATE_CONFIG:`/hms/interview-plan/update`
+        UPDATE_CONFIG:`/hms/interview-plan/update`,
+        PLANS_LIST:`/hms/configurations/interview-plans`,
+        INTERVIEW_ASSIGNED_LIST:`/hms/interviewer-assignment/list`,
+        GET_INTERVIEW_ASSIGNMENT_DETAILS:(id:any)=>`/hms/interviewer-assignment/details/${id}`,
+        INTERVIEW_UPDATE:`/hms/interviewer-assignment/assign`,
+        INTERVIEW_ASSIGNMENT_COUNTS:`/hms/interviewer-assignment/counts`,
+        GET_INTERVIEW_ASSIGNEMENT_BY_ID:(id:any)=>`/hms/interviewer-assignment/assign-interview-by-id/${id}`,
+        GET_ASSIGN_INTERVIEW_LIST:`/hms/interviewer-assignment/get-all-assigned-interviews`,
+        UPDATE_INTERVIEW_ASSIGN:`/hms/interviewer-assignment/update`
     }
 };

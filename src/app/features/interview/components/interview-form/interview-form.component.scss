@@ -1,0 +1,246 @@
+// ── Design Tokens ────────────────────────────────────────────────────────────
+:host {
+  --color-primary:     #4f46e5;
+  --color-primary-h:   #4338ca;
+  --color-primary-bg:  #eef2ff;
+  --color-error:       #dc2626;
+  --text-primary:   #111827;
+  --text-secondary: #6b7280;
+  --text-muted:     #9ca3af;
+  --border:         #e5e7eb;
+  --border-focus:   #6366f1;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.interview-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+// ── Section header ─────────────────────────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+
+  .section-number { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+  .section-title  { font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0; flex: 1; }
+}
+
+// ── Summary body ──────────────────────────────────────────────────────────────
+.summary-body { display: flex; gap: 0; }
+.summary-divider { width: 1px; background: var(--border); margin: 0 28px; flex-shrink: 0; }
+
+.job-info { flex: 0 0 42%; }
+.job-title-row {
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;
+  .job-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--color-primary-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .job-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0 0 2px; }
+  .job-dept  { font-size: 12px; color: var(--text-secondary); margin: 0; }
+}
+.job-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+
+.candidate-info { flex: 1; }
+.candidate-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.candidate-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0; }
+.candidate-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+.candidate-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.candidate-badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+.candidate-role { font-size: 12px; color: var(--text-secondary); margin: 0; }
+.candidate-meta-grid { display: flex; flex-direction: column; gap: 8px; }
+.candidate-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.meta-label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 2px; }
+.meta-value { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+
+// ── Info banner ────────────────────────────────────────────────────────────
+.info-banner {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--color-primary-bg); border: 1px solid #c7d2fe;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; color: #3730a3; margin-bottom: 20px;
+  svg { flex-shrink: 0; margin-top: 1px; }
+  &.bottom-banner { margin-top: 20px; margin-bottom: 0; }
+}
+
+// ── Current Schedule display ──────────────────────────────────────────────
+.schedule-display-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.schedule-display-item {
+  .sd-label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .sd-value-row { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+}
+.type-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 500; padding: 3px 9px; border-radius: 20px;
+  &.online  { background: #dcfce7; color: #15803d; &::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #16a34a; } }
+  &.offline { background: #f3f4f6; color: var(--text-secondary); }
+}
+.platform-tag { font-size: 12px; color: var(--text-secondary); padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+
+// ── Form ──────────────────────────────────────────────────────────────────
+.form-row { margin-bottom: 18px; &.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+.form-field { display: flex; flex-direction: column; &.full-width { grid-column: 1 / -1; } }
+.field-label { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; .req { color: var(--color-error); } }
+.input-icon-wrap {
+  position: relative;
+  .field-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+  .form-input { padding-left: 36px; }
+}
+.form-input {
+  width: 100%; height: 38px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 13.5px; color: var(--text-primary); background: #fff; padding: 0 12px;
+  box-sizing: border-box; transition: border-color .15s, box-shadow .15s; appearance: none;
+  &:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
+  &.error { border-color: var(--color-error); }
+  &::placeholder { color: var(--text-muted); }
+}
+.field-error { font-size: 12px; color: var(--color-error); margin-top: 4px; }
+.field-hint  { font-size: 12px; color: var(--text-muted); margin: 5px 0 0; }
+
+// ── OR divider ─────────────────────────────────────────────────────────────
+.or-divider {
+  display: flex; align-items: center; gap: 12px; margin: 4px 0 18px;
+  font-size: 12px; color: var(--text-muted);
+  &::before, &::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────
+.form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.btn-cancel {
+  height: 38px; padding: 0 20px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: #fff; font-size: 13.5px; font-weight: 500; color: var(--text-secondary); cursor: pointer;
+  transition: background .15s, border-color .15s;
+  &:hover { background: #f9fafb; border-color: #d1d5db; }
+}
+.btn-submit {
+  height: 38px; padding: 0 22px; border: none; border-radius: var(--radius-sm);
+  background: var(--color-primary); font-size: 13.5px; font-weight: 500; color: #fff; cursor: pointer;
+  transition: background .15s;
+  &:hover { background: var(--color-primary-h); }
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
+
+// ── Radio Card Group (Interview Type) ────────────────────────────────────────
+.radio-card-group {
+  display: flex;
+  gap: 12px;
+}
+
+.radio-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 280px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+  user-select: none;
+
+  &:hover:not(.selected) {
+    border-color: #a5b4fc;
+    background: #fafbff;
+  }
+
+  &.selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary-bg);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+
+    .radio-custom {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+    }
+    .radio-dot { opacity: 1; transform: scale(1); }
+    .online-icon  { color: var(--color-primary); background: #e0e7ff; }
+    .offline-icon { color: var(--color-primary); background: #e0e7ff; }
+    .radio-card-title { color: var(--color-primary); }
+  }
+}
+
+// Native radio — hidden but accessible
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+// Custom radio circle
+.radio-custom {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s, background .15s;
+}
+
+.radio-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity .15s, transform .15s;
+}
+
+// Card body: icon + text block
+.radio-card-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.radio-card-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+}
+
+.online-icon  { background: #f0f4ff; color: #6366f1; }
+.offline-icon { background: #f3f4f6; color: #6b7280; }
+
+.radio-card-text  { display: flex; flex-direction: column; gap: 2px; }
+.radio-card-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); transition: color .15s; }
+.radio-card-desc  { font-size: 11.5px; color: var(--text-muted); }
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .summary-body { flex-direction: column; }
+  .summary-divider { width: 100%; height: 1px; margin: 16px 0; }
+  .schedule-display-grid { grid-template-columns: 1fr 1fr; }
+  .form-row.three-col { grid-template-columns: 1fr; }
+  .radio-card-group { flex-direction: column; }
+  .radio-card { max-width: 100%; }
+}

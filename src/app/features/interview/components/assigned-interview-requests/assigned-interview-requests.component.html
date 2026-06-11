@@ -1,0 +1,36 @@
+<div class="assigned-interview-requests">
+
+  <app-heading [heading]="selectedStageMeta?.heading" [subHeading]="selectedStageMeta?.subHeading" />
+  <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
+
+  <app-common-filter
+    searchPlaceholder="Search by Candidate name, Job Title"
+    [dropdowns]="activeFilters"
+    (filterChange)="filterChange($event)" />
+
+  <app-today-interview-table
+    *ngIf="activeStageId === 'ti'"
+    [payload]="tablePayload"
+    (pageChange)="onPageChange($event)" />
+
+  <app-assigned-interview-requests-table
+    *ngIf="activeStageId === 'ar'"
+    [payload]="tablePayload"
+    (pageChange)="onPageChange($event)" />
+
+  <app-scheduled-table
+    *ngIf="activeStageId === 'ts'"
+    [payload]="tablePayload"
+    (pageChange)="onPageChange($event)" />
+
+  <app-interview-upcomming-table
+    *ngIf="activeStageId === 'ui'"
+    [payload]="tablePayload"
+    (pageChange)="onPageChange($event)" />
+
+  <app-interview-feedback-table
+    *ngIf="activeStageId === 'fp'"
+    [payload]="tablePayload"
+    (pageChange)="onPageChange($event)" />
+
+</div>

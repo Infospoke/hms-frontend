@@ -1,0 +1,193 @@
+
+.page-wrapper {
+  
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.round-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &--blue   { background: #dbeafe; color: #1d4ed8; }
+  &--purple { background: #ede9fe; color: #6d28d9; }
+  &--orange { background: #ffedd5; color: #c2410c; }
+  &--green  { background: #d1fae5; color: #065f46; }
+}
+
+/* ── Round cell layout ──────────────────────────────────────────────────── */
+.round-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.round-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0 0 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  gap:5px;
+}
+
+.round-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+  max-width: 240px;
+}
+
+.dur-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* ── Interviewer ────────────────────────────────────────────────────────── */
+.iv-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.iv-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0;
+}
+.iv-role {
+  font-size: 11px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── Response badge ─────────────────────────────────────────────────────── */
+.response-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 999px;
+
+  &--accepted { background: #d1fae5; color: #065f46; }
+  &--rejected { background: #fee2e2; color: #991b1b; }
+  &--pending{
+    background:#faecd1;
+    color:#5f3306;
+  }
+}
+
+/* ── Responded on ───────────────────────────────────────────────────────── */
+.resp-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  margin: 0;
+}
+.resp-time {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── Reassignment banner ────────────────────────────────────────────────── */
+.reassign-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 14px 20px;
+  flex-wrap: wrap;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.reassign-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: #fee2e2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #dc2626;
+}
+
+.reassign-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400e;
+  margin: 0 0 2px;
+}
+.reassign-sub {
+  font-size: 12px;
+  color: #b45309;
+  margin: 0;
+}
+
+.btn--reassign {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #6366f1;
+  color: #4f46e5;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+
+  &:hover  { background: #eef2ff; }
+  &:active { transform: scale(0.98); }
+}
+
+/* ── Footnote ───────────────────────────────────────────────────────────── */
+.footnote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+
+  .ti { font-size: 14px; }
+}

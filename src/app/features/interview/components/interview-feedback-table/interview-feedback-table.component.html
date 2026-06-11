@@ -1,0 +1,83 @@
+<div class="if-page">
+
+ 
+
+  <app-reusable-table
+    [columns]="columns"
+    [data]="feedbacks"
+    [showHeader]="true"
+    [cellTemplate]="cellTpl"
+    [sortableColumns]="sortableColumns"
+    [showPagination]="true"
+    [totalItems]="totalItems"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    (rowClick)="onRowClick($event)"
+    (pageChange)="onPageChange($event)">
+  </app-reusable-table>
+
+ 
+
+</div>
+
+<!-- ── Cell template ────────────────────────────────────────────────────────── -->
+<ng-template #cellTpl let-ctx>
+
+  <!-- CANDIDATE -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="cell-candidate">
+      <div class="avatar" [ngClass]="avatarClass(ctx.row.candidateInitials)">
+        {{ ctx.row.candidateInitials }}
+      </div>
+      <div>
+        <div class="candidate-name">{{ ctx.row.candidateName }}</div>
+        <div class="candidate-id">{{ ctx.row.candidateId }}</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- JOB TITLE -->
+  <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+    <div class="cell-job">
+      <span class="job-title">{{ ctx.row.jobTitle }}</span>
+      <span class="job-dept">{{ ctx.row.department }}</span>
+    </div>
+  </ng-container>
+
+  <!-- ROUND -->
+  <ng-container *ngIf="ctx.col.key === 'round'">
+    <div class="cell-round">
+      <span class="round-name">{{ ctx.row.round }}</span>
+      <span class="round-pill">{{ ctx.row.roundLabel }}</span>
+    </div>
+  </ng-container>
+
+  <!-- INTERVIEW DATE -->
+  <ng-container *ngIf="ctx.col.key === 'interviewDate'">
+    <div class="cell-date">
+      <span class="date-val">{{ ctx.row.interviewDate }}</span>
+      <span class="time-val">{{ ctx.row.interviewTime }}</span>
+    </div>
+  </ng-container>
+
+  <!-- PRIORITY -->
+  <ng-container *ngIf="ctx.col.key === 'priority'">
+    <span class="priority-pill"
+      [ngClass]="{
+        'p-high':   ctx.row.priority === 'High',
+        'p-medium': ctx.row.priority === 'Medium',
+        'p-low':    ctx.row.priority === 'Low'
+      }">
+      {{ ctx.row.priority }}
+    </span>
+  </ng-container>
+
+  <!-- ACTION -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <div class="cell-action">
+      <button class="btn-feedback">Provide Feedback</button>
+     
+    </div>
+  </ng-container>
+
+</ng-template>

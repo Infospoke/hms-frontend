@@ -1,0 +1,38 @@
+<div class="response-page">
+  <app-heading heading="Interview Assignment"
+    subHeading="You have been assigned to an interview. Please review the details and respond." [showBackButton]="true"
+    [buttonText]="'Back to My Interviews'" [backButtonUrl]="'//interview/assigned-interview-requests'"
+    [badge]="'Pending Response'" [badgeStatus]="'Pending'" />
+
+  <div class="card-dd">
+    <app-job-info-card [job]="job" />
+  </div>
+
+  <div class="main-layout card-dd">
+    <div class="job-details left-panel">
+      <app-job-details [job]="jobData"/>
+    </div>
+    <div class="right-panel">
+      <app-interview-candidate-info [candidate]="candidateData" [tabs]="tabs"/>
+    </div>
+  </div>
+  <div class="footer-bar card-dd">
+    <!-- <p class="footer-note">
+      Please respond by <strong>{{ responseDue }}</strong> to keep the hiring process on track.
+    </p> -->
+    <div class="footer-actions">
+      <button class="btn btn-decline" (click)="onDecline()">Decline Assignment</button>
+      <button class="btn btn-accept" (click)="onAccept()">Accept Assignment</button>
+    </div>
+  </div>
+</div>
+
+
+<app-common-modal
+  [visible]="showCommentModal"
+  [action]="commentModalAction"
+  [config]="modalConfig"
+  [submitting]="isSubmitting"
+  (cancelled)="closeCommentModal()"
+  (confirmed)="onModalConfirmed($event)">
+</app-common-modal>

@@ -127,7 +127,7 @@ export const NAV_ITEMS: NavItem[] = [
 
     ],
   },
-   {
+  {
     id: 'interview',
     permissionName: 'INTERVIEW',
     label: 'Interview',
@@ -144,6 +144,18 @@ export const NAV_ITEMS: NavItem[] = [
         icon: 'fa-solid fa-user-shield',
         path: '/interview/interview-approval-plans',
         permissionName: 'INTERVIEWAPPROVALS',
+      },
+      {
+        label: 'Assign Interviewers',
+        icon: 'fa-solid fa-user-check',
+        path: '/interview/assign-interviewers',
+        permissionName: 'ASSIGNINTERVIEWERS',
+      },
+      {
+        label: 'Assigned Interview Requests',
+        icon: 'fa-solid fa-file-signature',
+        path: '/interview/assigend-interview-requests',
+        permissionName: 'ASSIGNEDINTERVIEWREQUESTS',
       }
     ],
   },

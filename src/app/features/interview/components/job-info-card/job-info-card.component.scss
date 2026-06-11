@@ -1,0 +1,186 @@
+// ── Base ──────────────────────────────────────────────────────────────────────
+
+:host { display: block; }
+
+.job-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.job-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  background: #ede9fe;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #6d28d9;
+}
+
+.job-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.job-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.job-id {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.job-meta {
+  display: flex;
+  gap: 32px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-label {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.meta-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+
+  &.extra-bold {
+    font-weight: 700;
+    color: #1e1b4b;
+  }
+
+  &.due-soon {
+    color: #dc2626;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 640px) {
+  .job-meta { margin-left: 0; gap: 16px; }
+}
+
+// ── MODE B: detail vertical card (Image 1) ────────────────────────────────────
+
+.job-card--detail {
+  align-items: flex-start; // icon aligns to top
+
+  .job-icon {
+    margin-top: 4px; // slight top nudge to sit next to round-title
+  }
+}
+
+.job-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.extra-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.round-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e1b4b;
+}
+
+.round-badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #c4b5fd;
+}
+
+.extra-meta {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.extra-divider {
+  width: 100%;
+  height: 1px;
+  background: #f1f5f9;
+}
+
+.assigned-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ddd6fe;
+  color: #4c1d95;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.assigned-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.assigned-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e1b4b;
+}
+
+.assigned-role {
+  font-size: 11px;
+  color: #9ca3af;
+}

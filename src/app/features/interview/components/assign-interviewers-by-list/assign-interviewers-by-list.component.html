@@ -1,0 +1,140 @@
+<div class="page-wrapper" (click)="closeAllDropdowns()">
+
+  <!-- Heading -->
+  <app-heading
+    [heading]="pageMode === 'reassign' ? 'Reassign Interviewers' : 'Assign Interviewers'"
+    [subHeading]="pageMode === 'reassign'
+      ? 'Update interviewers for rounds that were rejected'
+      : 'Assign one interviewer to each round of the interview process'"
+    [showBackButton]="true"
+    backButtonUrl="/interview/assign-interviewers"
+  />
+
+  <!-- Shared job card -->
+  <app-job-info-card [job]="job" />
+
+  <!-- Rounds assignment table -->
+  <app-reusable-table
+    title="Interview Rounds & Interviewer Assignment"
+    [columns]="columns"
+    [data]="rounds"
+    [cellTemplate]="cellTpl"
+  />
+
+  <!-- Cell template -->
+  <ng-template #cellTpl let-ctx>
+
+    <!-- Round badge -->
+    <ng-container *ngIf="ctx.col.key === 'round'">
+      <span class="round-badge round-badge--{{ ctx.row.colorClass }}">
+        {{ ctx.row.label }}
+      </span>
+    </ng-container>
+
+    <!-- Name + description + type badge -->
+    <ng-container *ngIf="ctx.col.key === 'details'">
+      <div class="tech-details">
+        <p class="round-name">{{ ctx.row.name }}</p>
+        <span class="type-badge type-badge--{{ ctx.row.type | lowercase }}">{{ ctx.row.type }}</span>
+      </div>
+      <p class="round-desc">{{ ctx.row.description }}</p>
+    </ng-container>
+
+    <!-- Interviewer column -->
+    <ng-container *ngIf="ctx.col.key === 'interviewer'">
+
+      <!-- ══ READONLY chip (reassign mode, non-rejected rounds) ══ -->
+      <ng-container *ngIf="ctx.row.isReadonly; else editableField">
+        <div class="iv-field">
+          <div class="tag-input tag-input--readonly">
+            <span class="tag" *ngIf="ctx.row.interviewer; else emptyReadonly">
+              <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
+              {{ getDisplayName(ctx.row.interviewer) }}
+            </span>
+            <ng-template #emptyReadonly>
+              <span class="iv-placeholder">—</span>
+            </ng-template>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- ══ EDITABLE field (assign mode, or rejected rounds in reassign mode) ══ -->
+      <ng-template #editableField>
+        <div class="iv-field" (click)="$event.stopPropagation()">
+
+          <!-- Rejected badge shown in reassign mode -->
+          <span class="status-badge status-badge--rejected" *ngIf="ctx.row.isRejected">
+            Rejected — reassign required
+          </span>
+
+          <!-- Anchor element measured on open -->
+          <div class="tag-input" #anchorEl (click)="openDropdown(ctx.row, anchorEl)">
+
+            <!-- Selected chip -->
+            <span class="tag" *ngIf="ctx.row.interviewer">
+              <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
+              {{ getDisplayName(ctx.row.interviewer) }}
+              <span class="tx" (click)="$event.stopPropagation(); removeInterviewer(ctx.row)">×</span>
+            </span>
+
+            <!-- Search input — visible only when nothing selected -->
+            <input
+              *ngIf="!ctx.row.interviewer"
+              type="text"
+              [(ngModel)]="ctx.row.searchText"
+              placeholder="Search interviewer..."
+              (input)="onSearchInterviewer(ctx.row, anchorEl)"
+              (blur)="hideRoundDropdown(ctx.row)"
+            />
+          </div>
+
+          <!-- ── Dropdown rendered with position:fixed so it escapes overflow ── -->
+          <div
+            class="iv-dropdown-fixed"
+            *ngIf="ctx.row.showDropdown && ctx.row.filteredUsers.length"
+            [style.top.px]="ctx.row.dropdownTop"
+            [style.left.px]="ctx.row.dropdownLeft"
+            [style.width.px]="ctx.row.dropdownWidth"
+            (click)="$event.stopPropagation()">
+
+            <div
+              class="option"
+              *ngFor="let u of ctx.row.filteredUsers"
+              (mousedown)="selectInterviewer(ctx.row, u)">
+              <div class="avatar-initials">{{ getInitials(u) }}</div>
+              <div class="info">
+                <div class="name">{{ getDisplayName(u) }}</div>
+                <div class="role">{{ u.roleName }}</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </ng-template>
+
+    </ng-container>
+
+  </ng-template>
+
+  <!-- Assignment notes -->
+  <div class="notes-card">
+    <label class="notes-label">Assignment Notes (Optional)</label>
+    <textarea
+      class="notes-textarea"
+      placeholder="Add any notes or instructions for interviewers..."
+      [(ngModel)]="assignmentNotes"
+      maxlength="500"
+    ></textarea>
+    <span class="char-count">{{ assignmentNotes.length }} / 500</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-actions">
+    <button class="btn btn--cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn btn--primary" (click)="onSaveAssignments()">
+      {{ pageMode === 'reassign' ? 'Save Reassignments' : 'Save Assignments' }}
+    </button>
+  </div>
+
+</div>

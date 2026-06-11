@@ -42,8 +42,8 @@ export class App implements OnInit {
   }
 
 
-  @HostListener('window:beforeunload', ['$event'])
-  beforeUnloadHandler(event: Event) {
-    this.authService.logout();
-  }
+  // @HostListener('window:beforeunload', ['$event'])
+  // beforeUnloadHandler(event: Event) {
+  //   this.authService.logout();
+  // }
 }

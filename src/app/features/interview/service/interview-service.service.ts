@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
-import { firstValueFrom } from 'rxjs';
+import { first, firstValueFrom } from 'rxjs';
 import { API } from '../../../shared/constants/api-endpoints';
 
 @Injectable({
@@ -49,5 +49,44 @@ export class InterviewServiceService {
       return await firstValueFrom(
         this.api.hrmsput(API.INTERVIEW.UPDATE_CONFIG, payload)
       );
+    }
+
+    async getPlansList():Promise<any>{
+      return await firstValueFrom(
+        this.api.hrmsget(API.INTERVIEW.PLANS_LIST)
+      )
+    }
+
+    async getInterviewAssignedList(payload:any):Promise<any>{
+       return await firstValueFrom(
+        this.api.hrmspost(API.INTERVIEW.INTERVIEW_ASSIGNED_LIST, payload)
+      );
+    }
+
+    async getInterviewAssignmentDetails(id:any):Promise<any>{
+      return await firstValueFrom(
+        this.api.hrmsget(API.INTERVIEW.GET_INTERVIEW_ASSIGNMENT_DETAILS(id))
+      )
+    }
+
+    async updateAssignInterviwers(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.INTERVIEW_UPDATE,payload))
+    }
+
+    async getInterviewAssignementCount():Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_ASSIGNMENT_COUNTS))
+    }
+
+
+    async getInterviewListByAssignment(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_ASSIGN_INTERVIEW_LIST,payload))
+    }
+
+    async getInterviewRequestAssignmentDetails(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.GET_INTERVIEW_ASSIGNEMENT_BY_ID(id)))
+    }
+
+    async updateIntervieAssignement(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsput(API.INTERVIEW.UPDATE_INTERVIEW_ASSIGN,payload))
     }
 }

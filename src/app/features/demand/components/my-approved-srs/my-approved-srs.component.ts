@@ -183,6 +183,7 @@ export class MyApprovedSrsComponent implements OnInit{
 
   createNewJob(details : any){
     this.jobService.jobDetailsBySrId(details);
+    console.log(details);
     this.router.navigateByUrl('/demand/all-approved-srs/create-job');
   }
 }

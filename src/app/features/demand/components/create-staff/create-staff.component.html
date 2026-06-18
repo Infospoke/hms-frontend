@@ -105,8 +105,10 @@
 
                 <div class="field">
                     <label class="lbl">Country <span class="astrick">*</span></label>
-                    <input type="text" formControlName="country" placeholder="e.g. India,"
-                        [class.err]="hasError(step0Form, 'country')" />
+                    <nz-select formControlName="country" nzPlaceHolder="Select Country" [nzOptionOverflowSize]="5"
+                        [class.err]="hasError(step0Form, 'country')" class="nz-field-select">
+                        <nz-option *ngFor="let c of countries" [nzValue]="c.value" [nzLabel]="c.label"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'country')">
                         {{ getError(step0Form, 'country','Country') }}
                     </span>
@@ -726,135 +728,16 @@
                         <i class="fas fa-check"></i> {{srId }} Saved as draft
                     </button>
                     <button type="button" class="btn btn-primary" (click)="validateStep3('next')" [disabled]="isSaving">
-                        {{ isSaving ? 'Saving...' : 'Next: Sourcing →' }}
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </form>
-
-
-    <form [formGroup]="step4Form" *ngIf="currentStep === 4" novalidate>
-        <div class="card">
-            <div class="">
-                <div class="sec-title">Sourcing Strategy</div>
-            </div>
-
-            <!-- Job Boards -->
-            <div class="field" style="margin-bottom:20px">
-                <label class="lbl">Sourcing Channels <span class="astrick">*</span></label>
-                <p class="field-hint">Select where candidates should come from</p>
-
-                <div class="grid-boards">
-                    <div *ngFor="let b of boardOptions" class="board-card">
-
-                        <!-- ICON -->
-                        <div class="board-icon">
-                            <i class="fa-solid" [ngClass]="b.icon"></i>
-                        </div>
-
-                        <!-- NAME -->
-                        <div class="board-name">{{ b.n }}</div>
-
-                        <!-- TOGGLE SWITCH -->
-                        <label class="toggle switch-inside">
-                            <input type="checkbox" [checked]="jobBoards.includes(b.n)" (change)="toggleBoard(b.n)" />
-                            <span class="tslider"></span>
-                        </label>
-
-                        <!-- Selected text -->
-                        <!-- <div *ngIf="jobBoards.includes(b.n)" class="board-check">
-                            ✓ Selected
-                        </div> -->
-                    </div>
-                </div>
-                <div class="banner" *ngIf="banner" [ngClass]="banner.type === 'ok' ? 'banner-ok' : 'banner-err'">
-                    {{ banner.text }}
-                </div>
-            </div>
-
-            <div class="grid2" style="margin-bottom:18px">
-
-                <!-- Internal First -->
-                <div class="field">
-                    <label class="lbl">Internal First Policy <span class="astrick">*</span></label>
-                    <div class="toggle-row" style="margin-top:6px">
-                        <label class="toggle">
-                            <input type="checkbox" formControlName="internalFirst" />
-                            <span class="tslider"></span>
-                        </label>
-                        <span class="toggle-lbl">
-                            {{ step4Form.get('internalFirst')?.value
-                            ? 'Active — Internal applicants reviewed first'
-                            : 'Disabled' }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Referral Incentive -->
-                <div class="field">
-                    <label class="lbl">Referral Incentive</label>
-                    <div class="toggle-row" style="margin-top:6px">
-                        <label class="toggle">
-                            <input type="checkbox" formControlName="referralOn" />
-                            <span class="tslider"></span>
-                        </label>
-                        <span class="toggle-lbl">Enable</span>
-                    </div>
-                    <input *ngIf="step4Form.get('referralOn')?.value" type="text" formControlName="referralAmt"
-                        placeholder="₹ Incentive amount" style="margin-top:8px" />
-
-                    <span class="err-msg" *ngIf="hasError(step4Form, 'referralAmt')">
-                        {{ getError(step4Form, 'referralAmt','Referral Incentive') }}
-                    </span>
-                </div>
-
-                <!-- Sourcing Budget -->
-                <div class="field">
-                    <label class="lbl">Sourcing Budget <span class="lbl-sub"></span></label>
-                    <input type="text" formControlName="sourcingBudget" placeholder="₹ 0" />
-                    <span class="err-msg" *ngIf="hasError(step4Form, 'sourcingBudget')">
-                        {{ getError(step4Form, 'sourcingBudget','Sourcing Budget') }}
-                    </span>
-                </div>
-
-                <!-- Diversity Sourcing -->
-                <div class="field">
-                    <label class="lbl">Diversity Sourcing <span class="lbl-sub"></span></label>
-                    <div class="toggle-row" style="margin-top:6px">
-                        <label class="toggle">
-                            <input type="checkbox" formControlName="diversityOn" />
-                            <span class="tslider"></span>
-                        </label>
-                        <span class="toggle-lbl">Enable diversity boards</span>
-                    </div>
-                    <div *ngIf="step4Form.get('diversityOn')?.value" class="radio-row" style="margin-top:8px">
-                        <div *ngFor="let d of diversityOpts" class="rbtn" [class.sel]="diversityBoards.includes(d)"
-                            (click)="toggleDiversity(d)">{{ d }}</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="footer-btns">
-                <div class="flex-gap">
-                    <button type="button" class="btn btn-ghost" (click)="goTo(3)">← Back</button>
-                    <button type="button" class="btn btn-draft" (click)="saveDraft()">Save Draft</button>
-                </div>
-
-                <div class="next-buttons">
-                    <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
-                        <i class="fas fa-check"></i> {{srId }} Saved as draft
-                    </button>
-                    <button type="button" class="btn btn-primary" (click)="validateStep4('next')" [disabled]="isSaving">
                         {{ isSaving ? 'Saving...' : 'Next: Review →' }}
                     </button>
                 </div>
+
             </div>
         </div>
     </form>
-    <div class="card" *ngIf="currentStep === 5">
+
+
+    <div class="card" *ngIf="currentStep === 4">
         <div class="">
             <div class="sec-title">{{jobTitle}}</div>
             <span class="draft-badge">{{srId}}</span>
@@ -1127,67 +1010,9 @@
             </div>
         </div>
 
-        <!-- ── Step 5 — Sourcing Strategy ── -->
-        <div class="collapsible">
-            <div class="coll-hdr" (click)="toggleReviewSection(4)">
-                <span>Step 5 — Sourcing Strategy</span>
-                <div class="step-actions">
-                    <span class="edit-link" (click)="goTo(4)"><i class="fa fa-pen"></i> Edit</span>
-                    <span class="arrow-view" [class.open]="reviewSectionOpen[4]"><i
-                            class="fa-solid fa-chevron-down"></i></span>
-                </div>
-            </div>
-            <div class="coll-body" *ngIf="reviewSectionOpen[4]">
-                <div class="review-grid">
-                    <div class="review-row">
-                        <span class="review-label">Internal First Policy</span>
-                        <span class="review-val">
-                            <span [style.color]="step4Form.get('internalFirst')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('internalFirst')?.value ? ' Active' : ' Off' }}
-                            </span>
-                        </span>
-                    </div>
-                    <div class="review-row">
-                        <span class="review-label">Job Boards</span>
-                        <span class="review-val">{{ jobBoards.length ? jobBoards.join(', ') : '—' }}</span>
-                    </div>
-                    <div class="review-row">
-                        <span class="review-label">Sourcing Budget</span>
-                        <span class="review-val">
-                            {{ step4Form.get('sourcingBudget')?.value ? ('₹' + step4Form.get('sourcingBudget')?.value) :
-                            '—' }}
-                        </span>
-                    </div>
-                    <div class="review-row">
-                        <span class="review-label">Referral Programme</span>
-                        <span class="review-val">
-                            <span [style.color]="step4Form.get('referralOn')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('referralOn')?.value ? ' Enabled' : ' Disabled' }}
-                            </span>
-                            <span *ngIf="step4Form.get('referralOn')?.value && step4Form.get('referralAmt')?.value">
-                                — ₹{{ step4Form.get('referralAmt')?.value }} bonus
-                            </span>
-
-                        </span>
-                    </div>
-                    <div class="review-row">
-                        <span class="review-label">Diversity Hiring</span>
-                        <span class="review-val">
-                            <span [style.color]="step4Form.get('diversityOn')?.value ? '#16a34a' : '#dc2626'">
-                                {{ step4Form.get('diversityOn')?.value ? ' Enabled' : ' Disabled' }}
-                            </span>
-                            <span *ngIf="step4Form.get('diversityOn')?.value && diversityBoards.length">
-                                — {{ diversityBoards.join(', ') }}
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="footer-btns">
             <div class="flex-gap">
-                <button class="btn btn-ghost" (click)="goTo(4)">← Back</button>
+                <button class="btn btn-ghost" (click)="goTo(3)">← Back</button>
                 <!-- <button class="btn btn-draft" (click)="saveDraft()">Save Draft</button> -->
             </div>
             <button class="btn btn-primary" (click)="validateStep5('next')" [disabled]="isSaving">
@@ -1200,7 +1025,7 @@
 
 
 
-    <div class="card success-card" *ngIf="currentStep === 6">
+    <div class="card success-card" *ngIf="currentStep === 5">
 
         <!-- TOP SUCCESS -->
         <div class="success-top">

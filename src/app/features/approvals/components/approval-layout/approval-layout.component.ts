@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DashboardCountCardComponent } from "../../../../shared/components/dashboard-count-card/dashboard-count-card.component";
 import { CommonFilterComponent } from "../../../../shared/components/common-filter/common-filter.component";
 import { CanDirective } from "../../../../shared/directives/can.directive";
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-approval-layout',
@@ -48,7 +49,9 @@ export class ApprovalLayoutComponent {
       department:event?.filters['department'] || undefined,
       requestedBy:event?.filters['requestedBy'] || undefined,
       createdBy:event?.filters['createdby'] || undefined,
-      plan:event?.filters['plan'] || undefined
+      plan:event?.filters['plan'] || undefined,
+      allJobs:event?.filters['allJobs'] || undefined,
+      questionStatus:event?.filters['allQuestion']||undefined
     };
 
 

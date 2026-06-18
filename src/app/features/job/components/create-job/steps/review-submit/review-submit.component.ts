@@ -44,6 +44,7 @@ toggleAll(): void {
   reviewRecruiters: any[] = [];
 
   ngOnInit(): void {
+    console.log(this.step1Form,this.s1)
     this.buildChannels();
     this.buildRecruiters();
   }

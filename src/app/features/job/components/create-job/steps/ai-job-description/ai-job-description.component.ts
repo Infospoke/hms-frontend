@@ -144,7 +144,7 @@ export class AiJobDescriptionStepComponent
         || "Bachelor's degree in Computer Science or related field",
       travel_requirement: 'N/A',
       years_of_experience: String(step1?.minExp + '-' + step1?.maxExp || '5'),
-      required_certifications: step1?.certificate,
+      required_certifications: step1?.certificate || '',
       languages: step1?.languages || 'English',
       old_job_description: this.editorRef?.nativeElement?.innerHTML || '',
       update_parameter: updateParameter

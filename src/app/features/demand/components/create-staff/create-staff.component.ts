@@ -88,7 +88,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     { label: 'Business Justification', icon: '📝' },
     { label: 'Budget & Comp', icon: '💰' },
     { label: 'Role Requirements', icon: '🎯' },
-    { label: 'Sourcing Strategy', icon: '🔍' },
     { label: 'Review', icon: '👁' },
     // { label: 'Approval', icon: '✅' }
   ];
@@ -115,17 +114,11 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   readonly priorities = ['Critical', 'High', 'Standard'];
   educationOpts: any[] = [];
   travelOpts: any = [];
-  readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
-  readonly diversityOpts = ['Women-in-Tech', 'Veterans', 'LGBTQ+', 'Differently-Abled'];
-
-  readonly boardOptions: BoardOption[] = [
-    { n: 'Internal Board', icon: 'fa-building' },
-    { n: 'Naukri', icon: 'fa-briefcase' },
-    { n: 'LinkedIn', icon: 'fab fa-linkedin-in' },
-    { n: 'Indeed', icon: 'fa-search' },
-    { n: 'Company Site', icon: 'fa-globe' },
-    { n: 'Agency / RPO', icon: 'fa-handshake' }
+  readonly countries = [
+    { label: 'India', value: 'India' },
+    { label: 'USA',   value: 'USA'   }
   ];
+  readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
 
   readonly approvers: ApproverInfo[] = [
     { n: 'Maya Tete', role: 'Hiring Manager', status: 'Pending, notified', color: '#f0f9ff', tc: '#0284c7' },
@@ -162,11 +155,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   langInput = '';
 
   isDraftSuccess: boolean = false;
-  jobBoards: string[] = [];
-  diversityBoards: string[] = [];
   assessmentTypes: string[] = [];
   supportDoc: any = null;
-  reviewSectionOpen: boolean[] = [true, true, true, true, true];
+  reviewSectionOpen: boolean[] = [true, true, true, true];
   min = 0; max = 25;
 
   editorConfig = {
@@ -182,7 +173,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   step1Form!: FormGroup;
   step2Form!: FormGroup;
   step3Form!: FormGroup;
-  step4Form!: FormGroup;
   modalForm!: FormGroup;
 
   constructor(private fb: FormBuilder) { }
@@ -268,14 +258,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       travel: ['']
     });
 
-    this.step4Form = this.fb.group({
-      internalFirst: [true],
-      referralOn: [false],
-      referralAmt: ['', [numericOnly()]],
-      sourcingBudget: ['', [numericOnly()]],
-      diversityOn: [false]
-    });
-
     this.step2Form.get('signingBonus')?.valueChanges.subscribe(val => {
       this.setConditionalRequired(this.step2Form, 'signingAmt', val, [numericOnly()]);
     });
@@ -286,11 +268,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     this.step2Form.get('relocation')?.valueChanges.subscribe(val => {
       this.setConditionalRequired(this.step2Form, 'relocAmt', val, [numericOnly()]);
-    });
-
-
-    this.step4Form.get('referralOn')?.valueChanges.subscribe(val => {
-      this.setConditionalRequired(this.step4Form, 'referralAmt', val, [numericOnly()]);
     });
   }
   private setConditionalRequired(
@@ -591,62 +568,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       });
   }
 
-
-  validateStep4(type: any): void {
-    this.step4Form.markAllAsTouched();
-    if (this.jobBoards.length === 0) {
-      this.showBanner('Select at least one sourcing channel', 'err');
-      return;
-    }
-
-    this.isSaving = true;
-    const payload = {
-      positonBascicsRequest: this.buildPositionBasicsRequest(),
-      businessJustificationRequest: this.buildBusinessJustificationRequest(),
-      budgetAndCompensationRequest: this.buildBudgetRequest(),
-      rolesAndRequirementsRequest: this.buildRolesRequest(),
-      sourcingStrategyRequest: this.buildSourcingRequest(false)  // submit=false (draft)
-    };
-    const formData = new FormData();
-
-
-    const jsonBlob = new Blob(
-      [JSON.stringify(payload)],
-      { type: 'application/json' }
-    );
-
-    formData.append('request', jsonBlob);
-
-
-    if (this.supportDoc?.file) {
-      formData.append('file', this.supportDoc.file);
-    }
-    this.demandService.createStaffing(formData)
-      .then((res: any) => {
-        this.isSaving = false;
-        if (res?.responsecode === '00') {
-          if (type !== 'draft') {
-            this.goTo(5);
-            this.isDraftSuccess = false;
-          }
-          if (type === 'draft') {
-            this.isDraftSuccess = true;
-            this.notificationService.success(
-              'Success',
-              'Draft saved successfully!'
-            );
-          }
-        } else {
-          this.notificationService.error(this.getResponseError(res),)
-
-        }
-      })
-      .catch(() => {
-        this.isSaving = false;
-        this.showBanner('Error saving Sourcing Strategy. Please try again.', 'err');
-      });
-  }
-
   validateStep5(type: any): void {
 
     this.isSaving = true;
@@ -655,7 +576,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       businessJustificationRequest: this.buildBusinessJustificationRequest(),
       budgetAndCompensationRequest: this.buildBudgetRequest(),
       rolesAndRequirementsRequest: this.buildRolesRequest(),
-      sourcingStrategyRequest: this.buildSourcingRequest(true),  // submit=true
       reviewRequest: { srId: this.srId, submit: true }
     };
     const formData = new FormData();
@@ -687,7 +607,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
             this.showBanner(`Notice: ${res?.data?.message}`, 'ok');
           }
           if (type !== 'draft') {
-            this.goTo(6);
+            this.goTo(5);
             this.isDraftSuccess = false;
           }
           if (type === 'draft') {
@@ -782,28 +702,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     };
   }
 
-  private buildSourcingRequest(submit: boolean): object {
-    const f = this.step4Form.value;
-
-    return {
-      srId: this.srId,
-      internalBoard: this.jobBoards.includes('Internal Board'),
-      naukri: this.jobBoards.includes('Naukri'),
-      linkedIn: this.jobBoards.includes('LinkedIn'),
-      indeed: this.jobBoards.includes('Indeed'),
-      companySite: this.jobBoards.includes('Company Site'),
-      agencyRpo: this.jobBoards.includes('Agency / RPO'),
-      internalFirstPolicy: f.internalFirst,
-      sourcingBudget: Number(f.sourcingBudget) || 0,
-      referralEnabled: f.referralOn,
-      referralAmount: f.referralOn ? (Number(f.referralAmt) || 0) : 0,
-      diversityEnabled: f.diversityOn,
-      diversityTags: f.diversityOn ? this.diversityBoards.join(', ') : '',
-      submit
-    };
-  }
-
-
   loadStep0Data() {
     const obj = {
       page: 0, size: 10, sortBy: 'id', direction: 'DESC', filters: {}
@@ -849,7 +747,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       const bj = d.businessJustificationResponse ?? {};
       const bc = d.budgetAndCompensationResponse ?? {};
       const rr = d.rolesAndRequirementsResponse ?? {};
-      const ss = d.sourcingStrategyResponse ?? {};
       if (bc?.minSalary == null || bc?.minSalary == undefined || bc?.minSalary == '') {
         this.loadCtc = true;
       }
@@ -910,28 +807,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.niceSkills = this.splitCsv(rr.niceToHaveSkills);
       this.certs = this.splitCsv(rr.certificationsRequired);
       this.langs = this.splitCsv(rr.languages);
-
-      this.step4Form.patchValue({
-        internalFirst: !!ss.internalFirstPolicy,
-        referralOn: !!ss.referralEnabled,
-        referralAmt: ss.referralAmount ?? '',
-        sourcingBudget: ss.sourcingBudget != null ? String(ss.sourcingBudget) : '',
-        diversityOn: !!ss.diversityEnabled
-      });
-
-      this.jobBoards = [];
-      const boardKeys: Record<string, string> = {
-        internalBoard: 'Internal Board',
-        naukri: 'Naukri',
-        linkedIn: 'LinkedIn',
-        indeed: 'Indeed',
-        companySite: 'Company Site',
-        agencyRpo: 'Agency / RPO'
-      };
-      Object.entries(boardKeys).forEach(([key, label]) => {
-        if (ss[key]) this.jobBoards.push(label);
-      });
-      this.diversityBoards = this.splitCsv(ss.diversityTags);
 
     } catch {
       this.showBanner('Failed to load SR for editing', 'err');
@@ -1129,16 +1004,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     const i = this.assessmentTypes.indexOf(t);
     if (i >= 0) this.assessmentTypes.splice(i, 1); else this.assessmentTypes.push(t);
   }
-  toggleBoard(n: string): void {
-    const i = this.jobBoards.indexOf(n);
-    if (i >= 0) this.jobBoards.splice(i, 1); else this.jobBoards.push(n);
-  }
-  toggleDiversity(v: string): void {
-    const i = this.diversityBoards.indexOf(v);
-    if (i >= 0) this.diversityBoards.splice(i, 1); else this.diversityBoards.push(v);
-  }
-
-
   focusInput() { this.managerInput.nativeElement.focus(); }
 
   private getUnselectedUsers(): any[] {
@@ -1313,8 +1178,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       case 1: this.validateStep1('draft'); break;
       case 2: this.validateStep2('draft'); break;
       case 3: this.validateStep3('draft'); break;
-      case 4: this.validateStep4('draft'); break;
-      case 5: this.validateStep5('draft'); break;
+      case 4: this.validateStep5('draft'); break;
     }
   }
 
@@ -1329,7 +1193,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.buildForms();
     this.mustSkills = []; this.niceSkills = []; this.certs = []; this.langs = [];
     this.mustSuggestions = []; this.niceSuggestions = []; this.certSuggestions = []; this.langSuggestions = [];
-    this.jobBoards = []; this.diversityBoards = []; this.assessmentTypes = [];
+    this.assessmentTypes = [];
     this.selectedManagers = []; this.replaceEmployee = null;
     this.supportDoc = null;
     this.goTo(0);
@@ -1421,16 +1285,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     };
   }
 
-  get reviewStep4() {
-    const f = this.step4Form.value;
-    return {
-      internalFirst: f.internalFirst,
-      sourcingBudget: f.sourcingBudget,
-      referralOn: f.referralOn,   // ← was missing
-      referralAmt: f.referralAmt,  // ← was missing
-      diversityOn: f.diversityOn
-    };
-  }
   get filteredMustSuggestions() {
     return this.mustSuggestions.filter(s => !this.mustSkills.includes(s?.skill_title));
   }

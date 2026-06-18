@@ -50,25 +50,25 @@ export class CreateJobComponent implements OnInit {
   private srDepartmentId: number | string = '';
   private srBusinessUnitId: number | string = '';
 
-readonly steps = [
-  { title: 'Job Details' },
-  { title: 'AI Job Description' },
-  { title: 'Sourcing Strategy' },
-  { title: 'Recruiter Assignment' },
-  { title: 'Interview Plan' },       // ← add this
-  { title: 'Review & Submit' },
-];
+  readonly steps = [
+    { title: 'Job Details' },
+    { title: 'AI Job Description' },
+    { title: 'Sourcing Strategy' },
+    { title: 'Recruiter Assignment' },
+    { title: 'Interview Plan' },       // ← add this
+    { title: 'Review & Submit' },
+  ];
 
   get nextButtonLabel(): string {
     if (this.currentStep === this.steps.length - 1) return 'Submit';
     return 'Next: ' + this.steps[this.currentStep + 1].title;
   }
   get experienceDisplay(): string {
-  const min = this.step1Form.get('minExp')?.value;
-  const max = this.step1Form.get('maxExp')?.value;
-  if (min === null && max === null) return '';
-  return `${min ?? 0} - ${max ?? 0} Years`;
-}
+    const min = this.step1Form.get('minExp')?.value;
+    const max = this.step1Form.get('maxExp')?.value;
+    if (min === null && max === null) return '';
+    return `${min ?? 0} - ${max ?? 0} Years`;
+  }
   get isLastStep(): boolean { return this.currentStep === this.steps.length - 1; }
   get isFirstStep(): boolean { return this.currentStep === 0; }
 
@@ -77,8 +77,8 @@ readonly steps = [
   get step2Form(): FormGroup { return this.form.get('step2') as FormGroup; }
   get step3Form(): FormGroup { return this.form.get('step3') as FormGroup; }
   get step4Form(): FormGroup { return this.form.get('step4') as FormGroup; }
-get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
-get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
+  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
+  get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
   get currentStepForm(): FormGroup { return this.form.get('step' + (this.currentStep + 1)) as FormGroup; }
 
   ngOnInit(): void {
@@ -92,8 +92,8 @@ get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
         workMode: ['', Validators.required],
         employmentType: ['', Validators.required],
         experience: ['', Validators.required],
-        minExp:['',Validators.required],
-        maxExp:['',Validators.required],
+        minExp: ['', Validators.required],
+        maxExp: ['', Validators.required],
         openings: [null, [Validators.required, Validators.min(1)]],
         startDate: [null, Validators.required],
         mustHaveSkills: [[], [Validators.required, this.nonEmptyArray]],
@@ -101,14 +101,14 @@ get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
         notes: ['', Validators.maxLength(250)],
         educationRequirement: ['', Validators.maxLength(100)],
         country: ['', Validators.maxLength(50)],
-        certificate:['',],
-        languages:[''],
+        certificate: ['',],
+        languages: [''],
       }),
       step2: this.fb.group({}),
       step3: this.fb.group({}),
       step4: this.fb.group({}),
       step5: this.fb.group({}),   // ← new: interview plan
-      step6: this.fb.group({}), 
+      step6: this.fb.group({}),
     });
 
     // Persist SR ID to localStorage when coming fresh from signal
@@ -136,29 +136,29 @@ get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
           const data = res?.data;
           if (data) {
             // ── Store IDs for use at submit time ──────────────────────────────
-            this.srDepartmentId  = data.departmentId  ?? '';
+            this.srDepartmentId = data.departmentId ?? '';
             this.srBusinessUnitId = data.businessUnitId ?? '';
 
             // ── Patch display names into the form ─────────────────────────────
             this.step1Form.patchValue({
-              jobTitle:             data.jobTitle            || '',
-              jobCode:              data.jobCode             || '',
-              department:           data.departmentName      || '',   // display name
-              businessUnit:         data.businessName        || '',   // display name  ← note: API returns "businessName"
-              location:             data.location            || '',
-              workMode:             data.workMode            || '',
-              employmentType:       data.employmentType      || '',
-              experience:           data.maxExperience ?? data.minExperience ?? '',
-              minExp:data?.minExperience,
-              maxExp:data?.maxExperience,
-              openings:             data.openings            ?? null,
-              startDate:            data.targetStartDate     || null,
-              mustHaveSkills:       data.skillsMustHave  ? data.skillsMustHave.split(',')  : [],
-              niceToHaveSkills:     data.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
+              jobTitle: data.jobTitle || '',
+              jobCode: data.jobCode || '',
+              department: data.departmentName || '',   // display name
+              businessUnit: data.businessName || '',   // display name  ← note: API returns "businessName"
+              location: data.location || '',
+              workMode: data.workMode || '',
+              employmentType: data.employmentType || '',
+              experience: data.maxExperience ?? data.minExperience ?? '',
+              minExp: data?.minExperience,
+              maxExp: data?.maxExperience,
+              openings: data.openings ?? null,
+              startDate: data.targetStartDate || null,
+              mustHaveSkills: data.skillsMustHave ? data.skillsMustHave.split(',') : [],
+              niceToHaveSkills: data.niceToHaveSkills ? data.niceToHaveSkills.split(',') : [],
               educationRequirement: data.educationRequirement || '',
-              country:              data.country             || '',
-              certificate:data?.certificationsRequired,
-              languages:data?.languages || ''
+              country: data.country || '',
+              certificate: data?.certificationsRequired,
+              languages: data?.languages || ''
             });
           }
           return;
@@ -218,44 +218,66 @@ get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY) || '';
 
+    // ✅ Map description to expected camelCase format
+    const desc = step2.jobDescription;
+    const jobDescriptionRequest = {
+      description: [
+        {
+          jobTitle: desc?.job_title || desc?.jobTitle || '',
+          jobSummary: desc?.job_summary || desc?.jobSummary || '',
+          keyResponsibilities: desc?.key_responsibilities || desc?.keyResponsibilities || [],
+          basicQaulifications: desc?.basic_qualifications || desc?.basicQaulifications || [], // ✅ typo
+          preferredQualifications: desc?.preferred_qualifications || desc?.preferredQualifications || [],
+          skillsMustHave: desc?.skills_must_have || desc?.skillsMustHave || [],
+          niceToHaveSkills: desc?.skills_nice_to_have || desc?.niceToHaveSkills || [],
+          educationRequirements: desc?.education_requirements || desc?.educationRequirements || '',
+          experienceRequirements: desc?.experience_requirements || desc?.experienceRequirements || '',
+          certificationsRequired: desc?.certifications_required || desc?.certificationsRequired || [],
+          languagesRequired: this.toArray(desc?.languages_required || desc?.languagesRequired), // ✅ always array
+          workMode: desc?.work_mode || desc?.workMode || '',
+          employmentType: desc?.employment_type || desc?.employmentType || '',
+          location: desc?.location || '',
+          aboutCompany: desc?.about_company || desc?.aboutCompany || '',
+        }
+      ]
+    };
+
     const payload = {
       srId,
       submit: 'true',
       createJobDetailsRequest: {
-        jobTitle:             step1.jobTitle,
-        // ── Use IDs captured from SR response, not name-based lookups ─────────
-        businessUnitId:       this.srBusinessUnitId,
-        departmentId:         this.srDepartmentId,
-        // ─────────────────────────────────────────────────────────────────────
-        location:             step1.location,
-        jobCode:              step1.jobCode,
-        openings:             step1.openings,
-        targetStartDate:      step1.startDate,
-        workMode:             step1.workMode,
-        employmentType:       step1.employmentType,
-        skillsMustHave:       step1.mustHaveSkills?.join(','),
-        niceToHaveSkills:     step1.niceToHaveSkills?.join(','),
-        minExperience:        step1.minExp || step1.experience || 1,
-        maxExperience:        step1.maxExp || step1.experience || 5,
-        additionalNotes:      step1.notes,
+        jobTitle: step1.jobTitle,
+        businessUnitId: this.srBusinessUnitId,
+        departmentId: this.srDepartmentId,
+        location: step1.location,
+        jobCode: step1.jobCode,
+        openings: step1.openings,
+        targetStartDate: step1.startDate,
+        workMode: step1.workMode,
+        employmentType: step1.employmentType,
+        skillsMustHave: step1.mustHaveSkills?.join(','),
+        niceToHaveSkills: step1.niceToHaveSkills?.join(','),
+        minExperience: step1.minExp ?? 0,
+        maxExperience: step1.maxExp ?? 0,
+        additionalNotes: step1.notes,
         educationRequirement: step1.educationRequirement,
-        country:              step1.country,
-        certificationsRequired:step1.certificate,
-        languages:step1?.languages
+        country: step1.country,
+        certificationsRequired: step1.certificate,
+        languages: step1?.languages
       },
-      jobDescriptionRequest: { description: step2.jobDescription || '' },
+      jobDescriptionRequest,   // ✅ replaced
       sourcingChannelRequest: {
-        referral:        !!referralChannel,
-        referralAmount:  referralChannel?.referralAmount || 0,
-        channels:        channelsObject,
+        referral: !!referralChannel,
+        referralAmount: referralChannel?.referralAmount || 0,
+        channels: channelsObject,
       },
       recuriterAssignmentRequest: {
-        srId:                srId,
-        recruiterInfoDtos:   step4.selectedRecruiterDetails || [],
+        srId: srId,
+        recruiterInfoDtos: step4.selectedRecruiterDetails || [],
       },
       interviewPlanRequest: {
-  planId: step5.planId
-}
+        planId: step5.planId
+      }
     };
 
     this.jobService.createNewJob(payload)
@@ -271,5 +293,10 @@ get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
       .catch((error: any) => {
         this.notificationService.error(error?.message || 'Failed to create job');
       });
+  }
+  private toArray(value: string | string[] | null | undefined): string[] {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    return value.split(',').map((v: string) => v.trim()).filter(Boolean); // ✅ "English,Hindi" → ["English","Hindi"]
   }
 }

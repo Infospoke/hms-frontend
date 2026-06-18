@@ -49,7 +49,7 @@
         </ng-container>
 
         <!-- Action — Create Job -->
-       <ng-container *ngIf="ctx.col.key === 'action'">
+       <ng-container *ngIf="ctx.col.key == 'action'">
             <div class="rt-actions" (click)="$event.stopPropagation()" *appCan="typeOfPermission">
                 <button class="btn-create-job" (click)="onCreateJob(ctx.row)">
                     <i class="fa-solid fa-plus"></i>

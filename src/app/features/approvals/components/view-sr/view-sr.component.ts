@@ -148,7 +148,7 @@ export class ViewSrComponent implements OnInit {
   get isViewMode(): boolean { return this.pageType === 'view'; }
 
 
-  readonly TOTAL_SECTIONS = 5;
+  readonly TOTAL_SECTIONS = 4;
   reviewedCount = 0;
 
   get allSectionsReviewed(): boolean { return this.reviewedCount >= this.TOTAL_SECTIONS; }

@@ -1,6 +1,8 @@
 import {
   Component, EventEmitter, Input, OnDestroy, OnInit,
-  Output, HostListener, ChangeDetectionStrategy, ChangeDetectorRef
+  Output, HostListener, ChangeDetectionStrategy, ChangeDetectorRef,
+  SimpleChanges,
+  OnChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +20,7 @@ const CUSTOM_VALUE = 'CUSTOM';
   styleUrl: './common-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CommonFilterComponent implements OnInit, OnDestroy {
+export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
 
   @Input() searchPlaceholder: string = 'Search...';
   @Input() debounceMs: number = 400;
@@ -47,9 +49,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.dropdowns.forEach(d => {
-      this.selectedFilters[d.key] = d.selected ?? d.options[0]?.value ?? '';
-    });
+    this.initSelectedFilters();
     
     this.searchSubject.pipe(
       debounceTime(this.debounceMs),
@@ -59,13 +59,27 @@ export class CommonFilterComponent implements OnInit, OnDestroy {
     console.log(this.tabs);
     
   }
+   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['dropdowns'] && !changes['dropdowns'].firstChange) {
+      // ✅ Re-init when dropdowns input changes (e.g. after loadJobs completes)
+      this.initSelectedFilters();
+      this.cdr.markForCheck();
+    }
+  }
 
   ngOnDestroy(): void {
     this.destroy$?.next();
     this.destroy$?.complete();
   }
 
-
+  private initSelectedFilters(): void {
+    this.dropdowns.forEach(d => {
+      // ✅ Only set if not already set by user interaction
+      if (this.selectedFilters[d.key] === undefined) {
+        this.selectedFilters[d.key] = d.selected ?? d.options[0]?.value ?? '';
+      }
+    });
+  }
   get dateDropdown(): any | undefined {
     return this.dropdowns.find(d => d.isDateFilter);
   }

@@ -155,6 +155,6 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
 
   addAssignees(): void {
     // localStorage.setItem('alreadyAssgined',this.filteredData)
-    this.router.navigateByUrl(`/demand/all-jobs/recruiter-assignment/${this.id}/${this.srId}`)
+    this.router.navigateByUrl(`/demand/recruiter-assignment-management/recruiter-assignment/${this.id}/${this.srId}`)
   }
 }

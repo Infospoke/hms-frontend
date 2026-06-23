@@ -97,10 +97,10 @@ export class AssignInterviewersByListComponent implements OnInit {
   private planId!: number;
 
   private userService = inject(UserService);
-  private ngZone      = inject(NgZone);
-  private http        = inject(HttpClient);
-  private interviewService=inject(InterviewServiceService);
-  private notificationService=inject(NotificationService);
+  private ngZone = inject(NgZone);
+  private http = inject(HttpClient);
+  private interviewService = inject(InterviewServiceService);
+  private notificationService = inject(NotificationService);
   allUsers: Interviewer[] = [];
 
   job: JobInfo = {
@@ -114,18 +114,18 @@ export class AssignInterviewersByListComponent implements OnInit {
   };
 
   columns: TableColumn[] = [
-    { key: 'round',       label: 'Round',                    width: '80px',  custom: true },
-    { key: 'details',     label: 'Round Name & Description', width: '500px', custom: true },
-    { key: 'interviewer', label: 'Interviewer *',            width: '280px', custom: true },
+    { key: 'round', label: 'Round', width: '80px', custom: true },
+    { key: 'details', label: 'Round Name & Description', width: '500px', custom: true },
+    { key: 'interviewer', label: 'Interviewer *', width: '280px', custom: true },
   ];
 
   rounds: InterviewRound[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
+  // ✅ Always available in ngOnInit
   ngOnInit(): void {
-    const nav   = this.router.getCurrentNavigation();
-    const state = nav?.extras?.state as { type?: string; id?: number } | undefined;
+    const state = history.state as { type?: string; id?: number };
 
     const type = state?.type ?? 'assign';
     this.pageMode = type === 'reassign' ? 'reassign' : 'assign';
@@ -137,6 +137,7 @@ export class AssignInterviewersByListComponent implements OnInit {
       const jobId = state?.id;
       if (jobId) {
         this.jobId = jobId;
+        this.initFromLocalStorage();
         this.loadReassignData(jobId);
       }
     }
@@ -150,39 +151,39 @@ export class AssignInterviewersByListComponent implements OnInit {
 
     try {
       const row: any = JSON.parse(raw);
-
+      console.log(row);
       this.jobId = row.jobId;
       this.planId = row.planId;
 
       this.job = {
-        title:       row.jobTitle,
-        id:          ``,
-        status:      '',
-        department:  row.deptName,
-        planName:    row.planName,
+        title: row.jobTitle,
+        id: ``,
+        status: '',
+        department: row.deptName,
+        planName: row.planName,
         totalRounds: row.rounds,
-        createdOn:   new Date(row.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        createdOn: new Date(row.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
       };
 
-      this.rounds = row.assignmentStatus.map((s:any, i:any) => ({
-        id:           `r${i + 1}`,
-        roundId:      s.roundId,
-        label:        `R${i + 1}`,
-        colorClass:   ROUND_COLORS[i % ROUND_COLORS.length],
-        name:         s?.roundName,        // will be overridden after API load if available
-        description:  s?.roundName,
-        type:         s?.roundType,
-        duration:     '',
-        interviewer:  null,
+      this.rounds = row.assignmentStatus.map((s: any, i: any) => ({
+        id: `r${i + 1}`,
+        roundId: s.roundId,
+        label: `R${i + 1}`,
+        colorClass: ROUND_COLORS[i % ROUND_COLORS.length],
+        name: s?.roundName,        // will be overridden after API load if available
+        description: s?.roundName,
+        type: s?.roundType,
+        duration: '',
+        interviewer: null,
         dropdownOpen: false,
-        searchText:   '',
+        searchText: '',
         filteredUsers: [],
         showDropdown: false,
-        dropdownTop:  0,
+        dropdownTop: 0,
         dropdownLeft: 0,
-        dropdownWidth:0,
-        isRejected:   false,
-        isReadonly:   false,
+        dropdownWidth: 0,
+        isRejected: false,
+        isReadonly: false,
       }));
     } catch {
       console.error('Failed to parse localStorage details');
@@ -193,42 +194,42 @@ export class AssignInterviewersByListComponent implements OnInit {
 
   private async loadReassignData(jobId: number): Promise<void> {
     try {
-      const res:any =await this.interviewService.getInterviewAssignmentDetails(jobId);
+      const res: any = await this.interviewService.getInterviewAssignmentDetails(jobId);
 
       const apiRounds = res?.data?.rounds ?? [];
 
-      this.rounds = apiRounds.map((r:any, i:any) => {
+      this.rounds = apiRounds.map((r: any, i: any) => {
         // Latest history entry = current assignment
-        const latestHistory = r.assignmentHistory.at(-1);
-        const isRejected    = latestHistory?.status === 'REJECTED';
+        const latestHistory = r.assignmentHistory.at(0);
+        const isRejected = latestHistory?.status === 'Rejected';
 
         const prefilledInterviewer: Interviewer | null = latestHistory && !isRejected
           ? {
-              id:       latestHistory.interviewerUserId,
-              name:     latestHistory.interviewerName,
-              roleName: latestHistory.roleName,
-            }
+            id: latestHistory.interviewerUserId,
+            name: latestHistory.interviewerName,
+            roleName: latestHistory.roleName,
+          }
           : null;
 
         return {
-          id:           `r${i + 1}`,
-          roundId:      r.roundId,
-          label:        `R${i + 1}`,
-          colorClass:   ROUND_COLORS[i % ROUND_COLORS.length],
-          name:         r.stageName,
-          description:  r.stageType,
-          type:         r.stageType,
-          duration:     '',
-          interviewer:  prefilledInterviewer,
+          id: `r${i + 1}`,
+          roundId: r.roundId,
+          label: `R${i + 1}`,
+          colorClass: ROUND_COLORS[i % ROUND_COLORS.length],
+          name: r.stageName,
+          description: r.stageType,
+          type: r.stageType,
+          duration: '',
+          interviewer: prefilledInterviewer,
           dropdownOpen: false,
-          searchText:   '',
+          searchText: '',
           filteredUsers: [],
           showDropdown: false,
-          dropdownTop:  0,
+          dropdownTop: 0,
           dropdownLeft: 0,
-          dropdownWidth:0,
+          dropdownWidth: 0,
           isRejected,
-          isReadonly:   !isRejected,   // non-rejected rounds are locked
+          isReadonly: !isRejected,   // non-rejected rounds are locked
         };
       });
 
@@ -280,15 +281,15 @@ export class AssignInterviewersByListComponent implements OnInit {
     this.closeAllDropdowns();
     round.filteredUsers = [...this.allUsers];
 
-    const rect       = anchorEl.getBoundingClientRect();
+    const rect = anchorEl.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
-    const dropdownH  = Math.min(220, round.filteredUsers.length * 52 + 8);
+    const dropdownH = Math.min(220, round.filteredUsers.length * 52 + 8);
     const openUpward = spaceBelow < dropdownH && rect.top > dropdownH;
 
-    round.dropdownTop    = openUpward ? rect.top - dropdownH - 4 : rect.bottom + 4;
-    round.dropdownLeft   = rect.left;
-    round.dropdownWidth  = rect.width;
-    round.showDropdown   = true;
+    round.dropdownTop = openUpward ? rect.top - dropdownH - 4 : rect.bottom + 4;
+    round.dropdownLeft = rect.left;
+    round.dropdownWidth = rect.width;
+    round.showDropdown = true;
   }
 
   onSearchInterviewer(round: InterviewRound, anchorEl: HTMLElement): void {
@@ -304,16 +305,16 @@ export class AssignInterviewersByListComponent implements OnInit {
   }
 
   selectInterviewer(round: InterviewRound, user: Interviewer): void {
-    round.interviewer   = user;
-    round.searchText    = '';
-    round.showDropdown  = false;
+    round.interviewer = user;
+    round.searchText = '';
+    round.showDropdown = false;
     round.filteredUsers = [...this.allUsers];
   }
 
   removeInterviewer(round: InterviewRound): void {
     if (!this.isEditable(round)) return;
-    round.interviewer   = null;
-    round.searchText    = '';
+    round.interviewer = null;
+    round.searchText = '';
     round.filteredUsers = [...this.allUsers];
   }
 
@@ -324,7 +325,7 @@ export class AssignInterviewersByListComponent implements OnInit {
   // ── Actions ──────────────────────────────────────────────────────────────────
 
   onCancel(): void {
-    this.router.navigate(['/interview/assign-interviewers']);
+    this.router.navigate(['/demand/assign-interviewers']);
   }
 
   onSaveAssignments(): void {
@@ -339,13 +340,13 @@ export class AssignInterviewersByListComponent implements OnInit {
     }
 
     const payload = {
-      jobId:  this.jobId,
+      jobId: this.jobId,
       planId: this.planId,
       assignments: roundsToValidate.map(r => ({
-        roundId:           r.roundId,
+        roundId: r.roundId,
         interviewerUserId: r.interviewer!.id,
-        interviewerName:   r.interviewer!.name || r.interviewer!.username || '',
-        roleName:          r.interviewer!.roleName || '',
+        interviewerName: r.interviewer!.name || r.interviewer!.username || '',
+        roleName: r.interviewer!.roleName || '',
       })),
     };
 
@@ -353,12 +354,12 @@ export class AssignInterviewersByListComponent implements OnInit {
 
     this.interviewService.updateAssignInterviwers(payload)
       .then((res: any) => {
-        if(res?.responsecode=='00'){
-            this.notificationService.success(res?.responsemessage || res?.message)
-             this.router.navigate(['/interview/assign-interviewers']);
-        } 
-        else{
-           this.notificationService.error(res?.responsemessage || res?.message)
+        if (res?.responsecode == '00') {
+          this.notificationService.success(res?.responsemessage || res?.message)
+          this.router.navigate(['/demand/assign-interviewers']);
+        }
+        else {
+          this.notificationService.error(res?.responsemessage || res?.message)
         }
       })
       .catch((error: any) => {

@@ -6,6 +6,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -19,6 +20,7 @@ import {
   InterviewCandidateInfoComponent,
   CandidateData,
 } from '../interview-candidate-info/interview-candidate-info.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-interview-form',
@@ -40,7 +42,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   @Output() submitted = new EventEmitter<any>();
 
   form!: FormGroup;
-
+  private router=inject(Router);
   /**
    * Maps summary.candidate (the shape used by interview-form) to the
    * CandidateData interface expected by InterviewCandidateInfoComponent.
@@ -176,5 +178,10 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   isInvalid(control: string): boolean {
     const c = this.form.get(control);
     return !!(c?.invalid && c?.touched);
+  }
+
+  handleBack(){
+    const type=this.mode==='schedule'?'ts':'ui'
+    this.router.navigate(["/supply/my-interview-requests"],{state:{activeType:type}})
   }
 }

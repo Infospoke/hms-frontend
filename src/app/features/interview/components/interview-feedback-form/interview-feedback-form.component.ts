@@ -2,13 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-// ── Public types (re-export so parent pages can import from one place) ────────
-
+// Public types
 export interface CompetencyRow {
   key: string;
   label: string;
   description: string;
-  rating: number | null; // 1 = Poor … 5 = Excellent
+  rating: number | null;
 }
 
 export type DecisionType = 'next' | 'hold' | 'reject' | null;
@@ -22,39 +21,13 @@ export interface FeedbackFormValue {
   decision: DecisionType;
 }
 
-// ── Default competency rows – parent can override via @Input ──────────────────
-
+// Default competency rows
 export const DEFAULT_COMPETENCIES: CompetencyRow[] = [
-  {
-    key: 'technical',
-    label: 'Technical Knowledge',
-    description: 'Understanding of core technical concepts',
-    rating: null,
-  },
-  {
-    key: 'problem',
-    label: 'Problem Solving',
-    description: 'Ability to analyze and solve problems effectively',
-    rating: null,
-  },
-  {
-    key: 'communication',
-    label: 'Communication',
-    description: 'Clarity of communication and expression of ideas',
-    rating: null,
-  },
-  {
-    key: 'analytical',
-    label: 'Analytical Thinking',
-    description: 'Ability to think critically and logically',
-    rating: null,
-  },
-  {
-    key: 'cultural',
-    label: 'Cultural Fit',
-    description: 'Alignment with team values and organization culture',
-    rating: null,
-  },
+  { key: 'technical',    label: 'Technical Knowledge', description: 'Understanding of core technical concepts',            rating: null },
+  { key: 'problem',      label: 'Problem Solving',     description: 'Ability to analyze and solve problems effectively',  rating: null },
+  { key: 'communication',label: 'Communication',       description: 'Clarity of communication and expression of ideas',   rating: null },
+  { key: 'analytical',   label: 'Analytical Thinking', description: 'Ability to think critically and logically',          rating: null },
+  { key: 'cultural',     label: 'Cultural Fit',        description: 'Alignment with team values and organization culture', rating: null },
 ];
 
 @Component({
@@ -66,36 +39,28 @@ export const DEFAULT_COMPETENCIES: CompetencyRow[] = [
 })
 export class InterviewFeedbackFormComponent implements OnInit {
 
-  // ── Inputs ──────────────────────────────────────────────────────────────────
-
-  /** Override the competency rows shown in the table. Defaults to 5 standard rows. */
+  // Inputs
   @Input() competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
-
-  /** Pre-fill initial overall rating (1-5). */
   @Input() initialRating = 0;
-
-  /** Pre-fill text fields and decision (e.g. when editing a saved draft). */
   @Input() initialStrengths            = '';
   @Input() initialAreasOfImprovement   = '';
   @Input() initialAdditionalComments   = '';
   @Input() initialDecision: DecisionType = null;
 
-  /** Show / hide the cancel button. */
-  @Input() showCancel = true;
+  /** When true, all inputs are read-only and action buttons are hidden. */
+  @Input() readonly = false;
 
-  /** Label for the submit button. */
+  /** Show / hide the Decision section. */
+  @Input() showDecision = true;
+
+  @Input() showCancel = true;
   @Input() submitLabel = 'Submit Feedback';
 
-  // ── Outputs ─────────────────────────────────────────────────────────────────
-
-  /** Emitted when the user clicks Submit. */
+  // Outputs
   @Output() formSubmit = new EventEmitter<FeedbackFormValue>();
-
-  /** Emitted when the user clicks Cancel. */
   @Output() formCancel = new EventEmitter<void>();
 
-  // ── Internal state ───────────────────────────────────────────────────────────
-
+  // Internal state
   overallRating = 0;
   hoverRating   = 0;
 
@@ -116,38 +81,21 @@ export class InterviewFeedbackFormComponent implements OnInit {
   ];
 
   readonly decisionOptions: { key: DecisionType; label: string; sub: string; color: string }[] = [
-    {
-      key: 'next',
-      label: 'Move to Next Round',
-      sub: 'Candidate will move to the next round for further evaluation.',
-      color: 'green',
-    },
-    {
-      key: 'hold',
-      label: 'Hold',
-      sub: 'Candidate will be put on hold. Review will occur at a later stage.',
-      color: 'amber',
-    },
-    {
-      key: 'reject',
-      label: 'Reject',
-      sub: 'Candidate will not be selected for further rounds.',
-      color: 'red',
-    },
+    { key: 'next',   label: 'Move to Next Round', sub: 'Candidate will move to the next round for further evaluation.', color: 'green' },
+    { key: 'hold',   label: 'Hold',               sub: 'Candidate will be put on hold. Review will occur at a later stage.', color: 'amber' },
+    { key: 'reject', label: 'Reject',             sub: 'Candidate will not be selected for further rounds.', color: 'red' },
   ];
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────────
-
+  // Lifecycle
   ngOnInit(): void {
-    this.overallRating       = this.initialRating;
-    this.strengths           = this.initialStrengths;
-    this.areasOfImprovement  = this.initialAreasOfImprovement;
-    this.additionalComments  = this.initialAdditionalComments;
-    this.decision            = this.initialDecision;
+    this.overallRating      = this.initialRating;
+    this.strengths          = this.initialStrengths;
+    this.areasOfImprovement = this.initialAreasOfImprovement;
+    this.additionalComments = this.initialAdditionalComments;
+    this.decision           = this.initialDecision;
   }
 
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-
+  // Handlers
   setRating(value: number): void {
     this.overallRating = value;
   }

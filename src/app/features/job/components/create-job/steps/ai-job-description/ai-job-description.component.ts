@@ -86,22 +86,58 @@ export class AiJobDescriptionStepComponent
   // ── Lifecycle ───────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
-    this.versions = [];
-
     if (!this.form.get('jobDescription')) {
-      this.form.addControl(
-        'jobDescription',
-        new FormControl('', Validators.required)
-      );
+      this.form.addControl('jobDescription', new FormControl('', Validators.required));
+    }
+
+    // If user is returning from the Review screen to edit, the parent form still
+    // holds the previously-generated raw JD object. Restore a version from it
+    // so the editor shows the content instead of the empty state.
+    const existingJd = this.form.get('jobDescription')?.value;
+    if (existingJd && typeof existingJd === 'object') {
+      const html = this.formatJdResponse(existingJd);
+      const restored: JdVersion = {
+        id: Date.now(),
+        label: 'Version 1 (Current)',
+        isCurrent: true,
+        generatedAt: new Date(),
+        content: html,
+        rawResponse: existingJd,
+        showMenu: false
+      };
+      this.versions = [restored];
+      this.selectedVersionId = restored.id;
+      this.persistVersions();
+    } else {
+      // Fresh start — clear any stale localStorage from a prior session
+      localStorage.removeItem(this.STORAGE_KEY);
+      this.versions = [];
     }
   }
 
-  ngAfterViewInit(): void { }
+  ngAfterViewInit(): void {
+    // If we restored an existing version, populate the editor DOM.
+    // Uses setTimeout(0) because *ngIf="hasContent" has just become true —
+    // the editor element needs one render cycle before innerHTML can be set.
+    if (this.selectedVersionId !== null && this.versions.length > 0) {
+      const v = this.versions.find(ver => ver.id === this.selectedVersionId);
+      if (v) {
+        setTimeout(() => {
+          if (this.editorRef?.nativeElement) {
+            this.editorRef.nativeElement.innerHTML = v.content;
+            this.updateWordCount();
+          }
+          this.cdr.detectChanges();
+        }, 0);
+      }
+    }
+  }
 
   ngOnDestroy(): void {
     clearTimeout(this.saveTimer);
-    localStorage.removeItem(this.STORAGE_KEY);
+    // Do NOT remove localStorage here — the form holds the source of truth,
+    // but keeping localStorage means versions survive a Back→Forward within
+    // the same stepper session.
   }
 
   // ── Public API actions ──────────────────────────────────────────────────────

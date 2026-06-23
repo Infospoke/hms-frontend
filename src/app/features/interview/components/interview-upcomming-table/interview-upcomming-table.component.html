@@ -107,8 +107,8 @@
 
     <!-- ── ACTION ── -->
     <ng-container *ngIf="ctx.col.key === 'action'">
-      <div class="cell-action">
-        <button class="btn btn-view">
+      <div class="cell-action" *appCan="'SUPPLY:MYINTERVIEWREQUESTS:EDIT'">
+        <button class="btn btn-view" (click)="handleview(ctx.row)">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M1 7s2-4.5 6-4.5S13 7 13 7s-2 4.5-6 4.5S1 7 1 7z" stroke="currentColor" stroke-width="1.3"/>
             <circle cx="7" cy="7" r="1.8" stroke="currentColor" stroke-width="1.3"/>

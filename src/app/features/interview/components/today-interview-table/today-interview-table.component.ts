@@ -1,6 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
+import { Router } from '@angular/router';
+import { CanDirective } from "../../../../shared/directives/can.directive";
 
 export type InterviewType = 'Technical' | 'HR' | 'Managerial' | 'Cultural Fit';
  
@@ -17,7 +19,7 @@ export interface TodayInterview {
  
 @Component({
   selector: 'app-today-interview-table',
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent, CanDirective],
   templateUrl: './today-interview-table.component.html',
   styleUrl: './today-interview-table.component.scss',
 })
@@ -32,7 +34,7 @@ export class TodayInterviewTableComponent {
   @Output() viewDetails = new EventEmitter<TodayInterview>();
   @Output() rowClick    = new EventEmitter<TodayInterview>();
   @Output() pageChange  = new EventEmitter<number>();
-  
+  private router=inject(Router);
   columns: TableColumn[] = [
 
     { key: 'time',      label: 'Time',      custom: true, width: '120px' },
@@ -59,7 +61,7 @@ export class TodayInterviewTableComponent {
  
   // ── Actions ───────────────────────────────────────────────────────────────
   onViewDetails(interview: TodayInterview): void {
-    this.viewDetails.emit(interview);
+    this.router.navigateByUrl('/supply/my-interview-requests/today-interview-details')
   }
  
   onRowClick(row: TodayInterview): void {

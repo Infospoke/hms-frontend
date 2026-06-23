@@ -1,0 +1,60 @@
+<div class="ist-shell">
+
+
+
+  <!-- ── Table ──────────────────────────────────────────────────────────── -->
+  <div class="card-dd">
+    <app-reusable-table [columns]="tableColumns" [data]="tableData" [currentPage]="currentPage" [pageSize]="pageSize"
+      [cellTemplate]="cellTpl" (rowClick)="onRowClick($event)" (sortChange)="onSortChange($event)"
+      [showPagination]='true' (pageChange)="pageChange($event)" [totalItems]="totalElements">
+    </app-reusable-table>
+  </div>
+
+</div>
+
+
+<!-- ── Custom cell templates ──────────────────────────────────────────────── -->
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate column -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="ist-candidate">
+      <span class="ist-avatar" [style.background-color]="ctx.row.initialsColor">
+        {{ ctx.row.initials }}
+      </span>
+      <div class="ist-candidate-info">
+        <span class="ist-name">{{ ctx.row.name }}</span>
+        <span class="ist-email">{{ ctx.row.email }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Priority column -->
+  <ng-container *ngIf="ctx.col.key === 'priority'">
+    <span class="ist-priority-badge" [class.ist-priority--high]="ctx.row.priorityType === 'high'"
+      [class.ist-priority--medium]="ctx.row.priorityType === 'medium'"
+      [class.ist-priority--low]="ctx.row.priorityType === 'low'">
+      {{ ctx.row.priority }}
+    </span>
+  </ng-container>
+
+  <!-- Actions column -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <div class="ist-actions">
+      <button class="ist-btn-schedule" (click)="onSchedule(ctx.row, $event)"
+        aria-label="Schedule interview for {{ ctx.row.name }}">
+        <!-- Calendar icon -->
+        <svg class="ist-btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1.5" y="3" width="13" height="12" rx="2" stroke="currentColor" stroke-width="1.4" />
+          <path d="M1.5 6.5h13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          <path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          <rect x="4.5" y="9" width="2" height="2" rx="0.4" fill="currentColor" />
+          <rect x="7.5" y="9" width="2" height="2" rx="0.4" fill="currentColor" />
+          <rect x="4.5" y="11.5" width="2" height="2" rx="0.4" fill="currentColor" />
+        </svg>
+        Schedule
+      </button>
+    </div>
+  </ng-container>
+
+</ng-template>

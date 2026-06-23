@@ -77,7 +77,7 @@
 
   <!-- ACTION -->
   <ng-container *ngIf="ctx.col.key === 'action'">
-    <div class="ti-action" (click)="$event.stopPropagation()">
+    <div class="ti-action" (click)="$event.stopPropagation()" *appCan="'SUPPLY:MYINTERVIEWREQUESTS:VIEW'">
       <button
         class="ti-btn-view"
         type="button"

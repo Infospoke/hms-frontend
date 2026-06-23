@@ -1,0 +1,313 @@
+<div class="iq-root">
+  <app-heading heading="" subHeading="" [showBackButton]="true" backButtonUrl="/interview/ai-interview-zone"  buttonText="Back to Generate AI Questions"/>
+  <div class="iq-header">
+    <div class="iq-candidate-info">
+      <div class="iq-avatar">{{ candidate.initials }}</div>
+      <div class="iq-candidate-details">
+        <div class="iq-name-row">
+          <span class="iq-name">{{ candidate.name }}</span>
+          <span class="iq-badge">{{ candidate.status }}</span>
+        </div>
+        <div class="iq-meta">
+          <span>{{ candidate.role }}</span>
+          <span class="iq-dot">•</span>
+          <span>{{ candidate.noOfRounds }} Round Plan</span>
+        </div>
+        <div class="iq-contact">
+          <i class="fa-regular fa-envelope iq-contact-icon"></i>
+          <span>{{ candidate.email }}</span>
+          <span class="iq-dot">•</span>
+          <i class="fa-solid fa-phone iq-contact-icon"></i>
+          <span>{{ candidate.phone }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="iq-header-stats">
+      <div class="iq-stat">
+        <div class="iq-stat-icon-wrap">
+          <i class="fa-regular fa-calendar-days"></i>
+        </div>
+        <div>
+          <div class="iq-stat-label">Applied on</div>
+          <div class="iq-stat-value">{{ candidate.appliedOn }}</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Main Body -->
+  <div class="iq-body">
+
+    <!-- Left Panel: Settings -->
+    <div class="iq-settings-panel">
+      <h3 class="iq-panel-title">Question Generation Settings</h3>
+
+      <!-- Interview Plan -->
+      <div class="iq-field-group">
+        <label class="iq-label">Interview Plan</label>
+        <div class="iq-plan-readonly">
+          <i class="fa-regular fa-file-lines iq-plan-icon"></i>
+          <span>{{ candidate.planName || '—' }}</span>
+        </div>
+      </div>
+
+      <!-- Question Type -->
+      <div class="iq-field-group">
+        <label class="iq-label">Question Type</label>
+        <div class="iq-checkboxes">
+          <label class="iq-checkbox-label">
+            <input type="checkbox" [(ngModel)]="questionTypes.technical">
+            <span class="iq-checkmark"></span>
+            Technical
+          </label>
+          <label class="iq-checkbox-label">
+            <input type="checkbox" [(ngModel)]="questionTypes.behavioral">
+            <span class="iq-checkmark"></span>
+            Behavioral
+          </label>
+          <label class="iq-checkbox-label">
+            <input type="checkbox" [(ngModel)]="questionTypes.situational">
+            <span class="iq-checkmark"></span>
+            Situational
+          </label>
+        </div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="iq-field-group">
+        <label class="iq-label">Difficulty Level</label>
+        <div class="iq-select-wrapper">
+          <select class="iq-select" [(ngModel)]="difficultyLevel">
+            <option>Easy</option>
+            <option>Medium</option>
+            <option>Hard</option>
+          </select>
+          <i class="fa-solid fa-chevron-down iq-select-arrow"></i>
+        </div>
+      </div>
+
+      <!-- Total Questions -->
+      <div class="iq-field-group">
+        <label class="iq-label">Total Questions</label>
+        <div class="iq-select-wrapper">
+          <select class="iq-select" [(ngModel)]="totalQuestions">
+            <option [value]="5">5 Questions</option>
+            <option [value]="10">10 Questions</option>
+            <option [value]="15">15 Questions</option>
+            <option [value]="20">20 Questions</option>
+          </select>
+          <i class="fa-solid fa-chevron-down iq-select-arrow"></i>
+        </div>
+      </div>
+
+      <!-- Estimated Duration -->
+      <div class="iq-duration-row">
+        <i class="fa-regular fa-clock iq-clock-icon"></i>
+        <span class="iq-duration-text">{{ estimatedDuration }}</span>
+      </div>
+
+      <!-- Minimum Pass Criteria -->
+      <div class="iq-pass-criteria">
+        <div class="iq-pass-header">
+          <i class="fa-solid fa-shield-halved iq-pass-icon"></i>
+          <span class="iq-pass-title">Minimum Pass Criteria</span>
+        </div>
+        <p class="iq-pass-desc">Set the minimum pass criteria based on the final overall score for candidates to move to the next stage.</p>
+
+        <div class="iq-pass-field">
+          <label class="iq-label">Minimum Pass Percentage (%)</label>
+          <div class="iq-pass-input-row">
+            <input
+              class="iq-number-input"
+              type="number"
+              min="0"
+              max="100"
+              [(ngModel)]="minPassPercentage"
+            />
+            <span class="iq-percent-sign">%</span>
+            <span class="iq-pass-badge" [style.background-color]="passPercentageColor + '1a'" [style.color]="passPercentageColor">
+              {{ passPercentageLabel }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Pass Percentage Visual Bar -->
+        <div class="iq-pass-bar-wrap">
+          <div class="iq-pass-bar-track">
+            <div class="iq-pass-bar-fill" [style.width.%]="minPassPercentage" [style.background-color]="passPercentageColor"></div>
+            <div class="iq-pass-bar-thumb" [style.left.%]="minPassPercentage" [style.border-color]="passPercentageColor"></div>
+          </div>
+          <div class="iq-pass-bar-labels">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+          <input
+            class="iq-range-hidden"
+            type="range"
+            min="0"
+            max="100"
+            [(ngModel)]="minPassPercentage"
+          />
+        </div>
+
+        <div class="iq-field-group" style="margin-top:12px">
+          <label class="iq-label">Acceptable Score Range</label>
+          <div class="iq-range-row">
+            <span class="iq-range-val">{{ acceptableScoreMin }}%</span>
+            <input
+              class="iq-range"
+              type="range"
+              min="0"
+              max="100"
+              [(ngModel)]="acceptableScoreMin"
+            />
+            <span class="iq-range-val">{{ acceptableScoreMax }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <button class="iq-generate-btn" (click)="generateQuestions()" [class.loading]="isGenerating">
+        <span *ngIf="!isGenerating">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Questions
+        </span>
+        <span *ngIf="isGenerating" class="iq-spinner-wrap">
+          <i class="fa-solid fa-circle-notch fa-spin"></i> Generating...
+        </span>
+      </button>
+
+      <div class="iq-ai-note">
+        <i class="fa-solid fa-robot iq-ai-icon"></i>
+        <div>
+          <span class="iq-ai-note-title">AI will generate questions based on:</span>
+          <ul class="iq-ai-list">
+            <li>Job description &amp; requirements</li>
+            <li>Candidate's resume &amp; skills</li>
+            <li>Industry best practices</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Questions -->
+    <div class="iq-questions-panel">
+      <div class="iq-questions-header">
+        <h3 class="iq-questions-title">
+          AI Generated Questions
+          <span class="iq-preview-tag">Preview</span>
+        </h3>
+        <span class="iq-questions-count">{{ questions.length }} Questions</span>
+      </div>
+
+      <div class="iq-questions-list">
+        <div class="iq-question-card" *ngFor="let q of questions; let i = index">
+          <div class="iq-question-number">{{ i + 1 }}</div>
+          <div class="iq-question-content">
+            <span class="iq-type-tag" [ngClass]="getTypeClass(q.type)">{{ q.type }}</span>
+
+            <!-- View mode -->
+            <div *ngIf="!q.isEditing" class="iq-question-text">{{ q.question }}</div>
+
+            <!-- Edit mode -->
+            <div *ngIf="q.isEditing" class="iq-edit-area">
+              <textarea class="iq-edit-textarea" [(ngModel)]="q.editText" rows="3" [autofocus]="true"></textarea>
+              <div class="iq-edit-actions">
+                <button class="iq-btn-save" (click)="saveEdit(q)">Save</button>
+                <button class="iq-btn-cancel" (click)="cancelEdit(q)">Cancel</button>
+              </div>
+            </div>
+
+            <div class="iq-question-meta">
+              <i class="fa-regular fa-clock"></i>
+              <span class="iq-meta-item">Expected: {{ q.expectedTime }}</span>
+              <span class="iq-meta-dot">•</span>
+              <i class="fa-solid fa-signal"></i>
+              <span class="iq-meta-item">{{ q.difficulty }}</span>
+            </div>
+          </div>
+          <div class="iq-question-actions">
+            <button class="iq-action-btn iq-edit-btn" (click)="startEdit(q)" title="Edit question">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <button class="iq-action-btn iq-delete-btn" (click)="deleteQuestion(q.id)" title="Delete question">
+              <i class="fa-regular fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Question Form -->
+      <div class="iq-add-form" *ngIf="showAddForm">
+        <h4 class="iq-add-form-title">Add New Question</h4>
+        <div class="iq-add-form-row">
+          <div class="iq-field-group">
+            <label class="iq-label">Type</label>
+            <div class="iq-select-wrapper">
+              <select class="iq-select iq-select-sm" [(ngModel)]="newQuestion.type">
+                <option value="technical">Technical</option>
+                <option value="behavioural">Behavioral</option>
+                <option value="situational">Situational</option>
+              </select>
+              <i class="fa-solid fa-chevron-down iq-select-arrow"></i>
+            </div>
+          </div>
+          <div class="iq-field-group">
+            <label class="iq-label">Difficulty</label>
+            <div class="iq-select-wrapper">
+              <select class="iq-select iq-select-sm" [(ngModel)]="newQuestion.difficulty">
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+              </select>
+              <i class="fa-solid fa-chevron-down iq-select-arrow"></i>
+            </div>
+          </div>
+          <div class="iq-field-group">
+            <label class="iq-label">Expected Time</label>
+            <div class="iq-select-wrapper">
+              <select class="iq-select iq-select-sm" [(ngModel)]="newQuestion.expectedTime">
+                <option>1-2 mins</option>
+                <option>2-3 mins</option>
+                <option>3-5 mins</option>
+                <option>5-7 mins</option>
+              </select>
+              <i class="fa-solid fa-chevron-down iq-select-arrow"></i>
+            </div>
+          </div>
+        </div>
+        <div class="iq-field-group">
+          <label class="iq-label">Question</label>
+          <textarea class="iq-edit-textarea" [(ngModel)]="newQuestion.question" rows="3" placeholder="Type your question here..."></textarea>
+        </div>
+        <div class="iq-add-form-actions">
+          <button class="iq-btn-save" (click)="addQuestion()">
+            <i class="fa-solid fa-plus"></i>
+            Add Question
+          </button>
+          <button class="iq-btn-cancel" (click)="cancelAdd()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Add Custom Question Button -->
+      <button class="iq-add-custom-btn" (click)="showAddForm = !showAddForm" *ngIf="!showAddForm">
+        <i class="fa-solid fa-plus"></i> Add Custom Question
+      </button>
+
+      <!-- Footer Actions -->
+      <div class="iq-footer-actions">
+        <button class="iq-btn-finalize" (click)="finalizeQuestions()" [disabled]="isFinalizing || !questions.length">
+          <i class="fa-regular fa-circle-check"></i>
+          {{ isFinalizing ? 'Finalizing...' : 'Finalize Questions' }}
+        </button>
+        <button class="iq-btn-schedule" (click)="moveToSchedule()" [disabled]="isScheduling || !questions.length">
+          <i class="fa-regular fa-calendar-plus"></i>
+          {{ isScheduling ? 'Processing...' : 'Move to Schedule' }}
+        </button>
+        <button class="iq-btn-plain" (click)="handleBack()">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>

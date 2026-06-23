@@ -5,11 +5,12 @@ import { ReusableTableComponent, TableColumn } from '../../../../shared/componen
 import { chainOptions } from '../../../../shared/constants/reusbale-filter';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { Router } from '@angular/router';
+import { CanDirective } from "../../../../shared/directives/can.directive";
 
 @Component({
   selector: 'app-interview-plain-aproval',
   standalone: true,
-  imports: [CommonModule, ApprovalLayoutComponent, ReusableTableComponent],
+  imports: [CommonModule, ApprovalLayoutComponent, ReusableTableComponent, CanDirective],
   templateUrl: './interview-plain-aproval.component.html',
   styleUrl: './interview-plain-aproval.component.scss',
 })
@@ -53,7 +54,7 @@ export class InterviewPlainAprovalComponent implements OnInit {
 
   handleReviewApprove(plan: any): void {
     this.router.navigate(
-      ['/interview/interview-approval-plans/review-and-approve', plan.id],
+      ['/approval/interview-approval-plans/review-and-approve', plan.id],
       {
         queryParams: { requestType: plan.requestType }
       }

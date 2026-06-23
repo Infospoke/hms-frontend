@@ -1,0 +1,144 @@
+.ai-interview-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+// ── Candidate cell ──────────────────────────────────────────────────────────
+.aiz-candidate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiz-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.aiz-candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aiz-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.3;
+}
+
+.aiz-email {
+  font-size: 11.5px;
+  color: #8a8fa8;
+  line-height: 1.3;
+}
+
+// ── Stacked date/time cell ──────────────────────────────────────────────────
+.aiz-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aiz-date-day {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #1a1a2e;
+  white-space: nowrap;
+}
+
+.aiz-date-time {
+  font-size: 11px;
+  color: #8a8fa8;
+  white-space: nowrap;
+}
+
+// ── Status badge ────────────────────────────────────────────────────────────
+.aiz-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &.aiz-status--generated {
+    background-color: #e6f9ef;
+    color: #1a9e50;
+  }
+
+  &.aiz-status--generating {
+    background-color: #fff3e0;
+    color: #e07b10;
+  }
+
+  &.aiz-status--draft {
+    background-color: #fdecea;
+    color: #d9534f;
+  }
+}
+
+// ── Actions ─────────────────────────────────────────────────────────────────
+.aiz-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.aiz-btn-manage {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background-color: #5b4fcf;
+  color: #fff;
+  white-space: nowrap;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: #4a3fbf;
+  }
+
+  &.aiz-btn-manage--generating {
+    background-color: #e0e0e0;
+    color: #888;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.aiz-btn-more {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid #e0e3ef;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 14px;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: #f4f5fa;
+    border-color: #c0c4d8;
+  }
+}

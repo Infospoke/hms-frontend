@@ -1,0 +1,155 @@
+<div class="aid-page">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="aid-loading">
+    <div class="aid-spinner"></div>
+    <p>Loading interview details…</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="aid-error">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="1.5"/>
+      <path d="M12 7v5M12 16h.01" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <p>{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !error && candidate">
+
+    <!-- Page Title -->
+    <div class="aid-page-title-row">
+      <h1 class="aid-page-title">AI Interview Details</h1>
+      <p class="aid-page-sub">Review interview performance and make an informed decision.</p>
+    </div>
+
+    <!-- Candidate Card -->
+    <div class="aid-cand-card">
+
+      <!-- Left: Avatar + Name + Contact -->
+      <div class="aid-cand-ident">
+        <div class="aid-avatar">{{ candidate.avatarInitials }}</div>
+        <div class="aid-cand-details">
+          <div class="aid-name-row">
+            <span class="aid-name">{{ candidate.name }}</span>
+            <span *ngIf="candidate.tag" class="aid-tag" [ngClass]="tagClass(candidate.tag)">
+              {{ candidate.tag }}
+            </span>
+          </div>
+          <div class="aid-contact-row">
+            <span *ngIf="candidate.email">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4l6 5 6-5M2 4h12v9H2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+              </svg>
+              {{ candidate.email }}
+            </span>
+            <span *ngIf="candidate.phone">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M3 2h3l1.5 3.5-1.5 1a8 8 0 004 4l1-1.5L14.5 10v3A1 1 0 0114 14C7 14 2 9 2 3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+              {{ candidate.phone }}
+            </span>
+            <span *ngIf="candidate.location">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1C5.2 1 3 3.2 3 6c0 4 5 9 5 9s5-5 5-9c0-2.8-2.2-5-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z" stroke="currentColor" stroke-width="1.3"/>
+              </svg>
+              {{ candidate.location }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vertical separator -->
+      <div class="aid-vert-sep"></div>
+
+      <!-- Right: Meta grid 4x2 -->
+      <div class="aid-meta-grid">
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Job Title</div>
+          <div class="aid-meta-value">{{ candidate.jobTitle }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Job ID</div>
+          <div class="aid-meta-value">{{ candidate.jobId }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Interview Type</div>
+          <div class="aid-meta-value">{{ candidate.interviewType }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Interview Date</div>
+          <div class="aid-meta-value">{{ candidate.interviewDate }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Experience</div>
+          <div class="aid-meta-value">{{ candidate.experience }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Department</div>
+          <div class="aid-meta-value">{{ candidate.department }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">Interview Duration</div>
+          <div class="aid-meta-value">{{ candidate.interviewDuration }}</div>
+        </div>
+        <div class="aid-meta-item">
+          <div class="aid-meta-label">AI Score</div>
+          <div class="aid-meta-value">
+            <span class="aid-score-pct">{{ candidate.aiScore }}%</span>
+            <div class="aid-score-bar">
+              <div class="aid-score-bar-fill" [style.width.%]="candidate.aiScore"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="aid-tabs">
+      <button *ngFor="let tab of tabs" class="aid-tab"
+              [class.active]="activeTab === tab.key"
+              (click)="setTab(tab.key)" type="button">
+        <!-- chart -->
+        <svg *ngIf="tab.icon === 'chart'" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="8" width="3" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/>
+          <rect x="6.5" y="5" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.3"/>
+          <rect x="11" y="2" width="3" height="12" rx="1" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <!-- ai -->
+        <svg *ngIf="tab.icon === 'ai'" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M5.5 6.5C5.5 5.4 6.4 4.5 7.5 4.5h1C9.6 4.5 10.5 5.4 10.5 6.5c0 .8-.5 1.5-1.2 1.8L9 9H7l-.3-.7C6 8 5.5 7.3 5.5 6.5z" stroke="currentColor" stroke-width="1.1"/>
+          <path d="M7 10h2M8 11.5v1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <!-- code -->
+        <svg *ngIf="tab.icon === 'code'" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M4.5 5.5L2 8l2.5 2.5M11.5 5.5L14 8l-2.5 2.5M9 4l-2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <!-- briefcase -->
+        <svg *ngIf="tab.icon === 'briefcase'" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <rect x="1.5" y="5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M5.5 5V3.5A1.5 1.5 0 017 2h2a1.5 1.5 0 011.5 1.5V5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M1.5 9h13" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <!-- people -->
+        <svg *ngIf="tab.icon === 'people'" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M1.5 13c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M14.5 13c0-1.8-1.1-3-2.5-3.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="aid-content">
+      <app-evaluation-summary *ngIf="activeTab === 'evaluation'" [data]="evaluationData" />
+      <app-ai-interview      *ngIf="activeTab === 'ai-interview'" [data]="aiInterviewData" />
+      <app-round-detail      *ngIf="activeTab === 'technical'"   [data]="technicalData"   roundTitle="Technical Round" />
+      <app-round-detail      *ngIf="activeTab === 'managerial'"  [data]="managerialData"  roundTitle="Managerial Round" />
+      <app-round-detail      *ngIf="activeTab === 'hr'"          [data]="hrData"           roundTitle="HR Round" />
+    </div>
+
+  </ng-container>
+</div>

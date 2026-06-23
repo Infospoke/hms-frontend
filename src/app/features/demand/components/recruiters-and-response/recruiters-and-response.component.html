@@ -9,8 +9,8 @@
     [showBtn]="false"
     [showBackButton]="true"
     [buttonText]="'Back to All Jobs'"
-    [buttonUrl]="'/demand/all-jobs'"
-    [showBtn]="'DEMAND:ALLJOBS:CREATE'"
+    [buttonUrl]="'/demand/recruiter-assignment-management'"
+    [showBtn]="'DEMAND:RECRUITERASSIGNMENTMANAGEMENT:CREATE'"
     (handle)="addAssignees()"
     [buttonType]="'Add Assigness'"
     >
@@ -29,6 +29,7 @@
       [pageSize]="pageSize"
       [currentPage]="currentPage"
       [cellTemplate]="jobCellTemplate"
+      [showPagination]="true"
       emptyMessage="No recruiters assigned yet."
       (pageChange)="onPageChange($event)">
     </app-reusable-table>

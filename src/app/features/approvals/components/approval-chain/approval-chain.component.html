@@ -51,7 +51,7 @@
   <ng-container *ngIf="ctx.col.key === 'chainStatus'">
     <span class="status-badge"   [ngClass]="{
       'status-badge--created':
-        ctx.row.chainStatus === 'Chain Created',
+        ctx.row.chainStatus === 'Chain Created' ||ctx.row.chainStatus === 'Chain-Created' ,
 
       'status-badge--active':
         ctx.row.chainStatus === 'Chain Active' || ctx.row.chainStatus==='Chain-Active',

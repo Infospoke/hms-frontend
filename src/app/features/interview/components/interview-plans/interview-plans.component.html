@@ -5,7 +5,7 @@
     [infoTooltip]="false"
     [cards]="cards"
     [buttonType]="'Create Plan'"
-    [showBtn]="'INTERVIEW:INTERVIEWPLAN:CREATE'"
+    [showBtn]="'DEMAND:INTERVIEWPLANCONFIG:CREATE'"
     searchPlaceholder="Search plans by name or description"
     (handle)="handleCreateNewPlan()"
     [tabs]="tabs"
@@ -76,8 +76,8 @@
   <!-- Actions icons -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
     <app-common-table-actions
-      [viewPermission]="'INTERVIEW:INTERVIEWPLAN:VIEW'"
-      [editPermission]="'INTERVIEW:INTERVIEWPLAN:EDIT'"
+      [viewPermission]="'DEMAND:INTERVIEWPLANCONFIG:VIEW'"
+      [editPermission]="'DEMAND:INTERVIEWPLANCONFIG:EDIT'"
       (view)="handleView(ctx?.row)"
       (edit)="handleEdit(ctx?.row)"
     />

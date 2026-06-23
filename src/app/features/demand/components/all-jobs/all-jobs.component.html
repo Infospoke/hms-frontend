@@ -38,7 +38,7 @@
   <ng-container *ngIf="ctx.col.key === 'assignees'">
     <div class="aj-assignees">
       <span class="aj-assignee-count">{{ ctx.row['assignees'] }}</span>
-      <a class="aj-view-link" (click)="viewUsersList(ctx?.row)">View Assignees</a>
+      <a class="aj-view-link" *appCan="'DEMAND:RECRUITERASSIGNMENTMANAGEMENT:VIEW'" (click)="viewUsersList(ctx?.row)">View Assignees</a>
     </div>
   </ng-container>
  
@@ -55,7 +55,7 @@
   </ng-container>
  
   <ng-container *ngIf="ctx.col.key === 'action'">
-    <a class="aj-action-link" *appCan="'DEMAND:ALLJOBS:EDIT'" (click)="viewDetails(ctx.row)">View Details</a>
+    <a class="aj-action-link" *appCan="'DEMAND:RECRUITERASSIGNMENTMANAGEMENT:EDIT'" (click)="viewDetails(ctx.row)">View Details</a>
   </ng-container>
  
 </ng-template>

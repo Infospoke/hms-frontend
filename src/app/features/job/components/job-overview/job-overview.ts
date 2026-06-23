@@ -279,27 +279,36 @@ export class JobOverview {
   }
 
   getFilters(data: any[]): any {
-    const filters: any = {};
-    const allowedKeys = ['jobCountry', 'jobLevel', 'jobMode', 'jobType', 'skills', 'jobLocation'];
+    const allowedKeys = ['jobCountry', 'jobMode', 'jobType'];
 
+    // Default seed values — always present even when jobs list is empty
+    const defaultValues: Record<string, string[]> = {
+      jobCountry: ['India', 'USA'],
+      jobType:    ['Full-time', 'Part-time', 'Contract', 'Internship'],
+      jobMode:    ['Hybrid', 'Remote', 'Onsite'],
+    };
+
+    // Initialise filters with defaults using Sets for dedup
+    const filterSets: Record<string, Set<string>> = {};
+    for (const key of allowedKeys) {
+      filterSets[key] = new Set(defaultValues[key] ?? []);
+    }
+
+    // Merge in values from actual job data
     data.forEach((item) => {
       Object.keys(item).forEach((key) => {
         if (!allowedKeys.includes(key)) return;
-        if (key === 'skills') {
-          item.skills?.forEach((s: any) => {
-            filters['skills'] = filters['skills'] || new Set();
-            filters['skills'].add(s.skillName);
-          });
-        } else if (typeof item[key] === 'string' || typeof item[key] === 'number') {
-          filters[key] = filters[key] || new Set();
-          filters[key].add(item[key]);
+        if (typeof item[key] === 'string' || typeof item[key] === 'number') {
+          filterSets[key].add(item[key].toString());
         }
       });
     });
 
-    Object.keys(filters).forEach((k) => {
-      filters[k] = Array.from(filters[k]);
-    });
+    // Convert Sets → arrays, preserving key order from allowedKeys
+    const filters: any = {};
+    for (const key of allowedKeys) {
+      filters[key] = Array.from(filterSets[key]);
+    }
 
     return filters;
   }

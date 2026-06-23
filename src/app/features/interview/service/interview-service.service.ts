@@ -89,4 +89,71 @@ export class InterviewServiceService {
     async updateIntervieAssignement(payload:any):Promise<any>{
       return await firstValueFrom(this.api.hrmsput(API.INTERVIEW.UPDATE_INTERVIEW_ASSIGN,payload))
     }
+
+
+    async getJobDetailsById(id:any):Promise<any>{
+      console.log(id);
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.GET_JOB_DETAILS_BYID(id)))
+    }
+
+
+     async getInterviewCandidateDetails(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.INTERVIEW_CANDIDATE_DETAILS,payload))
+    }
+
+
+    async getAiInterviewZoneCounts():Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.GET_AI_INTERVEW_ZONE_COUNTS))
+    }
+
+    async getAIInterviewZoneJobs():Promise<any>{
+       return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.GET_AI_INTERVEW_ZONE_JOBS))
+    }
+
+    async getAIInterviewZoneList(payload:any):Promise<any>{
+       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_AI_INTERVEW_ZONE_LIST,payload))
+    }
+
+
+    async getAiInterviewZoneScheduleAIInterview(payload:any):Promise<any>{
+       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_AI_INTERVEW_SCHEDULE_INTERVIEW,payload))
+    }
+
+    async getAIInterviewPLANSLIST():Promise<any>{
+       return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.GET_AI_INTERVIEW_PLANS_LIST))
+    }
+
+    async getUpcommingAIInterviewList(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_UPCOMMING_LIST,payload))
+    }
+
+    async getApplicantDetailsById(id: any): Promise<any> {
+      return await firstValueFrom(this.api.hrmsget(API.JOBS.GET_APPLICANT_DETAILS_BY_ID(id)));
+    }
+
+    async createInterviewSession(payload: any): Promise<any> {
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.CREATE_INTERVIEW_SESSION, payload));
+    }
+
+    async generateAIQuestions(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.GENERATE_AI_QUESTIONS,payload))
+    }
+
+    async addCustomQuestion(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.CUSTOM_QUESTION,payload))
+    }
+
+    async finalizeQuestions(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.FINALIZE_QUESTIONS,payload))
+    }
+
+    async updateMoveToSchedule(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.UPDATE_MOVE_TO_SCHEDULE,payload))
+    }
+
+
+    async getInterviewDetails(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.AI_INTERVIEW_DETAILS(id)))
+    }
+
 }

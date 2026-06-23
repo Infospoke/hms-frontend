@@ -1,0 +1,151 @@
+<div class="ic-root">
+
+  
+
+  <!-- ══ Error State ════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!loading && error">
+    <div class="ic-state-box ic-state-box--error">
+      <i class="fa-solid fa-circle-exclamation ic-state-icon ic-state-icon--error"></i>
+      <span class="ic-state-text">{{ error }}</span>
+    </div>
+  </ng-container>
+
+  <!-- ══ Main Content ═══════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!loading && !error">
+
+    <!-- ══ Candidate Header Card ════════════════════════════════════════════ -->
+    <div class="ic-header-card">
+
+      <!-- Left: Avatar + Info -->
+      <div class="ic-cand-section">
+        <div class="ic-avatar">{{ candidate.initials }}</div>
+        <div class="ic-cand-details">
+          <div class="ic-name-row">
+            <span class="ic-name">{{ candidate.name }}</span>
+            <span class="ic-status-badge">
+              <i class="fa-solid fa-circle-check ic-badge-icon"></i>
+              {{ candidate.status }}
+            </span>
+          </div>
+          <div class="ic-contact-row">
+            <i class="fa-regular fa-envelope ic-contact-icon"></i>
+            <span>{{ candidate.email }}</span>
+          </div>
+          <div class="ic-contact-row">
+            <i class="fa-solid fa-phone ic-contact-icon"></i>
+            <span>{{ candidate.phone }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ic-header-divider"></div>
+
+      <!-- Right: Job Details Grid -->
+      <div class="ic-job-grid">
+        <div class="ic-job-field">
+          <span class="ic-field-label">Job Title</span>
+          <span class="ic-field-value">{{ jobDetails.jobTitle }}</span>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Job ID</span>
+          <span class="ic-field-value">{{ jobDetails.jobId }}</span>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Department</span>
+          <span class="ic-field-value">{{ jobDetails.department }}</span>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Experience</span>
+          <span class="ic-field-value">{{ jobDetails.experience }}</span>
+        </div>
+
+        <div class="ic-job-field">
+          <span class="ic-field-label">Scheduled At</span>
+          <span class="ic-field-value ic-field-value--blue">{{ jobDetails.scheduledAt }}</span>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Scheduled By</span>
+          <div class="ic-scheduled-by">
+            <i class="fa-regular fa-user ic-sched-icon"></i>
+            <span class="ic-field-value">{{ jobDetails.scheduledBy }}</span>
+          </div>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Interview Type</span>
+          <span class="ic-field-value">{{ jobDetails.interviewType }}</span>
+        </div>
+        <div class="ic-job-field">
+          <span class="ic-field-label">Time Zone</span>
+          <span class="ic-field-value">{{ jobDetails.timeZone }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ Stats Row ════════════════════════════════════════════════════════ -->
+    <div class="ic-stats-row">
+      <div class="ic-stat-card" *ngFor="let stat of stats">
+        <div class="ic-stat-icon-wrap" [style.background]="stat.iconBg">
+          <i [class]="stat.icon" [style.color]="stat.iconColor"></i>
+        </div>
+        <div class="ic-stat-body">
+          <span class="ic-stat-label">{{ stat.label }}
+            <i class="fa-regular fa-circle-question ic-info-icon"
+               *ngIf="stat.hasInfo"
+               title="Minimum score required to pass"></i>
+          </span>
+          <span class="ic-stat-value">{{ stat.value }}</span>
+          <span class="ic-stat-sub" *ngIf="stat.sub">{{ stat.sub }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ Question Set Preview ════════════════════════════════════════════ -->
+    <div class="ic-questions-section">
+      <div class="ic-qs-heading">
+        <h2 class="ic-qs-title">Question Set Preview</h2>
+        <p class="ic-qs-sub">Preview of questions in this interview</p>
+      </div>
+
+      <div class="ic-table-wrap">
+        <table class="ic-table">
+          <thead>
+            <tr>
+              <th class="ic-th ic-th-num">#</th>
+              <th class="ic-th">QUESTION</th>
+              <th class="ic-th">TYPE</th>
+              <th class="ic-th ic-th-right">DIFFICULTY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="ic-tr" *ngFor="let q of visibleQuestions">
+              <td class="ic-td ic-td-num">{{ q.id }}</td>
+              <td class="ic-td ic-td-question">{{ q.text }}</td>
+              <td class="ic-td">
+                <span class="ic-type-tag" [ngClass]="getTypeClass(q.type)">{{ q.type }}</span>
+              </td>
+              <td class="ic-td ic-td-right">
+                <span class="ic-diff-badge" [ngClass]="getDifficultyClass(q.difficulty)">{{ q.difficulty }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="ic-view-all-btn" (click)="showAll = !showAll">
+        <span *ngIf="!showAll">View all {{ totalQuestions }} questions</span>
+        <span *ngIf="showAll">Show less</span>
+      </button>
+    </div>
+
+    <!-- ══ Footer ══════════════════════════════════════════════════════════ -->
+    <div class="ic-footer">
+      <button class="ic-back-btn" (click)="onBack()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Interviews in Progress
+      </button>
+    </div>
+
+  </ng-container>
+
+</div>

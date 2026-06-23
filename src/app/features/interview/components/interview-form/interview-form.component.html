@@ -1,7 +1,7 @@
 <div class="interview-page">
 
     <app-heading [heading]="pageTitle" [subHeading]="pageSubtitle" [showBackButton]="true" [backButtonUrl]="'/'"
-        [buttonText]="pageBackTitle" />
+        [buttonText]="pageBackTitle" (backClick)="handleBack()"/>
 
     <!-- SECTION 1: Interview Summary -->
     <section class="card" *ngIf="summary">

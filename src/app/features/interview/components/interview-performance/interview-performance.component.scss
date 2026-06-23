@@ -1,0 +1,280 @@
+$primary: #4f46e5;
+$primary-light: #eef2ff;
+$green: #10b981;
+$green-light: #d1fae5;
+$amber: #f59e0b;
+$amber-light: #fef3c7;
+$red: #ef4444;
+$red-light: #fee2e2;
+$blue: #3b82f6;
+$blue-light: #dbeafe;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-700: #374151;
+$gray-900: #111827;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.aid-page {
+  
+  font-size: 13px;
+  color: $gray-900;
+  background: $gray-50;
+  min-height: 100vh;
+  // padding: 24px;
+}
+
+// ── Page Title ────────────────────────────────────────────────────────────────
+.aid-page-title-row { margin-bottom: 16px; }
+
+.aid-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: $gray-900;
+  margin-bottom: 4px;
+}
+
+.aid-page-sub {
+  font-size: 13px;
+  color: $gray-500;
+}
+
+// ── Candidate Card ────────────────────────────────────────────────────────────
+.aid-cand-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.aid-cand-ident {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  min-width: 340px;
+  flex-shrink: 0;
+}
+
+.aid-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aid-cand-details { flex: 1; }
+
+.aid-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.aid-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: $gray-900;
+}
+
+.aid-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.strong-hire { background: $green-light;  color: $green; }
+  &.hire        { background: $blue-light;   color: $blue; }
+  &.hold        { background: $amber-light;  color: $amber; }
+  &.reject      { background: $red-light;    color: $red; }
+}
+
+.aid-contact-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: $gray-500;
+  font-size: 12px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.aid-vert-sep {
+  width: 1px;
+  background: $gray-200;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+// ── Meta Grid ─────────────────────────────────────────────────────────────────
+.aid-meta-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.aid-meta-item {
+  padding: 14px 18px;
+  border-right: 1px solid $gray-200;
+  border-bottom: 1px solid $gray-200;
+
+  &:nth-child(4n) { border-right: none; }
+  &:nth-child(n+5) { border-bottom: none; }
+}
+
+.aid-meta-label {
+  font-size: 11px;
+  color: $gray-400;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.aid-meta-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: $gray-900;
+}
+
+.aid-score-pct {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: $green;
+  margin-bottom: 5px;
+}
+
+.aid-score-bar {
+  width: 80px;
+  height: 5px;
+  background: $gray-100;
+  border-radius: 3px;
+  overflow: hidden;
+
+  &-fill {
+    height: 100%;
+    background: $green;
+    border-radius: 3px;
+  }
+}
+
+// ── Inline Progress Bar (round scores, AI recommendation) ──────────────────────
+.aid-prog-track {
+  width: 100%;
+  height: 6px;
+  background: $gray-100;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.aid-prog-fill {
+  height: 100%;
+  background: $green;
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+// ── Tab Bar ───────────────────────────────────────────────────────────────────
+.aid-tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: 10px;
+  margin: 14px 0 16px;
+  overflow-x: auto;
+  padding: 4px;
+}
+
+.aid-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: $gray-500;
+  cursor: pointer;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+  background: none;
+  border: none;
+  font-family: inherit;
+
+  svg { flex-shrink: 0; }
+  &:hover { color: $primary; background: $primary-light; }
+
+  &.active {
+    color: $primary;
+    background: $primary-light;
+    font-weight: 600;
+  }
+}
+
+// ── Content Area ──────────────────────────────────────────────────────────────
+.aid-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+// ── Loading / Error ───────────────────────────────────────────────────────────
+.aid-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 14px;
+  color: $gray-400;
+  font-size: 13px;
+}
+
+.aid-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid $gray-200;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: aid-spin 0.7s linear infinite;
+}
+
+@keyframes aid-spin { to { transform: rotate(360deg); } }
+
+.aid-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: 12px;
+  color: $gray-500;
+  font-size: 13px;
+  text-align: center;
+  padding: 40px;
+  p { margin: 0; max-width: 340px; line-height: 1.6; }
+}

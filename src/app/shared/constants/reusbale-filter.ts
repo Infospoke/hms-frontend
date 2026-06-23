@@ -192,30 +192,52 @@ export const interview: any = [
 ];
 
 export const aiInterview: any = [
-
   {
     key: 'allJobs',
     label: 'All Jobs',
     selected: '',
-    options: [
-
-
-    ],
-
+    options: [],
   },
   {
     key: 'allQuestion',
-    label: 'All Question Status',
+    label: 'Question Status',
     selected: '',
     options: [
-
-
+      { value: '', label: 'All' },
+      { value: 'true', label: 'Generated' },
+      { value: 'false', label: 'Not Generated' },
     ],
-
   },
-
-
-
+  {
+    key: 'priority',
+    label: 'Priority',
+    selected: '',
+    options: [
+      { value: '', label: 'All' },
+      { value: 'HIGH', label: 'High' },
+      { value: 'MEDIUM', label: 'Medium' },
+      { value: 'LOW', label: 'Low' },
+    ],
+  },
+  {
+    key: 'allInterviewPlans',
+    label: 'Interview Plans',
+    selected: '',
+    options: [],
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',  
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'today', label: 'Today' },           // ✅ was 'TODAY'
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },  // ✅ selected matches this
+      { value: 'custom', label: 'Custom Range' },   // ✅ was 'CUSTOM'
+    ],
+  },
 ];
 
 export const assignRecruters: any = [

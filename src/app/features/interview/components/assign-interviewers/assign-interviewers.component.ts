@@ -181,12 +181,12 @@ export class AssignInterviewersComponent implements OnInit {
     console.log(row);
     if (allNotSent) {
       localStorage.setItem("details", JSON.stringify(row));
-      this.router.navigate(['/interview/assign-interviewers/new-assign'], { state: { type: 'assign' } });
+      this.router.navigate(['/demand/assign-interviewers/new-assign'], { state: { type: 'assign' } });
 
     } else {
       localStorage.setItem("jobAssigned", JSON.stringify(row));
       this.router.navigate(
-        ['/interview/assign-interviewers/view'],
+        ['/demand/assign-interviewers/view'],
         { state: { id: row.jobId } }
       );
     }

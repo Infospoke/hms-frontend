@@ -321,7 +321,7 @@ export class InterviewPlanCreateComponent implements OnInit {
 
       if (response?.responsecode === '00') {
         this.notificationService.success(response?.data || response?.message);
-        this.router.navigateByUrl('/interview/interview-plan');
+        this.router.navigateByUrl('/demand/interview-plan-config');
       } else {
         this.saveError = response?.data ?? 'An unexpected error occurred. Please try again.';
       }
@@ -336,6 +336,6 @@ export class InterviewPlanCreateComponent implements OnInit {
   }
 
   onDiscard(): void {
-    this.router.navigateByUrl('/interview/interview-plan');
+    this.router.navigateByUrl('/demand/interview-plan-config');
   }
 }

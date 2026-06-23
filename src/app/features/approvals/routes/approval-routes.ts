@@ -25,4 +25,12 @@ export const APPROVAL_ROUTES: Routes = [
     path:'chains/:type',
     loadComponent:()=>import("../components/create-new-chain/create-new-chain.component").then(m=>m.CreateNewChainComponent)
   },
+  {
+    path:'interview-plan-approval',
+    loadComponent:()=>import("../../interview/components/interview-plain-aproval/interview-plain-aproval.component").then(m=>m.InterviewPlainAprovalComponent)
+  },
+  {
+        path:"interview-approval-plans/review-and-approve/:id",
+        loadComponent:()=>import("../../interview/components/approve-interview-plan/approve-interview-plan.component").then(m=>m.ApproveInterviewPlanComponent)
+    },
 ];

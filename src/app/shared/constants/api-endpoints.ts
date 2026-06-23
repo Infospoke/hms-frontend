@@ -28,6 +28,7 @@ export const API = {
         GET_ALL_APPLICANTS: () => `/hms/jobs/get-all-jobs-applicant`,
         GET_CANDIDATE_BY_ID: () => `/hms/jobs/get-candidate-by-id`,
         GET_APPLICANT_BY_ID: (id: any) => `/hms/jobs/view-applicant-by-id/${id}`,
+        GET_APPLICANT_DETAILS_BY_ID: (id: any) => `/hms/jobs/get-applicant-details-by-id/${id}`,
         GET_ALL_ANALYSIS: '/api/resume/analysis',
         MOVE_TO_INTERVIEW: `/api/interview/create-interview-session`,
         UPDATE_APPLICANT_BY_ID: '/api/interview/update-final-candidate-decision',
@@ -136,6 +137,20 @@ export const API = {
         INTERVIEW_ASSIGNMENT_COUNTS:`/hms/interviewer-assignment/counts`,
         GET_INTERVIEW_ASSIGNEMENT_BY_ID:(id:any)=>`/hms/interviewer-assignment/assign-interview-by-id/${id}`,
         GET_ASSIGN_INTERVIEW_LIST:`/hms/interviewer-assignment/get-all-assigned-interviews`,
-        UPDATE_INTERVIEW_ASSIGN:`/hms/interviewer-assignment/update`
+        UPDATE_INTERVIEW_ASSIGN:`/hms/interviewer-assignment/update`,
+        GET_JOB_DETAILS_BYID:(id:any)=>`/hms/create-job/get-job-details/${id}`,
+        INTERVIEW_CANDIDATE_DETAILS:`/api/resume/analysis/update`,
+        GET_AI_INTERVEW_ZONE_COUNTS:`/hms/ai-interview-zone/dashboard-counts`,
+        GET_AI_INTERVEW_ZONE_JOBS:`/hms/configurations/jobs`,
+        GET_AI_INTERVIEW_PLANS_LIST:`/hms/configurations/interview-plans`,
+        GET_AI_INTERVEW_ZONE_LIST:`/hms/ai-interview-zone/list`,
+        GET_AI_INTERVEW_SCHEDULE_INTERVIEW:`/hms/interview-plan/get-all-ai-interviews`,
+        GET_UPCOMMING_LIST:`/hms/ai-interview-zone/get-all-interviews-in-progress`,
+        CREATE_INTERVIEW_SESSION:`/api/interview/create-interview-session`,
+        GENERATE_AI_QUESTIONS:`/api/interview/generate-ai-questions`,
+        CUSTOM_QUESTION:`/api/interview/custom-question`,
+        FINALIZE_QUESTIONS:`/api/interview/finalize-questions`,
+        UPDATE_MOVE_TO_SCHEDULE:`/api/interview/update-move-to-schedule`,
+        AI_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/interview-progress-details/${id}`
     }
 };

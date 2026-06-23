@@ -1,0 +1,191 @@
+<!-- AI Interview Card -->
+<div class="aid-card">
+  <div class="aid-ai-header-row">
+    <div>
+      <h2 class="aid-card-title" style="margin-bottom:2px">AI Interview</h2>
+      <p class="aid-card-sub mb-0">Questions &amp; Evaluation Summary</p>
+    </div>
+    <div class="aid-ai-meta-row">
+      <div class="aid-ai-meta">
+        <div class="aid-ai-meta-label">Total Questions</div>
+        <div class="aid-ai-meta-value">{{ data.totalQuestions }}</div>
+      </div>
+      <div class="aid-ai-meta">
+        <div class="aid-ai-meta-label">Attempted</div>
+        <div class="aid-ai-meta-value">{{ data.attempted }}</div>
+      </div>
+      <div class="aid-ai-meta">
+        <div class="aid-ai-meta-label">Average AI Score</div>
+        <div class="aid-ai-meta-value" style="color:var(--green)">{{ data.averageAiScore }}/10</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Table -->
+  <table class="aid-q-table">
+    <thead>
+      <tr>
+        <th style="width:48px">#</th>
+        <th>Question</th>
+        <th style="width:160px">AI Score</th>
+        <th style="width:48px">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let q of data.questions">
+        <tr class="aid-q-row-tr" (click)="toggle(q)">
+          <td>
+            <div class="aid-q-num-badge" [ngClass]="q.difficulty.toLowerCase()">{{ q.id }}</div>
+          </td>
+          <td>
+            <div style="display:flex;align-items:flex-start;gap:8px">
+              <span class="aid-q-diff" [ngClass]="q.difficulty.toLowerCase()">{{ q.difficulty }}</span>
+              <span style="font-size:13px;color:var(--gray-900);line-height:1.5">{{ q.question }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="aid-q-score-cell">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+                <span style="font-size:14px;font-weight:700;color:var(--gray-900)">{{ q.aiScore }}/{{ q.maxScore }}</span>
+                <span class="aid-q-score-label" [ngClass]="q.rating.toLowerCase()">{{ q.rating }}</span>
+              </div>
+              <div class="aid-prog-track" style="height:5px">
+                <div class="aid-prog-fill" [style.width.%]="(q.aiScore / q.maxScore) * 100"
+                     [ngClass]="'fill-' + q.rating.toLowerCase()"></div>
+              </div>
+            </div>
+          </td>
+          <td style="text-align:center">
+            <svg [style.transform]="q.expanded ? 'rotate(180deg)' : ''"
+                 style="transition:transform .2s"
+                 width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 6l4 4 4-4" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </td>
+        </tr>
+
+        <!-- Expanded row -->
+        <tr *ngIf="q.expanded" class="aid-q-expand-tr">
+          <td colspan="4">
+            <div class="aid-q-expand-grid">
+              <!-- Left: question + ideal answer + eval metrics -->
+              <div>
+                <div class="aid-expand-section-title">Question</div>
+                <p class="aid-q-text" style="margin-bottom:10px">{{ q.question }}</p>
+                <div class="aid-q-chips">
+                  <span class="aid-chip">Type: {{ q.type }}</span>
+                  <span class="aid-chip">Marks: {{ q.maxScore }}</span>
+                  <span class="aid-chip">Time Taken: {{ q.time }}</span>
+                </div>
+
+                <div style="margin-top:14px">
+                  <div class="aid-expand-section-title">AI Suggested Answer</div>
+                  <p class="aid-q-text">{{ q.idealAnswer }}</p>
+                </div>
+
+                <div style="margin-top:14px" *ngIf="q.evalDetail">
+                  <div class="aid-expand-section-title">AI Evaluation</div>
+                  <div class="aid-eval-grid">
+                    <div *ngFor="let m of evalMetrics(q)" class="aid-eval-row">
+                      <span class="aid-eval-label">{{ m.label }}</span>
+                      <span style="display:inline-flex;align-items:center;gap:3px">
+                        <ng-container *ngFor="let s of [1,2,3,4,5]">
+                          <span [style.color]="s <= m.val ? '#f59e0b' : '#e5e7eb'" style="font-size:15px;line-height:1">★</span>
+                        </ng-container>
+                        <span style="font-size:12px;color:var(--gray-500);margin-left:3px">{{ m.val }}/5</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: candidate answer + score -->
+              <div>
+                <div class="aid-expand-section-title">Candidate Answer</div>
+                <p class="aid-q-text" style="margin-bottom:16px">{{ q.candidateAnswer }}</p>
+
+                <div class="aid-expand-section-title">AI Evaluation</div>
+                <p class="aid-q-text" style="margin-bottom:14px">{{ q.aiEvaluation }}</p>
+
+                <div class="aid-score-display-box">
+                  <span style="font-size:13px;color:var(--gray-500)">Score</span>
+                  <span class="aid-score-display-num">{{ q.aiScore }}/{{ q.maxScore }}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<!-- Proctoring Summary -->
+<div class="aid-card">
+  <h2 class="aid-card-title">Proctoring Summary</h2>
+  <p class="aid-card-sub">AI monitored the interview session to ensure integrity and fairness.</p>
+
+  <div class="aid-proc-row">
+    <div class="aid-proc-stat">
+      <div class="aid-proc-num">{{ data.proctoring.totalViolations }}</div>
+      <div class="aid-proc-lbl">Total Violations</div>
+      <span class="aid-pill" [ngClass]="riskClass(data.proctoring.overallRisk)">
+        {{ data.proctoring.overallRisk }} Risk
+      </span>
+    </div>
+    <div class="aid-proc-stat">
+      <div class="aid-proc-num red">{{ data.proctoring.highSeverity }}</div>
+      <div class="aid-proc-lbl">High Severity</div>
+      <a class="aid-view-link" href="#">View Details</a>
+    </div>
+    <div class="aid-proc-stat">
+      <div class="aid-proc-num amber">{{ data.proctoring.mediumSeverity }}</div>
+      <div class="aid-proc-lbl">Medium Severity</div>
+      <a class="aid-view-link" href="#">View Details</a>
+    </div>
+    <div class="aid-proc-stat">
+      <div class="aid-proc-num green">{{ data.proctoring.lowSeverity }}</div>
+      <div class="aid-proc-lbl">Low Severity</div>
+      <a class="aid-view-link" href="#">View Details</a>
+    </div>
+    <div class="aid-proc-stat">
+      <div class="aid-proc-num" [ngClass]="riskClass(data.proctoring.overallRisk) + '-num'">
+        {{ data.proctoring.overallRisk }}
+      </div>
+      <div class="aid-proc-lbl">Overall Risk</div>
+    </div>
+  </div>
+
+  <!-- Proctoring Details Table -->
+  <h3 class="aid-section-h3" style="margin-top:20px">Proctoring Details</h3>
+  <table class="aid-round-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Violation Type</th>
+        <th>Severity</th>
+        <th>Description</th>
+        <th>Screenshot</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let v of data.proctoring.violations">
+        <td style="color:var(--gray-500);font-size:12px">{{ v.time }}</td>
+        <td class="fw-600">{{ v.violation }}</td>
+        <td>
+          <span class="aid-pill" [ngClass]="riskClass(v.severity)">{{ v.severity }}</span>
+        </td>
+        <td style="color:var(--gray-700);font-size:12px">{{ v.description }}</td>
+        <td>
+          <div *ngIf="v.snapshots?.length" style="display:flex;gap:4px">
+            <div *ngFor="let snap of v.snapshots"
+                 style="width:36px;height:28px;background:var(--gray-200);border-radius:4px;overflow:hidden">
+              <img *ngIf="snap" [src]="snap" style="width:100%;height:100%;object-fit:cover" alt="snapshot"/>
+            </div>
+          </div>
+          <span *ngIf="!v.snapshots?.length" style="color:var(--gray-400);font-size:12px">—</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

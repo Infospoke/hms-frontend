@@ -128,7 +128,7 @@ export class InterviewPlanViewComponent implements OnInit {
     if (this.back.observed) {
       this.back.emit();
     } else {
-      this.router.navigate(['/interview/interview-plan'], { relativeTo: this.route });
+      this.router.navigate(['/demand/interview-plan-config'], { relativeTo: this.route });
     }
   }
 

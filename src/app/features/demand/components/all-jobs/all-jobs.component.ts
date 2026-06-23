@@ -251,12 +251,12 @@ export class AllJobsComponent implements OnInit {
 
   viewDetails(row: any) {
     console.log(row);
-    this.router.navigateByUrl(`/demand/all-jobs/recruiter-and-response/${row?.id}/${row?.srId}`, {
+    this.router.navigateByUrl(`/demand/recruiter-assignment-management/recruiter-and-response/${row?.id}/${row?.srId}`, {
       state: { id: row?.id, srId: row?.srId }
     })
   }
 
   viewUsersList(row: any) {
-    this.router.navigateByUrl(`/users/role-permissions/by-role`, { state: { id: row?.id, } })
+    this.router.navigateByUrl(`/demand/recruiter-assignment-management/view-assignes`, { state: { id: row?.id, } })
   }
 }

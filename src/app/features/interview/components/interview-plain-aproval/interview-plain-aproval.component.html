@@ -69,7 +69,7 @@
 
   <!-- Action: Review & Approve button + arrow -->
   <ng-container *ngIf="ctx.col.key === 'action'">
-    <div class="ipa-action">
+    <div class="ipa-action" *appCan="'MYAPPROVAL:INTERVIEWPLANAPPROVALS:EDIT'">
       <button class="ipa-review-btn"
         (click)="handleReviewApprove(ctx.row); $event.stopPropagation()">
         <i class="fa-regular fa-shield-check"></i>

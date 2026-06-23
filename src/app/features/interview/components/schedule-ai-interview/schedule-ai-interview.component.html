@@ -1,0 +1,167 @@
+<div class="sai-root">
+    <app-heading heading="Schedule AI Interview" subHeading="" [showBackButton]="true" backButtonUrl=""  buttonText="Back to Generate AI Questions"/>
+  <div class="sai-content card-dd">
+
+    <!-- Candidate Overview Card -->
+    <div class="sai-overview-card">
+      <div class="sai-overview-title">Candidate Overview</div>
+      <div class="sai-overview-body">
+
+        <!-- Avatar + Name -->
+        <div class="sai-cand-identity">
+          <div class="sai-cand-avatar">{{ candidate.initials }}</div>
+          <div class="sai-cand-info">
+            <span class="sai-cand-name">{{ candidate.name }}</span>
+            <span class="sai-cand-email">{{ candidate.email }}</span>
+          </div>
+        </div>
+
+        <div class="sai-overview-divider"></div>
+
+        <!-- Job -->
+        <div class="sai-overview-stat">
+          <div class="sai-stat-label">
+            <i class="fa-regular fa-building"></i> Job
+          </div>
+          <div class="sai-stat-value">{{ candidate.job }}</div>
+        </div>
+
+        <div class="sai-overview-divider"></div>
+
+        <!-- Interview Plan -->
+        <div class="sai-overview-stat">
+          <div class="sai-stat-label">
+            <i class="fa-solid fa-list-check"></i> Interview Plan
+          </div>
+          <div class="sai-stat-value">{{ candidate.interviewPlan }}</div>
+        </div>
+
+        <div class="sai-overview-divider"></div>
+
+        <!-- Interview Type -->
+        <div class="sai-overview-stat">
+          <div class="sai-stat-label">
+            <i class="fa-solid fa-video"></i> Interview Type
+          </div>
+          <div class="sai-stat-value">{{ candidate.interviewType }}</div>
+        </div>
+
+        <div class="sai-overview-divider"></div>
+
+        <!-- Duration -->
+        <div class="sai-overview-stat">
+          <div class="sai-stat-label">
+            <i class="fa-regular fa-clock"></i> Duration
+          </div>
+          <div class="sai-stat-value">{{ candidate.duration }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Main Grid: Calendar + Time Slot ─────────── -->
+    <div class="sai-main-grid">
+
+      <!-- Calendar Panel -->
+      <div class="sai-panel">
+        <div class="sai-panel-heading">
+          <i class="fa-regular fa-calendar-days"></i>
+          <span>Select Date</span>
+        </div>
+
+        <!-- Month Nav -->
+        <div class="sai-cal-header">
+          <button class="sai-cal-nav" (click)="prevMonth()">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span class="sai-cal-month">{{ currentMonthLabel }}</span>
+          <button class="sai-cal-nav" (click)="nextMonth()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Weekday Headers -->
+        <div class="sai-cal-grid">
+          <div class="sai-cal-dow" *ngFor="let wd of weekDays">{{ wd }}</div>
+
+          <!-- Days -->
+          <div
+            class="sai-cal-day"
+            *ngFor="let day of calendarDays"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.is-weekend]="day.isWeekend && day.isCurrentMonth && !day.isPast"
+            [class.is-selected]="day.isSelected"
+            [class.is-today]="day.isToday && !day.isSelected"
+            [class.is-past]="day.isPast && day.isCurrentMonth"
+            [class.is-clickable]="day.isCurrentMonth && !day.isPast"
+            (click)="selectDate(day)"
+          >
+            {{ day.date }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Slot Panel -->
+      <div class="sai-panel">
+        <div class="sai-panel-heading">
+          <i class="fa-regular fa-clock"></i>
+          <span>Select Time Slot (IST)</span>
+        </div>
+
+       
+
+        <!-- Time Slots -->
+        <div class="sai-slots-list" *ngIf="!noSlotsAvailable">
+          <div
+            class="sai-slot"
+            *ngFor="let slot of timeSlots"
+            [class.is-selected]="slot.selected"
+            (click)="selectTimeSlot(slot)"
+          >
+            <div class="sai-slot-radio">
+              <div class="sai-radio-outer">
+                <div class="sai-radio-inner" *ngIf="slot.selected"></div>
+              </div>
+            </div>
+            <span class="sai-slot-label">{{ slot.label }}</span>
+            <span class="sai-slot-avail available">Available</span>
+          </div>
+        </div>
+
+        <!-- No slots available (all passed for today) -->
+        <div class="sai-no-slots" *ngIf="noSlotsAvailable">
+          <i class="fa-regular fa-clock sai-no-slots-icon"></i>
+          <span class="sai-no-slots-title">No slots available today</span>
+          <span class="sai-no-slots-sub">All interview slots for today have passed. Please select a future date.</span>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="sai-info-banner">
+          <i class="fa-solid fa-circle-info sai-info-icon"></i>
+          <span>The interview link will be sent to the candidate via email after scheduling.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Proposed Schedule Bar ────────────────────── -->
+    <div class="sai-proposed-bar" *ngIf="proposedSchedule">
+      <i class="fa-regular fa-calendar-check sai-proposed-icon"></i>
+      <div class="sai-proposed-text">
+        <span class="sai-proposed-label">Proposed Schedule</span>
+        <span class="sai-proposed-value">{{ proposedSchedule }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Footer Actions ──────────────────────────────── -->
+  <div class="sai-footer">
+    <button class="sai-btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="sai-btn-schedule" (click)="onSchedule()">
+      <i class="fa-regular fa-calendar-plus"></i>
+      Schedule Interview
+    </button>
+  </div>
+
+</div>

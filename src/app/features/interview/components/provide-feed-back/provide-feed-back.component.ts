@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import {
@@ -11,6 +11,7 @@ import {
   DEFAULT_COMPETENCIES,
   CompetencyRow,
 } from '../interview-feedback-form/interview-feedback-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-provide-feed-back',
@@ -45,7 +46,7 @@ export class ProvideFeedBackComponent {
     currentLocation: 'Bangalore, Karnataka, India',
     stage: 'Round 1',
   };
-
+  private router=inject(Router)
   // Pass a fresh copy so mutations inside the form don't touch the original array
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
 
@@ -56,5 +57,10 @@ export class ProvideFeedBackComponent {
 
   onFeedbackCancel(): void {
     // navigate back
+  }
+
+  handleBack(){
+  
+    this.router.navigate(["/supply/my-interview-requests"],{state:{activeType:'fp'}})
   }
 }

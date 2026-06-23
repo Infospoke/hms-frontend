@@ -1,0 +1,174 @@
+<div class="page-wrapper">
+
+  <!-- Back Navigation -->
+  
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <app-heading heading="Interview Details" subHeading="Review candidate profile and conduct the scheduled interview." [showBackButton]="true" buttonText="Back to Interviews" backButtonUrl="/supply/my-interview-requests"/>
+    <button class="view-job-btn" (click)="onViewJobDetails()">
+      View Job &amp; Candidate Details
+      <span class="btn-arrow">&#8250;</span>
+    </button>
+  </div>
+
+  <!-- Interview Information -->
+  <div class="section-card">
+    <h2 class="section-title">Interview Information</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Interview ID</span>
+        <span class="info-value">{{ interviewInfo.interviewId }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Job Title</span>
+        <span class="info-value">{{ interviewInfo.jobTitle }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Interview Type</span>
+        <span class="info-value">{{ interviewInfo.interviewType }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Scheduled Time</span>
+        <span class="info-value">{{ interviewInfo.scheduledTime }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Candidate Name</span>
+        <span class="info-value">{{ interviewInfo.candidateName }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Department</span>
+        <span class="info-value">{{ interviewInfo.department }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Interview Mode</span>
+        <span class="info-value">{{ interviewInfo.interviewMode }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Duration</span>
+        <span class="info-value">{{ interviewInfo.duration }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Candidate ID</span>
+        <span class="info-value">{{ interviewInfo.candidateId }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Interview Round</span>
+        <span class="info-value">{{ interviewInfo.interviewRound }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Meeting Platform</span>
+        <span class="info-value meet-value">
+          <img src="https://www.google.com/favicon.ico" alt="Google Meet" class="meet-icon" />
+          {{ interviewInfo.meetingPlatform }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experience Details -->
+  <div class="section-card">
+    <h2 class="section-title">Experience Details</h2>
+    <div class="experience-layout">
+      <!-- Left sidebar -->
+      <div class="experience-sidebar">
+        <div class="exp-badge">
+          <div class="exp-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6c63ff" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+          </div>
+          <div class="exp-years">{{ totalExperience }}</div>
+          <div class="exp-label">Total Experience</div>
+        </div>
+        <div class="sidebar-info">
+          <div class="sidebar-label">Current Company</div>
+          <div class="sidebar-value">{{ currentCompany }}</div>
+        </div>
+        <div class="sidebar-info">
+          <div class="sidebar-label">Current Role</div>
+          <div class="sidebar-value">{{ currentRole }}</div>
+        </div>
+      </div>
+
+      <!-- Experience table -->
+      <div class="experience-table-wrap">
+        <table class="experience-table">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Role</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let exp of experiences">
+              <td>{{ exp.company }}</td>
+              <td>{{ exp.role }}</td>
+              <td>{{ exp.duration }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Details -->
+  <div class="section-card">
+    <h2 class="section-title">Projects Details</h2>
+    <table class="projects-table">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Role</th>
+          <th>Technologies</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let project of projects">
+          <td class="project-name">{{ project.name }}</td>
+          <td>{{ project.role }}</td>
+          <td class="tech-cell">{{ project.technologies }}</td>
+          <td class="desc-cell">{{ project.description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Candidate Documents -->
+  <div class="section-card">
+    <h2 class="section-title">Candidate Documents</h2>
+    <div class="documents-row">
+      <div class="doc-card" *ngFor="let doc of documents">
+        <div class="doc-icon-wrap">
+          <div class="doc-icon" [style.background-color]="doc.color">
+            <span class="doc-type-label">{{ doc.type }}</span>
+          </div>
+        </div>
+        <div class="doc-info">
+          <div class="doc-name">{{ doc.name }}</div>
+          <div class="doc-meta">{{ doc.type }} · {{ doc.size }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Action Bar -->
+  <div class="action-bar">
+    <button class="action-btn start-btn" (click)="onStartInterview()">
+      <span class="btn-icon start-icon">&#9654;</span>
+      Start Interview
+    </button>
+    <button class="action-btn complete-btn" (click)="onComplete()">
+      <span class="btn-icon complete-icon">&#10003;</span>
+      Complete
+    </button>
+    <button class="action-btn cancel-btn" (click)="onCancel()">
+      <span class="btn-icon cancel-icon">&#10005;</span>
+      Cancel
+    </button>
+  </div>
+
+</div>

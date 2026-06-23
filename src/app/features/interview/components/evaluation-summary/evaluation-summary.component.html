@@ -1,0 +1,248 @@
+<!-- Evaluation Summary Card -->
+<div class="aid-card">
+  <h2 class="aid-card-title">Evaluation Summary</h2>
+  <p class="aid-card-sub">Overall performance summary for this candidate across all interview rounds.</p>
+
+  <!-- Stats Row -->
+  <div class="aid-stats-row">
+    <div class="aid-stat-cell">
+      <div class="aid-stat-label">Average AI Score</div>
+      <div class="aid-stat-value green">{{ data.averageAiScore }}%</div>
+    </div>
+    <div class="aid-stat-cell">
+      <div class="aid-stat-label">Total Rounds Completed</div>
+      <div class="aid-stat-value">{{ data.totalRoundsCompleted }}/{{ data.totalRounds }}</div>
+    </div>
+    <div class="aid-stat-cell">
+      <div class="aid-stat-label">Total Questions Attempted</div>
+      <div class="aid-stat-value">{{ data.totalQuestionsAttempted }}</div>
+    </div>
+    <div class="aid-stat-cell">
+      <div class="aid-stat-label">Average Score Across Rounds</div>
+      <div class="aid-stat-value">{{ data.averageScoreAcrossRounds }}%</div>
+    </div>
+    <div class="aid-stat-cell">
+      <div class="aid-stat-label">Status</div>
+      <div class="aid-stat-value green">{{ data.status }}</div>
+      <div class="aid-stat-sub">Minimum Pass Score: {{ data.minimumPassScore }}%</div>
+    </div>
+    <!-- Donut Chart Cell -->
+    <div class="aid-stat-cell aid-stat-cell--donut">
+      <div class="aid-donut-wrap">
+        <svg viewBox="0 0 120 120" width="110" height="110" style="display:block">
+          <!-- Track -->
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#e5e7eb" stroke-width="11"/>
+          <!-- Progress arc -->
+          <circle cx="60" cy="60" r="46" fill="none" stroke="#10b981" stroke-width="11"
+                  stroke-linecap="round"
+                  [attr.stroke-dasharray]="289"
+                  [attr.stroke-dashoffset]="289 * (1 - data.overallScore / 100)"
+                  transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="aid-donut-center">
+          <div class="aid-donut-value">{{ data.overallScore }}%</div>
+          <div class="aid-donut-label">Overall Score</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Round-wise Performance -->
+  <h3 class="aid-section-h3">Round-wise Performance</h3>
+  <p class="aid-section-p">Performance breakdown across all interview rounds.</p>
+
+  <table class="aid-round-table">
+    <thead>
+      <tr>
+        <th style="width:60px">Round</th>
+        <th>Round Type</th>
+        <th>Interviewer / System</th>
+        <th style="width:180px">Score</th>
+        <th>Recommendation</th>
+        <th style="width:48px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let row of data.rounds">
+        <tr (click)="toggle(row)">
+          <td>
+            <div class="aid-round-badge" [ngClass]="'round-' + row.round">{{ row.round }}</div>
+          </td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <!-- AI icon -->
+              <span *ngIf="row.roundType === 'AI Interview'" class="aid-round-icon ai">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5.5 6.5C5.5 5.4 6.4 4.5 7.5 4.5h1C9.6 4.5 10.5 5.4 10.5 6.5c0 .8-.5 1.5-1.2 1.8L9 9H7l-.3-.7C6 8 5.5 7.3 5.5 6.5z" stroke="currentColor" stroke-width="1.1"/>
+                  <path d="M7 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <!-- Technical icon -->
+              <span *ngIf="row.roundType === 'Technical Round'" class="aid-round-icon tech">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path d="M4.5 5.5L2 8l2.5 2.5M11.5 5.5L14 8l-2.5 2.5M9 4l-2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <!-- Managerial icon -->
+              <span *ngIf="row.roundType === 'Managerial Round'" class="aid-round-icon mgr">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <rect x="1.5" y="5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5.5 5V3.5A1.5 1.5 0 017 2h2a1.5 1.5 0 011.5 1.5V5" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+              </span>
+              <!-- HR icon -->
+              <span *ngIf="row.roundType === 'HR Round'" class="aid-round-icon hr">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M1.5 13c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="fw-600">{{ row.roundType }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="fw-600" style="color:var(--gray-900)">{{ row.interviewerName }}</div>
+            <div style="font-size:11px;color:var(--gray-400)">{{ row.interviewerTitle }}</div>
+          </td>
+          <td>
+            <div class="aid-score-row">
+              <div class="aid-prog-track">
+                <div class="aid-prog-fill" [style.width.%]="row.score"
+                     [style.background]="row.score >= 80 ? 'var(--green)' : row.score >= 60 ? 'var(--amber)' : 'var(--red)'"></div>
+              </div>
+              <span class="fw-600" style="font-size:13px">{{ row.score }}%</span>
+            </div>
+          </td>
+          <td>
+            <span class="aid-pill" [ngClass]="pillClass(row.recommendation)">
+              <svg *ngIf="row.recommendation === 'Strong Hire'" width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+                <path d="M6 1l1.24 2.52L10 4.04l-2 1.95.47 2.75L6 7.5l-2.47 1.24L4 5.99 2 4.04l2.76-.52L6 1z"/>
+              </svg>
+              {{ row.recommendation }}
+            </span>
+          </td>
+          <td style="text-align:center">
+            <svg [style.transform]="row.expanded ? 'rotate(180deg)' : ''"
+                 style="transition:transform .2s"
+                 width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 6l4 4 4-4" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </td>
+        </tr>
+
+        <!-- Expanded Detail Row -->
+        <tr *ngIf="row.expanded" class="aid-expand-row">
+          <td colspan="6">
+            <div class="aid-expand-inner">
+              <!-- Evaluation Summary -->
+              <div *ngIf="row.evalSummary">
+                <div class="aid-expand-section-title">Evaluation Summary</div>
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                  <tr *ngFor="let skill of row.evalSummary.skills"
+                      style="border-bottom:1px solid var(--gray-100)">
+                    <td style="padding:8px 0;color:var(--gray-700)">{{ skill.label }}</td>
+                    <td style="padding:8px 0;text-align:right">
+                      <span style="display:inline-flex;align-items:center;gap:3px">
+                        <ng-container *ngFor="let s of [1,2,3,4,5]">
+                          <span [style.color]="s <= getRatingNum(skill.score) ? '#f59e0b' : '#e5e7eb'"
+                                style="font-size:16px;line-height:1">★</span>
+                        </ng-container>
+                        <span style="font-size:12px;color:var(--gray-500);margin-left:4px">{{ skill.score }}/5</span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding:10px 0;font-weight:700;color:var(--gray-900)">Total Score</td>
+                    <td style="padding:10px 0;text-align:right;font-weight:700;color:var(--primary)">
+                      {{ row.evalSummary.totalScore }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Interviewer Feedback -->
+              <div *ngIf="row.interviewerFeedback">
+                <div class="aid-expand-section-title">Interviewer Feedback</div>
+                <p style="font-size:13px;color:var(--gray-700);line-height:1.6;margin-bottom:12px">
+                  {{ row.interviewerFeedback }}
+                </p>
+                <div class="aid-expand-section-title">Recommendation</div>
+                <span class="aid-pill" [ngClass]="pillClass(row.recommendation)">{{ row.recommendation }}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<!-- Consolidated Evaluation -->
+<div class="aid-card">
+  <h2 class="aid-card-title">Consolidated Evaluation</h2>
+  <p class="aid-card-sub">AI Interviewer's insights to help you make the final decision.</p>
+
+  <div class="aid-consolidated">
+    <!-- Key Strengths -->
+    <div class="aid-list-card aid-list-card--green">
+      <div class="aid-list-card-title" style="color:var(--green)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Key Strengths
+      </div>
+      <ul class="aid-check-list">
+        <li *ngFor="let s of data.keyStrengths">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;color:var(--green)">
+            <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {{ s }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Areas of Improvement -->
+    <div class="aid-list-card aid-list-card--amber">
+      <div class="aid-list-card-title" style="color:var(--amber)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 2L2 13h12L8 2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M8 7v3M8 11.5v.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        Areas of Improvement
+      </div>
+      <ul class="aid-check-list">
+        <li *ngFor="let a of data.areasOfImprovement">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;color:var(--amber)">
+            <path d="M6 1.5L1 10.5h10L6 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            <path d="M6 5.5v2M6 9v.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          {{ a }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- AI Recommendation -->
+    <div class="aid-list-card aid-list-card--primary">
+      <div class="aid-list-card-title" style="color:var(--primary)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5.5 6.5C5.5 5.4 6.4 4.5 7.5 4.5h1C9.6 4.5 10.5 5.4 10.5 6.5c0 .8-.5 1.5-1.2 1.8L9 9H7l-.3-.7C6 8 5.5 7.3 5.5 6.5z" stroke="currentColor" stroke-width="1.1"/>
+        </svg>
+        AI Recommendation
+      </div>
+      <div class="aid-rec-value">{{ data.status }}</div>
+      <p style="font-size:12px;color:var(--gray-700);line-height:1.6;margin-bottom:12px">
+        {{ data.aiRecommendation }}
+      </p>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="aid-prog-track" style="flex:1">
+          <div class="aid-prog-fill" [style.width.%]="data.aiRecommendationScore"
+               style="background:var(--primary)"></div>
+        </div>
+        <span style="font-size:13px;font-weight:700;color:var(--primary)">{{ data.aiRecommendationScore }}%</span>
+      </div>
+    </div>
+  </div>
+</div>

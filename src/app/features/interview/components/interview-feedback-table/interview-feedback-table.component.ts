@@ -1,6 +1,8 @@
-import { Component, ViewChild, TemplateRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, TemplateRef, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
+import { Router } from '@angular/router';
+import { CanDirective } from "../../../../shared/directives/can.directive";
 
 export interface InterviewFeedback {
   id: string;
@@ -17,7 +19,7 @@ export interface InterviewFeedback {
 }
 @Component({
   selector: 'app-interview-feedback-table',
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent, CanDirective],
   templateUrl: './interview-feedback-table.component.html',
   styleUrl: './interview-feedback-table.component.scss',
 })
@@ -26,7 +28,7 @@ export class InterviewFeedbackTableComponent {
   @Input() payload!: any;
   @Output() pageChange = new EventEmitter<number>();
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
- 
+  private router=inject(Router);
   columns: TableColumn[] = [
     { key: 'candidate',     label: 'Candidate',       custom: true, width: '180px' },
     { key: 'jobTitle',      label: 'Job Title',        custom: true, width: '190px' },
@@ -58,4 +60,8 @@ export class InterviewFeedbackTableComponent {
  
   onPageChange(p: number): void { this.currentPage = p; }
   onRowClick(_r: InterviewFeedback): void {}
+
+  handleProvide(row:any){
+    this.router.navigateByUrl('/supply/my-interview-requests/provide-feedback')
+  }
 }

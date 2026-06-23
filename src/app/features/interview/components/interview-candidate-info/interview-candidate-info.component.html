@@ -3,7 +3,6 @@
 
     <div class="panel-header no-border">
       <span class="panel-title">Candidate Details</span>
-     
     </div>
 
     <!-- Avatar + name block -->
@@ -22,36 +21,37 @@
     <div class="cand-details">
       <div class="detail-row">
         <span class="detail-label">Candidate ID:</span>
-        <span class="detail-value">{{ candidate.candidateId }}</span>
+        <span class="detail-value">{{ candidate.candidateId || '—' }}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Email:</span>
-        <span class="detail-value link">{{ candidate.email }}</span>
+        <span class="detail-value link">{{ candidate.email || '—' }}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Phone:</span>
-        <span class="detail-value">{{ candidate.phone }}</span>
+        <span class="detail-value">{{ candidate.phone || '—' }}</span>
       </div>
       <div class="detail-row inline-row">
         <span class="detail-label">Current Location:</span>
-        <span class="detail-value">{{ candidate.currentLocation }}</span>
+        <span class="detail-value">{{ candidate.currentLocation || '—' }}</span>
         <span class="divider-v"></span>
         <span class="detail-label">Notice Period:</span>
-        <span class="detail-value">{{ candidate.noticePeriod }}</span>
+        <span class="detail-value">{{ candidate.noticePeriod || '—' }}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Current Company:</span>
-        <span class="detail-value">{{ candidate.currentCompany }}</span>
+        <span class="detail-value">{{ candidate.currentCompany || '—' }}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Total Experience:</span>
-        <span class="detail-value">{{ candidate.totalExperience }}</span>
+        <span class="detail-value">{{ candidate.totalExperience || '—' }}</span>
       </div>
     </div>
 
   </div>
 
-   <div class="tabs" role="tablist" *ngIf="tabs">
+  <!-- Tabs -->
+  <div class="tabs" role="tablist" *ngIf="tabs.length">
     <button
       *ngFor="let tab of tabs"
       class="tab"
@@ -67,74 +67,120 @@
   <!-- ── Tab Content ─────────────────────────────────────────── -->
   <div class="tab-content">
 
-    <!-- Personal -->
+    <!-- ── Personal ────────────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'personal'">
       <div class="info-grid">
-        <div class="info-item" *ngIf="candidate.dateOfBirth">
+
+        <div class="info-item">
           <label>Date of Birth</label>
-          <span>{{ candidate.dateOfBirth }}<ng-container *ngIf="candidate.age"> ({{ candidate.age }})</ng-container></span>
+          <span>{{ candidate.dateOfBirth || '—' }}<ng-container *ngIf="candidate.age"> ({{ candidate.age }})</ng-container></span>
         </div>
-        <div class="info-item" *ngIf="candidate.gender">
+
+        <div class="info-item">
           <label>Gender</label>
-          <span>{{ candidate.gender }}</span>
+          <span>{{ candidate.gender || '—' }}</span>
         </div>
-        <div class="info-item" *ngIf="candidate.nationality">
+
+        <div class="info-item">
           <label>Nationality</label>
-          <span>{{ candidate.nationality }}</span>
+          <span>{{ candidate.nationality || '—' }}</span>
         </div>
-        <div class="info-item full" *ngIf="candidate.languages?.length">
+
+        <div class="info-item full">
           <label>Languages Known</label>
-          <div class="tags-row">
+          <div class="tags-row" *ngIf="candidate.languages?.length; else noLangs">
             <span class="lang-tag" *ngFor="let lang of candidate.languages">{{ lang }}</span>
           </div>
+          <ng-template #noLangs><span>—</span></ng-template>
         </div>
-        <div class="info-item full" *ngIf="candidate.address">
+
+        <div class="info-item full">
           <label>Address</label>
-          <span>{{ candidate.address }}</span>
+          <span>{{ candidate.address || '—' }}</span>
         </div>
+
       </div>
     </ng-container>
 
-    <!-- Education -->
+    <!-- ── Education ────────────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'education'">
-      <div class="info-grid">
-        <div class="info-item full" *ngIf="candidate.degree">
-          <label>Degree</label>
-          <span>{{ candidate.degree }}</span>
+
+      <!-- Multiple education entries from API -->
+      <ng-container *ngIf="candidate.education?.length; else singleEdu">
+        <div class="edu-card" *ngFor="let edu of candidate.education">
+          <div class="info-grid">
+            <div class="info-item full">
+              <label>Degree</label>
+              <span>{{ edu.degree || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Institution</label>
+              <span>{{ edu.institution || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Field of Study</label>
+              <span>{{ edu.fieldOfStudy || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Year of Passing</label>
+              <span>{{ edu.endYear || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <label>CGPA / Percentage</label>
+              <span>{{ edu.percentage || '—' }}</span>
+            </div>
+          </div>
         </div>
-        <div class="info-item" *ngIf="candidate.university">
-          <label>University</label>
-          <span>{{ candidate.university }}</span>
+      </ng-container>
+
+      <!-- Fallback to flat fields if education array is not present -->
+      <ng-template #singleEdu>
+        <div class="info-grid">
+          <div class="info-item full">
+            <label>Degree</label>
+            <span>{{ candidate.degree || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>University</label>
+            <span>{{ candidate.university || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>Year of Passing</label>
+            <span>{{ candidate.yearOfPassing || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <label>CGPA</label>
+            <span>{{ candidate.cgpa || '—' }}</span>
+          </div>
         </div>
-        <div class="info-item" *ngIf="candidate.yearOfPassing">
-          <label>Year of Passing</label>
-          <span>{{ candidate.yearOfPassing }}</span>
-        </div>
-        <div class="info-item" *ngIf="candidate.cgpa">
-          <label>CGPA</label>
-          <span>{{ candidate.cgpa }}</span>
-        </div>
-      </div>
+      </ng-template>
+
     </ng-container>
 
-    <!-- Experience -->
+    <!-- ── Experience ───────────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'experience'">
+
+      <!-- Summary row -->
       <div class="info-grid">
-        <div class="info-item full" *ngIf="candidate.currentCompany">
-          <label>Current Company</label>
-          <span>{{ candidate.currentCompany }}</span>
-        </div>
-        <div class="info-item full" *ngIf="candidate.currentRole">
-          <label>Current Role</label>
-          <span>{{ candidate.currentRole }}</span>
-        </div>
-        <div class="info-item" *ngIf="candidate.totalExperience">
+        <div class="info-item">
           <label>Total Experience</label>
-          <span>{{ candidate.totalExperience }}</span>
+          <span>{{ candidate.totalExperience || '—' }}</span>
         </div>
-        <div class="info-item" *ngIf="candidate.noticePeriod">
+        <div class="info-item">
+          <label>Relevant Experience</label>
+          <span>{{ candidate.experience?.relevantExperience || '—' }}</span>
+        </div>
+        <div class="info-item">
           <label>Notice Period</label>
-          <span>{{ candidate.noticePeriod }}</span>
+          <span>{{ candidate.noticePeriod || '—' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Current Company</label>
+          <span>{{ candidate.currentCompany || '—' }}</span>
+        </div>
+        <div class="info-item">
+          <label>Current Role</label>
+          <span>{{ candidate.currentRole || '—' }}</span>
         </div>
         <div class="info-item" *ngIf="candidate.currentCtc">
           <label>Current CTC</label>
@@ -145,22 +191,56 @@
           <span>{{ candidate.expectedCtc }}</span>
         </div>
       </div>
+
+      <!-- Detailed experience entries -->
+      <ng-container *ngIf="candidate.experience?.details?.length">
+        <div class="section-divider">
+          <span class="section-label">Work History</span>
+        </div>
+        <div class="exp-card" *ngFor="let exp of candidate.experience?.details">
+          <div class="exp-header">
+            <span class="exp-title">{{ exp.jobTitle }}</span>
+            <span class="exp-company">{{ exp.company }}</span>
+            <span class="exp-dates">{{ exp.startDate }} – {{ exp.endDate || 'Present' }}</span>
+          </div>
+          <ul class="exp-desc" *ngIf="exp.description?.length">
+            <li *ngFor="let point of exp.description">{{ point }}</li>
+          </ul>
+        </div>
+      </ng-container>
+
     </ng-container>
 
-    <!-- Projects -->
+    <!-- ── Projects ─────────────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'projects'">
       <p class="empty-state" *ngIf="!candidate.projects?.length">No projects added yet.</p>
       <div *ngFor="let project of candidate.projects" class="project-card">
-        <div class="project-name">{{ project.name }}</div>
-        <p class="project-desc" *ngIf="project.description">{{ project.description }}</p>
+        <div class="project-header">
+          <span class="project-name">{{ project.name || project.title }}</span>
+          <span class="exp-dates" *ngIf="project.startDate">
+            {{ project.startDate }} – {{ project.endDate || 'Present' }}
+          </span>
+        </div>
+        <!-- description can be string or array -->
+        <p class="project-desc" *ngIf="isString(project.description)">{{ project.description }}</p>
+        <ul class="project-desc" *ngIf="isArray(project.description)">
+          <li *ngFor="let point of project.description">{{ point }}</li>
+        </ul>
+        <div class="tags-row" *ngIf="project.techStack?.length">
+          <span class="lang-tag" *ngFor="let tech of project.techStack">{{ tech }}</span>
+        </div>
       </div>
     </ng-container>
 
-    <!-- Certifications -->
+    <!-- ── Certifications ───────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'certifications'">
       <p class="empty-state" *ngIf="!candidate.certifications?.length">No certifications added yet.</p>
-      <div class="tags-row" *ngIf="candidate.certifications?.length">
-        <span class="cert-tag" *ngFor="let cert of candidate.certifications">{{ cert }}</span>
+      <div class="cert-list" *ngIf="candidate.certifications?.length">
+        <div class="cert-item" *ngFor="let cert of candidate.certifications; let last = last"
+             [style.margin-bottom]="last ? '0' : '12px'">
+         
+          <span class="cert-tag">{{ cert }}</span>
+        </div>
       </div>
     </ng-container>
 

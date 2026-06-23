@@ -1,0 +1,834 @@
+// Shared Aid styles — imported by all interview child components
+// Variables (mirror :root from interview-performance.component.scss)
+$primary:       #4f46e5;
+$primary-light: #eef2ff;
+$green:         #10b981;
+$green-light:   #d1fae5;
+$amber:         #f59e0b;
+$amber-light:   #fef3c7;
+$red:           #ef4444;
+$red-light:     #fee2e2;
+$blue:          #3b82f6;
+$blue-light:    #dbeafe;
+$gray-50:       #f9fafb;
+$gray-100:      #f3f4f6;
+$gray-200:      #e5e7eb;
+$gray-400:      #9ca3af;
+$gray-500:      #6b7280;
+$gray-700:      #374151;
+$gray-900:      #111827;
+$radius-sm:     6px;
+$radius-md:     10px;
+$radius-lg:     14px;
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.aid-card {
+  background: #fff;
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-lg;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.aid-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900, #{$gray-900});
+  margin: 0 0 4px;
+}
+
+.aid-card-sub {
+  font-size: 12px;
+  color: var(--gray-500, #{$gray-500});
+  margin: 0 0 18px;
+}
+
+// ── Stats Row ─────────────────────────────────────────────────────────────────
+.aid-stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr) 160px;
+  gap: 0;
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.aid-stat-cell {
+  padding: 16px 20px;
+  border-right: 1px solid var(--gray-200, #{$gray-200});
+
+  &:last-child { border-right: none; background: var(--primary-light, #{$primary-light}); }
+}
+
+.aid-stat-label {
+  font-size: 11px;
+  color: var(--gray-400, #{$gray-400});
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.aid-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900, #{$gray-900});
+
+  &.green   { color: var(--green, #{$green}); }
+  &.primary { color: var(--primary, #{$primary}); }
+}
+
+.aid-stat-sub {
+  font-size: 11px;
+  color: var(--gray-400, #{$gray-400});
+}
+
+.aid-overall-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  gap: 4px;
+
+  .circle-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary, #{$primary});
+  }
+
+  .circle-label {
+    font-size: 11px;
+    color: var(--gray-500, #{$gray-500});
+    font-weight: 500;
+  }
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.aid-round-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr {
+    background: var(--gray-50, #{$gray-50});
+    border-bottom: 1px solid var(--gray-200, #{$gray-200});
+  }
+
+  th {
+    padding: 10px 14px;
+    font-weight: 500;
+    color: var(--gray-500, #{$gray-500});
+    text-align: left;
+    font-size: 12px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--gray-100, #{$gray-100});
+    cursor: pointer;
+    transition: background 0.12s;
+
+    &:hover { background: var(--gray-50, #{$gray-50}); }
+    &:last-child { border-bottom: none; }
+  }
+
+  td {
+    padding: 14px;
+    vertical-align: middle;
+  }
+}
+
+.aid-round-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary-light, #{$primary-light});
+  color: var(--primary, #{$primary});
+  font-weight: 700;
+  font-size: 12px;
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+.aid-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aid-progress {
+  width: 80px;
+  height: 6px;
+  background: var(--gray-200, #{$gray-200});
+  border-radius: 3px;
+  overflow: hidden;
+
+  &-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--green, #{$green});
+  }
+}
+
+// ── Pill ──────────────────────────────────────────────────────────────────────
+.aid-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.pass, &.strong-hire { background: var(--green-light, #{$green-light}); color: var(--green, #{$green}); }
+  &.hold                 { background: var(--amber-light, #{$amber-light}); color: var(--amber, #{$amber}); }
+  &.reject               { background: var(--red-light, #{$red-light});     color: var(--red, #{$red}); }
+}
+
+// ── Expand Row ────────────────────────────────────────────────────────────────
+.aid-expand-row td {
+  padding: 0 14px;
+  background: var(--gray-50, #{$gray-50});
+  border-bottom: 1px solid var(--gray-200, #{$gray-200});
+}
+
+.aid-expand-inner {
+  padding: 16px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+.aid-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .star {
+    color: var(--gray-200, #{$gray-200});
+    font-size: 22px;
+    line-height: 1;
+
+    &.filled { color: var(--amber, #{$amber}); }
+  }
+
+  .star-label {
+    font-size: 12px;
+    color: var(--gray-500, #{$gray-500});
+    margin-left: 4px;
+  }
+}
+
+// ── Consolidated / List Cards ─────────────────────────────────────────────────
+.aid-consolidated {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.aid-list-card {
+  background: var(--gray-50, #{$gray-50});
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  padding: 16px;
+
+  &-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-900, #{$gray-900});
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.aid-bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    font-size: 12px;
+    color: var(--gray-700, #{$gray-700});
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary, #{$primary});
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+  }
+}
+
+// ── Q Row (AI Interview) ──────────────────────────────────────────────────────
+.aid-q-row {
+  background: #fff;
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.aid-q-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 110px 120px 40px 24px;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  gap: 12px;
+
+  &:hover { background: var(--gray-50, #{$gray-50}); }
+}
+
+.aid-q-num {
+  font-weight: 700;
+  color: var(--gray-400, #{$gray-400});
+  font-size: 12px;
+}
+
+.aid-q-diff {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 8px;
+
+  &.easy   { background: var(--green-light, #{$green-light}); color: var(--green, #{$green}); }
+  &.medium { background: var(--amber-light, #{$amber-light}); color: var(--amber, #{$amber}); }
+  &.hard   { background: var(--red-light, #{$red-light});     color: var(--red, #{$red}); }
+}
+
+.aid-q-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 13px;
+
+  &.excellent { color: var(--green, #{$green}); }
+  &.good      { color: var(--blue, #{$blue}); }
+  &.average   { color: var(--amber, #{$amber}); }
+  &.poor      { color: var(--red, #{$red}); }
+}
+
+.aid-q-expand {
+  border-top: 1px solid var(--gray-200, #{$gray-200});
+  padding: 16px;
+  background: var(--gray-50, #{$gray-50});
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.aid-q-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500, #{$gray-500});
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.aid-q-text {
+  font-size: 13px;
+  color: var(--gray-700, #{$gray-700});
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ── Proctoring ────────────────────────────────────────────────────────────────
+.aid-proc-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.aid-proc-stat {
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  padding: 14px 16px;
+  text-align: center;
+
+  .value { font-size: 22px; font-weight: 700; color: var(--gray-900, #{$gray-900}); }
+  .label { font-size: 11px; color: var(--gray-400, #{$gray-400}); margin-top: 2px; }
+
+  &.high   .value { color: var(--red, #{$red}); }
+  &.medium .value { color: var(--amber, #{$amber}); }
+  &.low    .value { color: var(--green, #{$green}); }
+}
+
+// ── Round Overview ────────────────────────────────────────────────────────────
+.aid-round-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 0 28px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gray-200, #{$gray-200});
+}
+
+.aid-ov-label {
+  font-size: 11px;
+  color: var(--gray-400, #{$gray-400});
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.aid-ov-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900, #{$gray-900});
+}
+
+.aid-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green, #{$green});
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green, #{$green});
+  }
+}
+
+// ── Interviewer Grid ──────────────────────────────────────────────────────────
+.aid-interviewer-grid {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.aid-int-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gray-200, #{$gray-200});
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-500, #{$gray-500});
+  flex-shrink: 0;
+}
+
+.aid-int-field {
+  margin-bottom: 10px;
+
+  &-label { font-size: 11px; color: var(--gray-400, #{$gray-400}); font-weight: 500; margin-bottom: 2px; }
+  &-value { font-size: 13px; font-weight: 500; color: var(--gray-900, #{$gray-900}); }
+}
+
+// ── Decision Badge ────────────────────────────────────────────────────────────
+.aid-decision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: $radius-md;
+  font-weight: 600;
+  font-size: 14px;
+
+  &.next   { background: var(--green-light, #{$green-light}); color: var(--green, #{$green}); border: 1.5px solid var(--green, #{$green}); }
+  &.hold   { background: var(--amber-light, #{$amber-light}); color: var(--amber, #{$amber}); border: 1.5px solid var(--amber, #{$amber}); }
+  &.reject { background: var(--red-light, #{$red-light});     color: var(--red, #{$red});     border: 1.5px solid var(--red, #{$red}); }
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+.fw-600 { font-weight: 600; }
+.fs-12  { font-size: 12px; }
+.fs-13  { font-size: 13px; }
+.mb-0   { margin-bottom: 0; }
+.mt-12  { margin-top: 12px; }
+.text-green   { color: var(--green, #{$green}); }
+.text-amber   { color: var(--amber, #{$amber}); }
+.text-red     { color: var(--red, #{$red}); }
+.text-primary { color: var(--primary, #{$primary}); }
+
+
+// ── Donut Chart ───────────────────────────────────────────────────────────────
+.aid-stat-cell--donut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.aid-donut-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aid-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.aid-donut-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gray-900, #{$gray-900});
+  line-height: 1.1;
+}
+
+.aid-donut-label {
+  font-size: 10px;
+  color: var(--gray-500, #{$gray-500});
+  font-weight: 500;
+}
+
+// ── Section headings ──────────────────────────────────────────────────────────
+.aid-section-h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900, #{$gray-900});
+  margin: 0 0 4px;
+}
+
+.aid-section-p {
+  font-size: 12px;
+  color: var(--gray-500, #{$gray-500});
+  margin: 0 0 14px;
+}
+
+// ── Score Row (progress + pct) ────────────────────────────────────────────────
+.aid-score-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aid-prog-track {
+  flex: 1;
+  height: 6px;
+  background: var(--gray-200, #{$gray-200});
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.aid-prog-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--green, #{$green});
+  transition: width 0.3s ease;
+
+  &.fill-excellent { background: var(--green, #{$green}); }
+  &.fill-good      { background: var(--blue, #{$blue}); }
+  &.fill-average   { background: var(--amber, #{$amber}); }
+  &.fill-poor      { background: var(--red, #{$red}); }
+}
+
+// ── Colored Round Badges ──────────────────────────────────────────────────────
+.aid-round-badge {
+  &.round-1 { background: #ede9fe; color: #7c3aed; }
+  &.round-2 { background: #dbeafe; color: #1d4ed8; }
+  &.round-3 { background: #fef3c7; color: #b45309; }
+  &.round-4 { background: #d1fae5; color: #065f46; }
+}
+
+// ── Round Type Icon ───────────────────────────────────────────────────────────
+.aid-round-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  flex-shrink: 0;
+
+  &.ai   { background: #ede9fe; color: #7c3aed; }
+  &.tech { background: #dbeafe; color: #1d4ed8; }
+  &.mgr  { background: #fef3c7; color: #b45309; }
+  &.hr   { background: #d1fae5; color: #065f46; }
+}
+
+// ── Expand Section Title ──────────────────────────────────────────────────────
+.aid-expand-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-400, #{$gray-400});
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+// ── List Cards (Consolidated) ─────────────────────────────────────────────────
+.aid-list-card {
+  background: var(--gray-50, #{$gray-50});
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  padding: 16px;
+
+  &-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-900, #{$gray-900});
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &--green  { border-color: var(--green-light, #{$green-light}); background: #f0fdf4; }
+  &--amber  { border-color: var(--amber-light, #{$amber-light}); background: #fffbeb; }
+  &--primary { border-color: var(--primary-light, #{$primary-light}); background: #f5f3ff; }
+}
+
+.aid-check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--gray-700, #{$gray-700});
+    line-height: 1.5;
+  }
+}
+
+.aid-rec-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary, #{$primary});
+  margin-bottom: 8px;
+}
+
+// ── AI Interview Header ───────────────────────────────────────────────────────
+.aid-ai-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  gap: 12px;
+}
+
+.aid-ai-meta-row {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.aid-ai-meta {
+  text-align: right;
+}
+
+.aid-ai-meta-label {
+  font-size: 11px;
+  color: var(--gray-400, #{$gray-400});
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.aid-ai-meta-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900, #{$gray-900});
+}
+
+// ── Question Table (AI Interview) ─────────────────────────────────────────────
+.aid-q-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr {
+    background: var(--gray-50, #{$gray-50});
+    border-bottom: 2px solid var(--gray-200, #{$gray-200});
+  }
+
+  th {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500, #{$gray-500});
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  td { padding: 14px; vertical-align: middle; }
+}
+
+.aid-q-row-tr {
+  border-bottom: 1px solid var(--gray-100, #{$gray-100});
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover { background: var(--gray-50, #{$gray-50}); }
+}
+
+.aid-q-expand-tr td {
+  padding: 0;
+  background: var(--gray-50, #{$gray-50});
+  border-bottom: 1px solid var(--gray-200, #{$gray-200});
+}
+
+.aid-q-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.easy   { background: var(--green-light, #{$green-light}); color: var(--green, #{$green}); }
+  &.medium { background: var(--amber-light, #{$amber-light}); color: var(--amber, #{$amber}); }
+  &.hard   { background: var(--red-light, #{$red-light});     color: var(--red, #{$red}); }
+}
+
+.aid-q-score-cell { min-width: 120px; }
+
+.aid-q-score-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.excellent { background: var(--green-light, #{$green-light}); color: var(--green, #{$green}); }
+  &.good      { background: var(--blue-light, #{$blue-light});   color: var(--blue, #{$blue}); }
+  &.average   { background: var(--amber-light, #{$amber-light}); color: var(--amber, #{$amber}); }
+  &.poor      { background: var(--red-light, #{$red-light});     color: var(--red, #{$red}); }
+}
+
+.aid-q-expand-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 20px;
+}
+
+.aid-q-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.aid-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--gray-100, #{$gray-100});
+  color: var(--gray-700, #{$gray-700});
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.aid-eval-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aid-eval-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aid-eval-label {
+  font-size: 12px;
+  color: var(--gray-700, #{$gray-700});
+}
+
+.aid-score-display-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary-light, #{$primary-light});
+  border: 1px solid var(--primary, #{$primary});
+  border-radius: $radius-md;
+  padding: 12px 16px;
+}
+
+.aid-score-display-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary, #{$primary});
+}
+
+// ── Proctoring Stats Row ──────────────────────────────────────────────────────
+.aid-proc-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.aid-proc-stat {
+  border: 1px solid var(--gray-200, #{$gray-200});
+  border-radius: $radius-md;
+  padding: 14px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.aid-proc-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--gray-900, #{$gray-900});
+  line-height: 1.2;
+
+  &.red   { color: var(--red, #{$red}); }
+  &.amber { color: var(--amber, #{$amber}); }
+  &.green { color: var(--green, #{$green}); }
+}
+
+.aid-proc-lbl {
+  font-size: 11px;
+  color: var(--gray-400, #{$gray-400});
+  font-weight: 500;
+}
+
+.aid-view-link {
+  font-size: 11px;
+  color: var(--primary, #{$primary});
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover { text-decoration: underline; }
+}

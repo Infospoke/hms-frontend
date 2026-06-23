@@ -220,7 +220,7 @@ export class InterviewPlansComponent implements OnInit {
 
   // ── Event handlers ──────────────────────────────────────────────────────────
   handleCreateNewPlan(): void {
-    this.router.navigateByUrl('/interview/interview-plan/create');
+    this.router.navigateByUrl('/demand/interview-plan-config/create');
   }
 
   handleTabChange(tab: string): void {
@@ -235,11 +235,11 @@ export class InterviewPlansComponent implements OnInit {
   }
 
   handleView(row: any): void {
-    this.router.navigateByUrl(`/interview/interview-plan/view/${row.id}`);
+    this.router.navigateByUrl(`/demand/interview-plan-config/view/${row.id}`);
   }
 
   handleEdit(row: any): void {
-    this.router.navigateByUrl(`/interview/interview-plan/create`,{
+    this.router.navigateByUrl(`/demand/interview-plan-config/create`,{
       state: { id:row?.id }
     });
   }

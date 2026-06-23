@@ -7,9 +7,10 @@
       *ngFor="let s of starsArray"
       class="iff-star"
       [class.filled]="s <= (hoverRating || overallRating)"
-      (mouseenter)="hoverRating = s"
-      (mouseleave)="hoverRating = 0"
-      (click)="setRating(s)"
+      [style.cursor]="readonly ? 'default' : 'pointer'"
+      (mouseenter)="readonly ? null : (hoverRating = s)"
+      (mouseleave)="readonly ? null : (hoverRating = 0)"
+      (click)="readonly ? null : setRating(s)"
     >
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
         <path
@@ -45,12 +46,13 @@
             <span class="iff-comp-desc">{{ comp.description }}</span>
           </td>
           <td *ngFor="let col of competencyColumns" class="iff-radio-cell">
-            <label class="iff-radio-wrap">
+            <label class="iff-radio-wrap" [style.cursor]="readonly ? 'default' : 'pointer'">
               <input
                 type="radio"
                 [name]="comp.key"
                 [value]="col.value"
                 [(ngModel)]="comp.rating"
+                [disabled]="readonly"
                 class="iff-radio-hidden"
               />
               <span class="iff-radio-custom" [class.selected]="comp.rating === col.value"></span>
@@ -69,12 +71,14 @@
   <div class="iff-textarea-wrap">
     <textarea
       class="iff-textarea"
+      [class.iff-textarea--readonly]="readonly"
       rows="4"
       maxlength="500"
       placeholder="Write your feedback here..."
       [(ngModel)]="strengths"
+      [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count">{{ strengths.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ strengths.length }}/500</span>
   </div>
 </section>
 
@@ -85,12 +89,14 @@
   <div class="iff-textarea-wrap">
     <textarea
       class="iff-textarea"
+      [class.iff-textarea--readonly]="readonly"
       rows="4"
       maxlength="500"
       placeholder="Write your feedback here..."
       [(ngModel)]="areasOfImprovement"
+      [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count">{{ areasOfImprovement.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ areasOfImprovement.length }}/500</span>
   </div>
 </section>
 
@@ -104,17 +110,19 @@
   <div class="iff-textarea-wrap">
     <textarea
       class="iff-textarea"
+      [class.iff-textarea--readonly]="readonly"
       rows="4"
       maxlength="500"
       placeholder="Write your comments here..."
       [(ngModel)]="additionalComments"
+      [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count">{{ additionalComments.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ additionalComments.length }}/500</span>
   </div>
 </section>
 
 <!-- ── DECISION ──────────────────────────────────────────────────────── -->
-<section class="iff-card">
+<section class="iff-card" *ngIf="showDecision">
   <h2 class="iff-section-title">6. Decision</h2>
   <p class="iff-section-sub">Select the decision for this candidate.</p>
 
@@ -123,8 +131,9 @@
       *ngFor="let opt of decisionOptions"
       class="iff-decision-card"
       [class.selected]="decision === opt.key"
+      [class.iff-decision-card--readonly]="readonly"
       [attr.data-color]="opt.color"
-      (click)="setDecision(opt.key)"
+      (click)="readonly ? null : setDecision(opt.key)"
     >
       <span class="iff-decision-icon" [attr.data-color]="opt.color">
         <!-- Move to Next Round -->
@@ -152,8 +161,8 @@
   </div>
 </section>
 
-
-<div class="iff-actions card-dd">
+<!-- ── ACTIONS (hidden in readonly mode) ─────────────────────────────── -->
+<div class="iff-actions card-dd" *ngIf="!readonly">
   <button
     *ngIf="showCancel"
     class="iff-btn-cancel"

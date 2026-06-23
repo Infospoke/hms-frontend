@@ -28,7 +28,7 @@ function mapStatus(status: string): 'Accepted' | 'Rejected' | 'Pending' {
   switch (status?.toUpperCase()) {
     case 'ACCEPTED': return 'Accepted';
     case 'REJECTED': return 'Rejected';
-    default:         return 'Pending';
+    default: return 'Pending';
   }
 }
 
@@ -68,14 +68,14 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
 
   // ── Table columns ─────────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'round',       label: 'Round & Type',  width: '250px', custom: true },
-    { key: 'interviewer', label: 'Interviewer',   width: '180px', custom: true },
-    { key: 'response',    label: 'Response',      width: '130px', custom: true, align: 'center' },
-    { key: 'comments',    label: 'Comments',      width: '200px' },
-    { key: 'respondedOn', label: 'Responded On',  width: '130px', custom: true },
+    { key: 'round', label: 'Round & Type', width: '250px', custom: true },
+    { key: 'interviewer', label: 'Interviewer', width: '180px', custom: true },
+    { key: 'response', label: 'Response', width: '130px', custom: true, align: 'center' },
+    { key: 'comments', label: 'Comments', width: '200px' },
+    { key: 'respondedOn', label: 'Responded On', width: '130px', custom: true },
   ];
 
-  private router          = inject(Router);
+  private router = inject(Router);
   private interviewService = inject(InterviewServiceService);
 
   // ── Computed ──────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
   get rejectedCount(): number {
     return this.responses.filter(r => r.response === 'Rejected').length;
   }
-
+  id: any;
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.loadResponse();
@@ -97,10 +97,10 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = null;
       const state = this.router.getCurrentNavigation()?.extras?.state
-                 ?? history.state;
+        ?? history.state;
       console.log(state);
       const id = state?.['id'] ?? state?.['assignmentId'];
-
+      this.id = id;
       if (!id) {
         this.errorMessage = 'No assignment ID found. Please go back and try again.';
         return;
@@ -123,48 +123,63 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
   }
 
   private mapApiResponse(data: any): void {
-    let assign:any=localStorage.getItem('jobAssigned')
-    const jobData:any=JSON.parse(assign);
+    let assign: any = localStorage.getItem('jobAssigned')
+    const jobData: any = JSON.parse(assign);
     console.log(jobData);
     this.job = {
-      title:       jobData.jobTitle  ?? 'N/A',
-      id:          ``,
-      status:      '',
-      department:  jobData.deptName  ?? 'N/A',
-      planName:    jobData.planName  ?? 'N/A',
+      title: jobData.jobTitle ?? 'N/A',
+      id: ``,
+      status: '',
+      department: jobData.deptName ?? 'N/A',
+      planName: jobData.planName ?? 'N/A',
       totalRounds: data.rounds?.length ?? 0,
-      createdOn:   jobData?.createdAt,
+      createdOn: jobData?.createdAt,
     };
 
     this.responses = (data.rounds ?? []).map((round: any, index: number) => {
       const history: any[] = round.assignmentHistory ?? [];
-      const current = history[history.length - 1] ?? {};
+      const current = history[0] ?? {};
 
       const { date, time } = formatRespondedAt(current.respondedAt ?? null);
 
       return {
-        id:          String(round.roundId),
-        label:       `R${index + 1}`,
-        colorClass:  ROUND_COLORS[index % ROUND_COLORS.length],
-        name:        round.stageName  ?? `Round ${index + 1}`,
-        description: round.stageType  ?? '',
+        id: String(round.roundId),
+        label: `R${index + 1}`,
+        colorClass: ROUND_COLORS[index % ROUND_COLORS.length],
+        name: round.stageName ?? `Round ${index + 1}`,
+        description: round.stageType ?? '',
         durationMins: 0,                         // not in API — hide if 0
         interviewer: {
-          name:   current.interviewerName ?? 'Unassigned',
-          role:   current.roleName        ?? '',
+          name: current.interviewerName ?? 'Unassigned',
+          role: current.roleName ?? '',
           avatar: '',
         },
-        response:    mapStatus(current.status),
-        comments:    current.comments   ?? '—',
+        response: mapStatus(current.status),
+        comments: current.comments ?? '—',
         respondedOn: date,
         respondedTime: time,
       } satisfies RoundResponse;
     });
   }
 
-  // ── Actions ───────────────────────────────────────────────────────────────
   onReassignInterviewer(): void {
-    this.router.navigate(['/interview/assign-interviewers-by-list']);
+    const assign = localStorage.getItem('jobAssigned');
+
+    if (!assign) return;
+
+    const jobData = JSON.parse(assign);
+
+    localStorage.setItem('details', JSON.stringify(jobData));
+    console.log(this.id,'reassign')
+    this.router.navigate(
+      ['/demand/assign-interviewers/new-assign'],
+      {
+        state: {
+          id: this.id,
+          type: 'reassign'
+        }
+      }
+    );
   }
 
   getInitials(name: string): string {

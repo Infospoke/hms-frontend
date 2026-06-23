@@ -1,0 +1,948 @@
+
+$primary:       #2563eb;
+$primary-light: #eff6ff;
+$primary-mid:   #bfdbfe;
+$primary-dark:  #1d4ed8;
+$white:         #ffffff;
+$gray-50:       #f8fafc;
+$gray-100:      #f1f5f9;
+$gray-200:      #e2e8f0;
+$gray-300:      #cbd5e1;
+$gray-400:      #94a3b8;
+$gray-600:      #475569;
+$gray-700:      #334155;
+$gray-900:      #0f172a;
+
+$behavioral:    #7c3aed;
+$situational:   #0891b2;
+$danger:        #ef4444;
+$success:       #059669;
+
+$radius-sm:     6px;
+$radius-md:     10px;
+$radius-lg:     14px;
+
+$shadow-sm:     0 1px 3px rgba(37,99,235,.08), 0 1px 2px rgba(0,0,0,.04);
+$shadow-md:     0 4px 16px rgba(37,99,235,.10), 0 2px 6px rgba(0,0,0,.06);
+$shadow-card:   0 2px 8px rgba(37,99,235,.07);
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+.iq-root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: $gray-50;
+  min-height: 100vh;
+  color: $gray-900;
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+.iq-header {
+  background: $white;
+  border-bottom: 1px solid $gray-200;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+
+.iq-candidate-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iq-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $white;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+  box-shadow: 0 2px 8px rgba($primary, .30);
+}
+
+.iq-candidate-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.iq-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iq-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: $gray-900;
+}
+
+.iq-badge {
+  background: #d1fae5;
+  color: $success;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+}
+
+.iq-meta {
+  font-size: 13px;
+  color: $gray-600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iq-contact {
+  font-size: 13px;
+  color: $gray-600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iq-contact-icon {
+  color: $gray-400;
+  font-size: 11px;
+}
+
+.iq-dot {
+  color: $gray-300;
+}
+
+.iq-header-stats {
+  display: flex;
+  gap: 28px;
+}
+
+.iq-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iq-stat-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  background: $primary-light;
+  border: 1px solid $primary-mid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.iq-stat-label {
+  font-size: 11px;
+  color: $gray-400;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.iq-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary;
+  margin-top: 1px;
+}
+
+// ─── Body Layout ─────────────────────────────────────────────────────────────
+.iq-body {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - 82px);
+}
+
+// ─── Settings Panel ───────────────────────────────────────────────────────────
+.iq-settings-panel {
+  width: 280px;
+  min-width: 260px;
+  background: $white;
+  border-right: 1px solid $gray-200;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 100%;
+  flex-shrink: 0;
+}
+
+.iq-panel-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: $gray-900;
+  margin: 0 0 18px;
+  letter-spacing: -.1px;
+}
+
+.iq-field-group {
+  margin-bottom: 16px;
+}
+
+.iq-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $gray-600;
+  margin-bottom: 6px;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+}
+
+// ─── Plan read-only display ───────────────────────────────────────────────────
+.iq-plan-readonly {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: $gray-100;
+  border: 1px solid $gray-200;
+  border-radius: $radius-sm;
+  font-size: 13.5px;
+  color: $gray-700;
+  font-weight: 500;
+
+  .iq-plan-icon {
+    color: $primary;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+}
+
+// ─── Select ───────────────────────────────────────────────────────────────────
+.iq-select-wrapper {
+  position: relative;
+
+  .iq-select-arrow {
+    position: absolute;
+    right: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: $gray-400;
+    pointer-events: none;
+  }
+}
+
+.iq-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-sm;
+  padding: 8px 30px 8px 10px;
+  font-size: 13px;
+  color: $gray-700;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, .10);
+  }
+
+  &.iq-select-sm {
+    padding: 6px 26px 6px 8px;
+    font-size: 12px;
+  }
+}
+
+// ─── Checkboxes ───────────────────────────────────────────────────────────────
+.iq-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.iq-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $gray-700;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: $primary;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+}
+
+// ─── Duration Row ─────────────────────────────────────────────────────────────
+.iq-duration-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: $gray-600;
+}
+
+.iq-clock-icon {
+  color: $primary;
+  font-size: 14px;
+}
+
+.iq-duration-text {
+  font-weight: 600;
+  color: $gray-700;
+}
+
+// ─── Pass Criteria Box ────────────────────────────────────────────────────────
+.iq-pass-criteria {
+  background: $primary-light;
+  border: 1.5px solid $primary-mid;
+  border-radius: $radius-md;
+  padding: 14px;
+  margin-bottom: 18px;
+}
+
+.iq-pass-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+}
+
+.iq-pass-icon {
+  color: $primary;
+  font-size: 13px;
+}
+
+.iq-pass-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $primary-dark;
+}
+
+.iq-pass-desc {
+  font-size: 11.5px;
+  color: $gray-600;
+  margin: 0 0 12px;
+  line-height: 1.55;
+}
+
+.iq-pass-field {
+  margin-bottom: 12px;
+
+  .iq-label {
+    color: $primary-dark;
+    font-size: 11px;
+  }
+}
+
+.iq-pass-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iq-number-input {
+  width: 70px;
+  background: $white;
+  border: 1.5px solid $primary-mid;
+  border-radius: $radius-sm;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary;
+  text-align: center;
+  font-family: inherit;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, .10);
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: auto;
+  }
+}
+
+.iq-percent-sign {
+  font-size: 13px;
+  font-weight: 600;
+  color: $gray-600;
+}
+
+.iq-pass-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 99px;
+  margin-left: auto;
+}
+
+// ─── Pass Bar ─────────────────────────────────────────────────────────────────
+.iq-pass-bar-wrap {
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.iq-pass-bar-track {
+  height: 7px;
+  background: $primary-mid;
+  border-radius: 99px;
+  position: relative;
+  overflow: visible;
+}
+
+.iq-pass-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .25s, background-color .25s;
+}
+
+.iq-pass-bar-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 15px;
+  height: 15px;
+  background: $white;
+  border: 2.5px solid $primary;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba($primary, .25);
+  transition: left .25s, border-color .25s;
+  pointer-events: none;
+}
+
+.iq-pass-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: $gray-400;
+  margin-top: 5px;
+}
+
+.iq-range-hidden {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  height: 7px;
+  margin: 0;
+}
+
+// ─── Acceptable Score Range ───────────────────────────────────────────────────
+.iq-range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iq-range {
+  flex: 1;
+  accent-color: $primary;
+  cursor: pointer;
+  height: 4px;
+}
+
+.iq-range-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: $primary-dark;
+  min-width: 30px;
+}
+
+// ─── Generate Button ──────────────────────────────────────────────────────────
+.iq-generate-btn {
+  width: 100%;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $white;
+  border: none;
+  border-radius: $radius-md;
+  padding: 11px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s, box-shadow .2s;
+  box-shadow: 0 3px 10px rgba($primary, .35);
+  margin-bottom: 14px;
+  font-family: inherit;
+  letter-spacing: .2px;
+
+  i {
+    margin-right: 6px;
+  }
+
+  &:hover {
+    opacity: .92;
+    box-shadow: 0 4px 14px rgba($primary, .45);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(.98);
+  }
+
+  &.loading {
+    opacity: .8;
+    cursor: wait;
+  }
+}
+
+.iq-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+// ─── AI Note ─────────────────────────────────────────────────────────────────
+.iq-ai-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: $gray-50;
+  border-radius: $radius-sm;
+  border: 1px solid $gray-200;
+}
+
+.iq-ai-icon {
+  color: $primary;
+  font-size: 15px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.iq-ai-note-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.iq-ai-list {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 12px;
+  color: $gray-600;
+  line-height: 1.65;
+}
+
+// ─── Questions Panel ──────────────────────────────────────────────────────────
+.iq-questions-panel {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 100%;
+}
+
+.iq-questions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.iq-questions-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $gray-900;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iq-preview-tag {
+  font-size: 11px;
+  font-weight: 600;
+  background: $primary-light;
+  color: $primary;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid $primary-mid;
+}
+
+.iq-questions-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: $primary;
+  background: $primary-light;
+  border: 1px solid $primary-mid;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+// ─── Question Cards ───────────────────────────────────────────────────────────
+.iq-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.iq-question-card {
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-lg;
+  padding: 16px 16px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  box-shadow: $shadow-card;
+  transition: border-color .2s, box-shadow .2s;
+
+  &:hover {
+    border-color: $primary-mid;
+    box-shadow: $shadow-md;
+  }
+}
+
+.iq-question-number {
+  width: 26px;
+  height: 26px;
+  background: $primary-light;
+  color: $primary;
+  border: 1px solid $primary-mid;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.iq-question-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.iq-type-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+  width: fit-content;
+
+  &.tag-technical {
+    background: #dbeafe;
+    color: $primary-dark;
+  }
+
+  &.tag-behavioral {
+    background: #ede9fe;
+    color: $behavioral;
+  }
+
+  &.tag-situational {
+    background: #cffafe;
+    color: $situational;
+  }
+}
+
+.iq-question-text {
+  font-size: 14px;
+  color: $gray-700;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+.iq-question-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: $gray-400;
+  margin-top: 2px;
+
+  i {
+    font-size: 11px;
+    color: $gray-400;
+  }
+}
+
+.iq-meta-dot {
+  color: $gray-300;
+}
+
+// ─── Question Actions ─────────────────────────────────────────────────────────
+.iq-question-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.iq-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  border: 1.5px solid $gray-200;
+  background: $white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all .2s;
+}
+
+.iq-edit-btn {
+  color: $primary;
+
+  &:hover {
+    background: $primary-light;
+    border-color: $primary;
+    color: $primary-dark;
+  }
+}
+
+.iq-delete-btn {
+  color: $danger;
+
+  &:hover {
+    background: #fef2f2;
+    border-color: $danger;
+  }
+}
+
+// ─── Edit Area ────────────────────────────────────────────────────────────────
+.iq-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.iq-edit-textarea {
+  width: 100%;
+  border: 1.5px solid $primary-mid;
+  border-radius: $radius-sm;
+  padding: 9px 11px;
+  font-size: 13.5px;
+  color: $gray-700;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, .10);
+  }
+}
+
+.iq-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.iq-btn-save {
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    background: $primary-dark;
+  }
+}
+
+.iq-btn-cancel {
+  background: $white;
+  color: $gray-600;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-sm;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+
+  &:hover {
+    border-color: $gray-400;
+    color: $gray-700;
+  }
+}
+
+// ─── Add Form ─────────────────────────────────────────────────────────────────
+.iq-add-form {
+  background: $primary-light;
+  border: 1.5px dashed $primary;
+  border-radius: $radius-lg;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn .2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.iq-add-form-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary-dark;
+  margin: 0;
+}
+
+.iq-add-form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .iq-field-group {
+    flex: 1;
+    min-width: 110px;
+    margin-bottom: 0;
+  }
+}
+
+.iq-add-form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+// ─── Add Custom Button ────────────────────────────────────────────────────────
+.iq-add-custom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: $white;
+  color: $primary;
+  border: 1.5px dashed $primary-mid;
+  border-radius: $radius-md;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  width: fit-content;
+  font-family: inherit;
+
+  i {
+    font-size: 13px;
+  }
+
+  &:hover {
+    background: $primary-light;
+    border-color: $primary;
+  }
+}
+
+// ─── Footer Actions ───────────────────────────────────────────────────────────
+.iq-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid $gray-200;
+}
+
+.iq-btn-finalize {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: $white;
+  color: $primary;
+  border: 1.5px solid $primary;
+  border-radius: $radius-md;
+  padding: 9px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+
+  i {
+    font-size: 15px;
+  }
+
+  &:hover {
+    background: $primary-light;
+  }
+}
+
+.iq-btn-schedule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-md;
+  padding: 9px 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s;
+  box-shadow: 0 3px 10px rgba($primary, .30);
+  font-family: inherit;
+
+  i {
+    font-size: 15px;
+  }
+
+  &:hover {
+    background: $primary-dark;
+    box-shadow: 0 4px 14px rgba($primary, .40);
+  }
+}
+
+.iq-btn-plain {
+  background: none;
+  color: $gray-600;
+  border: none;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  font-family: inherit;
+
+  &:hover {
+    color: $gray-900;
+    background: $gray-100;
+  }
+}

@@ -20,7 +20,18 @@
         </button>
       </div>
       <div class="all-jobs">
-        <app-job [filteredJobs]="filteredJobsList" (selectedJobIdChange)="handleSelectedJob($event)" />
+        <ng-container *ngIf="filteredJobsList.length > 0; else noJobs">
+          <app-job [filteredJobs]="filteredJobsList" (selectedJobIdChange)="handleSelectedJob($event)" />
+        </ng-container>
+        <ng-template #noJobs>
+          <div class="no-jobs-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" stroke-width="1.5">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+            <span>No jobs available</span>
+          </div>
+        </ng-template>
       </div>
     </div>
 

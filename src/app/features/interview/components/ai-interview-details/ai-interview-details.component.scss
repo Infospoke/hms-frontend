@@ -1,0 +1,480 @@
+// ─── Blue & White Design Tokens ───────────────────────────────────────────────
+$primary:        #2563eb;
+$primary-light:  #eff6ff;
+$primary-mid:    #bfdbfe;
+$primary-dark:   #1d4ed8;
+$primary-subtle: #dbeafe;
+
+$white:          #ffffff;
+$bg:             #f8f9ff;        // near-white page bg
+
+$gray-50:        #f8fafc;
+$gray-100:       #f1f5f9;
+$gray-200:       #e2e8f0;
+$gray-300:       #cbd5e1;
+$gray-400:       #94a3b8;
+$gray-500:       #64748b;
+$gray-600:       #475569;
+$gray-700:       #334155;
+$gray-900:       #0f172a;
+
+// status / difficulty colours stay for meaning
+$green:          #059669;
+$green-light:    #d1fae5;
+$amber:          #d97706;
+$amber-light:    #fef3c7;
+$danger:         #ef4444;
+$danger-light:   #fef2f2;
+
+$radius-sm:      6px;
+$radius-md:      10px;
+$radius-lg:      14px;
+$radius-xl:      18px;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+.ic-root {
+  
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  
+}
+
+// ─── Header Card ──────────────────────────────────────────────────────────────
+.ic-header-card {
+  background: $white;
+  
+  border-radius: $radius-xl;
+  padding: 22px 26px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+// Candidate section (left)
+.ic-cand-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-shrink: 0;
+  min-width: 200px;
+}
+
+.ic-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary-mid, $primary);
+  color: $white;
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+}
+
+.ic-cand-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 2px;
+}
+
+.ic-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ic-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: $gray-900;
+  letter-spacing: -.2px;
+}
+
+.ic-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: $primary-light;
+  color: $primary;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+   white-space: nowrap;
+}
+
+.ic-badge-icon {
+  font-size: 11px;
+}
+
+.ic-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: $gray-600;
+}
+
+.ic-contact-icon {
+  color: $primary-mid;
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+}
+
+// Divider
+.ic-header-divider {
+  width: 1px;
+  background: $primary-subtle;
+  margin: 0 26px;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+// Job grid (right)
+.ic-job-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 24px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ic-job-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ic-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $gray-400;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.ic-field-value {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: $gray-900;
+  line-height: 1.3;
+
+  &--blue {
+    color: $primary;
+  }
+}
+
+.ic-scheduled-by {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ic-sched-icon {
+  color: $primary-mid;
+  font-size: 11px;
+}
+
+// ─── Stats Row ────────────────────────────────────────────────────────────────
+.ic-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.ic-stat-card {
+  background: $white;
+
+  border-radius: $radius-lg;
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color .2s;
+
+  &:hover {
+    border-color: $primary-mid;
+  }
+}
+
+.ic-stat-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ic-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ic-stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $gray-500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.ic-info-icon {
+  color: $gray-400;
+  font-size: 11px;
+  cursor: help;
+}
+
+.ic-stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: $gray-900;
+  letter-spacing: -.2px;
+}
+
+.ic-stat-sub {
+  font-size: 11.5px;
+  color: $gray-500;
+  line-height: 1.4;
+}
+
+// ─── Question Set Section ─────────────────────────────────────────────────────
+.ic-questions-section {
+  background: $white;
+ 
+  border-radius: $radius-xl;
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ic-qs-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ic-qs-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: $gray-900;
+  margin: 0;
+  letter-spacing: -.2px;
+}
+
+.ic-qs-sub {
+  font-size: 13px;
+  color: $gray-500;
+  margin: 0;
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+.ic-table-wrap {
+  
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.ic-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ic-th {
+  background: $primary-light;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: $primary;
+  text-align: left;
+  letter-spacing: .6px;
+  border-bottom: 1.5px solid $primary-subtle;
+  text-transform: uppercase;
+
+  &.ic-th-num {
+    width: 48px;
+    text-align: center;
+  }
+
+  &.ic-th-right {
+    text-align: right;
+    padding-right: 20px;
+  }
+}
+
+.ic-tr {
+  border-bottom: 1px solid $primary-light;
+  transition: background .15s;
+
+  &:last-child { border-bottom: none; }
+
+//   &:hover { background: $primary-light; }
+}
+
+.ic-td {
+  padding: 13px 16px;
+  vertical-align: middle;
+
+  &.ic-td-num {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: $gray-400;
+    width: 48px;
+  }
+
+  &.ic-td-question {
+    font-size: 13.5px;
+    color: $gray-700;
+    font-weight: 500;
+    line-height: 1.5;
+    max-width: 380px;
+  }
+
+  &.ic-td-right {
+    text-align: right;
+    padding-right: 20px;
+  }
+}
+
+// ─── Type Tags ────────────────────────────────────────────────────────────────
+.ic-type-tag {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: $primary;
+}
+
+// ─── Difficulty Badges ────────────────────────────────────────────────────────
+.ic-diff-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 14px;
+  border-radius: 99px;
+  min-width: 64px;
+
+  &.diff-easy {
+    background: $green-light;
+    color: $green;
+    border: 1px solid darken($green-light, 8%);
+  }
+
+  &.diff-medium {
+    background: $amber-light;
+    color: $amber;
+    border: 1px solid darken($amber-light, 8%);
+  }
+
+  &.diff-hard {
+    background: $danger-light;
+    color: $danger;
+    border: 1px solid darken($danger-light, 6%);
+  }
+}
+
+// ─── View All Button ──────────────────────────────────────────────────────────
+.ic-view-all-btn {
+  background: none;
+  border: none;
+  color: $primary;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: inherit;
+  text-align: left;
+  width: fit-content;
+  transition: color .2s;
+
+  &:hover {
+    color: $primary-dark;
+    text-decoration: underline;
+  }
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.ic-footer {
+  display: flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.ic-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: $white;
+  color: $primary;
+border: 1.5px solid $primary-mid;
+  border-radius: $radius-md;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .2s;
+
+  i { font-size: 13px; }
+
+  &:hover {
+    background: $primary-light;
+    border-color: $primary;
+  }
+}
+// ─── Loading / Error State ────────────────────────────────────────────────────
+.ic-state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 24px;
+  background: $white;
+  border-radius: $radius-xl;
+  text-align: center;
+
+  &--error {
+    background: $danger-light;
+  }
+}
+
+.ic-state-icon {
+  font-size: 32px;
+  color: $primary;
+
+  &--spin {
+    color: $primary;
+  }
+
+  &--error {
+    color: $danger;
+  }
+}
+
+.ic-state-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: $gray-600;
+
+  .ic-state-box--error & {
+    color: $danger;
+  }
+}

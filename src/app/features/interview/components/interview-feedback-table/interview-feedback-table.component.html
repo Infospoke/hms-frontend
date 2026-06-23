@@ -74,8 +74,8 @@
 
   <!-- ACTION -->
   <ng-container *ngIf="ctx.col.key === 'action'">
-    <div class="cell-action">
-      <button class="btn-feedback">Provide Feedback</button>
+    <div class="cell-action" *appCan="'SUPPLY:MYINTERVIEWREQUESTS:EDIT'">
+      <button class="btn-feedback" (click)="handleProvide(ctx.row)">Provide Feedback</button>
      
     </div>
   </ng-container>

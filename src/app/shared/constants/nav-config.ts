@@ -34,16 +34,28 @@ export const NAV_ITEMS: NavItem[] = [
         permissionName: 'MYSRS',
       },
       {
-        label: "All Approved SR's",
-        icon: 'fa-solid fa-file-circle-check',
+        label: "Job Requisitions",
+        icon: 'fa-solid fa-briefcase',
         path: '/demand/all-approved-srs',
-        permissionName: 'ALLAPPROVEDSRS',
+        permissionName: 'JOBREQUISITIONS',
       },
       {
-        label: "All Jobs",
-        icon: "fa-solid fa-briefcase",
-        path: "/demand/all-jobs",
-        permissionName: "ALLJOBS",
+        label: "Recruiter Assignment Management",
+        icon: "fa-solid fa-users-gear",
+        path: "/demand/recruiter-assignment-management",
+        permissionName: "RECRUITERASSIGNMENTMANAGEMENT",
+      },
+      {
+        label: 'Interview Plans Config',
+        icon: 'fa-solid fa-user-pen',
+        path: '/demand/interview-plan-config',
+        permissionName: 'INTERVIEWPLANCONFIG',
+      },
+      {
+        label: 'Assign Interviewers',
+        icon: 'fa-solid fa-user-check',
+        path: '/demand/assign-interviewers',
+        permissionName: 'ASSIGNINTERVIEWERS',
       }
     ],
   },
@@ -76,6 +88,24 @@ export const NAV_ITEMS: NavItem[] = [
         icon: "fa-solid fa-briefcase",
         path: "/supply/my-assignend-jobs",
         permissionName: "MYJOBASSIGNMENTS",
+      },
+      {
+        label: 'My Interview Requests',
+        icon: 'fa-solid fa-file-signature',
+        path: '/supply/my-interview-requests',
+        permissionName: 'MYINTERVIEWREQUESTS',
+      },
+      {
+        label: 'AI Interview Zone',
+        icon: 'fa-solid fa-robot',
+        path: '/supply/ai-interview-zone',
+        permissionName: 'AIINTERVIEWZONE',
+      },
+      {
+        label: 'Candidate Management',
+        icon: 'fa-solid fa-users',
+        path: '/supply/applicant-management',
+        permissionName: 'CANDIDATEMANAGEMENT',
       }
     ],
   },
@@ -124,7 +154,12 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/approval/chains',
         permissionName: 'HIERARCHYAPPROVALS',
       },
-
+      {
+        label: 'Interview Plan Approval',
+        icon: 'fa-solid fa-calendar-check',
+        path: '/approval/interview-plan-approval',
+        permissionName: 'INTERVIEWPLANAPPROVALS',
+      },
     ],
   },
   {
@@ -133,30 +168,8 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Interview',
     icon: 'fa-solid fa-people-group',
     children: [
-      {
-        label: 'Interview Plans',
-        icon: 'fa-solid fa-user-pen',
-        path: '/interview/interview-plan',
-        permissionName: 'INTERVIEWPLAN',
-      },
-      {
-        label: 'Interview Plan Approval',
-        icon: 'fa-solid fa-user-shield',
-        path: '/interview/interview-approval-plans',
-        permissionName: 'INTERVIEWAPPROVALS',
-      },
-      {
-        label: 'Assign Interviewers',
-        icon: 'fa-solid fa-user-check',
-        path: '/interview/assign-interviewers',
-        permissionName: 'ASSIGNINTERVIEWERS',
-      },
-      {
-        label: 'Assigned Interview Requests',
-        icon: 'fa-solid fa-file-signature',
-        path: '/interview/assigend-interview-requests',
-        permissionName: 'ASSIGNEDINTERVIEWREQUESTS',
-      }
+
+
     ],
   },
 ];

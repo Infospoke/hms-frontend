@@ -1,0 +1,340 @@
+// ── Variables ──────────────────────────────────────────────
+$primary: #6c63ff;
+$primary-light: #f0efff;
+$surface: #ffffff;
+$bg: #f7f8fc;
+$border: #e8eaf0;
+$text-primary: #1a1d2e;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+$success: #22c55e;
+$danger: #ef4444;
+$radius: 12px;
+$shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+
+
+// ── Page Header ────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+ 
+
+  .view-job-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: $surface;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-primary;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    .btn-arrow {
+      font-size: 18px;
+      color: $primary;
+    }
+
+    &:hover {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px $primary-light;
+    }
+  }
+}
+
+// ── Section Card ───────────────────────────────────────────
+.section-card {
+  background: $surface;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  // margin: 0 28px 0px;
+  padding: 24px;
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+    margin: 0 0 20px;
+  }
+}
+
+// ── Interview Info Grid ────────────────────────────────────
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 12px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .info-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .info-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+
+    &.meet-value {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}
+
+.meet-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+// ── Experience Layout ──────────────────────────────────────
+.experience-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.experience-sidebar {
+  flex: 0 0 180px;
+  border-right: 1.5px solid $border;
+  padding-right: 24px;
+
+  .exp-badge {
+    background: $primary-light;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 16px;
+
+    .exp-icon {
+      margin-bottom: 6px;
+    }
+
+    .exp-years {
+      font-size: 22px;
+      font-weight: 800;
+      color: $primary;
+      line-height: 1.1;
+    }
+
+    .exp-label {
+      font-size: 10px;
+      color: $text-secondary;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+  }
+
+  .sidebar-info {
+    margin-bottom: 12px;
+
+    .sidebar-label {
+      font-size: 11px;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+}
+
+.experience-table-wrap {
+  flex: 1;
+  overflow-x: auto;
+}
+
+// ── Tables ─────────────────────────────────────────────────
+.experience-table,
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr {
+    border-bottom: 1.5px solid $border;
+  }
+
+  th {
+    text-align: left;
+    padding: 0 16px 12px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  td {
+    padding: 12px 16px 12px 0;
+    color: $text-primary;
+    font-size: 13px;
+    vertical-align: top;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.projects-table {
+  .project-name {
+    font-weight: 600;
+    color: $text-primary;
+    white-space: nowrap;
+  }
+
+  .tech-cell {
+    color: $text-secondary;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .desc-cell {
+    color: $text-secondary;
+    font-size: 12px;
+    max-width: 300px;
+    line-height: 1.5;
+  }
+}
+
+// ── Documents ──────────────────────────────────────────────
+.documents-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.doc-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1.5px solid $border;
+  border-radius: 10px;
+  padding: 14px 18px;
+  min-width: 180px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px $primary-light;
+  }
+}
+
+.doc-icon-wrap {
+  flex-shrink: 0;
+}
+
+.doc-icon {
+  width: 40px;
+  height: 48px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .doc-type-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+}
+
+.doc-info {
+  .doc-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 2px;
+  }
+
+  .doc-meta {
+    font-size: 11px;
+    color: $text-muted;
+  }
+}
+
+// ── Action Bar ─────────────────────────────────────────────
+.action-bar {
+ 
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 16px 28px;
+  z-index: 100;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.start-btn {
+  background: $primary;
+  color: #fff;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.complete-btn {
+  background: $success;
+  color: #fff;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.cancel-btn {
+  background: #fff;
+  color: $danger;
+  border: 1.5px solid $danger;
+
+  &:hover {
+    background: #fff5f5;
+  }
+}
+
+.btn-icon {
+  font-size: 13px;
+}

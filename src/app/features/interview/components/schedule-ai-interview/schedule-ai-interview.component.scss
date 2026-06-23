@@ -1,0 +1,525 @@
+
+$primary:       #2563eb;
+$primary-light: #eff6ff;
+$primary-mid:   #bfdbfe;
+$primary-dark:  #1d4ed8;
+$white:         #ffffff;
+$gray-50:       #f8fafc;
+$gray-100:      #f1f5f9;
+$gray-200:      #e2e8f0;
+$gray-300:      #cbd5e1;
+$gray-400:      #94a3b8;
+$gray-500:      #64748b;
+$gray-600:      #475569;
+$gray-700:      #334155;
+$gray-900:      #0f172a;
+
+$radius-sm:     6px;
+$radius-md:     10px;
+$radius-lg:     14px;
+$radius-xl:     18px;
+
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+.sai-content {
+  flex: 1;
+//   padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ─── Overview Card ────────────────────────────────────────────────────────────
+.sai-overview-card {
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-lg;
+  padding: 18px 22px;
+  box-shadow: 0 2px 8px rgba(37,99,235,.06);
+}
+
+.sai-overview-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $gray-700;
+  margin-bottom: 14px;
+  letter-spacing: -.1px;
+}
+
+.sai-overview-body {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.sai-overview-divider {
+  width: 1px;
+  height: 44px;
+  background: $gray-200;
+  margin: 0 22px;
+  flex-shrink: 0;
+}
+
+.sai-cand-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.sai-cand-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a5b4fc, $primary);
+  color: $white;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: .5px;
+}
+
+.sai-cand-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sai-cand-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: $gray-900;
+}
+
+.sai-cand-email {
+  font-size: 12.5px;
+  color: $gray-500;
+}
+
+.sai-overview-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.sai-stat-label {
+  font-size: 11.5px;
+  color: $gray-400;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+
+  i { color: $primary; font-size: 11px; }
+}
+
+.sai-stat-value {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: $gray-900;
+  line-height: 1.35;
+}
+
+// ─── Main Grid ────────────────────────────────────────────────────────────────
+.sai-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+// ─── Panel ────────────────────────────────────────────────────────────────────
+.sai-panel {
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-lg;
+  padding: 20px 22px;
+  box-shadow: 0 2px 8px rgba(37,99,235,.06);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sai-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: $gray-900;
+
+  i { color: $primary; font-size: 15px; }
+}
+
+// ─── Calendar ─────────────────────────────────────────────────────────────────
+.sai-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.sai-cal-month {
+  font-size: 15px;
+  font-weight: 700;
+  color: $gray-900;
+  letter-spacing: -.2px;
+}
+
+.sai-cal-nav {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid $gray-200;
+  background: $white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $gray-600;
+  font-size: 11px;
+  transition: all .2s;
+
+  &:hover {
+    background: $primary-light;
+    border-color: $primary-mid;
+    color: $primary;
+  }
+}
+
+.sai-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.sai-cal-dow {
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $gray-400;
+  padding: 4px 0 6px;
+  letter-spacing: .3px;
+}
+
+.sai-cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: $gray-700;
+  border-radius: 50%;
+  cursor: default;
+  transition: all .15s;
+  position: relative;
+
+  &.other-month {
+    color: $gray-300;
+    font-weight: 400;
+  }
+
+  &.is-clickable {
+    cursor: pointer;
+    &:hover:not(.is-selected) {
+      background: $primary-light;
+      color: $primary;
+    }
+  }
+
+  &.is-weekend {
+    color: $primary;
+  }
+
+  &.is-today {
+    border: 1.5px solid $primary-mid;
+    color: $primary;
+    font-weight: 700;
+  }
+
+  &.is-selected {
+    background: $primary;
+    color: $white !important;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba($primary, .35);
+  }
+
+  &.is-past {
+    color: $gray-300;
+    cursor: not-allowed;
+    pointer-events: none;
+    font-weight: 400;
+  }
+}
+
+// ─── No Slots Empty State ─────────────────────────────────────────────────────
+.sai-no-slots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 16px;
+  background: $gray-50;
+  border: 1.5px dashed $gray-300;
+  border-radius: $radius-md;
+  text-align: center;
+}
+
+.sai-no-slots-icon {
+  font-size: 28px;
+  color: $gray-300;
+  margin-bottom: 4px;
+}
+
+.sai-no-slots-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $gray-600;
+}
+
+.sai-no-slots-sub {
+  font-size: 12.5px;
+  color: $gray-400;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+// ─── Timezone Selector ────────────────────────────────────────────────────────
+.sai-tz-wrapper {
+  position: relative;
+}
+
+.sai-tz-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-sm;
+  padding: 9px 34px 9px 12px;
+  font-size: 13px;
+  color: $gray-700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .2s, box-shadow .2s;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, .10);
+  }
+}
+
+.sai-tz-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: $gray-400;
+  pointer-events: none;
+}
+
+// ─── Time Slots ───────────────────────────────────────────────────────────────
+.sai-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sai-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all .2s;
+  background: $white;
+
+  &:hover:not(.is-selected) {
+    border-color: $primary-mid;
+    background: $primary-light;
+  }
+
+  &.is-selected {
+    border-color: $primary;
+    background: $primary-light;
+    box-shadow: 0 0 0 3px rgba($primary, .08);
+  }
+}
+
+.sai-slot-radio {
+  flex-shrink: 0;
+}
+
+.sai-radio-outer {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid $gray-300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .2s;
+
+  .is-selected & {
+    border-color: $primary;
+  }
+}
+
+.sai-radio-inner {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: $primary;
+}
+
+.sai-slot-label {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $gray-700;
+
+  .is-selected & { color: $primary-dark; }
+}
+
+.sai-slot-avail {
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-400;
+
+  &.available {
+    color: #059669;
+  }
+}
+
+// ─── Info Banner ──────────────────────────────────────────────────────────────
+.sai-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: $primary-light;
+  border: 1px solid $primary-mid;
+  border-radius: $radius-md;
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: $gray-600;
+  line-height: 1.5;
+}
+
+.sai-info-icon {
+  color: $primary;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+// ─── Proposed Schedule Bar ────────────────────────────────────────────────────
+.sai-proposed-bar {
+  background: $white;
+  border: 1.5px solid $primary-mid;
+  border-radius: $radius-lg;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba($primary, .07);
+  animation: fadeUp .25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sai-proposed-icon {
+  font-size: 20px;
+  color: $primary;
+  flex-shrink: 0;
+}
+
+.sai-proposed-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sai-proposed-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.sai-proposed-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary;
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.sai-footer {
+
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.sai-btn-cancel {
+  background: $white;
+  color: $gray-700;
+  border: 1.5px solid $gray-200;
+  border-radius: $radius-md;
+  padding: 10px 24px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .2s;
+
+  &:hover {
+    border-color: $gray-400;
+    color: $gray-900;
+  }
+}
+
+.sai-btn-schedule {
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $white;
+  border: none;
+  border-radius: $radius-md;
+  padding: 10px 24px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 10px rgba($primary, .35);
+  transition: opacity .2s, box-shadow .2s, transform .1s;
+
+  i { font-size: 14px; }
+
+  &:hover {
+    opacity: .92;
+    box-shadow: 0 4px 14px rgba($primary, .45);
+    transform: translateY(-1px);
+  }
+
+  &:active { transform: scale(.98); }
+}

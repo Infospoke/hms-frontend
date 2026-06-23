@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
@@ -9,6 +10,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
+import { Router } from '@angular/router';
+import { CanDirective } from "../../../../shared/directives/can.directive";
 
 export interface Interview {
   id: string;
@@ -32,7 +35,7 @@ export interface Interview {
  
 @Component({
   selector: 'app-interview-upcomming-table',
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent, CanDirective],
   templateUrl: './interview-upcomming-table.component.html',
   styleUrl: './interview-upcomming-table.component.scss',
 })
@@ -40,7 +43,7 @@ export class InterviewUpcommingTableComponent {
     @Input() payload!: any;
   @Output() pageChange = new EventEmitter<number>();
    @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
- 
+  private router=inject(Router);
   columns: TableColumn[] = [
     { key: 'interview', label: 'Interview Detail', custom: true, width: '100px' },
     { key: 'candidate', label: 'Candidate', custom: true, width: '160px' },
@@ -166,6 +169,9 @@ export class InterviewUpcommingTableComponent {
  
   onRowClick(row: Interview): void {
     // handle row click
+  }
+  handleview(row:any){
+    this.router.navigateByUrl('/supply/my-interview-requests/reschedule-interview')
   }
  
   onPageChange(page: number): void {

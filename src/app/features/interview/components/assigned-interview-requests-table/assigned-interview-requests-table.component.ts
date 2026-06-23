@@ -19,6 +19,7 @@ export interface InterviewRequest {
   priority: Priority;
   requestedDate: string;
   requestedTime: string;
+  jobId:any;
 }
 
 @Component({
@@ -77,6 +78,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
       initials: this.toInitials(item.candidateName),
       jobTitle: item.jobTitle ?? '',
       department: item.department ?? '',
+      jobId:item?.jobId,
       round: item.round ?? '',
       roundCount: this.parseRoundCount(item.round),
       priority: this.normalizePriority(item.priority),
@@ -108,7 +110,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   onViewDetails(req: InterviewRequest): void {
     this.router.navigate(
-      [`/interview/assigend-interview-requests/response/${req?.assignmentId}`],
+      [`/supply/my-interview-requests/response/${req?.assignmentId}/${req?.jobId}`],
       
     );
   }

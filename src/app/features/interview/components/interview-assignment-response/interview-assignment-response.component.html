@@ -1,8 +1,8 @@
 <div class="response-page">
   <app-heading heading="Interview Assignment"
     subHeading="You have been assigned to an interview. Please review the details and respond." [showBackButton]="true"
-    [buttonText]="'Back to My Interviews'" [backButtonUrl]="'//interview/assigned-interview-requests'"
-    [badge]="'Pending Response'" [badgeStatus]="'Pending'" />
+    [buttonText]="'Back to My Interviews'" (backClick)="handleBack()"
+    [badge]="'Pending Response'" [badgeStatus]="'Pending'" backButtonUrl="/"/>
 
   <div class="card-dd">
     <app-job-info-card [job]="job" />

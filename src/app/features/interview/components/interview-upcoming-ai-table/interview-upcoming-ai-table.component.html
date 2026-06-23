@@ -1,0 +1,87 @@
+<div class="sit-shell">
+  <div class="card-dd">
+    <app-reusable-table
+      [columns]="tableColumns"
+      [data]="tableData"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalElements"
+      [cellTemplate]="cellTpl"
+      (rowClick)="onRowClick($event)"
+      (sortChange)="onSortChange($event)"
+      (pageChange)="pageChange($event)"
+      [showPagination]='true'>
+    </app-reusable-table>
+  </div>
+</div>
+
+
+<!-- ── Custom cell templates ──────────────────────────────────────────────── -->
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate column -->
+  <ng-container *ngIf="ctx.col.key === 'candidate'">
+    <div class="sit-candidate">
+      <span class="sit-avatar" [style.background-color]="ctx.row.initialsColor">
+        {{ ctx.row.initials }}
+      </span>
+      <div class="sit-candidate-info">
+        <span class="sit-name">{{ ctx.row.name }}</span>
+        <span class="sit-email">{{ ctx.row.email }}</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Scheduled At column -->
+  <ng-container *ngIf="ctx.col.key === 'scheduledAt'">
+    <div class="sit-datetime">
+      <span class="sit-date">{{ ctx.row.scheduledDate }}</span>
+      <span class="sit-time">{{ ctx.row.scheduledTime }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Scheduled By column -->
+  <ng-container *ngIf="ctx.col.key === 'scheduledBy'">
+    <div class="sit-scheduled-by">
+      <!-- Self-scheduled icon: person silhouette -->
+      <ng-container *ngIf="ctx.row.scheduledByType === 'self'">
+        <svg class="sit-by-icon sit-by-icon--self" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="6.5" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </ng-container>
+      <!-- Recruiter icon: calendar/badge -->
+      <ng-container *ngIf="ctx.row.scheduledByType === 'recruiter'">
+        <svg class="sit-by-icon sit-by-icon--recruiter" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2.5" y="4" width="15" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M2.5 8h15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M6.5 2v3M13.5 2v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="10" cy="13" r="2" fill="currentColor" opacity=".35"/>
+        </svg>
+      </ng-container>
+      <span class="sit-by-label" [class.sit-by-label--recruiter]="ctx.row.scheduledByType === 'recruiter'">
+        {{ ctx.row.scheduledByLabel }}
+      </span>
+    </div>
+  </ng-container>
+
+  <!-- Status column -->
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="sit-status-badge sit-status--{{ ctx.row.status }}">
+      {{ ctx.row.statusLabel }}
+    </span>
+  </ng-container>
+
+  <!-- Actions column -->
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <div class="sit-actions">
+      <button
+        class="sit-btn-view"
+        (click)="onViewDetails(ctx.row, $event)"
+        aria-label="View details for {{ ctx.row.name }}">
+        View Details
+      </button>
+    </div>
+  </ng-container>
+
+</ng-template>

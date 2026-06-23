@@ -1,0 +1,107 @@
+<div class="offer-management">
+
+  <!-- Top summary cards + filters -->
+  <app-approval-layout
+    heading="Offer Management"
+    subHeading="View candidates who have cleared all interview rounds. Track their progress and take the next hiring action."
+    [cards]="cards"
+    [dropDownData]="dropDownData" />
+
+  <div class="">
+    <app-reusable-table
+      title="Candidates (All Interview Rounds Cleared)"
+      [columns]="columns"
+      [data]="candidates"
+      [showPagination]="true"
+      [currentPage]="currentPage"
+      [pageSize]="pageSize"
+      [totalItems]="totalItems"
+      [cellTemplate]="interviewCell"
+      emptyMessage="No candidates found."
+      (pageChange)="onPageChange($event)">
+
+      
+
+    </app-reusable-table>
+  </div>
+
+  <!-- ── Cell template ───────────────────────────────────────────────── -->
+  <ng-template #interviewCell let-ctx>
+
+    <!-- Candidate: avatar (initials) + full name + email -->
+    <ng-container *ngIf="ctx.col.key === 'candidate'">
+      <div class="om-candidate-cell">
+        <div
+          class="om-avatar"
+          [style.background]="getAvatarBg(ctx.row)">
+          {{ getInitials(ctx.row) }}
+        </div>
+        <div class="om-candidate-info">
+          <span class="om-candidate-name">
+            {{ ctx.row.firstName }} {{ ctx.row.lastName }}
+          </span>
+          <span class="om-candidate-email">{{ ctx.row.email }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Job Title -->
+    <ng-container *ngIf="ctx.col.key === 'jobTitle'">
+      <span class="om-cell-text">{{ ctx.row.jobTitle }}</span>
+    </ng-container>
+
+    <!-- Round Progress: coloured dots connected by a line -->
+    <ng-container *ngIf="ctx.col.key === 'roundProgress'">
+      <div class="om-progress-track">
+        <ng-container
+          *ngFor="let state of getRoundStates(ctx.row); let i = index; let last = last">
+          <div class="om-dot" [ngClass]="'om-dot--' + state">
+            <!-- done checkmark -->
+            <svg *ngIf="state === 'done'" width="10" height="10" viewBox="0 0 12 12" fill="none">
+              <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <!-- connector between dots -->
+          <span *ngIf="!last" class="om-connector"
+                [class.om-connector--done]="state === 'done'"></span>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    
+
+    <!-- Current Stage: stage name + status pill -->
+    <ng-container *ngIf="ctx.col.key === 'currentStage'">
+      <div class="om-stage-cell">
+        <span class="om-stage-name"
+              [class.om-stage-name--done]="ctx.row.stageStatus === 'Completed'">
+          {{ ctx.row.currentStage }}
+        </span>
+        <span class="om-stage-status"
+              [class.om-stage-status--done]="ctx.row.stageStatus === 'Completed'">
+          {{ ctx.row.stageStatus }}
+        </span>
+      </div>
+    </ng-container>
+
+    <!-- Last Activity: date + time -->
+    <ng-container *ngIf="ctx.col.key === 'lastActivity'">
+      <div class="om-datetime-cell">
+        <span class="om-date">{{ ctx.row.lastActivity }}</span>
+        <span class="om-time">{{ ctx.row.lastActivityTime }}</span>
+      </div>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container *ngIf="ctx.col.key === 'actions'">
+      <div class="om-actions-cell" (click)="$event.stopPropagation()">
+        <button class="om-view-btn" (click)="viewDetails(ctx.row)">
+          View Details
+        </button>
+        
+      </div>
+    </ng-container>
+
+  </ng-template>
+</div>

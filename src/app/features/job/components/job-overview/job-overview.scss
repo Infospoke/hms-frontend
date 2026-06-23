@@ -459,3 +459,14 @@ label {
 
   .popup-modal { width: 95vw; }
 }
+.no-jobs-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 16px;
+  color: #94A3B8;
+  font-size: 14px;
+  text-align: center;
+}

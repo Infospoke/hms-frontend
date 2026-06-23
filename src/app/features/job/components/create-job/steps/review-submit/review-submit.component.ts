@@ -26,55 +26,55 @@ export class ReviewSubmitStepComponent implements OnInit {
 
   open = { jobDetails: true, aiJd: true, sourcing: true, recruiter: true, interviewPlan: true };
 
-get allCollapsed(): boolean {
-  return !this.open.jobDetails && !this.open.aiJd && !this.open.sourcing
+  get allCollapsed(): boolean {
+    return !this.open.jobDetails && !this.open.aiJd && !this.open.sourcing
       && !this.open.recruiter && !this.open.interviewPlan;
-}
+  }
 
-toggleAll(): void {
-  const collapse = !this.allCollapsed;
-  this.open.jobDetails    = !collapse;
-  this.open.aiJd          = !collapse;
-  this.open.sourcing      = !collapse;
-  this.open.recruiter     = !collapse;
-  this.open.interviewPlan = !collapse;
-}
+  toggleAll(): void {
+    const collapse = !this.allCollapsed;
+    this.open.jobDetails = !collapse;
+    this.open.aiJd = !collapse;
+    this.open.sourcing = !collapse;
+    this.open.recruiter = !collapse;
+    this.open.interviewPlan = !collapse;
+  }
 
   reviewChannels: ReviewChannel[] = [];
   reviewRecruiters: any[] = [];
 
   ngOnInit(): void {
-    console.log(this.step1Form,this.s1)
+    console.log(this.step1Form, this.s1)
     this.buildChannels();
     this.buildRecruiters();
   }
 
-private buildChannels(): void {
-  const stored: any[] = this.step3Form?.get('selectedChannels')?.value || [];
-  this.reviewChannels = stored.map((ch: any) => ({
-    id:            ch.channelName?.toLowerCase().replace(/\s+/g, ''),
-    name:          ch.channelName,
-    iconText:      ch.iconText    ?? ch.channelName?.[0]?.toUpperCase() ?? '?',
-    iconBg:        ch.iconBg      ?? '#e2e8f0',
-    iconColor:     ch.iconColor   ?? '#1e293b',
-    bestFor:       ch.bestFor     ?? '—',
-    cost:          ch.cost        ?? 'Free',
-    enabled:       !!ch.postJob,
-    referralAmount: ch.referralAmount ? Number(ch.referralAmount) : 0,
-  }));
-}
+  private buildChannels(): void {
+    const stored: any[] = this.step3Form?.get('selectedChannels')?.value || [];
+    this.reviewChannels = stored.map((ch: any) => ({
+      id: ch.channelName?.toLowerCase().replace(/\s+/g, ''),
+      name: ch.channelName,
+      iconText: ch.iconText ?? ch.channelName?.[0]?.toUpperCase() ?? '?',
+      iconBg: ch.iconBg ?? '#e2e8f0',
+      iconColor: ch.iconColor ?? '#1e293b',
+      bestFor: ch.bestFor ?? '—',
+      cost: ch.cost ?? 'Free',
+      enabled: !!ch.postJob,
+      referralAmount: ch.referralAmount ? Number(ch.referralAmount) : 0,
+    }));
+  }
 
   private buildRecruiters(): void {
     this.reviewRecruiters = (this.step4Form?.get('selectedRecruiterDetails')?.value || []).map((r: any) => ({
       ...r,
-      initials:    this.getInitials(r.userName),
+      initials: this.getInitials(r.userName),
       avatarColor: this.getAvatarColor(r.userName),
     }));
   }
 
   get enabledChannels(): ReviewChannel[] { return this.reviewChannels.filter(c => c.enabled); }
-  get paidCount():     number { return this.enabledChannels.filter(c => c.cost === 'Paid').length; }
-  get freeCount():     number { return this.enabledChannels.filter(c => c.cost === 'Free').length; }
+  get paidCount(): number { return this.enabledChannels.filter(c => c.cost === 'Paid').length; }
+  get freeCount(): number { return this.enabledChannels.filter(c => c.cost === 'Free').length; }
   get internalCount(): number { return this.enabledChannels.filter(c => c.cost === 'Internal').length; }
   get referralAmount(): number {
     return this.reviewChannels.find(c => c.id === 'referral' && c.enabled)?.referralAmount || 0;
@@ -85,6 +85,11 @@ private buildChannels(): void {
 
   readonly today = new Date();
   get s1(): any { return this.step1Form?.getRawValue() || {}; }
+  get s2(): any {
+    console.log(this.step2Form?.getRawValue()); return this.step2Form?.getRawValue()?.
+      jobDescription
+      || null;
+  }
 
   formatList(arr: string[]): string {
     return Array.isArray(arr) && arr.length ? arr.join(', ') : 'None';
@@ -101,13 +106,13 @@ private buildChannels(): void {
   }
 
   getAvatarColor(userName: string): string {
-    const colors = ['#4f46e5','#0891b2','#16a34a','#d97706','#dc2626','#9333ea','#0284c7','#c2410c'];
+    const colors = ['#4f46e5', '#0891b2', '#16a34a', '#d97706', '#dc2626', '#9333ea', '#0284c7', '#c2410c'];
     let hash = 0;
     for (let i = 0; i < userName.length; i++) hash = userName.charCodeAt(i) + ((hash << 5) - hash);
     return colors[Math.abs(hash) % colors.length];
   }
 
   get selectedPlanDetail(): any {
-  return this.step5Form?.get('selectedPlanDetail')?.value || null;
-}
+    return this.step5Form?.get('selectedPlanDetail')?.value || null;
+  }
 }

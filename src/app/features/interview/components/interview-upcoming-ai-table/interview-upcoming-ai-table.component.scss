@@ -1,0 +1,171 @@
+// ── Shell ────────────────────────────────────────────────────────────────────
+.sit-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ── Candidate cell ───────────────────────────────────────────────────────────
+.sit-candidate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sit-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.sit-candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sit-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.3;
+}
+
+.sit-email {
+  font-size: 11.5px;
+  color: #8a8fa8;
+  line-height: 1.3;
+}
+
+// ── Scheduled At cell ────────────────────────────────────────────────────────
+.sit-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sit-date {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #1a1a2e;
+  white-space: nowrap;
+}
+
+.sit-time {
+  font-size: 11px;
+  color: #8a8fa8;
+  white-space: nowrap;
+}
+
+// ── Scheduled By cell ────────────────────────────────────────────────────────
+.sit-scheduled-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sit-by-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  &.sit-by-icon--self {
+    color: #2563eb;
+  }
+
+  &.sit-by-icon--recruiter {
+    color: #7c3aed;
+  }
+}
+
+.sit-by-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #2563eb;
+  white-space: nowrap;
+
+  &.sit-by-label--recruiter {
+    color: #7c3aed;
+  }
+}
+
+// ── Status badge ─────────────────────────────────────────────────────────────
+.sit-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+// ✅ Teal — success / positive
+.sit-status--completed {
+  background: #E1F5EE;
+  color: #085041;
+}
+
+// ✅ Blue — neutral future event
+.sit-status--upcoming {
+  background: #E6F1FB;
+  color: #0C447C;
+}
+
+// ✅ Purple — intentionally planned
+.sit-status--scheduled {
+  background: #EEEDFE;
+  color: #3C3489;
+}
+
+// ✅ Amber — in-flight / warm
+.sit-status--in_progress {
+  background: #FAEEDA;
+  color: #633806;
+}
+
+// ✅ Red — negative outcome
+.sit-status--did_not_attend {
+  background: #FCEBEB;
+  color: #791F1F;
+}
+
+// ── Actions ──────────────────────────────────────────────────────────────────
+.sit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sit-btn-view {
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1.5px solid #2563eb;
+  background-color: #fff;
+  color: #2563eb;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+
+  &:hover {
+    background-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.22);
+  }
+
+  &:active {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #fff;
+  }
+}

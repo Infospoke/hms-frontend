@@ -255,3 +255,29 @@
   i { font-size: 36px; margin-bottom: 12px; display: block; }
   p { font-size: 13px; margin: 0; }
 }
+// ── Empty detail panel (SVG state) ────────────────────────────────────────────
+.ip-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 340px;
+  padding: 32px 24px;
+  gap: 12px;
+}
+
+.ip-detail-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.ip-detail-empty-sub {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+  max-width: 240px;
+  margin: 0;
+}

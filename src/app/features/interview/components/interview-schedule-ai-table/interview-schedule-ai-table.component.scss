@@ -4,7 +4,24 @@
   flex-direction: column;
   gap: 12px;
 }
+.aiz-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
+.aiz-date-day {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #1a1a2e;
+  white-space: nowrap;
+}
+
+.aiz-date-time {
+  font-size: 11px;
+  color: #8a8fa8;
+  white-space: nowrap;
+}
 // ── Header bar ───────────────────────────────────────────────────────────────
 .ist-header {
   display: flex;

@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ConfirmModalComponent } from '../../../../shared/components/modal-component/confirm-modal.component';
 import { InterviewPlanStepComponent } from './steps/interview-plan-step/interview-plan-step.component';;
 
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
@@ -25,6 +28,7 @@ const SR_ID_KEY = 'create_job_sr_id';
     CommonModule,
     ReactiveFormsModule,
     NzStepsModule,
+    NzModalModule,
     HeadingComponent,
     JobDetailsStepComponent,
     AiJobDescriptionStepComponent,
@@ -39,12 +43,14 @@ const SR_ID_KEY = 'create_job_sr_id';
 export class CreateJobComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private modal = inject(NzModalService);
   private notificationService = inject(NotificationService);
   private jobService = inject(JobService);
   private approvalService = inject(ApprovalService);
   private userService = inject(UserService);
 
   currentStep = 0;
+  jdError = false;
 
   // IDs sourced directly from the SR response — no separate lookup arrays needed
   private srDepartmentId: number | string = '';
@@ -98,7 +104,7 @@ export class CreateJobComponent implements OnInit {
         startDate: [null, Validators.required],
         mustHaveSkills: [[], [Validators.required, this.nonEmptyArray]],
         niceToHaveSkills: [[]],
-        notes: ['', Validators.maxLength(250)],
+        notes: ['', [Validators.minLength(6), Validators.maxLength(300)]],
         educationRequirement: ['', Validators.maxLength(100)],
         country: ['', Validators.maxLength(50)],
         certificate: ['',],
@@ -176,7 +182,34 @@ export class CreateJobComponent implements OnInit {
   }
 
   onNext(): void {
-    if (this.isLastStep) { this.onSubmit(); return; }
+    if (this.isLastStep) { this.confirmSubmit(); return; }
+
+    // Step 2: JD must be generated
+    if (this.currentStep === 1) {
+      const jd = this.step2Form.get('jobDescription')?.value;
+      if (!jd) { this.jdError = true; return; }
+      this.jdError = false;
+    }
+
+    // Step 3: referral amount must be > 0 when referral channel enabled
+    if (this.currentStep === 2) {
+      const channels = this.step3Form.get('selectedChannels')?.value ?? [];
+      const referral = channels.find((c: any) => c.channelName === 'Employee Referral' && c.postJob);
+      if (referral && !(Number(referral.referralAmount) > 0)) {
+        this.notificationService.error('Please enter a referral bonus amount greater than ₹0 for Employee Referral.');
+        return;
+      }
+    }
+
+    // Step 4: at least one recruiter must be assigned
+    if (this.currentStep === 3) {
+      const selected = this.step4Form.get('selectedRecruiterDetails')?.value ?? [];
+      if (!selected.length) {
+        this.notificationService.error('Please assign at least one recruiter before proceeding.');
+        return;
+      }
+    }
+
     const stepForm = this.currentStepForm;
     if (stepForm?.invalid) { stepForm.markAllAsTouched(); return; }
     this.currentStep++;
@@ -194,6 +227,23 @@ export class CreateJobComponent implements OnInit {
   goBack(): void {
     this.clearSrIdStorage();
     this.router.navigateByUrl('/demand/all-approved-srs');
+  }
+
+  confirmSubmit(): void {
+    const modal = this.modal.create<ConfirmModalComponent>({
+      nzContent: ConfirmModalComponent,
+      nzData: { mode: 'submit-job' },
+      nzClassName: 'custom-confirm-modal custom-edit-modal',
+      nzFooter: null,
+      nzCentered: true,
+      nzWidth: 360,
+      nzClosable: false,
+    });
+    modal.afterClose.subscribe((result: string) => {
+      if (result === 'confirm') {
+        this.onSubmit();
+      }
+    });
   }
 
   onSubmit(): void {

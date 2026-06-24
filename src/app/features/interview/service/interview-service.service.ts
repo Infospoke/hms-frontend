@@ -156,4 +156,11 @@ export class InterviewServiceService {
       return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.AI_INTERVIEW_DETAILS(id)))
     }
 
+    async scheduleInterviewTime(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.SCHEDULE_USER,payload))
+    }
+
+    async getCandidateOverview(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.SCHEDULE_CANDIDATE_OVERVIEW(id)))
+    }
 }

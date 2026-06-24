@@ -94,7 +94,7 @@
   <!-- Action button -->
   <ng-container *ngIf="ctx.col.key === 'action'">
     <button
-      class="ra-assign-btn"
+      class="ra-assign-btn ra-assign-btn--nowrap"
       [class.ra-assign-btn--assigned]="ctx.row.assigned"
       (click)="toggleAssign(ctx.row); $event.stopPropagation()">
       <ng-container *ngIf="ctx.row.assigned">

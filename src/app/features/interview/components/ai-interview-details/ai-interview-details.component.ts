@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InterviewServiceService } from '../../service/interview-service.service';
+import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 
 // ── API response shape ────────────────────────────────────────────────────────
 interface ApiQuestion {
@@ -76,7 +77,7 @@ interface Question {
 
 @Component({
   selector: 'app-ai-interview-details',
-  imports: [CommonModule],
+  imports: [CommonModule, HeadingComponent],
   templateUrl: './ai-interview-details.component.html',
   styleUrl: './ai-interview-details.component.scss',
 })
@@ -165,15 +166,7 @@ export class AiInterviewDetailsComponent implements OnInit {
         value:      `${d.noOfQuestions} Questions`,
         sub:        null,
       },
-      {
-        icon:       'fa-solid fa-award',
-        iconColor:  '#d97706',
-        iconBg:     '#fef3c7',
-        label:      'Minimum Pass Score',
-        value:      '70%',
-        sub:        null,
-        hasInfo:    true,
-      },
+      
     ];
 
     /* ---------- Questions ---------- */
@@ -248,7 +241,7 @@ export class AiInterviewDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/interview/ai-interview-zone'],
+    this.router.navigate(['/supply/ai-interview-zone'],
       {state: { activeType: 'si' }}
     );
   }

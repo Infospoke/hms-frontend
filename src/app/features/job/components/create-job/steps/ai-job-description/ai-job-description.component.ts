@@ -11,6 +11,9 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ConfirmModalComponent } from '../../../../../../shared/components/modal-component/confirm-modal.component';
 import {
   FormControl,
   FormGroup,
@@ -54,7 +57,7 @@ interface JdApiResponse {
 @Component({
   selector: 'app-ai-job-description-step',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NzModalModule],
   templateUrl: './ai-job-description.component.html',
   styleUrl: './ai-job-description.component.scss'
 })
@@ -62,12 +65,14 @@ export class AiJobDescriptionStepComponent
   implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() form!: FormGroup;
+  @Input() jdError = false;
 
   @ViewChild('editor', { static: false })
   editorRef!: ElementRef<HTMLDivElement>;
 
   private cdr = inject(ChangeDetectorRef);
   private jobService = inject(JobService);
+  private modal = inject(NzModalService);
 
   readonly STORAGE_KEY = 'ai_jd_versions';
 
@@ -90,9 +95,7 @@ export class AiJobDescriptionStepComponent
       this.form.addControl('jobDescription', new FormControl('', Validators.required));
     }
 
-    // If user is returning from the Review screen to edit, the parent form still
-    // holds the previously-generated raw JD object. Restore a version from it
-    // so the editor shows the content instead of the empty state.
+    
     const existingJd = this.form.get('jobDescription')?.value;
     if (existingJd && typeof existingJd === 'object') {
       const html = this.formatJdResponse(existingJd);
@@ -143,6 +146,23 @@ export class AiJobDescriptionStepComponent
   // ── Public API actions ──────────────────────────────────────────────────────
 
   async generateJD(): Promise<void> {
+    if (this.versions.length >= 3) {
+      const modal = this.modal.create<ConfirmModalComponent>({
+        nzContent: ConfirmModalComponent,
+        nzData: { mode: 'replace-jd' },
+        nzClassName: 'custom-confirm-modal custom-edit-modal',
+        nzFooter: null,
+        nzCentered: true,
+        nzWidth: 360,
+        nzClosable: false,
+      });
+      modal.afterClose.subscribe((result: string) => {
+        if (result === 'confirm') {
+          this.callGenerateApi('');
+        }
+      });
+      return;
+    }
     await this.callGenerateApi('');
   }
 

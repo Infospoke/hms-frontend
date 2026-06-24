@@ -40,7 +40,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
   minPassPercentage = 70;
   acceptableScoreMin = 50;
   acceptableScoreMax = 100;
-
+  isQuestionsFinalized:boolean=true;
   // ── UI state ─────────────────────────────────────────────────────────────────
   isLoading = false;
   isGenerating = false;
@@ -144,7 +144,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
         number_of_questions: this.totalQuestions,
         difficulty_level: this.difficultyLevel,
         question_type: this.selectedQuestionTypes,
-        job_Id:this.jobId,
+      
       };
       const res = await this.interviewService.generateAIQuestions(payload);
       this.questions = this.mapApiQuestions(res?.questions ?? []);
@@ -215,6 +215,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
     try {
       await this.interviewService.finalizeQuestions(this.buildFinalizePayload());
       this.notification.success('Questions finalized successfully');
+      this.isQuestionsFinalized=false;
     } catch {
       this.notification.error('Failed to finalize questions');
     } finally {
@@ -232,11 +233,11 @@ export class InterviewQuestionGenerateComponent implements OnInit {
     try {
       await this.interviewService.finalizeQuestions(this.buildFinalizePayload());
       await this.interviewService.updateMoveToSchedule({
-        interview_session_id: this.interviewSessionId,
+        application_id: this.applicationId,
         move_to_schedule: true,
       });
       this.notification.success('Moved to schedule successfully');
-      this.router.navigate(['../schedule-ai-interview'], {
+      this.router.navigate(['/supply/ai-interview-zone'], {
         relativeTo: this.route,
         queryParams: { applicationId: this.applicationId, sessionId: this.interviewSessionId },
       });

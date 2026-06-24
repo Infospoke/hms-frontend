@@ -215,13 +215,18 @@
     <div class="jd-textarea-wrap">
       <textarea
         class="jd-textarea"
+        [class.jd-textarea--err]="isInvalid('notes')"
         formControlName="notes"
         rows="4"
         placeholder="Add any additional information relevant to this job."
-        maxlength="250">
+        maxlength="300">
       </textarea>
-      <span class="jd-char-count">{{ notesLength }}/250</span>
+      <span class="jd-char-count" [class.jd-char-count--warn]="notesLength > 270">{{ notesLength }}/300</span>
     </div>
+    <span class="jd-err">
+      <ng-container *ngIf="f('notes')?.hasError('minlength')">Minimum 6 characters required</ng-container>
+      <ng-container *ngIf="f('notes')?.hasError('maxlength')">Maximum 300 characters allowed</ng-container>
+    </span>
   </div>
 
 </div>

@@ -81,13 +81,7 @@
       </div>
 
       <!-- What happens next -->
-      <div class="ip-info-note" *ngIf="!selectedPlan">
-        <i class="fa-solid fa-circle-info"></i>
-        <div>
-          <strong>What happens next?</strong>
-          <p>All the rounds, weightages, evaluation settings and plan details from the selected interview plan will be applied to this job.</p>
-        </div>
-      </div>
+      
 
     </div>
   </div>
@@ -188,8 +182,23 @@
     <!-- Empty right panel -->
     <ng-template #emptyDetail>
       <div class="ip-detail-empty">
-        <i class="fa-solid fa-clipboard-list"></i>
-        <p>Select a plan from the left to view its details here.</p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+          <rect width="120" height="120" rx="24" fill="#EEF2FF"/>
+          <!-- Clipboard body -->
+          <rect x="28" y="36" width="64" height="72" rx="6" fill="#E0E7FF" stroke="#818CF8" stroke-width="1.6"/>
+          <!-- Clipboard top tab -->
+          <rect x="44" y="28" width="32" height="14" rx="4" fill="#C7D2FE" stroke="#818CF8" stroke-width="1.4"/>
+          <!-- Lines on clipboard -->
+          <path d="M40 58h40M40 68h40M40 78h28" stroke="#6366F1" stroke-width="2" stroke-linecap="round"/>
+          <!-- Check circle -->
+          <circle cx="86" cy="88" r="16" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.6"/>
+          <!-- Magnifying glass hint (select indicator) -->
+          <path d="M80 88l4 4 8-8" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="ip-detail-empty-title">No plan selected</p>
+        <p class="ip-detail-empty-sub">
+          Select an interview plan from the list to see its details, rounds, and evaluation settings.
+        </p>
       </div>
     </ng-template>
 

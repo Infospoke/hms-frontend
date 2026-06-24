@@ -3,6 +3,7 @@ import { TableColumn, ReusableTableComponent } from '../../../../shared/componen
 import { CommonModule } from '@angular/common';
 import { OnChangeType } from 'ng-zorro-antd/core/types';
 import { InterviewServiceService } from '../../service/interview-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-interview-schedule-ai-table',
@@ -18,7 +19,7 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
     { key: 'jobTitle', label: 'Job Title', width: '160px' },
     { key: 'interviewPlan', label: 'Interview Plan', width: '220px' },
     { key: 'priority', label: 'Priority', width: '110px', custom: true, align: 'center' },
-    { key: 'dueDate', label: 'Due Date', width: '130px' },
+    { key: 'dueDate', label: 'Due Date', width: '130px', custom: true, align: 'center' },
     { key: 'actions', label: 'Actions', width: '140px', custom: true, align: 'center' },
   ];
 
@@ -26,18 +27,19 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
   tableData: any[] = [];
   pageSize: any = 10;
   currentPage: any = 1;
-  totalElements:any;
+  totalElements: any;
   totalCandidates = 26;
   private interviewService = inject(InterviewServiceService);
+  private router = inject(Router);
   ngOnInit(): void {
-    // this.loadData();
+    this.loadData();
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (
       changes['activeFilters'] &&
       !changes['activeFilters'].firstChange
     ) {
-      // this.loadData();
+      this.loadData();
     }
   }
 
@@ -46,7 +48,7 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
     const res: any = await this.interviewService.getAiInterviewZoneScheduleAIInterview(obj);
     if (res?.responsecode == '00') {
       this.tableData = this.mapResponse(res?.data?.content);
-      this.totalElements=res?.data.totalElements;
+      this.totalElements = res?.data.totalElements;
     }
   }
   private mapResponse(data: any[]) {
@@ -66,21 +68,30 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
       interviewPlan: item.interviewPlan || '-',
       priority: item.priority || '-',
       priorityType: item.priority?.toLowerCase(),
-      dueDate: item.dueDate
+      dueDate: item.dueDate,
+      lastUpdatedDate: new Date(item.dueDate).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }),
+
+      lastUpdatedTime: new Date(item.dueDate).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      }),
     }));
   }
   onRowClick(row: any): void {
     console.log('Row clicked:', row);
   }
 
-  onSortChange(event: { col: string; dir: 'asc' | 'desc' }): void {
-    console.log('Sort changed:', event);
-  }
+  
 
   onSchedule(row: any, event: MouseEvent): void {
     event.stopPropagation();
     console.log('Schedule clicked for:', row.name);
-    
+    this.router.navigate([`/supply/ai-interview-zone/schedule-ai-interview/${row?.applicationId}`])
   }
 
   private getInitials(name: string): string {

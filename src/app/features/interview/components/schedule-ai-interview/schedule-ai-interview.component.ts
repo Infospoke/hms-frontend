@@ -2,7 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { InterviewServiceService } from '../../service/interview-service.service';
 
 interface CalendarDay {
   date: number | null;
@@ -26,7 +29,16 @@ interface TimeSlot {
   isPast: boolean;
 }
 
-// All possible slots in a day (fixed schedule)
+interface CandidateOverview {
+  initials: string;
+  name: string;
+  email: string;
+  job: string;
+  interviewPlan: string;
+  interviewType: string;
+  duration: string;
+}
+
 const ALL_SLOT_DEFINITIONS = [
   { id: 1, label: '09:00 AM – 10:00 AM', startHour: 9,  startMinute: 0,  endHour: 10, endMinute: 0  },
   { id: 2, label: '10:30 AM – 11:30 AM', startHour: 10, startMinute: 30, endHour: 11, endMinute: 30 },
@@ -36,6 +48,10 @@ const ALL_SLOT_DEFINITIONS = [
   { id: 6, label: '05:00 PM – 06:00 PM', startHour: 17, startMinute: 0,  endHour: 18, endMinute: 0  },
 ];
 
+// Fallback values used only when the API doesn't return interviewType/duration
+const DEFAULT_INTERVIEW_TYPE = 'AI Video Interview';
+const DEFAULT_DURATION = '60 Minutes';
+
 @Component({
   selector: 'app-schedule-ai-interview',
   standalone: true,
@@ -44,22 +60,36 @@ const ALL_SLOT_DEFINITIONS = [
   styleUrl: './schedule-ai-interview.component.scss',
 })
 export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
-  candidate = {
-    initials: 'PS',
-    name: 'Priya Sharma',
-    email: 'priya.sharma@email.com',
-    job: 'Backend Developer',
-    interviewPlan: 'Backend Developer – Technical Round',
-    interviewType: 'AI Video Interview',
-    duration: '60 Minutes',
+  candidate: CandidateOverview = {
+    initials: '',
+    name: '',
+    email: '',
+    job: '',
+    interviewPlan: '',
+    interviewType: DEFAULT_INTERVIEW_TYPE,
+    duration: DEFAULT_DURATION,
   };
-  private router=inject(Router);
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private interviewService = inject(InterviewServiceService); // 👈 service exposing scheduleInterviewTime() + getCandidateOverview()
+
   recruiter = {
     initials: 'RK',
     name: 'Riya Kapoor',
     role: 'Recruiter',
     notifications: 6,
   };
+
+  // ── Application context ──────────────────────────────────────────────────
+  applicationId!: number;
+  isScheduling = false;
+  scheduleError: string | null = null;
+
+  isLoadingCandidate = false;
+  candidateError: string | null = null;
+
+  private paramSub?: Subscription;
 
   selectedTimezone = '(GMT +05:30) Asia/Kolkata';
   timezones = [
@@ -92,12 +122,17 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     this.today = new Date();
     this.currentYear = this.today.getFullYear();
     this.currentMonth = this.today.getMonth();
-    this.selectedDate = new Date(this.today); // default: today
+    this.selectedDate = new Date(this.today);
+
+    // Read the id straight off the URL: /ai-interview-zone/schedule-ai-interview/:applicantionId
+    // (param name matches the route config exactly — note the typo "applicantionId")
+    this.applicationId = this.readApplicationIdFromRoute();
   }
 
   ngOnInit() {
     this.buildCalendar();
     this.buildTimeSlots();
+    this.fetchCandidateOverview();
 
     // Refresh every minute so slots update as time passes
     this.clockInterval = setInterval(() => {
@@ -105,10 +140,84 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
       this.buildTimeSlots();
       this.buildCalendar();
     }, 60_000);
+
+    // Keep applicationId (and candidate data) in sync if the same component
+    // instance is reused for a different :applicantionId — e.g. navigating
+    // between candidates without leaving this route.
+    this.paramSub = this.route.paramMap.subscribe(() => {
+      const next = this.readApplicationIdFromRoute();
+      if (next !== this.applicationId) {
+        this.applicationId = next;
+        this.fetchCandidateOverview();
+      }
+    });
   }
 
   ngOnDestroy() {
     if (this.clockInterval) clearInterval(this.clockInterval);
+    this.paramSub?.unsubscribe();
+  }
+
+  private readApplicationIdFromRoute(): number {
+    const raw =
+      this.route.snapshot.paramMap.get('applicantionId') ??
+      this.route.snapshot.paramMap.get('applicationId');
+
+    if (raw != null && !isNaN(Number(raw))) {
+      return Number(raw);
+    }
+
+    const navState = this.router.getCurrentNavigation()?.extras?.state as
+      | { applicationId?: number }
+      | undefined;
+    return navState?.applicationId ?? (history.state?.applicationId ?? 0);
+  }
+
+  // ── Candidate Overview ───────────────────────────────────────────────────
+
+  async fetchCandidateOverview() {
+    if (!this.applicationId) {
+      this.candidateError = 'Missing application id; cannot load candidate details.';
+      return;
+    }
+
+    this.isLoadingCandidate = true;
+    this.candidateError = null;
+
+    try {
+      const res = await this.interviewService.getCandidateOverview(this.applicationId);
+      const data = res?.data;
+
+      if (!data) {
+        this.candidateError = 'Candidate details not found.';
+        return;
+      }
+
+      this.candidate = {
+        initials: this.getInitials(data.candidateName),
+        name: data.candidateName ?? '',
+        email: data.email ?? '',
+        job: data.jobTitle ?? '',
+        interviewPlan: data.planName ?? '',
+        interviewType: data.interviewType ?? DEFAULT_INTERVIEW_TYPE,
+        duration: data.duration ?? DEFAULT_DURATION,
+      };
+    } catch (err) {
+      console.error('Failed to load candidate overview', err);
+      this.candidateError = 'Failed to load candidate details. Please try again.';
+    } finally {
+      this.isLoadingCandidate = false;
+    }
+  }
+
+  private getInitials(name?: string | null): string {
+    if (!name) return '';
+    return name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(part => part[0]?.toUpperCase() ?? '')
+      .join('');
   }
 
   get currentMonthLabel(): string {
@@ -184,13 +293,6 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     this.buildTimeSlots();
   }
 
-  // ── Time Slots ──────────────────────────────────────────────────────────────
-
-  /**
-   * Build visible slots for the selected date.
-   * Rule: if today is selected, hide slots whose START time has already passed.
-   *       For future dates, show all slots.
-   */
   buildTimeSlots() {
     const now = this.today;
     const isToday = this.selectedDate
@@ -248,13 +350,58 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     return `${dayName}, ${d} ${m} ${y} at ${this.selectedSlot.label} (IST)`;
   }
 
-  onSchedule() {
-    alert(`Interview scheduled!\n${this.proposedSchedule}`);
+  // ── Schedule / Cancel actions ────────────────────────────────────────────
+
+  async onSchedule() {
+    if (!this.selectedDate || !this.selectedSlot) return;
+
+    if (!this.applicationId) {
+      this.scheduleError = 'Missing application reference. Cannot schedule interview.';
+      console.error(this.scheduleError);
+      return;
+    }
+
+    const payload = {
+      application_id: this.applicationId,
+      scheduled_date: this.formatDateForApi(this.selectedDate),
+      scheduled_time: this.formatTimeForApi(this.selectedSlot),
+      question_type: 'AI',
+    };
+
+    this.isScheduling = true;
+    this.scheduleError = null;
+
+    try {
+      await this.interviewService.scheduleInterviewTime(payload);
+
+      this.router.navigate(['/supply/ai-interview-zone'], { state: { activeType: 'is' } });
+    } catch (err) {
+      console.error('Failed to schedule interview', err);
+      this.scheduleError = 'Something went wrong while scheduling the interview. Please try again.';
+    } finally {
+      this.isScheduling = false;
+    }
   }
 
   onCancel() {
-    this.router.navigate(['/interview/ai-interview-zone'],
-      {state: { activeType: 'si' }}
+    console.log("clicked");
+    this.router.navigate(['/supply/ai-interview-zone'],
+      { state: { activeType: 'is' } }
     );
+  }
+
+  // ── Formatters for API payload ───────────────────────────────────────────
+
+  private formatDateForApi(date: Date): string {
+    const y = date.getFullYear();
+    const m = `${date.getMonth() + 1}`.padStart(2, '0');
+    const d = `${date.getDate()}`.padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private formatTimeForApi(slot: TimeSlot): string {
+    const h = `${slot.startHour}`.padStart(2, '0');
+    const min = `${slot.startMinute}`.padStart(2, '0');
+    return `${h}:${min}`;
   }
 }

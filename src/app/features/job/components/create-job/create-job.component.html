@@ -1,6 +1,5 @@
 <app-heading
   [heading]="'Create Job'"
-  [subHeading]="'Create a new job from approved service request'"
   [showInfo]="false"
   [infoTooltip]="''"
   [showBackButton]="true"
@@ -10,7 +9,7 @@
   />
 
 <!-- ── Stepper ──────────────────────────────────────────────────────────── -->
-<div class="cj-stepper-wrap">
+<div class="cj-stepper-wrap card-dd">
   <nz-steps [nzCurrent]="currentStep" nzSize="small" class="cj-steps">
     <nz-step *ngFor="let s of steps" [nzTitle]="s.title"></nz-step>
   </nz-steps>
@@ -27,7 +26,8 @@
 
   <app-ai-job-description-step
     *ngIf="currentStep === 1"
-    [form]="step2Form">
+    [form]="step2Form"
+    [jdError]="jdError">
   </app-ai-job-description-step>
 
   <app-sourcing-strategy-step

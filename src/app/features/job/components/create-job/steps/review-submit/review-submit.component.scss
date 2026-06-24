@@ -311,7 +311,15 @@
   }
 }
 
-// ── Sourcing table ────────────────────────────────────────────────────────────
+// ── Table wrap (outer border) ─────────────────────────────────────────────────
+.rv-table-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+// ── Sourcing / Interview-plan table ──────────────────────────────────────────
 .rv-src-table {
   width: 100%;
   border-collapse: collapse;
@@ -326,7 +334,7 @@
     color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 2px solid var(--color-border);
     text-align: left;
   }
 
@@ -336,10 +344,10 @@
     color: var(--color-text);
     vertical-align: middle;
     font-size: 13px;
-
-    &:last-child { border-bottom: none; }
+    // ← removed the erroneous &:last-child rule that was killing the last column's border
   }
 
+  // Only remove the divider after the very last data row
   tr:last-child td { border-bottom: none; }
 }
 

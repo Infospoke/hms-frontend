@@ -66,7 +66,7 @@ export class JobOverview {
 
   async loadJobs() {
     try {
-      const res = await this.jobApi.getJobsList(true);
+      const res = await this.jobApi.getJobsList();
       this.jobsList = this.jobApi.jobs$() || [];
       this.filteredJobsList = [...this.jobsList];
     } catch (error) {
@@ -99,13 +99,15 @@ export class JobOverview {
     if (!this.selectedJobId) return;
     try {
       const res: any = await this.jobApi.getJobDetailsById(this.selectedJobId);
+      const data=res?.data?.applicantsCount;
+     
       this.stages = [
-        { id: 1, title: 'Applied', count: res?.data?.applicantCount, total: res?.data?.applicantCount },
-        { id: 2, title: 'Screened', count: res?.data?.resumeCount, total: res?.data?.applicantCount },
-        { id: 3, title: 'Shortlisted', count: res?.data?.shortlisted, total: res?.data?.applicantCount },
-        { id: 4, title: 'Interview', count: res?.data?.interviewCount, total: res?.data?.applicantCount },
-        { id: 5, title: 'Offer', count: res?.data?.offerReleased, total: res?.data?.applicantCount },
-        { id: 6, title: 'Hired', count: res?.data?.hiredCount, total: res?.data?.applicantCount },
+        { id: 1, title: 'Applied', count: data?.applicantCount, total: data?.applicantCount },
+        { id: 2, title: 'Screened', count: data?.resumeCount, total:data?.applicantCount },
+        { id: 3, title: 'Shortlisted', count: data?.shortlisted, total: data?.applicantCount },
+        { id: 4, title: 'Interview', count: data?.interviewCount, total: data?.applicantCount },
+        { id: 5, title: 'Offer', count: data?.offerReleased, total: data?.applicantCount },
+        { id: 6, title: 'Hired', count: data?.hiredCount, total: data?.applicantCount },
       ];
       this.selectedJob = res?.data;
     } catch (error) {

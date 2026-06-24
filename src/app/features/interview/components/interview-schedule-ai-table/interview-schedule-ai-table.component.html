@@ -5,7 +5,7 @@
   <!-- ── Table ──────────────────────────────────────────────────────────── -->
   <div class="card-dd">
     <app-reusable-table [columns]="tableColumns" [data]="tableData" [currentPage]="currentPage" [pageSize]="pageSize"
-      [cellTemplate]="cellTpl" (rowClick)="onRowClick($event)" (sortChange)="onSortChange($event)"
+      [cellTemplate]="cellTpl" (rowClick)="onRowClick($event)" 
       [showPagination]='true' (pageChange)="pageChange($event)" [totalItems]="totalElements">
     </app-reusable-table>
   </div>
@@ -38,6 +38,12 @@
     </span>
   </ng-container>
 
+  <ng-container *ngIf="ctx.col.key === 'dueDate'">
+        <div class="aiz-date">
+            <span class="aiz-date-day">{{ ctx.row.lastUpdatedDate }}</span>
+            <span class="aiz-date-time">{{ ctx.row.lastUpdatedTime }}</span>
+        </div>
+    </ng-container>
   <!-- Actions column -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
     <div class="ist-actions">

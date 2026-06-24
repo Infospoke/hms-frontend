@@ -74,8 +74,8 @@ export class RecruiterAssignmentStepComponent implements OnInit {
     { key: 'name', label: 'Recruiter', width: '240px', custom: true },
     { key: 'email', label: 'Email ID' },
     { key: 'role', label: 'Role' },
-    { key: 'activeAssignments', label: 'Total Active Assignments', align: 'center' },
-    { key: 'action', label: 'Action', align: 'center', custom: true },
+    { key: 'activeAssignments', label: 'Total Assignments', align: 'center' },
+    { key: 'action', label: 'Action', width: '120px', align: 'center', custom: true },
   ];
 
   filterDropdowns = roles;
@@ -85,6 +85,12 @@ export class RecruiterAssignmentStepComponent implements OnInit {
     if (this.form && !this.form.get('selectedRecruiterDetails')) {
       this.form.addControl('selectedRecruiterDetails', new FormControl([]));
     }
+
+    // Restore previously assigned IDs so mapApiResponseToRecruiters() can mark
+    // them as assigned=true after the API response arrives.
+    const saved: any[] = this.form.get('selectedRecruiterDetails')?.value ?? [];
+    saved.forEach((r: any) => this.assignedIds.add(r.userId));
+
     this.loadDepartments();
   }
 

@@ -46,7 +46,7 @@ export const SUPPLY_ROUTES: Routes = [
         loadComponent:()=>import("../../interview/components/interview-question-generate/interview-question-generate.component").then(m=>m.InterviewQuestionGenerateComponent)
     },
     {
-        path:"ai-interview-zone/schedule-ai-interview",
+        path:"ai-interview-zone/schedule-ai-interview/:applicantionId",
         loadComponent:()=>import("../../interview/components/schedule-ai-interview/schedule-ai-interview.component").then(m=>m.ScheduleAiInterviewComponent)
     },
     {

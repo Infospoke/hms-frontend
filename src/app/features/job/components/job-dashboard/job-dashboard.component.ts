@@ -14,10 +14,10 @@ export class JobDashboardComponent implements OnInit {
   list: any;
   stages: any;
   pipeLineDetails: any;
-  jobsListData:any;
-  selectedJobId:any;
-  selectedJob:any;
-  activityList:any;
+  jobsListData: any;
+  selectedJobId: any;
+  selectedJob: any;
+  activityList: any;
   ngOnInit(): void {
     this.getJobs();
     this.getDashboardCount();
@@ -43,7 +43,7 @@ export class JobDashboardComponent implements OnInit {
   async getJobs() {
     let isOpen = true;
     try {
-      const res: any = await this.jobApi.getJobsList(isOpen);
+      const res: any = await this.jobApi.getJobsList();
 
       this.jobsListData = res?.data;
       this.selectedJobId = res?.data?.[0]?.jobId;
@@ -55,7 +55,7 @@ export class JobDashboardComponent implements OnInit {
 
   }
 
-  async getActityvityLogs(){
+  async getActityvityLogs() {
     try {
       const res: any = await this.jobApi.getActivityLogs();
       this.activityList = res?.data;
@@ -71,21 +71,23 @@ export class JobDashboardComponent implements OnInit {
   }
 
   handleJobSelection() {
-    this.selectedJob = this.jobsListData.find((item:any) => item.jobId === this.selectedJobId);
+    this.selectedJob = this.jobsListData.find((item: any) => item.jobId === this.selectedJobId);
     this.handleJobDetailsById();
   }
 
   async handleJobDetailsById() {
     try {
       const res: any = await this.jobApi.getJobDetailsById(this.selectedJobId);
+      const data = res?.data?.applicantsCount;
+
       this.stages = [
-        { id: 1, title: "Applied", count: res?.data?.applicantCount, total: res?.data?.applicantCount },
-        { id: 2, title: "Screened", count: res?.data?.resumeCount, total: res?.data?.applicantCount },
-        { id: 3, title: "Shortlisted", count: res?.data?.shortlisted, total: res?.data?.applicantCount },
-        { id: 4, title: "Interview", count: res?.data?.interviewCount, total: res?.data?.applicantCount },
-        { id: 5, title: "Offer", count: res?.data?.offerReleased, total: res?.data?.applicantCount },
-        { id: 6, title: "Hired", count: res?.data?.hiredCount, total: res?.data?.applicantCount },
-      ]
+        { id: 1, title: 'Applied', count: data?.applicantCount, total: data?.applicantCount },
+        { id: 2, title: 'Screened', count: data?.resumeCount, total: data?.applicantCount },
+        { id: 3, title: 'Shortlisted', count: data?.shortlisted, total: data?.applicantCount },
+        { id: 4, title: 'Interview', count: data?.interviewCount, total: data?.applicantCount },
+        { id: 5, title: 'Offer', count: data?.offerReleased, total: data?.applicantCount },
+        { id: 6, title: 'Hired', count: data?.hiredCount, total: data?.applicantCount },
+      ];
     }
     catch (error) {
 

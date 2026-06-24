@@ -1,7 +1,7 @@
 <div class="ic-root">
 
   
-
+  <app-heading heading="AI Interview Session Details" subHeading="Access interview schedules, candidate profiles, evaluation metrics, and assessment questions in one place." [showBackButton]="true" backButtonUrl="/" buttonText="Back to AI Interview Zone"  (backClick)="onBack()"/>
   <!-- ══ Error State ════════════════════════════════════════════════════════ -->
   <ng-container *ngIf="!loading && error">
     <div class="ic-state-box ic-state-box--error">
@@ -74,10 +74,7 @@
           <span class="ic-field-label">Interview Type</span>
           <span class="ic-field-value">{{ jobDetails.interviewType }}</span>
         </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Time Zone</span>
-          <span class="ic-field-value">{{ jobDetails.timeZone }}</span>
-        </div>
+        
       </div>
 
     </div>

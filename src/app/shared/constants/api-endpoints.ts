@@ -15,9 +15,9 @@ export const API = {
         GET_ALL: '/user/modules',
     },
     JOBS: {
-        GET_ALL_JOBS: (id: any) => `/hms/jobs/get-all-jobs/${id}`,
+        GET_ALL_JOBS: `/hms/create-job/get-all-jobs`,
         GET_DASHBOARD_DATA: "/hms/jobs/get-all-jobs-dashboard-counts",
-        GET_JOB_BY_ID: (id: any) => `/hms/jobs/get-job-details-by-id/${id}`
+        GET_JOB_BY_ID: (id: any) => `/hms/create-job/get-job-details/${id}`
         , ADD_JOB: `/hms/jobs/add-new-job`,
         UPDATE_JOB: `/hms/jobs/update-job-details`,
         GET_ALL_SKILLS: `/hms/jobs/get-all-skills`,
@@ -151,6 +151,8 @@ export const API = {
         CUSTOM_QUESTION:`/api/interview/custom-question`,
         FINALIZE_QUESTIONS:`/api/interview/finalize-questions`,
         UPDATE_MOVE_TO_SCHEDULE:`/api/interview/update-move-to-schedule`,
-        AI_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/interview-progress-details/${id}`
+        AI_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/interview-progress-details/${id}`,
+        SCHEDULE_USER:`/api/interview/admin-schedule-interview`,
+        SCHEDULE_CANDIDATE_OVERVIEW:(id:any)=>`/hms/interview-plan/candidate-overview/${id}`
     }
 };

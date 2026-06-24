@@ -1,44 +1,161 @@
-.overview-div {
+:host {
+  display: block;
   background: #fff;
-  padding: 14px;
-  border-radius: 6px;
-  font-family: 'Segoe UI';
+  border-radius: 8px;
   margin-top: 5px;
   height: 60vh;
-  overflow-y: scroll;
-}
+  overflow-y: auto;
+  font-family: 'Segoe UI', sans-serif;
 
-.padding-class {
-  padding: 20px !important;
-  &::-webkit-scrollbar { width: 5px; top: 5px; bottom: 5px; }
+  &::-webkit-scrollbar { width: 5px; }
   &::-webkit-scrollbar-thumb { background: #e5ecfc; border-radius: 10px; }
 }
 
-.title { font-size: 17px; font-weight: 600; margin-bottom: 18px; }
+// ── Section ───────────────────────────────────────────────────────────────────
+.vj-section {
+  padding: 20px 22px 8px;
+}
 
-.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; }
-.second-row { margin-top: 12px; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.vj-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a2a4a;
+  margin: 0 0 16px;
+}
 
-.label {
+.vj-divider {
+  border-top: 1px solid #eef0f5;
+  margin: 4px 0;
+}
+
+// ── Grids ─────────────────────────────────────────────────────────────────────
+.vj-grid {
+  display: grid;
+  gap: 14px 24px;
+  margin-bottom: 14px;
+
+  &--4 { grid-template-columns: repeat(4, 1fr); }
+  &--2 { grid-template-columns: 1fr 1fr; }
+}
+
+// ── Field ─────────────────────────────────────────────────────────────────────
+.vj-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &--full {
+    margin-bottom: 14px;
+  }
+}
+
+.vj-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  color: #8996b0;
+  text-transform: uppercase;
+}
+
+.vj-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1a2a4a;
+  margin: 0;
+}
+
+.vj-prose {
   font-size: 13px;
-  color: hsl(0, 0%, 34%);
-  letter-spacing: 0.6px;
-  margin-bottom: 6px;
-  display: block;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0;
 }
 
-p { margin: 0; font-weight: 500; font-size: 15px; }
-hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+// ── Lists ─────────────────────────────────────────────────────────────────────
+.vj-list {
+  margin: 0;
+  padding-left: 18px;
 
-.chip {
-  background: #eaeaea;
-  padding: 6px 12px;
-  border-radius: 14px;
+  li {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.7;
+  }
+}
+
+// ── Chips ─────────────────────────────────────────────────────────────────────
+.vj-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.vj-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
   font-size: 12px;
-  margin: 5px 8px 0 0;
-  display: inline-block;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &--primary {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+  }
+
+  &--secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+
+  &--channel {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+  }
 }
 
-.info { margin-bottom: 10px; color: #444; }
-.desc { margin-top: 10px; line-height: 1.6; font-size: 13px; color: #444; }
+.vj-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+}
+
+// ── Badge ─────────────────────────────────────────────────────────────────────
+.vj-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--green {
+    background: #dcfce7;
+    color: #15803d;
+  }
+}
+
+// ── No data ───────────────────────────────────────────────────────────────────
+.vj-no-data {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.vj-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 10px;
+  color: #94a3b8;
+
+  p { margin: 0; font-size: 13px; }
+}

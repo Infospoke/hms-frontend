@@ -30,12 +30,24 @@ export class JobService {
   analysis$ = this.analysisSignal;
 
 
-  async getJobsList(isOpen: boolean) {
+  async getJobsList(filters: any = {}) {
     const res: any = await firstValueFrom(
-      this.api.hrmsget(API.JOBS.GET_ALL_JOBS(isOpen))
+      this.api.hrmspost(API.JOBS.GET_ALL_JOBS, { filters })
     );
-    this.jobsListSignal.set(res?.data);
-    return res;
+    // Normalize new response keys to what templates expect
+    const normalized = (res?.data ?? []).map((item: any) => ({
+      ...item,
+      jobLocation: item.Location ?? item.jobLocation ?? '',
+      experience: item.minExperience != null && item.maxExperience != null
+        ? `${item.minExperience} - ${item.maxExperience}`
+        : (item.experience ?? ''),
+      skills: Array.isArray(item.skillsMustHave)
+        ? item.skillsMustHave.map((s: string) => ({ skillName: s }))
+        : (item.skills ?? []),
+      jobMode: item.modeType ?? item.jobMode ?? '',
+    }));
+    this.jobsListSignal.set(normalized);
+    return { ...res, data: normalized };
   }
 
   async getJobDashboardCount() {
@@ -50,6 +62,7 @@ export class JobService {
     const res: any = await firstValueFrom(
       this.api.hrmsget(API.JOBS.GET_JOB_BY_ID(jobId))
     );
+    // Return the full nested data; recruiters are excluded in the UI layer
     this.jobDetailsSignal.set(res?.data);
     return res;
   }

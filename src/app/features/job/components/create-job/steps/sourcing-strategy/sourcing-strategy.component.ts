@@ -50,7 +50,22 @@ export class SourcingStrategyStepComponent implements OnInit {
   ngOnInit(): void {
     if (!this.form.get('selectedChannels')) {
       this.form.addControl('selectedChannels', new FormControl([]));
+    }
 
+    // Restore channel states when user navigates back from a later step.
+    // The form control retains the last saved payload; apply it to the
+    // local channels array BEFORE syncForm() so we don't overwrite with defaults.
+    const saved: any[] = this.form.get('selectedChannels')?.value ?? [];
+    if (saved.length > 0) {
+      saved.forEach((s: any) => {
+        const ch = this.channels.find(c => c.name === s.channelName);
+        if (ch) {
+          ch.enabled = s.postJob;
+          if (ch.hasReferralAmount && s.referralAmount != null) {
+            ch.referralAmount = Number(s.referralAmount);
+          }
+        }
+      });
     }
 
     this.syncForm();

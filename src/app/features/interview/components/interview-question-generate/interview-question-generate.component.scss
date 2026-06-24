@@ -929,6 +929,9 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     background: $primary-dark;
     box-shadow: 0 4px 14px rgba($primary, .40);
   }
+  &:disabled{
+    cursor: not-allowed;
+  }
 }
 
 .iq-btn-plain {

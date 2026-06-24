@@ -54,6 +54,13 @@ export class InterviewPlanStepComponent implements OnInit {
     if (this.form && !this.form.get('selectedPlanDetail')) {
       this.form.addControl('selectedPlanDetail', new FormControl(null));
     }
+
+    // Restore selected plan when user navigates Back from a later step
+    const savedDetail = this.form.get('selectedPlanDetail')?.value;
+    if (savedDetail) {
+      this.selectedPlan = savedDetail;
+    }
+
     this.loadPlans();
   }
 

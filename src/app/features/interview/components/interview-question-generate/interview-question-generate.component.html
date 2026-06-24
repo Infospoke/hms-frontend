@@ -1,5 +1,5 @@
 <div class="iq-root">
-  <app-heading heading="" subHeading="" [showBackButton]="true" backButtonUrl="/interview/ai-interview-zone"  buttonText="Back to Generate AI Questions"/>
+  <app-heading heading="" subHeading="" [showBackButton]="true" backButtonUrl="/supply/ai-interview-zone"  buttonText="Back to Generate AI Questions"/>
   <div class="iq-header">
     <div class="iq-candidate-info">
       <div class="iq-avatar">{{ candidate.initials }}</div>
@@ -178,7 +178,7 @@
         </span>
       </button>
 
-      <div class="iq-ai-note">
+      <!-- <div class="iq-ai-note">
         <i class="fa-solid fa-robot iq-ai-icon"></i>
         <div>
           <span class="iq-ai-note-title">AI will generate questions based on:</span>
@@ -188,7 +188,7 @@
             <li>Industry best practices</li>
           </ul>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Right Panel: Questions -->
@@ -301,7 +301,7 @@
           <i class="fa-regular fa-circle-check"></i>
           {{ isFinalizing ? 'Finalizing...' : 'Finalize Questions' }}
         </button>
-        <button class="iq-btn-schedule" (click)="moveToSchedule()" [disabled]="isScheduling || !questions.length">
+        <button class="iq-btn-schedule" (click)="moveToSchedule()" [disabled]="isScheduling || !questions.length || isQuestionsFinalized">
           <i class="fa-regular fa-calendar-plus"></i>
           {{ isScheduling ? 'Processing...' : 'Move to Schedule' }}
         </button>

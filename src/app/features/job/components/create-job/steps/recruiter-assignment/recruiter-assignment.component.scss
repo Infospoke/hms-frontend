@@ -153,7 +153,7 @@
   border: 1.5px solid var(--color-primary);
   background: #fff;
   color: var(--color-primary);
-  transition: background 0.15s, color 0.15s;
+  // transition: background 0.15s, color 0.15s;
 
   i { font-size: 11px; }
 
@@ -180,4 +180,31 @@
   border: none;
   border-radius: 0;
   box-shadow: none;
+}
+// ── Recruiter validation banner ───────────────────────────────────────────────
+.ra-validation-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 12px 0 4px;
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 500;
+
+  svg { flex-shrink: 0; }
+}
+
+// ── Assign/Remove button — prevent overflow ───────────────────────────────────
+.ra-assign-btn {
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.ra-assign-btn--nowrap {
+  white-space: nowrap;
+  min-width: 100px;
 }

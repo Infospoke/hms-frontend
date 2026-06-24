@@ -65,12 +65,13 @@
                       class="ss-referral-input"
                       [(ngModel)]="ch.referralAmount"
                       (ngModelChange)="onReferralAmountChange(ch)"
-                      min="0"
+                      min="1"
                       step="500"
                       placeholder="0">
                   </div>
                   <span class="ss-referral-hint">Paid to the referring employee upon successful hire</span>
                 </div>
+
               </td>
             </tr>
 
@@ -79,10 +80,10 @@
       </table>
 
       <!-- Info note -->
-      <div class="ss-info-note">
+      <!-- <div class="ss-info-note">
         <i class="fa-solid fa-circle-info"></i>
         Paid channels may incur posting charges as per the platform's policy.
-      </div>
+      </div> -->
 
     </div>
   </div>

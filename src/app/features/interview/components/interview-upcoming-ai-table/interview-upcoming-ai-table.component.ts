@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   templateUrl: './interview-upcoming-ai-table.component.html',
   styleUrl: './interview-upcoming-ai-table.component.scss',
 })
-export class InterviewUpcomingAiTableComponent implements OnChanges ,OnInit{
+export class InterviewUpcomingAiTableComponent implements OnChanges, OnInit {
 
   @Input() activeFilters: any = {};
 
@@ -32,7 +32,7 @@ export class InterviewUpcomingAiTableComponent implements OnChanges ,OnInit{
   pageSize: any = 10;
   totalElements: any = 0;
   isLoading = false;
-  private router=inject(Router);
+  private router = inject(Router);
   sortableColumns: string[] = ['candidateName', 'jobTitle', 'scheduledAt'];
 
   ngOnInit(): void {
@@ -58,7 +58,7 @@ export class InterviewUpcomingAiTableComponent implements OnChanges ,OnInit{
           return {
             sessionId: item.sessionId,
             jobId: item.jobId,
-            applicationId:item?.applicationId,
+            applicationId: item?.applicationId,
             // candidate cell
             name: item.candidateName,
             email: item.email,
@@ -102,14 +102,14 @@ export class InterviewUpcomingAiTableComponent implements OnChanges ,OnInit{
       if (f.toDate) filters['toDate'] = f.toDate;
     }
 
-    const allJobs=f?.['allJobs'];
-    if(allJobs){
-      filters['jobTitle']=allJobs;
+    const allJobs = f?.['allJobs'];
+    if (allJobs) {
+      filters['jobTitle'] = allJobs;
     }
 
-    const questionStatus=f?.['questionStatus'];
-    if(questionStatus){
-      filters['questionStatus']=questionStatus;
+    const questionStatus = f?.['questionStatus'];
+    if (questionStatus) {
+      filters['questionStatus'] = questionStatus;
     }
 
     return {
@@ -179,10 +179,10 @@ export class InterviewUpcomingAiTableComponent implements OnChanges ,OnInit{
 
     return colors[Math.abs(hash) % colors.length];
   }
-  onViewDetails(row: any,data:any) {
-    console.log(row,data);
-    // this.router.navigateByUrl(`/interview/ai-interview-zone/ai-interview-details/${row?.applicationId}`)
-    this.router.navigate([`/interview/ai-interview-zone/ai-interview-details/12`],{
+  onViewDetails(row: any, data: any) {
+    console.log(row, data);
+    // this.router.navigateByUrl(`/interview/ai-interview-zone/ai-interview-details/`)
+    this.router.navigate([`/supply/ai-interview-zone/ai-interview-details/${row?.applicationId}`], {
     })
   }
 }

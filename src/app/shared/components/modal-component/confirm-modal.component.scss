@@ -3,16 +3,15 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 300px;
-  margin: 0 auto;
+  box-sizing: border-box;
+  // padding: 8px 24px 24px;
   text-align: center;
-
 }
 
 
 .modal-icon {
-  width: 72px;
-  height: 72px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -33,10 +32,17 @@
 
   &.icon-deactivate {
     background: #fdecec;
+    i { color: #dc2626; }
+  }
 
-    i {
-      color: #dc2626;
-    }
+  &.icon-warn {
+    background: #fff7ed;
+    i { color: #ea580c; }
+  }
+
+  &.icon-primary {
+    background: #eff6ff;
+    i { color: #2563eb; }
   }
 }
 
@@ -44,7 +50,7 @@
 .modal-title {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   color: #111827;
 }
 
@@ -52,9 +58,9 @@
 .modal-desc {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 24px;
-  line-height: 1.5;
-  max-width: 260px;
+  margin-bottom: 10px;
+  line-height: 1.02;
+  width: 100%;
 }
 
 /* BUTTONS */
@@ -86,6 +92,13 @@
   &:hover {
     background: #15803d;
   }
+}
+
+/* BLUE (submit / replace-jd) */
+.btn-primary-blue {
+  background: #2563eb;
+  color: #fff;
+  &:hover { background: #1d4ed8; }
 }
 
 /* DELETE (RED) */

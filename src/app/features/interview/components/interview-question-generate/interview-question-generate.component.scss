@@ -202,9 +202,93 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   color: $gray-600;
   margin-bottom: 6px;
   letter-spacing: .2px;
-  text-transform: uppercase;
+  // text-transform: uppercase;
+}
+.div-questions {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* space between items */
 }
 
+.ajd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px 48px;
+  text-align: center;
+
+  &__hero {
+    width: 220px;
+    height: auto;
+    margin-bottom: 18px;
+  }
+
+  &__title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a2a4a;
+    margin: 0 0 8px;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: #6b7a99;
+    max-width: 320px;
+    line-height: 1.65;
+    margin: 0 0 20px;
+  }
+
+  // ── 2-column checklist ──
+  &__features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 32px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  &__feat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+
+    svg { flex-shrink: 0; }
+  }
+
+  // ── CTA button ──
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: #2563EB;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 10px;
+
+    &:hover:not(:disabled) { background: #1d4ed8; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  // ── "Usually takes…" hint ──
+  &__hint {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+  }
+}
 // ─── Plan read-only display ───────────────────────────────────────────────────
 .iq-plan-readonly {
   display: flex;
@@ -931,6 +1015,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   }
   &:disabled{
     cursor: not-allowed;
+    background: $primary-mid;
   }
 }
 

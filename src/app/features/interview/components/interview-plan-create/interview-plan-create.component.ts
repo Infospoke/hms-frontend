@@ -38,7 +38,7 @@ interface CreateInterviewPlanPayload {
   rounds: {
     roundOrder: number;
     stageName: string;
-    stageType: string;
+    stageTypeId: string;
     interviewMode: string;
     mandatory: boolean;
   }[];
@@ -315,7 +315,7 @@ export class InterviewPlanCreateComponent implements OnInit {
       rounds: this.rounds.map(r => ({
         roundOrder: r.order,
         stageName: r.stageName,
-        stageType: r.stageType,
+        stageTypeId: r.stageType,
         interviewMode: r.interviewMode,
         mandatory: r.mandatory,
       })),

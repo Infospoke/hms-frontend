@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApprovalLayoutComponent } from "../../../approvals/components/approval-layout/approval-layout.component";
 import { interview } from '../../../../shared/constants/reusbale-filter';
 import { TableColumn, ReusableTableComponent } from '../../../../shared/components/reusable-table/reusable-table.component';
+import { CanDirective } from "../../../../shared/directives/can.directive";
+import { Router } from '@angular/router';
 
 export interface Candidate {
   firstName: string;
@@ -20,7 +22,7 @@ export interface Candidate {
 @Component({
   selector: 'app-offer-management',
   standalone: true,
-  imports: [CommonModule, ApprovalLayoutComponent, ReusableTableComponent],
+  imports: [CommonModule, ApprovalLayoutComponent, ReusableTableComponent, CanDirective],
   templateUrl: './offer-management.component.html',
   styleUrl: './offer-management.component.scss',
 })
@@ -78,7 +80,7 @@ export class OfferManagementComponent {
   currentPage: number = 1;
   totalItems: number = 18;
   pageSize: number = 10;
-
+  private router=inject(Router);
   columns: TableColumn[] = [
     { key: 'candidate',       label: 'Candidate',        width: '220px', custom: true },
     { key: 'jobTitle',        label: 'Job Title',        width: '180px', custom: true },
@@ -128,6 +130,6 @@ export class OfferManagementComponent {
   }
 
   viewDetails(candidate: Candidate): void {
-    console.log('View details:', candidate);
+    this.router.navigate(['/supply/applicant-management/view-ai-interview-details'])
   }
 }

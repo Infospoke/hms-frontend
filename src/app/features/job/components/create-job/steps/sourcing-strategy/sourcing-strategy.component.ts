@@ -36,10 +36,10 @@ export class SourcingStrategyStepComponent implements OnInit {
   whyReasons = WHY_REASONS;
 
   channels: Channel[] = [
-    { id: 'linkedin',  name: 'LinkedIn',       iconText: 'in', iconBg: '#0a66c2', iconColor: '#fff',     bestFor: 'Professional & experienced candidates',   cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: true  },
+    { id: 'linkedin',  name: 'LinkedIn',       iconText: 'in', iconBg: '#0a66c2', iconColor: '#fff',     bestFor: 'Professional & experienced candidates',   cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: false  },
     { id: 'indeed',    name: 'Indeed',               iconText: 'i',  iconBg: '#003a9b', iconColor: '#fff',     bestFor: 'Large volume of active job seekers',       cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: false  },
-    { id: 'naukri',    name: 'Naukri',           iconText: 'N',  iconBg: '#ff7555', iconColor: '#fff',     bestFor: 'Active job seekers across India',          cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: true  },
-    { id: 'internal',  name: 'Internal Career Site', iconText: '🏢', iconBg: '#e0f2fe', iconColor: '#0369a1',  bestFor: 'Internal & past applicants',               cost: 'Free',  isRecommended: false, hasReferralAmount: false, enabled: false  },
+    { id: 'naukri',    name: 'Naukri',           iconText: 'N',  iconBg: '#ff7555', iconColor: '#fff',     bestFor: 'Active job seekers across India',          cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: false  },
+    { id: 'internal',  name: 'Internal Career Site', iconText: '🏢', iconBg: '#e0f2fe', iconColor: '#0369a1',  bestFor: 'Internal & past applicants',               cost: 'Free',  isRecommended: false, hasReferralAmount: false, enabled: true  },
     { id: 'referral',  name: 'Employee Referral',    iconText: '👥', iconBg: '#dcfce7', iconColor: '#16a34a',  bestFor: 'Quality hires through employee network',   cost: 'Free',  isRecommended: true,  hasReferralAmount: true,  enabled: false, referralAmount: 0 },
     { id: 'monster',   name: 'Monster',              iconText: 'M',  iconBg: '#6d28d9', iconColor: '#fff',     bestFor: 'Diverse talent pool',                     cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: false },
     { id: 'shine',     name: 'Shine.com',            iconText: 'S',  iconBg: '#fbbf24', iconColor: '#fff',     bestFor: 'Mid-level professionals',                 cost: 'Paid',  isRecommended: false, hasReferralAmount: false, enabled: false },

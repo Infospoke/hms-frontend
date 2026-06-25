@@ -2,7 +2,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
+  OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +31,7 @@ export interface EvaluationSettings {
   templateUrl: './configure-rounds.component.html',
   styleUrl: './configure-rounds.component.scss',
 })
-export class ConfigureRoundsComponent {
+export class ConfigureRoundsComponent implements OnInit, OnChanges {
 
   /** Maximum number of rounds allowed */
   readonly maxRounds = 4;
@@ -64,6 +67,77 @@ export class ConfigureRoundsComponent {
     gradingScale: '1 - 5 (1 = Poor, 5 = Exceptional)',
     minimumPercentage: 60,
   };
+
+  // ── Default "AI Interview" round (create mode only) ──────────────────────────
+  /** Stage name used to pre-fill + auto-select the AI Interview round on create */
+  private readonly DEFAULT_STAGE_NAME = 'AI Interview';
+  /** Ensures the default round is only ever inserted once */
+  private defaultRoundInitialized = false;
+
+  ngOnInit(): void {
+    this.maybeAddDefaultRound();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['stageTypeOptions']) {
+      this.maybeAddDefaultRound();
+      this.resolveDefaultStageType();
+    }
+  }
+
+  /**
+   * On first load, if we're in create mode (not viewMode) and there are no
+   * rounds yet, seed the table with a single mandatory "AI Interview" round.
+   * If the matching stage type hasn't loaded from the API yet, stageType is
+   * left blank and gets backfilled by resolveDefaultStageType() once it does.
+   */
+  private maybeAddDefaultRound(): void {
+    if (this.viewMode) return;
+    if (this.defaultRoundInitialized) return;
+    if (this.rounds.length > 0) {
+      this.defaultRoundInitialized = true;
+      return;
+    }
+    this.defaultRoundInitialized = true;
+
+    const match = this.findAiInterviewStageType();
+
+    this.rounds = [
+      {
+        id: 1,
+        order: 1,
+        stageName: this.DEFAULT_STAGE_NAME,
+        stageType: match ? String(match.id) : '',
+        interviewMode: 'Online',
+        mandatory: true,
+      },
+    ];
+  }
+
+  /**
+   * Backfills the stageType id on the default round once stageTypeOptions
+   * (loaded async by the parent) arrives, in case it wasn't ready yet when
+   * the default round was first created.
+   */
+  private resolveDefaultStageType(): void {
+    const match = this.findAiInterviewStageType();
+    if (!match) return;
+
+    this.rounds = this.rounds.map(r =>
+      r.stageName === this.DEFAULT_STAGE_NAME && !r.stageType
+        ? { ...r, stageType: String(match.id) }
+        : r
+    );
+  }
+
+  private findAiInterviewStageType(): { id: number; name: string } | undefined {
+    // API returns names like "ai interview round" rather than an exact
+    // "AI Interview" match, so look for the keyword as a substring instead.
+    const keyword = this.DEFAULT_STAGE_NAME.toLowerCase(); // "ai interview"
+    return this.stageTypeOptions.find(opt =>
+      opt.name?.toLowerCase().includes(keyword)
+    );
+  }
 
   // ── Drag state ──────────────────────────────────────────────────────────────
   dragIndex: number | null = null;

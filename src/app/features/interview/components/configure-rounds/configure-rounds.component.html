@@ -80,7 +80,17 @@
 
           <!-- Stage Type -->
           <div class="cr-col cr-col--type">
-            <div class="cr-select-wrap">
+            <!-- View/Edit mode: data already has the stage type *name* (no id), show it directly -->
+            <input
+              *ngIf="viewMode"
+              class="cr-input"
+              type="text"
+              [value]="round.stageType"
+              readonly
+            />
+
+            <!-- Create mode: dropdown bound to stage type ids -->
+            <div class="cr-select-wrap" *ngIf="!viewMode">
               <select
                 class="cr-select"
                 [(ngModel)]="round.stageType"

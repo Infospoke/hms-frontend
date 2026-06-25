@@ -35,9 +35,14 @@
   font-weight: 600;
   color: #0f172a;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
+  width:200px;
+   word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
+
 
 .ai-job-code {
   font-size: 11px;

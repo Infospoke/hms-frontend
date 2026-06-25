@@ -36,7 +36,7 @@ export class ConfigureRoundsComponent {
 
   @Input() viewMode = false;
 
-
+  @Input() stageTypeOptions: { id: number; name: string }[] = [];
   @Input() set initialRounds(value: InterviewRound[]) {
     if (value && value.length) this.rounds = value.map(r => ({ ...r }));
   }
@@ -48,13 +48,7 @@ export class ConfigureRoundsComponent {
   @Output() discard  = new EventEmitter<void>();
   @Output() savePlan = new EventEmitter<{ rounds: InterviewRound[]; evaluation: EvaluationSettings }>();
 
-  stageTypeOptions = [
-    'HR Interview',
-    'Technical Interview',
-    'Managerial Interview',
-    'Final Interview',
-   
-  ];
+  
 
   interviewModeOptions = ['Online', 'Offline'];
 
@@ -64,12 +58,7 @@ export class ConfigureRoundsComponent {
     'A - F (A = Exceptional, F = Poor)',
   ];
 
-  rounds: InterviewRound[] = [
-    { id: 1, order: 1, stageName: 'Interview Round',     stageType: 'HR Interview',         interviewMode: 'Online',  mandatory: true  },
-    { id: 2, order: 2, stageName: 'Technical Interview', stageType: 'Technical Interview',   interviewMode: 'Online',  mandatory: true  },
-    { id: 3, order: 3, stageName: 'Managerial Interview',stageType: 'Managerial Interview',  interviewMode: 'Offline', mandatory: false },
-    { id: 4, order: 4, stageName: 'Final Discussion',    stageType: 'Final Interview',        interviewMode: 'Offline', mandatory: false },
-  ];
+  rounds: InterviewRound[] = [];
 
   evaluation: EvaluationSettings = {
     gradingScale: '1 - 5 (1 = Poor, 5 = Exceptional)',
@@ -122,7 +111,7 @@ export class ConfigureRoundsComponent {
         id: nextId,
         order: this.rounds.length + 1,
         stageName: '',
-        stageType: 'HR Interview',
+        stageType: '',
         interviewMode: 'Online',
         mandatory: false,
       },
@@ -133,6 +122,22 @@ export class ConfigureRoundsComponent {
     this.rounds = this.rounds
       .filter((_, i) => i !== index)
       .map((r, i) => ({ ...r, order: i + 1 }));
+  }
+
+  /**
+   * Returns the stageTypeOptions list for a given row, with already-selected
+   * types (in OTHER rows) disabled so they cannot be double-picked.
+   */
+  getAvailableStageTypes(currentRound: InterviewRound): { id: number; name: string; disabled: boolean }[] {
+    const usedIds = new Set(
+      this.rounds
+        .filter(r => r !== currentRound && r.stageType !== '' && r.stageType != null)
+        .map(r => Number(r.stageType))
+    );
+    return this.stageTypeOptions.map(opt => ({
+      ...opt,
+      disabled: usedIds.has(opt.id),
+    }));
   }
 
   // ── Submit ──────────────────────────────────────────────────────────────────

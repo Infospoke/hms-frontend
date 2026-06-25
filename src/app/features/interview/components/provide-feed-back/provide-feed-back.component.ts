@@ -11,7 +11,9 @@ import {
   DEFAULT_COMPETENCIES,
   CompetencyRow,
 } from '../interview-feedback-form/interview-feedback-form.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { InterviewServiceService } from '../../service/interview-service.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-provide-feed-back',
@@ -26,6 +28,9 @@ import { Router } from '@angular/router';
   styleUrl: './provide-feed-back.component.scss',
 })
 export class ProvideFeedBackComponent {
+
+  // ── Submission state ───────────────────────────────────────────────────────
+  isSubmitting = false;
 
   interview = {
     type: 'Technical Interview',
@@ -46,21 +51,74 @@ export class ProvideFeedBackComponent {
     currentLocation: 'Bangalore, Karnataka, India',
     stage: 'Round 1',
   };
-  private router=inject(Router)
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private interviewService = inject(InterviewServiceService);
+  private notificationService = inject(NotificationService);
+
   // Pass a fresh copy so mutations inside the form don't touch the original array
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
 
-  onFeedbackSubmit(value: FeedbackFormValue): void {
-    console.log('Feedback submitted:', value);
-    // call your API / service here
+  // ── Decision label mapping ─────────────────────────────────────────────────
+  private readonly DECISION_LABEL: Record<string, string> = {
+    next:     'Move to next round',
+    hold:     'On Hold',
+    rejected: 'Rejected',
+    null:''
+  };
+
+  async onFeedbackSubmit(value: any): Promise<void> {
+    if (this.isSubmitting) return;
+
+    // Helper: pull a competency rating by key, default 0 if missing
+    const rating = (key: string): number =>
+      value.competencies?.find((c: any) => c.key === key)?.rating ?? 0;
+
+    const payload = {
+      applicantId:          this.candidate?.candidateId ?? 1,           // replace with real id from route/state
+      interviewType:        this.interview.type,
+      roundType:            this.interview.jobBadge,
+      decision:             this.DECISION_LABEL[value.decision] ?? value.decision,
+      overallRating:        value.overallRating,
+      technicalKnowledge:   rating('technical'),
+      culturalFit:          rating('cultural'),
+      analyticalThinking:   rating('analytical'),
+      problemSolving:       rating('problem'),
+      communication:        rating('communication'),
+      strengths:            value.strengths ?? '',
+      areasOfImprovemnets:  value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
+      additionalComments:   value.additionalComments ?? '',
+    };
+
+    this.isSubmitting = true;
+
+    try {
+      const res: any = await this.interviewService.submitTheInterviewFeedBack(payload);
+
+      if (res?.responsecode === '00') {
+        this.notificationService.success(res?.data || res?.message || 'Feedback submitted successfully.');
+        this.router.navigate(['/supply/my-interview-requests'], { state: { activeType: 'fp' } });
+      } else {
+        this.notificationService.error(
+          res?.message ?? res?.data ?? 'Failed to submit feedback. Please try again.',
+        );
+      }
+    } catch (err: any) {
+      console.error('[onFeedbackSubmit]', err);
+      this.notificationService.error(
+        err?.error?.message ?? err?.message ?? 'An unexpected error occurred. Please try again.',
+      );
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   onFeedbackCancel(): void {
-    // navigate back
+    this.handleBack();
   }
 
-  handleBack(){
-  
-    this.router.navigate(["/supply/my-interview-requests"],{state:{activeType:'fp'}})
+  handleBack(): void {
+    this.router.navigate(['/supply/my-interview-requests'], { state: { activeType: 'fp' } });
   }
 }

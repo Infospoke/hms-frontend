@@ -117,7 +117,7 @@ export class InterviewPlanCreateComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-
+  stageTypeOptions: { id: number; name: string }[] = [];
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit(): void {
     const state = history.state as { id?: any; plan?: any };
@@ -129,12 +129,24 @@ export class InterviewPlanCreateComponent implements OnInit {
     }
 
     this.buildForm();
-
+     this.loadStageTypes();
     if (this.isEditMode && state?.id) {
       this.loadPlan(state.id);
     }
   }
-
+  private async loadStageTypes(): Promise<void> {
+  try {
+    const res: any = await this.interviewService.getInterviewRoundsList();
+    if (res?.responsecode === '00' && Array.isArray(res.data)) {
+      this.stageTypeOptions = res.data;
+    } else {
+      this.notificationService.error('Failed to load stage types.');
+    }
+  } catch (err) {
+    console.error('[loadStageTypes]', err);
+    this.notificationService.error('Failed to load stage types.');
+  }
+}
   // ── Form builder ──────────────────────────────────────────────────────────
   private buildForm(): void {
     this.planForm = this.fb.group({

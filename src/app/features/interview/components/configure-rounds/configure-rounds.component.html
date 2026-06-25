@@ -81,8 +81,20 @@
           <!-- Stage Type -->
           <div class="cr-col cr-col--type">
             <div class="cr-select-wrap">
-              <select class="cr-select" [(ngModel)]="round.stageType">
-                <option *ngFor="let opt of stageTypeOptions" [value]="opt">{{ opt }}</option>
+              <select
+                class="cr-select"
+                [(ngModel)]="round.stageType"
+                [class.cr-select--placeholder]="!round.stageType"
+              >
+                <option value="" disabled hidden>Select stage type</option>
+                <option
+                  *ngFor="let opt of getAvailableStageTypes(round)"
+                  [value]="opt.id"
+                  [disabled]="opt.disabled"
+                  [class.cr-option--disabled]="opt.disabled"
+                >
+                  {{ opt.name }}{{ opt.disabled ? ' (selected)' : '' }}
+                </option>
               </select>
               <i class="fas fa-chevron-down cr-select-arrow"></i>
             </div>

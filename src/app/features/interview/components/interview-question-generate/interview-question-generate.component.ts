@@ -234,7 +234,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
       await this.interviewService.finalizeQuestions(this.buildFinalizePayload());
       await this.interviewService.updateMoveToSchedule({
         application_id: this.applicationId,
-        move_to_schedule: true,
+        // move_to_schedule: true,
       });
       this.notification.success('Moved to schedule successfully');
       this.router.navigate(['/supply/ai-interview-zone'], {

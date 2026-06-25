@@ -18,9 +18,21 @@ $gray-500:      #6b7280;
 $gray-700:      #374151;
 $gray-900:      #111827;
 $gray-300:#d9dbdf;
+.iff-card-ddd{
+   background: #fff;
+  border: 1px solid $gray-200;
+  display:flex;
+  justify-content: space-between;
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+
+  &:last-child { margin-bottom: 0; }
+}
 .iff-card {
   background: #fff;
   border: 1px solid $gray-200;
+ 
   border-radius: 12px;
   padding: 22px 24px;
   margin-bottom: 16px;

@@ -150,9 +150,12 @@ export const API = {
         GENERATE_AI_QUESTIONS:`/api/interview/generate-ai-questions`,
         CUSTOM_QUESTION:`/api/interview/custom-question`,
         FINALIZE_QUESTIONS:`/api/interview/finalize-questions`,
-        UPDATE_MOVE_TO_SCHEDULE:`/api/interview/update-move-to-schedule`,
+        UPDATE_MOVE_TO_SCHEDULE:`/api/interview/move-to-schedule`,
         AI_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/interview-progress-details/${id}`,
         SCHEDULE_USER:`/api/interview/admin-schedule-interview`,
-        SCHEDULE_CANDIDATE_OVERVIEW:(id:any)=>`/hms/interview-plan/candidate-overview/${id}`
+        SCHEDULE_CANDIDATE_OVERVIEW:(id:any)=>`/hms/interview-plan/candidate-overview/${id}`,
+        INTERVIEW_PROVIDE_FEEDBACK:"/hms/interview-plan/interview-feedback",
+        ROUNDS_LIST:'/hms/configurations/interview-rounds',
+        SUBMIT_FEED_BACK:`/hms/interview-plan/interview-feedback`
     }
 };

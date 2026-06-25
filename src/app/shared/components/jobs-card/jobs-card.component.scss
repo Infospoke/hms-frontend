@@ -3,6 +3,11 @@
     height: 100%;
 }
 
+.job-title {
+    max-width: 220px;
+    overflow: -moz-hidden-unscrollable;
+}
+
 .card {
     height: 100%;
     border-radius: 12px;
@@ -208,7 +213,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     min-width: 100px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     display: none;
     flex-direction: column;
     z-index: 10;
@@ -223,7 +228,7 @@
     font-size: 12px;
     cursor: pointer;
     border-radius: 10px;
-    color : black;
+    color: black;
     display: flex;
     align-items: center;
     justify-content: space-between;

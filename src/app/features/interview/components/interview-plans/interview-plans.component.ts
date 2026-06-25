@@ -67,7 +67,7 @@ export class InterviewPlansComponent implements OnInit {
   tabs: { key: string; label: string; count: number }[] = [
     { key: 'all',         label: 'All Plans',         count: 0 },
     { key: 'Active',      label: 'Active Plans',      count: 0 },
-    { key: 'Inactive',    label: 'Deactive Plans',    count: 0 },
+    { key: 'deactive',    label: 'Deactive Plans',    count: 0 },
    
   ];
 

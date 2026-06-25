@@ -7,13 +7,26 @@
   overflow-y: auto;
   font-family: 'Segoe UI', sans-serif;
 
-  &::-webkit-scrollbar { width: 5px; }
-  &::-webkit-scrollbar-thumb { background: #e5ecfc; border-radius: 10px; }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #e5ecfc;
+    border-radius: 10px;
+  }
 }
 
 // ── Section ───────────────────────────────────────────────────────────────────
 .vj-section {
   padding: 20px 22px 8px;
+}
+
+.vj-job-title {
+  max-width: 250px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .vj-section-title {
@@ -34,8 +47,13 @@
   gap: 14px 24px;
   margin-bottom: 14px;
 
-  &--4 { grid-template-columns: repeat(4, 1fr); }
-  &--2 { grid-template-columns: 1fr 1fr; }
+  &--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  &--2 {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 // ── Field ─────────────────────────────────────────────────────────────────────
@@ -138,6 +156,7 @@
   &--green {
     background: #dcfce7;
     color: #15803d;
+    width: fit-content;
   }
 }
 
@@ -157,5 +176,8 @@
   gap: 10px;
   color: #94a3b8;
 
-  p { margin: 0; font-size: 13px; }
+  p {
+    margin: 0;
+    font-size: 13px;
+  }
 }

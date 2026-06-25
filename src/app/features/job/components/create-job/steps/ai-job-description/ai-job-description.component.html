@@ -22,46 +22,37 @@
         <!-- Action buttons -->
         <div class="ajd-actions">
 
-          <button class="ajd-btn ajd-btn--generate"
-            (click)="generateJD()"
-            [disabled]="isGenerating || isRegenerating">
+          <button class="ajd-btn ajd-btn--generate" (click)="generateJD()" [disabled]="isGenerating || isRegenerating">
             <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating"></i>
             <i class="fa-solid fa-stars" *ngIf="!isGenerating"></i>
             {{ isGenerating ? 'Generating…' : 'Generate JD' }}
           </button>
 
           <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
-            <button class="ajd-btn ajd-btn--outline"
-              (click)="toggleMoreAIOptions($event)"
+            <button class="ajd-btn ajd-btn--outline" (click)="toggleMoreAIOptions($event)"
               [disabled]="isGenerating || isRegenerating">
               More AI Options
-              <i class="fa-solid fa-chevron-down"
-                [class.fa-chevron-up]="showMoreAIOptions"></i>
+              <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
             </button>
 
             <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
-              <button class="ajd-dropdown-item"
-                (click)="applyAIOption('Rewrite for Senior level')">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Rewrite for Senior level')">
                 <i class="fa-solid fa-arrow-trend-up"></i>
                 Rewrite for senior levels
               </button>
-              <button class="ajd-dropdown-item"
-                (click)="applyAIOption('Rewrite for Junior Level')">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Rewrite for Junior Level')">
                 <i class="fa-solid fa-arrow-trend-down"></i>
                 Rewrite for junior levels
               </button>
-              <button class="ajd-dropdown-item"
-                (click)="applyAIOption('Expand Responsibilities')">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Expand Responsibilities')">
                 <i class="fa-solid fa-list-check"></i>
                 Expand Responsibilities
               </button>
-              <button class="ajd-dropdown-item"
-                (click)="applyAIOption('Make more Technical')">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Make more Technical')">
                 <i class="fa-solid fa-microchip"></i>
                 Make more technical
               </button>
-              <button class="ajd-dropdown-item"
-                (click)="applyAIOption('Make Concise')">
+              <button class="ajd-dropdown-item" (click)="applyAIOption('Make Concise')">
                 <i class="fa-solid fa-compress"></i>
                 Make concise
               </button>
@@ -82,8 +73,8 @@
       <!-- ── Validation banner ─────────────────────────────────────────── -->
       <div class="ajd-validation-banner" *ngIf="jdError && !hasContent">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="7" stroke="#dc2626" stroke-width="1.4"/>
-          <path d="M8 5v3M8 10v.5" stroke="#dc2626" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="8" cy="8" r="7" stroke="#dc2626" stroke-width="1.4" />
+          <path d="M8 5v3M8 10v.5" stroke="#dc2626" stroke-width="1.4" stroke-linecap="round" />
         </svg>
         Please generate a Job Description before proceeding to the next step.
       </div>
@@ -92,84 +83,53 @@
       <div class="ajd-empty" *ngIf="!hasContent && !isGenerating">
 
         <!-- Illustration -->
-        <svg class="ajd-empty__hero" xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 260 200" fill="none">
+        <svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background Circle -->
+          <circle cx="170" cy="105" r="78" fill="#EAF2FF" />
 
-          <!-- bg circle -->
-          <circle cx="130" cy="100" r="82" fill="#EBF1FA"/>
+          <!-- Decorative Stars -->
+          <path d="M56 58L59 65L66 68L59 71L56 78L53 71L46 68L53 65L56 58Z" fill="#6B8EFF" opacity=".8" />
+          <path d="M275 72L277 77L282 79L277 81L275 86L273 81L268 79L273 77L275 72Z" fill="#6B8EFF" opacity=".6" />
+          <circle cx="255" cy="126" r="3" fill="#7EA5FF" />
+          <circle cx="80" cy="132" r="4" fill="#7EA5FF" />
 
-          <!-- ── Sparkle crosses ── -->
-          <!-- top-left cross -->
-          <line x1="44" y1="38" x2="44" y2="48" stroke="#B8CAEC" stroke-width="2" stroke-linecap="round"/>
-          <line x1="39" y1="43" x2="49" y2="43" stroke="#B8CAEC" stroke-width="2" stroke-linecap="round"/>
-          <!-- top-right cross -->
-          <line x1="210" y1="42" x2="210" y2="52" stroke="#B8CAEC" stroke-width="2" stroke-linecap="round"/>
-          <line x1="205" y1="47" x2="215" y2="47" stroke="#B8CAEC" stroke-width="2" stroke-linecap="round"/>
-          <!-- right dot -->
-          <circle cx="222" cy="82" r="4" fill="#C8D8F4"/>
-          <!-- left dot -->
-          <circle cx="38" cy="95" r="3.5" fill="#C8D8F4"/>
+          <!-- Robot -->
+          <g transform="translate(35,80)">
+            <rect x="0" y="0" width="78" height="58" rx="22" fill="white" />
+            <rect x="8" y="8" width="62" height="42" rx="16" fill="#1F6BFF" />
 
-          <!-- ── Document (right side) ── -->
-          <rect x="118" y="34" width="82" height="106" rx="7"
-            fill="#fff" stroke="#D0DCF0" stroke-width="1.5"/>
-          <!-- doc header bar -->
-          <rect x="118" y="34" width="82" height="18" rx="7" fill="#E5EDFA"/>
-          <rect x="118" y="45" width="82" height="7" rx="0" fill="#E5EDFA"/>
-          <!-- lines -->
-          <line x1="132" y1="67" x2="188" y2="67" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="132" y1="78" x2="192" y2="78" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="132" y1="89" x2="185" y2="89" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="132" y1="100" x2="190" y2="100" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="132" y1="111" x2="176" y2="111" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="132" y1="122" x2="188" y2="122" stroke="#D0DCF0" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="28" cy="29" r="4" fill="#8FD6FF" />
+            <circle cx="50" cy="29" r="4" fill="#8FD6FF" />
 
-          <!-- pencil badge on doc -->
-          <circle cx="195" cy="135" r="18" fill="#2563EB"/>
-          <!-- pencil icon -->
-          <g transform="translate(183.5,123.5)">
-            <rect x="5" y="1" width="7" height="16" rx="2"
-              transform="rotate(45 8 8)" fill="#fff" opacity="0.95"/>
-            <polygon points="8,17 11.5,13.5 8,20.5" fill="#fff" opacity="0.8"/>
-            <line x1="5" y1="4" x2="11" y2="10" stroke="#93B8F5"
-              stroke-width="1" opacity="0.6"/>
+            <path d="M30 41H48" stroke="#8FD6FF" stroke-width="3" stroke-linecap="round" />
+
+            <path d="M39 -8L56 5" stroke="#1F6BFF" stroke-width="4" stroke-linecap="round" />
+            <circle cx="56" cy="5" r="5" fill="#1F6BFF" />
+
+            <rect x="-8" y="18" width="8" height="20" rx="4" fill="#6B8EFF" />
+            <rect x="78" y="18" width="8" height="20" rx="4" fill="#6B8EFF" />
+
+            <ellipse cx="39" cy="62" rx="36" ry="5" fill="#D9E8FF" />
           </g>
 
-          <!-- ── Robot (left side, overlapping doc slightly) ── -->
-          <!-- body -->
-          <rect x="56" y="88" width="54" height="50" rx="12" fill="#C8D8F0"/>
-          <!-- chest panel -->
-          <rect x="67" y="100" width="32" height="20" rx="5" fill="#B0C4E8"/>
-          <circle cx="75" cy="110" r="4" fill="#7FA8DC"/>
-          <circle cx="86" cy="110" r="4" fill="#7FA8DC"/>
-          <!-- head -->
-          <rect x="62" y="54" width="42" height="36" rx="10" fill="#DAEAFA"/>
-          <!-- antenna stem -->
-          <line x1="83" y1="54" x2="83" y2="40" stroke="#B0C4E8"
-            stroke-width="3" stroke-linecap="round"/>
-          <!-- antenna ball -->
-          <circle cx="83" cy="36" r="6" fill="#2563EB"/>
-          <circle cx="83" cy="36" r="3" fill="#fff" opacity="0.5"/>
-          <!-- eyes -->
-          <rect x="68" y="63" width="10" height="10" rx="5" fill="#fff"/>
-          <rect x="88" y="63" width="10" height="10" rx="5" fill="#fff"/>
-          <circle cx="73" cy="68" r="4" fill="#2563EB"/>
-          <circle cx="93" cy="68" r="4" fill="#2563EB"/>
-          <circle cx="74.5" cy="66.5" r="1.5" fill="#fff"/>
-          <circle cx="94.5" cy="66.5" r="1.5" fill="#fff"/>
-          <!-- mouth -->
-          <rect x="72" y="80" width="22" height="5" rx="2.5" fill="#B0C4E8"/>
-          <!-- left arm -->
-          <rect x="34" y="96" width="24" height="10" rx="5" fill="#C8D8F0"/>
-          <circle cx="34" cy="101" r="6" fill="#B0C4E8"/>
-          <!-- right arm -->
-          <rect x="108" y="96" width="24" height="10" rx="5" fill="#C8D8F0"/>
-          <circle cx="132" cy="101" r="6" fill="#B0C4E8"/>
-          <!-- legs -->
-          <rect x="63" y="136" width="14" height="20" rx="6" fill="#A8BCE0"/>
-          <rect x="83" y="136" width="14" height="20" rx="6" fill="#A8BCE0"/>
-        </svg>
+          <!-- Document -->
+          <g transform="translate(130,55)">
+            <rect width="105" height="120" rx="12" fill="white" />
+            <rect x="18" y="24" width="58" height="6" rx="3" fill="#2F6DFF" />
+            <rect x="18" y="42" width="70" height="5" rx="2.5" fill="#B6CCFF" />
+            <rect x="18" y="56" width="62" height="5" rx="2.5" fill="#B6CCFF" />
+            <rect x="18" y="70" width="68" height="5" rx="2.5" fill="#B6CCFF" />
+            <rect x="18" y="84" width="45" height="5" rx="2.5" fill="#B6CCFF" />
 
+            <path d="M82 0L105 22H90C85.5 22 82 18.5 82 14V0Z" fill="#EEF4FF" />
+          </g>
+
+          <!-- Edit Button -->
+          <g transform="translate(205,135)">
+            <circle cx="20" cy="20" r="20" fill="#1F6BFF" />
+            <path d="M15 25L17 19L25 11L29 15L21 23L15 25Z" fill="white" />
+          </g>
+        </svg>
         <p class="ajd-empty__title">Generate an AI-Powered Job Description</p>
         <p class="ajd-empty__sub">
           Create a professional job description automatically using the job details
@@ -177,22 +137,19 @@
         </p>
 
         <!-- Feature checklist -->
-        
+
 
         <!-- CTA button -->
-        <button class="ajd-empty__cta" (click)="generateJD()"
-          [disabled]="isGenerating">
+        <button class="ajd-empty__cta" (click)="generateJD()" [disabled]="isGenerating">
           <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-            <path d="M7.5 1l1.2 3.8L12.5 6l-3.8 1.2L7.5 11l-1.2-3.8L2.5 6l3.8-1.2z"
-              fill="#fff"/>
+            <path d="M7.5 1l1.2 3.8L12.5 6l-3.8 1.2L7.5 11l-1.2-3.8L2.5 6l3.8-1.2z" fill="#fff" />
           </svg>
           Generate Job Description
         </button>
 
         <p class="ajd-empty__hint">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-            <path d="M6.5 0.5l1 3.1 3.1 1-3.1 1-1 3.1-1-3.1-3.1-1 3.1-1z"
-              fill="#F59E0B"/>
+            <path d="M6.5 0.5l1 3.1 3.1 1-3.1 1-1 3.1-1-3.1-3.1-1 3.1-1z" fill="#F59E0B" />
           </svg>
           Usually takes less than 10 seconds
         </p>
@@ -268,11 +225,7 @@
         </div> -->
 
         <!-- Editable content area -->
-        <div class="ajd-editor"
-          #editor
-          contenteditable="true"
-          (input)="onEditorInput()"
-          spellcheck="true">
+        <div class="ajd-editor" #editor contenteditable="true" (input)="onEditorInput()" spellcheck="true">
         </div>
 
         <!-- Footer -->
@@ -304,8 +257,7 @@
           <span class="ajd-versions-title">
             AI Versions ({{ versions.length }}/3)
           </span>
-          <i class="fa-solid fa-circle-info ajd-info-icon"
-            title="Up to 3 AI-generated versions are saved."></i>
+          <i class="fa-solid fa-circle-info ajd-info-icon" title="Up to 3 AI-generated versions are saved."></i>
         </div>
         <p class="ajd-versions-sub">
           We keep up to 3 versions.<br>Select any version to view or use.
@@ -314,16 +266,12 @@
 
       <!-- Version list -->
       <div class="ajd-version-list" *ngIf="versions.length > 0">
-        <div class="ajd-version-item"
-          *ngFor="let v of versions"
-          [class.ajd-version-item--selected]="selectedVersionId === v.id"
-          (click)="loadVersion(v)">
+        <div class="ajd-version-item" *ngFor="let v of versions"
+          [class.ajd-version-item--selected]="selectedVersionId === v.id" (click)="loadVersion(v)">
 
           <div class="ajd-version-radio">
-            <div class="ajd-radio"
-              [class.ajd-radio--active]="selectedVersionId === v.id">
-              <div class="ajd-radio-dot"
-                *ngIf="selectedVersionId === v.id"></div>
+            <div class="ajd-radio" [class.ajd-radio--active]="selectedVersionId === v.id">
+              <div class="ajd-radio-dot" *ngIf="selectedVersionId === v.id"></div>
             </div>
           </div>
 
@@ -342,9 +290,7 @@
             <i class="fa-solid fa-circle-check"></i>
           </div>
 
-          <div class="ajd-version-menu-wrap"
-            *ngIf="!v.isCurrent"
-            (click)="$event.stopPropagation()">
+          <div class="ajd-version-menu-wrap" *ngIf="!v.isCurrent" (click)="$event.stopPropagation()">
             <button class="ajd-menu-btn" (click)="toggleMenu(v, $event)">
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
@@ -352,8 +298,7 @@
               <button class="ajd-version-menu-item" (click)="loadVersion(v)">
                 <i class="fa-solid fa-upload"></i> Load this version
               </button>
-              <button class="ajd-version-menu-item ajd-version-menu-item--danger"
-                (click)="deleteVersion(v)">
+              <button class="ajd-version-menu-item ajd-version-menu-item--danger" (click)="deleteVersion(v)">
                 <i class="fa-regular fa-trash-can"></i> Delete
               </button>
             </div>
@@ -365,23 +310,22 @@
       <!-- No versions yet -->
       <div class="ajd-versions-empty" *ngIf="versions.length === 0">
         <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <rect width="80" height="80" rx="16" fill="#EEF2FF"/>
+          <rect width="80" height="80" rx="16" fill="#EEF2FF" />
           <!-- Document stack -->
-          <rect x="18" y="26" width="32" height="38" rx="4" fill="#C7D2FE" stroke="#818CF8" stroke-width="1.2"/>
-          <rect x="22" y="22" width="32" height="38" rx="4" fill="#E0E7FF" stroke="#818CF8" stroke-width="1.2"/>
-          <rect x="26" y="18" width="32" height="38" rx="4" fill="#fff" stroke="#6366F1" stroke-width="1.4"/>
+          <rect x="18" y="26" width="32" height="38" rx="4" fill="#C7D2FE" stroke="#818CF8" stroke-width="1.2" />
+          <rect x="22" y="22" width="32" height="38" rx="4" fill="#E0E7FF" stroke="#818CF8" stroke-width="1.2" />
+          <rect x="26" y="18" width="32" height="38" rx="4" fill="#fff" stroke="#6366F1" stroke-width="1.4" />
           <!-- Lines -->
-          <path d="M32 28h20M32 34h20M32 40h14" stroke="#6366F1" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M32 28h20M32 34h20M32 40h14" stroke="#6366F1" stroke-width="1.6" stroke-linecap="round" />
           <!-- Clock badge -->
-          <circle cx="58" cy="56" r="11" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.4"/>
-          <path d="M58 50v6l3 3" stroke="#6366F1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="58" cy="56" r="11" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.4" />
+          <path d="M58 50v6l3 3" stroke="#6366F1" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <p>No versions yet.<br>Generate a JD to start comparing.</p>
       </div>
 
       <!-- Hint -->
-      <div class="ajd-versions-hint"
-        *ngIf="versions.length > 0 && selectedVersionId === null">
+      <div class="ajd-versions-hint" *ngIf="versions.length > 0 && selectedVersionId === null">
         <i class="fa-solid fa-circle-info"></i>
         Select a version to load its content in the editor.
       </div>

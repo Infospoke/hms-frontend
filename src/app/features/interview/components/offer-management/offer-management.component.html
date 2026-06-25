@@ -2,7 +2,7 @@
 
   <!-- Top summary cards + filters -->
   <app-approval-layout
-    heading="Offer Management"
+    heading="Candidate Management"
     subHeading="View candidates who have cleared all interview rounds. Track their progress and take the next hiring action."
     [cards]="cards"
     [dropDownData]="dropDownData" />
@@ -95,7 +95,7 @@
 
     <!-- Actions -->
     <ng-container *ngIf="ctx.col.key === 'actions'">
-      <div class="om-actions-cell" (click)="$event.stopPropagation()">
+      <div class="om-actions-cell" (click)="$event.stopPropagation()" *appCan="'SUPPLY:CANDIDATEMANAGEMENT:EDIT'">
         <button class="om-view-btn" (click)="viewDetails(ctx.row)">
           View Details
         </button>

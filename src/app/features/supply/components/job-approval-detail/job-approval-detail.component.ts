@@ -7,6 +7,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { ApprovalService } from '../../../approvals/services/approval-service';
 import { UserService } from '../../../settings/users/servics/user-service';
 import { SupplyService } from '../../services/supply-service';
+import { InterviewServiceService } from '../../../interview/service/interview-service.service';
 
 @Component({
   selector: 'app-job-approval-detail',
@@ -23,6 +24,17 @@ export class JobApprovalDetailComponent implements OnInit {
   private jobService = inject(SupplyService);
   private approvalService = inject(ApprovalService);
   private userService = inject(UserService);
+  private interviewService = inject(InterviewServiceService);
+
+  // ── Mode (job approval vs. interview-assignment acceptance)
+  // 'type' is read from router navigation state, e.g.
+  //   this.router.navigate([...], { state: { type: 'assignment' } })
+  type: string | null = null;
+  assignmentId: any = null;
+
+  get isAssignmentMode(): boolean {
+    return this.type === 'assignment';
+  }
 
   // ── State
   isLoading = true;
@@ -32,7 +44,7 @@ export class JobApprovalDetailComponent implements OnInit {
 
   // ── Derived display data
   overview: any = null;
-  jobDescription = '';
+  jobDescription: JobDescriptionDisplay | null = null;
   sourcingChannels: ChannelDisplay[] = [];
   recruiters: RecruiterDisplay[] = [];
   referralEnabled = false;
@@ -54,6 +66,11 @@ export class JobApprovalDetailComponent implements OnInit {
   isSubmitting = false;
 
   readonly MAX_COMMENT = 500;
+
+  // ── Comment modal (assignment accept/reject flow)
+  isCommentModalOpen = false;
+  commentModalAction: 'approve' | 'reject' | null = null;
+  modalComment = '';
 
   get charCount(): number {
     return this.comment.length;
@@ -95,6 +112,14 @@ export class JobApprovalDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.jobId = this.route.snapshot.params['id'];
+
+    // 'type' is passed via router navigation state when coming from
+    // the interview-assignment list (e.g. { state: { type: 'assignment' } }).
+    const navState = (history.state ?? {}) as { type?: string,assignmentId:string };
+    this.type = navState?.type ?? null;
+    this.assignmentId=navState?.assignmentId ??null;
+   
+
     this.loadJobDetail();
   }
 
@@ -128,8 +153,24 @@ export class JobApprovalDetailComponent implements OnInit {
     this.departmentName =this.overview?.department ?? '-';
     this.businessUnitName = this.overview.businessUnit??'-';
 
-    // Job description
-    this.jobDescription = data.jobDescription?.description ?? '';
+    // Job description – API returns an array of JD objects; take the first
+    const descArr = data.jobDescription?.description;
+    const raw = Array.isArray(descArr) && descArr.length > 0 ? descArr[0] : null;
+    if (raw) {
+      this.jobDescription = {
+        jobSummary:              raw.jobSummary ?? '',
+        keyResponsibilities:     raw.keyResponsibilities ?? [],
+        basicQualifications:     raw.basicQaulifications ?? [],
+        preferredQualifications: raw.preferredQualifications ?? [],
+        certificationsRequired:  raw.certificationsRequired ?? [],
+        languagesRequired:       raw.languagesRequired ?? [],
+        educationRequirements:   raw.educationRequirements ?? '',
+        experienceRequirements:  raw.experienceRequirements ?? '',
+        aboutCompany:            raw.aboutCompany ?? '',
+      };
+    } else {
+      this.jobDescription = null;
+    }
     const channelMeta: Record<string, { icon: string; iconBg: string }> = {
       LinkedIn: { icon: 'in', iconBg: '#0A66C2', },
       Naukri: { icon: 'N', iconBg: '#FF6633', },
@@ -204,7 +245,9 @@ export class JobApprovalDetailComponent implements OnInit {
               ? 'Job accepted successfully'
               : 'Job declined successfully'
           );
-          this.router.navigateByUrl('/supply/my-assignend-jobs');
+          this.router.navigate(['/supply/my-assignend-jobs'],{
+          state: { activeType: 'ar' },
+        });
         } else {
           this.notificationService.error(res?.message ?? 'Failed to submit decision');
         }
@@ -218,7 +261,59 @@ export class JobApprovalDetailComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigateByUrl('/supply/my-assignend-jobs');
+    this.router.navigate([
+      this.isAssignmentMode ? '/supply/my-interview-requests' : '/supply/my-assignend-jobs'],{
+          state: { activeType: 'ar' },
+        }
+    );
+  }
+
+  // ── Assignment accept/reject (comment modal flow)
+
+  openCommentModal(action: 'approve' | 'reject'): void {
+    this.commentModalAction = action;
+    this.modalComment = '';
+    this.isCommentModalOpen = true;
+  }
+
+  closeCommentModal(): void {
+    this.isCommentModalOpen = false;
+    this.commentModalAction = null;
+    this.modalComment = '';
+  }
+
+  async onModalConfirmed(comment: any): Promise<void> {
+    if (!this.assignmentId || !this.commentModalAction) return;
+
+    const status = this.commentModalAction === 'approve' ? 'Accepted' : 'Rejected';
+
+    const payload = {
+      Id:       this.assignmentId,
+      status,
+      comments: comment?.comment ?? '',
+    };
+
+    this.isSubmitting = true;
+    try {
+      const res: any = await this.interviewService.updateIntervieAssignement(payload);
+      if (res?.responsecode === '00') {
+        this.closeCommentModal();
+        this.notificationService.success(
+          status === 'Accepted'
+            ? 'Assignment accepted successfully'
+            : 'Assignment rejected successfully'
+        );
+        this.router.navigate(['/supply/my-interview-requests'], {
+          state: { activeType: 'ar' },
+        });
+      } else {
+        this.notificationService.error(res?.message ?? 'Failed to update assignment');
+      }
+    } catch (err: any) {
+      this.notificationService.error(err?.message ?? 'Failed to update assignment');
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   // ── Utilities
@@ -278,6 +373,18 @@ export interface ChannelDisplay {
   icon: string;
   iconBg: string;
   // type: string;
+}
+
+export interface JobDescriptionDisplay {
+  jobSummary: string;
+  keyResponsibilities: string[];
+  basicQualifications: string[];
+  preferredQualifications: string[];
+  certificationsRequired: string[];
+  languagesRequired: string[];
+  educationRequirements: string;
+  experienceRequirements: string;
+  aboutCompany: string;
 }
 
 export interface RecruiterDisplay {

@@ -36,11 +36,13 @@
     <ng-container *ngIf="ctx.col.key === 'details'">
       <div class="tech-details">
         <p class="round-name">{{ ctx.row.name }}</p>
-        <span class="type-badge type-badge--{{ ctx.row.type | lowercase }}">{{ ctx.row.type }}</span>
+        
       </div>
       <p class="round-desc">{{ ctx.row.description }}</p>
     </ng-container>
-
+    <ng-container *ngIf="ctx.col.key === 'detailsType'">
+      <span class="type-badge type-badge--{{ ctx.row.type | lowercase }}">{{ ctx.row.type }}</span>
+    </ng-container>
     <!-- Interviewer column -->
     <ng-container *ngIf="ctx.col.key === 'interviewer'">
 

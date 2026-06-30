@@ -9,8 +9,10 @@ import {
   inject,
 } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
+  ValidationErrors,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
@@ -21,6 +23,27 @@ import {
   CandidateData,
 } from '../interview-candidate-info/interview-candidate-info.component';
 import { Router } from '@angular/router';
+
+/**
+ * Only allows links from recognized video-meeting platforms.
+ * Extend this list of patterns if other providers need to be supported.
+ */
+const MEETING_LINK_PATTERNS: RegExp[] = [
+  /^https?:\/\/(www\.)?meet\.google\.com\/[a-z0-9-]+/i, // Google Meet
+  /^https?:\/\/([\w-]+\.)?zoom\.us\/(j|my)\/[\w?=&%-]+/i, // Zoom
+  /^https?:\/\/teams\.(microsoft|live)\.com\/[\w/?=&%.-]+/i, // Microsoft Teams
+  /^https?:\/\/([\w-]+\.)?webex\.com\/[\w/?=&%.-]+/i, // Cisco Webex
+  /^https?:\/\/join\.skype\.com\/[\w-]+/i, // Skype
+];
+
+export function meetingLinkValidator(control: AbstractControl): ValidationErrors | null {
+  const value: string = (control.value ?? '').trim();
+  if (!value) {
+    return null; // Empty is fine here - pair with Validators.required separately if it must be mandatory.
+  }
+  const isRecognized = MEETING_LINK_PATTERNS.some((pattern) => pattern.test(value));
+  return isRecognized ? null : { invalidMeetingLink: true };
+}
 
 @Component({
   selector: 'app-interview-form',
@@ -145,8 +168,18 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       startTime:     [prefill?.startTime ?? '',     Validators.required],
       endTime:       [prefill?.endTime ?? '',        Validators.required],
       interviewType: [prefill?.interviewType ?? 'Online', Validators.required],
-      meetingLink:   [prefill?.meetingLink ?? ''],
+      meetingLink:   [prefill?.meetingLink ?? '', [meetingLinkValidator]],
       venueDetails:  [prefill?.venueDetails ?? ''],
+    });
+
+    // If the candidate switches between Online / Offline, clear out whichever
+    // field no longer applies so a stale value can't block submission later.
+    this.form.get('interviewType')?.valueChanges.subscribe((type) => {
+      if (type === 'Online') {
+        this.form.get('venueDetails')?.setValue('');
+      } else if (type === 'Offline') {
+        this.form.get('meetingLink')?.setValue('');
+      }
     });
   }
 
@@ -171,7 +204,40 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       this.form.markAllAsTouched();
       return;
     }
-    this.submitted.emit(this.form.getRawValue());
+
+    const raw = this.form.getRawValue();
+
+    const payload: any = {
+      roundId: this.getRoundId(),
+      interviewDate: raw.interviewDate,
+      startTime: this.toTimeWithSeconds(raw.startTime),
+      endTime: this.toTimeWithSeconds(raw.endTime),
+    };
+
+    if (raw.interviewType === 'Online') {
+      payload.meetingLink = raw.meetingLink;
+    } else {
+      payload.venueDetails = raw.venueDetails;
+    }
+
+    this.submitted.emit(payload);
+  }
+
+ 
+  private getRoundId(): string {
+    const explicit = this.summary?.roundId ?? this.currentSchedule?.roundId;
+    if (explicit !== undefined && explicit !== null && explicit !== '') {
+      return String(explicit);
+    }
+    const roundText = this.summary?.job?.round;
+    const match = roundText ? String(roundText).match(/\d+/) : null;
+    return match ? match[0] : '';
+  }
+
+  /** Normalizes a time control's value ("HH:mm") to "HH:mm:ss". */
+  private toTimeWithSeconds(value: string): string {
+    if (!value) return '';
+    return value.length === 5 ? `${value}:00` : value;
   }
 
   /** Helper: is a control invalid and touched */

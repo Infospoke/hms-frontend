@@ -247,6 +247,8 @@ export class JobService {
   }
 
   
-  
+  async updateJobToClose(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmsput(API.JOBS.UPDATE_JOB_TO_CLOSE,payload))
+  }
 
 }

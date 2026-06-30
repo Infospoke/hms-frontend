@@ -1,8 +1,9 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { Router } from '@angular/router';
 import { CanDirective } from "../../../../shared/directives/can.directive";
+import { InterviewServiceService } from '../../service/interview-service.service';
 
 export type Priority = 'High' | 'Medium' | 'Low';
 
@@ -34,11 +35,11 @@ export interface InterviewRequest {
   imports: [
     CommonModule, ReusableTableComponent,
     CanDirective
-],
+  ],
   templateUrl: './interview-scheduled-table.component.html',
   styleUrl: './interview-scheduled-table.component.scss',
 })
-export class InterviewscheduledTableComponent {
+export class InterviewscheduledTableComponent implements OnInit, OnChanges {
 
   @Input() payload!: any;
   @Output() pageChange = new EventEmitter<number>();
@@ -55,65 +56,8 @@ export class InterviewscheduledTableComponent {
   sortableColumns: string[] = ['candidate', 'jobTitle', 'priority', 'requestedOn'];
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  requests: InterviewRequest[] = [
-    {
-      id: '1',
-      candidate: { initials: 'SP', name: 'Sneha Priya', code: 'NXH-1026', avatarClass: 'av-purple' },
-      job: { title: 'Quality Assurance Engineer – L2', department: 'Quality Assurance' },
-      round: { interviewType: 'Technical Interview', roundLabel: '1 Round', roundCount: 1 },
-      priority: 'High',
-      requestedOn: { date: 'May 20, 2025', time: '11:30 AM' },
-    },
-    {
-      id: '2',
-      candidate: { initials: 'MT', name: 'Mohit Tiwari', code: 'NXH-1027', avatarClass: 'av-blue' },
-      job: { title: 'Backend Developer – L3', department: 'Engineering' },
-      round: { interviewType: 'Two Round Interview', roundLabel: '2 Rounds', roundCount: 2 },
-      priority: 'High',
-      requestedOn: { date: 'May 20, 2025', time: '10:15 AM' },
-    },
-    {
-      id: '3',
-      candidate: { initials: 'KB', name: 'Kavya Bansal', code: 'NXH-1028', avatarClass: 'av-green' },
-      job: { title: 'Business Analyst – L2', department: 'Product' },
-      round: { interviewType: 'One Round Interview', roundLabel: '1 Round', roundCount: 1 },
-      priority: 'Medium',
-      requestedOn: { date: 'May 19, 2025', time: '04:20 PM' },
-    },
-    {
-      id: '4',
-      candidate: { initials: 'AD', name: 'Arjun Desai', code: 'NXH-1029', avatarClass: 'av-amber' },
-      job: { title: 'DevOps Engineer – L2', department: 'Engineering' },
-      round: { interviewType: 'Technical Interview', roundLabel: '1 Round', roundCount: 1 },
-      priority: 'Medium',
-      requestedOn: { date: 'May 19, 2025', time: '03:05 PM' },
-    },
-    {
-      id: '5',
-      candidate: { initials: 'NR', name: 'Neha Reddy', code: 'NXH-1030', avatarClass: 'av-pink' },
-      job: { title: 'UI/UX Designer – L2', department: 'Design' },
-      round: { interviewType: 'Two Round Interview', roundLabel: '2 Rounds', roundCount: 2 },
-      priority: 'Low',
-      requestedOn: { date: 'May 18, 2025', time: '02:45 PM' },
-    },
-    {
-      id: '6',
-      candidate: { initials: 'PG', name: 'Prateek Gupta', code: 'NXH-1031', avatarClass: 'av-teal' },
-      job: { title: 'Data Analyst – L2', department: 'Analytics' },
-      round: { interviewType: 'One Round Interview', roundLabel: '1 Round', roundCount: 1 },
-      priority: 'Low',
-      requestedOn: { date: 'May 18, 2025', time: '01:15 PM' },
-    },
-    {
-      id: '7',
-      candidate: { initials: 'ZS', name: 'Zoya Shaikh', code: 'NXH-1032', avatarClass: 'av-coral' },
-      job: { title: 'Technical Writer – L2', department: 'Content' },
-      round: { interviewType: 'Technical Interview', roundLabel: '1 Round', roundCount: 1 },
-      priority: 'Low',
-      requestedOn: { date: 'May 17, 2025', time: '11:50 AM' },
-    },
-  ];
-
+  requests: any[] = [];
+  private interviewService = inject(InterviewServiceService)
   // ── Pagination state ───────────────────────────────────────────────────────
   currentPage = 1;
   pageSize = 10;
@@ -121,10 +65,14 @@ export class InterviewscheduledTableComponent {
   pagedData: InterviewRequest[] = [];
 
   ngOnInit(): void {
-    this.totalItems = this.requests.length;
-    this.updatePagedData();
+    // this.loadDataOfInterviewList();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['payload']) {
+      this.loadDataOfInterviewList();
+    }
+  }
   // ── Pagination ─────────────────────────────────────────────────────────────
   onPageChange(page: number): void {
     this.currentPage = page;
@@ -136,36 +84,11 @@ export class InterviewscheduledTableComponent {
     this.pagedData = this.requests.slice(start, start + this.pageSize);
   }
 
-  // ── Sort ───────────────────────────────────────────────────────────────────
-  onSortChange(event: { col: string; dir: 'asc' | 'desc' }): void {
-    const dir = event.dir === 'asc' ? 1 : -1;
-    const priorityOrder: Record<Priority, number> = { High: 1, Medium: 2, Low: 3 };
-
-    this.requests = [...this.requests].sort((a, b) => {
-      switch (event.col) {
-        case 'candidate': return dir * a.candidate.name.localeCompare(b.candidate.name);
-        case 'jobTitle': return dir * a.job.title.localeCompare(b.job.title);
-        case 'priority': return dir * (priorityOrder[a.priority] - priorityOrder[b.priority]);
-        case 'requestedOn': return dir * a.requestedOn.date.localeCompare(b.requestedOn.date);
-        default: return 0;
-      }
-    });
-
-    this.currentPage = 1;
-    this.updatePagedData();
-  }
-
-  // ── Row click ──────────────────────────────────────────────────────────────
-  onRowClick(row: InterviewRequest): void {
-    console.log('Row clicked:', row);
-  }
-
-  // ── Actions ────────────────────────────────────────────────────────────────
   scheduleInterview(event: MouseEvent, row: InterviewRequest): void {
     event.stopPropagation();
     console.log('Schedule interview for:', row.candidate.name);
     // e.g. this.router.navigate(['/interviews/schedule'], { queryParams: { candidateId: row.id } });
-    this.router.navigateByUrl('/supply/my-interview-requests/schedule-interview')
+    this.router.navigateByUrl(`/supply/my-interview-requests/schedule-interview/${row.id}`)
   }
 
   toggleExpand(event: MouseEvent, row: InterviewRequest): void {
@@ -176,5 +99,71 @@ export class InterviewscheduledTableComponent {
   // ── Type cast helper ───────────────────────────────────────────────────────
   asRequest(row: any): InterviewRequest {
     return row as InterviewRequest;
+  }
+
+  private async loadDataOfInterviewList() {
+    const payload = {
+      ...this.payload,
+      sortBy:'moveToScheduleDateTime'
+    };
+    const res: any = await this.interviewService.getScheduleList(payload);
+    if (res?.responsecode == '00') {
+      this.requests = this.mapInterviews(res?.data?.content);
+      this.totalItems = res?.data?.totalElements;
+    }
+  }
+  private mapInterviews(data: any[]): any[] {
+    return data.map((item: any) => ({
+      id: item.applicationId?.toString(),
+
+      candidate: {
+        initials: this.getInitials(item.candidateName),
+        name: item.candidateName,
+        code: `APP-${item.applicationId}`,
+        avatarClass: this.getAvatarClass(item.priority)
+      },
+
+      job: {
+        title: item.jobTitle,
+        department: ''
+      },
+
+      round: {
+        interviewType: item.round,
+        roundLabel: `${item.roundId} Round`,
+        roundCount: item.roundId
+      },
+
+      priority: item.priority,
+
+      requestedOn: {
+        date: new Date(item.requestedOn).toLocaleDateString(),
+        time: new Date(item.requestedOn).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+    }));
+  }
+  private getInitials(name: string): string {
+    if (!name) return '';
+
+    return name
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase();
+  }
+  private getAvatarClass(priority: string): string {
+    switch (priority) {
+      case 'High':
+        return 'av-coral';
+      case 'Medium':
+        return 'av-blue';
+      case 'Low':
+        return 'av-green';
+      default:
+        return 'av-gray';
+    }
   }
 }

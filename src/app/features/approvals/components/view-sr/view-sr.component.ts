@@ -405,9 +405,12 @@ export class ViewSrComponent implements OnInit {
   }
 
   private deriveOverallStatus(basics: PositionBasicsResponse): SrStatus {
-    if ((basics.approver1 === false && basics.approver1By !== null) || (basics.approver2 === false && basics?.approver2By !== null) || (basics.approver3 === false && basics?.approver2By !== null)) {
-      return 'Rejected';
-    }
+    // A stage is truly rejected only when a decision date exists AND the flag is explicitly false
+    const isRejected =
+      (basics.approver1 === false && basics.dateOfApproval1 !== null) ||
+      (basics.approver2 === false && basics.dateOfApproval2 !== null) ||
+      (basics.approver3 === false && basics.dateOfApproval3 !== null);
+    if (isRejected) return 'Rejected';
     return basics.approved ? 'Approved' : 'Pending Approval';
   }
 
@@ -428,16 +431,22 @@ export class ViewSrComponent implements OnInit {
     const approverStages: ApprovalStage[] = defined.map((slot, i) => {
       let status: StageStatus;
       if (slot.dateApproval) {
+        // A decision date exists — check whether it was approved or rejected
         if (slot.approvedFlag === false) {
           status = 'REJECTED';
           foundRejected = true;
         } else {
           status = 'APPROVED';
         }
-      } else if (!foundInProgress && !foundRejected) {
+      } else if (foundRejected) {
+        // Prior stage was rejected — this one is blocked
+        status = 'PENDING';
+      } else if (!foundInProgress) {
+        // No decision yet and no prior in-progress — this is the current active stage
         status = 'IN_PROGRESS';
         foundInProgress = true;
       } else {
+        // A later stage still waiting
         status = 'PENDING';
       }
       const name = slot.approverBy ?? '';

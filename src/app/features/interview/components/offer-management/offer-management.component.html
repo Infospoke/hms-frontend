@@ -5,7 +5,8 @@
     heading="Candidate Management"
     subHeading="View candidates who have cleared all interview rounds. Track their progress and take the next hiring action."
     [cards]="cards"
-    [dropDownData]="dropDownData" />
+    [dropDownData]="dropDownData" 
+    [searchPlaceholder]="'Search by candidate name,email'"/>
 
   <div class="">
     <app-reusable-table
@@ -55,7 +56,8 @@
       <div class="om-progress-track">
         <ng-container
           *ngFor="let state of getRoundStates(ctx.row); let i = index; let last = last">
-          <div class="om-dot" [ngClass]="'om-dot--' + state">
+          <div class="om-dot" [ngClass]="'om-dot--' + state"
+               [title]="ctx.row.roundDetails?.[i]?.roundName || ('Round ' + (i + 1))">
             <!-- done checkmark -->
             <svg *ngIf="state === 'done'" width="10" height="10" viewBox="0 0 12 12" fill="none">
               <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor"

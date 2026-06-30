@@ -41,6 +41,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
   acceptableScoreMin = 50;
   acceptableScoreMax = 100;
   isQuestionsFinalized:boolean=true;
+  disabledQuestions:boolean=false;
   // ── UI state ─────────────────────────────────────────────────────────────────
   isLoading = false;
   isGenerating = false;
@@ -73,13 +74,13 @@ export class InterviewQuestionGenerateComponent implements OnInit {
         this.isLoading = true;
         await Promise.all([
           this.loadApplicantDetails(),
+          this.loadQuestionsForAlreadyFinalised(),
         ]);
         this.isLoading = false;
       }
     });
   }
 
-  // ── Load applicant details ───────────────────────────────────────────────────
   private async loadApplicantDetails(): Promise<void> {
     try {
       const res = await this.interviewService.getApplicantDetailsById(this.applicationId);
@@ -109,7 +110,20 @@ export class InterviewQuestionGenerateComponent implements OnInit {
 
   // ── Create / fetch interview session ─────────────────────────────────────────
   
+  private async loadQuestionsForAlreadyFinalised(){
+    const res:any=await this.interviewService.loadFinalizedQuestions(this.applicationId);
+    if(res?.hasOwnProperty('questions')){
+       this.questions = this.mapApiQuestions(res?.questions ?? []);
+       this.isQuestionsFinalized=false;
+       this.disabledQuestions=true;
+    }
+    else{
+      // if(res?.status==204){
 
+      // }
+    }
+   
+  }
   // ── Computed helpers ─────────────────────────────────────────────────────────
   get passPercentageLabel(): string {
     if (this.minPassPercentage < 40) return 'Low';
@@ -326,8 +340,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
 
 
   handleBack(){
-    this.router.navigate(['/interview/ai-interview-zone'],
-      {state: { activeType: 'si' }}
+    this.router.navigate(['/supply/ai-interview-zone']
     );
   }
 }

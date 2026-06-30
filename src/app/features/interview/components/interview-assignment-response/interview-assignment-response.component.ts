@@ -273,7 +273,7 @@ export class InterviewAssignmentResponseComponent implements OnInit {
       const res: any = await this.interviewService.updateIntervieAssignement(payload);
       if (res?.responsecode === '00') {
         this.closeCommentModal();
-        this.router.navigate(['/interview/assigend-interview-requests'], {
+        this.router.navigate(['/supply/my-interview-requests'], {
           state: { activeType: 'ar' },
         });
       } else {

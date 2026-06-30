@@ -222,10 +222,13 @@
                                 stroke-width="1.3" stroke-linecap="round" />
                         </svg>
                         <input id="meetingLink" type="url" class="form-input" formControlName="meetingLink"
+                            [class.error]="isInvalid('meetingLink')"
                             placeholder="https://meet.google.com/abc-defg-hij" />
                     </div>
-                    <p class="field-hint">This link will be shared with the candidate in the interview invitation email.
-                    </p>
+                    <span class="field-error" *ngIf="isInvalid('meetingLink')">Enter a valid Google Meet, Zoom,
+                        Microsoft Teams, Webex, or Skype link.</span>
+                    <p class="field-hint" *ngIf="!isInvalid('meetingLink')">This link will be shared with the
+                        candidate in the interview invitation email.</p>
                 </div>
             </div>
 

@@ -45,6 +45,7 @@ export class AssignInterviewersComponent implements OnInit {
   private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
   currentPage: any = 1;
   pageSize: any = 10;
+  totalItems:any;
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       Promise.all([this.loadDepartments(), this.loadPlans(), this.loadData()]);
@@ -59,6 +60,7 @@ export class AssignInterviewersComponent implements OnInit {
       .then((res: any) => {
         if (res?.responsecode == '00') {
           this.tableData = res?.data?.content;
+          this.totalItems=res?.data?.totalPages * this.pageSize;
         }
         else {
           this.notificationSerivce.error(res?.message || res?.responsemessage)
@@ -122,8 +124,11 @@ export class AssignInterviewersComponent implements OnInit {
     switch (status) {
       case 'ACCEPTED':
         return 'ai-rs ai-rs--accepted';
-
+      case 'Accepted':
+        return 'ai-rs ai-rs--accepted';
       case 'PENDING':
+        return 'ai-rs ai-rs--pending';
+       case 'Pending':
         return 'ai-rs ai-rs--pending';
 
       case 'REJECTED':
@@ -143,10 +148,13 @@ export class AssignInterviewersComponent implements OnInit {
     switch (status) {
       case 'ACCEPTED':
         return 'fa-solid fa-circle-check';
+       case 'Accepted':
+        return 'fa-solid fa-circle-check';
 
       case 'PENDING':
         return 'fa-solid fa-clock';
-
+       case 'Pending':
+        return 'fa-solid fa-clock';
       case 'REJECTED':
         return 'fa-solid fa-circle-xmark';
       case 'Rejected':
@@ -245,5 +253,10 @@ export class AssignInterviewersComponent implements OnInit {
       direction: 'desc',
       filters,
     };
+  }
+
+  pageChange(data:any){
+    this.currentPage=data;
+    this.loadData();
   }
 }

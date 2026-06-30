@@ -198,7 +198,7 @@
         </h3>
         <div class="div-questions">
           <span class="iq-questions-count">{{ questions.length }} Questions</span>
-          <button class="iq-add-custom-btn" (click)="showAddForm = !showAddForm" *ngIf="!showAddForm">
+          <button class="iq-add-custom-btn" (click)="showAddForm = !showAddForm" *ngIf="!showAddForm" [disabled]="!isQuestionsFinalized">
             <i class="fa-solid fa-plus"></i> Add Custom Question
           </button>
         </div>
@@ -287,7 +287,7 @@
             placeholder="Type your question here..."></textarea>
         </div>
         <div class="iq-add-form-actions">
-          <button class="iq-btn-save" (click)="addQuestion()">
+          <button class="iq-btn-save" (click)="addQuestion()" [disabled]="disabledQuestions">
             <i class="fa-solid fa-plus"></i>
             Add Question
           </button>

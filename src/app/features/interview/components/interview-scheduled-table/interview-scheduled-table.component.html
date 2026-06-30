@@ -1,5 +1,6 @@
 <app-reusable-table
   [columns]="columns"
+  [title]="'To Schedule'"
   [data]="pagedData"
   [sortableColumns]="sortableColumns"
   [showPagination]="true"
@@ -8,9 +9,9 @@
   [totalItems]="totalItems"
   [cellTemplate]="requestCellTemplate"
   emptyMessage="No interview requests found."
-  (sortChange)="onSortChange($event)"
+  
   (pageChange)="onPageChange($event)"
-  (rowClick)="onRowClick($event)">
+>
 </app-reusable-table>
 
 

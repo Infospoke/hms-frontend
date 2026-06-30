@@ -16,7 +16,7 @@
     <!-- Back -->
     <button class="jad-back" (click)="onCancel()">
       <i class="fa-solid fa-arrow-left"></i>
-      Back to My Job Assignments
+      {{ isAssignmentMode ? 'Back to My Interview Requests' : 'Back to My Job Assignments' }}
     </button>
 
     <!-- Page heading -->
@@ -27,10 +27,10 @@
       </div>
       <p class="jad-meta">
         Requested on {{ targetStartDate }}
-        &nbsp;·&nbsp;
-        Requested by
+       
+        <!-- Requested by
         <span class="jad-meta-avatar"><i class="fa-solid fa-user"></i></span>
-        <span class="jad-meta-name">Admin Kumar</span>
+        <span class="jad-meta-name">Admin Kumar</span> -->
       </p>
     </div>
 
@@ -150,7 +150,96 @@
         <span class="jad-sh-icon jad-sh-icon--purple"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
         Job Description
       </h2>
-      <p class="jad-body-text">{{ jobDescription || 'No description provided.' }}</p>
+
+      <ng-container *ngIf="jobDescription; else noJD">
+
+        <!-- Job Summary -->
+        <div class="jad-jd-block" *ngIf="jobDescription.jobSummary">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-align-left"></i> Job Summary
+          </p>
+          <p class="jad-body-text">{{ jobDescription.jobSummary }}</p>
+        </div>
+
+        <!-- Key Responsibilities -->
+        <div class="jad-jd-block" *ngIf="jobDescription.keyResponsibilities.length > 0">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-list-check"></i> Key Responsibilities
+          </p>
+          <ul class="jad-jd-list">
+            <li *ngFor="let item of jobDescription.keyResponsibilities">{{ item }}</li>
+          </ul>
+        </div>
+
+        <!-- Basic Qualifications -->
+        <div class="jad-jd-block" *ngIf="jobDescription.basicQualifications.length > 0">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-graduation-cap"></i> Basic Qualifications
+          </p>
+          <ul class="jad-jd-list">
+            <li *ngFor="let item of jobDescription.basicQualifications">{{ item }}</li>
+          </ul>
+        </div>
+
+        <!-- Preferred Qualifications -->
+        <div class="jad-jd-block" *ngIf="jobDescription.preferredQualifications.length > 0">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-star"></i> Preferred Qualifications
+          </p>
+          <ul class="jad-jd-list jad-jd-list--preferred">
+            <li *ngFor="let item of jobDescription.preferredQualifications">{{ item }}</li>
+          </ul>
+        </div>
+
+        <!-- Education & Experience row -->
+        <div class="jad-jd-block jad-jd-meta-row">
+          <div *ngIf="jobDescription.educationRequirements">
+            <p class="jad-jd-section-title">
+              <i class="fa-solid fa-book-open"></i> Education
+            </p>
+            <p class="jad-body-text">{{ jobDescription.educationRequirements }}</p>
+          </div>
+          <div *ngIf="jobDescription.experienceRequirements">
+            <p class="jad-jd-section-title">
+              <i class="fa-solid fa-briefcase"></i> Experience Required
+            </p>
+            <p class="jad-body-text">{{ jobDescription.experienceRequirements }} Years</p>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="jad-jd-block" *ngIf="jobDescription.certificationsRequired.length > 0">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-certificate"></i> Certifications Required
+          </p>
+          <div class="jad-chips">
+            <span class="jad-chip jad-chip--cert" *ngFor="let c of jobDescription.certificationsRequired">{{ c }}</span>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div class="jad-jd-block" *ngIf="jobDescription.languagesRequired.length > 0">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-language"></i> Languages Required
+          </p>
+          <div class="jad-chips">
+            <span class="jad-chip jad-chip--lang" *ngFor="let l of jobDescription.languagesRequired">{{ l }}</span>
+          </div>
+        </div>
+
+        <!-- About Company -->
+        <div class="jad-jd-block" *ngIf="jobDescription.aboutCompany">
+          <p class="jad-jd-section-title">
+            <i class="fa-solid fa-building"></i> About the Company
+          </p>
+          <p class="jad-body-text">{{ jobDescription.aboutCompany }}</p>
+        </div>
+
+      </ng-container>
+
+      <ng-template #noJD>
+        <p class="jad-body-text">No description provided.</p>
+      </ng-template>
     </div>
 
     <!-- ══ 3. Sourcing Strategy ══════════════ -->
@@ -187,7 +276,7 @@
     </div>
 
     <!-- ══ 4. Assigned Recruiters ════════════ -->
-    <div class="jad-section">
+    <div class="jad-section" *ngIf="!isAssignmentMode">
       <h2 class="jad-section-heading">
         <span class="jad-sh-icon jad-sh-icon--green"><i class="fa-solid fa-user-tie"></i></span>
         Assigned Recruiters
@@ -237,7 +326,7 @@
             <i class="fa-solid fa-check-circle" *ngIf="existingResponse!.status === 'Accepted'"></i>
             <i class="fa-solid fa-times-circle" *ngIf="existingResponse!.status === 'Rejected'"></i>
             <span class="jad-dr-status">
-              You have already {{ existingResponse!.status === 'Accepted' ? 'accepted' : 'declined' }} this job
+              You have already {{ existingResponse!.status === 'Accepted' ? 'accepted' : 'declined' }} this {{ isAssignmentMode ? 'assignment' : 'job' }}
             </span>
           </div>
           <div class="jad-dr-comments" *ngIf="existingResponse!.comments">
@@ -251,55 +340,112 @@
         </div>
       </ng-container>
 
-      <!-- ── Not yet submitted: decision form ── -->
+      <!-- ── Not yet submitted ── -->
       <ng-template #decisionForm>
-        <p class="jad-body-text jad-mb-16">
-          Please review the job details and let us know your decision.
-        </p>
 
-        <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
-        <div class="jad-dec-btns">
-          <button
-            class="jad-dec-btn jad-dec-btn--accept"
-            [class.active]="decision === 'Accepted'"
-            (click)="setDecision('Accepted')">
-            <i class="fa-solid fa-check"></i> Accept
-          </button>
-          <button
-            class="jad-dec-btn jad-dec-btn--decline"
-            [class.active]="decision === 'Rejected'"
-            (click)="setDecision('Rejected')">
-            <i class="fa-solid fa-xmark"></i> Decline
-          </button>
-        </div>
+        <!-- ── Assignment mode: Accept/Reject open a comment modal ── -->
+        <ng-container *ngIf="isAssignmentMode; else jobDecisionForm">
+          <p class="jad-body-text jad-mb-16">
+            Please review the assignment details and let us know your decision.
+          </p>
+          <div class="jad-dec-btns">
+            <button
+              class="jad-dec-btn jad-dec-btn--accept"
+              (click)="openCommentModal('approve')">
+              <i class="fa-solid fa-check"></i> Accept the Assignment
+            </button>
+            <button
+              class="jad-dec-btn jad-dec-btn--decline"
+              (click)="openCommentModal('reject')">
+              <i class="fa-solid fa-xmark"></i> Reject the Assignment
+            </button>
+          </div>
+        </ng-container>
 
-        <p class="jad-field-label">
-          Comments <span class="astrick">*</span>
-        </p>
-        <p class="jad-field-hint">Provide a reason for your decision (recommended).</p>
+        <!-- ── Default mode: existing inline decision form ── -->
+        <ng-template #jobDecisionForm>
+          <p class="jad-body-text jad-mb-16">
+            Please review the job details and let us know your decision.
+          </p>
+
+          <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
+          <div class="jad-dec-btns">
+            <button
+              class="jad-dec-btn jad-dec-btn--accept"
+              [class.active]="decision === 'Accepted'"
+              (click)="setDecision('Accepted')">
+              <i class="fa-solid fa-check"></i> Accept
+            </button>
+            <button
+              class="jad-dec-btn jad-dec-btn--decline"
+              [class.active]="decision === 'Rejected'"
+              (click)="setDecision('Rejected')">
+              <i class="fa-solid fa-xmark"></i> Decline
+            </button>
+          </div>
+
+          <p class="jad-field-label">
+            Comments <span class="astrick">*</span>
+          </p>
+          <p class="jad-field-hint">Provide a reason for your decision (recommended).</p>
+          <div class="jad-ta-wrap">
+            <textarea
+              class="jad-textarea"
+              [(ngModel)]="comment"
+              [maxlength]="MAX_COMMENT"
+              rows="4"
+              placeholder="Write your comments here...">
+            </textarea>
+            <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
+          </div>
+
+          <div class="jad-footer">
+            <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
+            <button
+              class="jad-btn-submit"
+              [disabled]="!canSubmit"
+              (click)="onSubmit()">
+              <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+              {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
+              <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
+            </button>
+          </div>
+        </ng-template>
+
+      </ng-template>
+    </div>
+
+    <!-- ══ Comment Modal — Accept/Reject Assignment ══ -->
+    <div class="jad-modal-backdrop" *ngIf="isCommentModalOpen" (click)="closeCommentModal()">
+      <div class="jad-modal" (click)="$event.stopPropagation()">
+        <h3 class="jad-modal-title">
+          {{ commentModalAction === 'approve' ? 'Accept the Assignment' : 'Reject the Assignment' }}
+        </h3>
+
+        <p class="jad-field-label">Comments <span class="jad-req">*</span></p>
+        <p class="jad-field-hint">Provide a reason for your decision.</p>
         <div class="jad-ta-wrap">
           <textarea
             class="jad-textarea"
-            [(ngModel)]="comment"
+            [(ngModel)]="modalComment"
             [maxlength]="MAX_COMMENT"
             rows="4"
             placeholder="Write your comments here...">
           </textarea>
-          <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
+          <span class="jad-char">{{ modalComment.length }} / {{ MAX_COMMENT }}</span>
         </div>
 
         <div class="jad-footer">
-          <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
+          <button class="jad-btn-cancel" (click)="closeCommentModal()">Cancel</button>
           <button
             class="jad-btn-submit"
-            [disabled]="!canSubmit"
-            (click)="onSubmit()">
+            [disabled]="isSubmitting || !modalComment.trim()"
+            (click)="onModalConfirmed({ comment: modalComment })">
             <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
-            {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
-            <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
+            {{ isSubmitting ? 'Submitting...' : (commentModalAction === 'approve' ? 'Confirm Acceptance' : 'Confirm Rejection') }}
           </button>
         </div>
-      </ng-template>
+      </div>
     </div>
 
   </ng-container>

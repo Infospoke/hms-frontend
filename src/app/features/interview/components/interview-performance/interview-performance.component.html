@@ -17,16 +17,11 @@
 
   <ng-container *ngIf="!loading && !error && candidate">
 
-    <!-- Page Title -->
-    <div class="aid-page-title-row">
-      <h1 class="aid-page-title">AI Interview Details</h1>
-      <p class="aid-page-sub">Review interview performance and make an informed decision.</p>
-    </div>
-
-    <!-- Candidate Card -->
+    
+    <app-heading heading="AI Interview Details" subHeading="Review interview performance and make an informed decision." [showBackButton]="true" [buttonText]="'Back to Candidate Management'" backButtonUrl="/supply/applicant-management" />
+    
     <div class="aid-cand-card">
 
-      <!-- Left: Avatar + Name + Contact -->
       <div class="aid-cand-ident">
         <div class="aid-avatar">{{ candidate.avatarInitials }}</div>
         <div class="aid-cand-details">

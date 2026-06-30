@@ -1,30 +1,29 @@
-
-$primary:       #2563eb;
+$primary: #2563eb;
 $primary-light: #eff6ff;
-$primary-mid:   #bfdbfe;
-$primary-dark:  #1d4ed8;
-$white:         #ffffff;
-$gray-50:       #f8fafc;
-$gray-100:      #f1f5f9;
-$gray-200:      #e2e8f0;
-$gray-300:      #cbd5e1;
-$gray-400:      #94a3b8;
-$gray-600:      #475569;
-$gray-700:      #334155;
-$gray-900:      #0f172a;
+$primary-mid: #bfdbfe;
+$primary-dark: #1d4ed8;
+$white: #ffffff;
+$gray-50: #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-300: #cbd5e1;
+$gray-400: #94a3b8;
+$gray-600: #475569;
+$gray-700: #334155;
+$gray-900: #0f172a;
 
-$behavioral:    #7c3aed;
-$situational:   #0891b2;
-$danger:        #ef4444;
-$success:       #059669;
+$behavioral: #7c3aed;
+$situational: #0891b2;
+$danger: #ef4444;
+$success: #059669;
 
-$radius-sm:     6px;
-$radius-md:     10px;
-$radius-lg:     14px;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
 
-$shadow-sm:     0 1px 3px rgba(37,99,235,.08), 0 1px 2px rgba(0,0,0,.04);
-$shadow-md:     0 4px 16px rgba(37,99,235,.10), 0 2px 6px rgba(0,0,0,.06);
-$shadow-card:   0 2px 8px rgba(37,99,235,.07);
+$shadow-sm: 0 1px 3px rgba(37, 99, 235, .08), 0 1px 2px rgba(0, 0, 0, .04);
+$shadow-md: 0 4px 16px rgba(37, 99, 235, .10), 0 2px 6px rgba(0, 0, 0, .06);
+$shadow-card: 0 2px 8px rgba(37, 99, 235, .07);
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 .iq-root {
@@ -44,7 +43,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
 }
 
 .iq-candidate-info {
@@ -165,8 +164,9 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
 // ─── Body Layout ─────────────────────────────────────────────────────────────
 .iq-body {
   display: flex;
-  align-items: flex-start;
-  min-height: calc(100vh - 82px);
+  align-items: stretch;
+  height: calc(100vh - 82px);
+  overflow: hidden;
 }
 
 // ─── Settings Panel ───────────────────────────────────────────────────────────
@@ -179,8 +179,9 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   display: flex;
   flex-direction: column;
   gap: 0;
-  min-height: 100%;
+  height: 100%;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .iq-panel-title {
@@ -204,10 +205,12 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   letter-spacing: .2px;
   // text-transform: uppercase;
 }
+
 .div-questions {
   display: flex;
   align-items: center;
-  gap: 16px; /* space between items */
+  gap: 16px;
+  /* space between items */
 }
 
 .ajd-empty {
@@ -256,7 +259,9 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     font-weight: 500;
     color: #374151;
 
-    svg { flex-shrink: 0; }
+    svg {
+      flex-shrink: 0;
+    }
   }
 
   // ── CTA button ──
@@ -275,8 +280,14 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     transition: background 0.15s;
     margin-bottom: 10px;
 
-    &:hover:not(:disabled) { background: #1d4ed8; }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
 
   // ── "Usually takes…" hint ──
@@ -289,6 +300,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     margin: 0;
   }
 }
+
 // ─── Plan read-only display ───────────────────────────────────────────────────
 .iq-plan-readonly {
   display: flex;
@@ -639,7 +651,8 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .iq-questions-header {
@@ -647,6 +660,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   align-items: center;
   justify-content: space-between;
   margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
 .iq-questions-title {
@@ -684,6 +698,10 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .iq-question-card {
@@ -866,6 +884,10 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   &:hover {
     background: $primary-dark;
   }
+
+  &:disabled {
+    background: $primary-mid;
+  }
 }
 
 .iq-btn-cancel {
@@ -899,8 +921,15 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .iq-add-form-title {
@@ -952,6 +981,11 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     background: $primary-light;
     border-color: $primary;
   }
+  &:disabled{
+    background: $primary-light;
+    border-color: $primary;
+    cursor: not-allowed;
+  }
 }
 
 // ─── Footer Actions ───────────────────────────────────────────────────────────
@@ -963,6 +997,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
   margin-top: auto;
   padding-top: 18px;
   border-top: 1px solid $gray-200;
+  flex-shrink: 0;
 }
 
 .iq-btn-finalize {
@@ -986,6 +1021,7 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
 
   &:hover {
     background: $primary-light;
+    cursor: not-allowed;
   }
 }
 
@@ -1013,7 +1049,8 @@ $shadow-card:   0 2px 8px rgba(37,99,235,.07);
     background: $primary-dark;
     box-shadow: 0 4px 14px rgba($primary, .40);
   }
-  &:disabled{
+
+  &:disabled {
     cursor: not-allowed;
     background: $primary-mid;
   }

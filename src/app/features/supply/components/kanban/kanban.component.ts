@@ -224,11 +224,11 @@ export class KanbanComponent implements OnInit {
     const key = stage?.toLowerCase();
     return this.stageCounts?.[key] ?? 0;
   }
+  
   async loadJobs() {
     this.jobsLoading = true;
     try {
-      const res: any = await this.jobsService.getJobsList(true);
-      console.log(res);
+      const res = await this.jobsService.getJobsList();
       if (res?.responsecode == '00') {
         this.jobsList = res?.data;
         if (this.jobsList.length > 0) {

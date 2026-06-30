@@ -4,6 +4,9 @@ $ctrl-h: 38px;
 .filter-bar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;          // fixed-width items, but wrap to a 2nd line instead of
+                             // overflowing/clipping when the row is already full
+                             // (this is what was hiding the Custom date-range box)
   gap: 10px;
   width: 100%;
   box-sizing: border-box;
@@ -15,6 +18,14 @@ $ctrl-h: 38px;
     align-items: center;
     width: 235px;
     flex-shrink: 0;
+
+    &.is-wide {
+      width: 300px;          // a bit more generous when there are only 1-3 filters
+    }
+
+    &.is-compact {
+      width: 190px;          // tighter, fixed width when there are 5+ filters
+    }
 
     .search-icon {
       position: absolute;
@@ -83,8 +94,29 @@ $ctrl-h: 38px;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    width: 155px;                           // fixed — never shifts with label text
+
+    // ── Fixed widths, chosen once based on filter count (not on viewport) ──
+    // Default (4 effective filters): the baseline width.
+    // .is-wide  → <=3 effective filters: wider, since there's less to fit.
+    // .is-compact → >=5 effective filters: tighter, so they all still fit.
+    width: 155px;
     flex-shrink: 0;
+
+    &.is-wide {
+      width: 205px;
+
+      .dropdown-value {
+        width: 130px;
+      }
+    }
+
+    &.is-compact {
+      width: 128px;
+
+      .dropdown-value {
+        width: 48px;
+      }
+    }
 
     height: $ctrl-h; // ← unified
     padding: 0 32px 0 12px;
@@ -114,13 +146,14 @@ $ctrl-h: 38px;
       font-weight: 600;
       color: #374151;
       pointer-events: none;
+      flex-shrink: 0;        // label never gets squeezed
     }
 
     .dropdown-value {
       font-size: 0.84rem;
       color: #6b7280;
       display: inline-block;
-      width: 80px;           // fixed — text truncates, box never grows
+      width: 80px;           // fixed — matches the default (non-wide) box width
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -143,6 +176,7 @@ $ctrl-h: 38px;
       top: calc(100% + 6px);
       left: 0;
       min-width: 100%;
+      max-width: min(230px, calc(100vw - 24px)); // never wider than the viewport on mobile
       background: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 10px;
@@ -153,7 +187,7 @@ $ctrl-h: 38px;
       // ── Scroll after 5 items ─────────────────────────────────────────────
       // Each item is ~34px (8px top + 8px bottom padding + ~18px text).
       // 5 items × 34px + 2×4px panel padding = ~178px.
-      max-height: 178px;
+      max-height: 168px;
       overflow-y: auto;
 
       // Thin, subtle scrollbar
@@ -230,7 +264,7 @@ $ctrl-h: 38px;
 .date-range-bar {
   display: inline-flex;
   align-items: center;
-  width: 300px;            // fixed static width — never shifts
+  width: 300px;             // fixed static width — never shifts
   flex-shrink: 0;
   height: $ctrl-h;
   box-sizing: border-box;

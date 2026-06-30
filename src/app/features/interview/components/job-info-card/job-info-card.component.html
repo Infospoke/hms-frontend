@@ -7,9 +7,13 @@
   <ng-container *ngIf="!isDetailMode">
 
     <div class="job-primary">
-      <span class="job-title">{{ job.title }}</span>
+      <div class="meta-item">
+        <span class="meta-label">Job Title</span>
+        <span class="meta-value">{{ job.title }}</span>
+      </div>
+      <!-- <span class="job-title">{{ job.title }}</span>
       <span class="job-id" *ngIf="job.id">{{ job.id }}</span>
-      <span class="status-badge" *ngIf="job.status">{{ job.status }}</span>
+      <span class="status-badge" *ngIf="job.status">{{ job.status }}</span> -->
     </div>
 
     <div class="job-meta">
@@ -33,10 +37,6 @@
 
   </ng-container>
 
-  <!-- ══════════════════════════════════════════════
-       MODE B — detail vertical layout (Image 1)
-       shown when roundTitle / interview fields exist
-       ══════════════════════════════════════════════ -->
   <div class="job-body" *ngIf="isDetailMode">
 
     <!-- Round title + type badge -->
@@ -63,33 +63,31 @@
         <span class="meta-label">Interview Mode</span>
         <span class="meta-value extra-bold">{{ job.interviewMode }}</span>
       </div>
-    </div>
-
-    <div class="extra-divider"></div>
-
-    <!-- Row 2: Assigned on · Response Due · Assigned by -->
-    <div class="extra-meta" *ngIf="job.assignedOn || job.responseDue || job.assignedBy">
-      <div class="meta-item" *ngIf="job.assignedOn">
-        <span class="meta-label">Assigned on</span>
-        <span class="meta-value">{{ job.assignedOn }}</span>
-      </div>
-      <div class="meta-item" *ngIf="job.responseDue">
-        <span class="meta-label">Response Due</span>
-        <span class="meta-value" [class.due-soon]="isDueSoon">
-          {{ job.responseDue }}{{ dueLabelSuffix }}
-        </span>
-      </div>
-      <div class="meta-item" *ngIf="job.assignedBy">
-        <span class="meta-label">Assigned by</span>
-        <div class="assigned-by">
-          <div class="avatar">{{ getInitials(job.assignedBy.name) }}</div>
-          <div class="assigned-info">
-            <span class="assigned-name">{{ job.assignedBy.name }}</span>
-            <span class="assigned-role">{{ job.assignedBy.role }}</span>
+      
+        <div class="meta-item" *ngIf="job.assignedOn">
+          <span class="meta-label">Assigned on</span>
+          <span class="meta-value">{{ job.assignedOn }}</span>
+        </div>
+        <div class="meta-item" *ngIf="job.responseDue">
+          <span class="meta-label">Response Due</span>
+          <span class="meta-value" [class.due-soon]="isDueSoon">
+            {{ job.responseDue }}{{ dueLabelSuffix }}
+          </span>
+        </div>
+        <div class="meta-item" *ngIf="job.assignedBy">
+          <span class="meta-label">Assigned by</span>
+          <div class="assigned-by">
+            <div class="avatar">{{ getInitials(job.assignedBy.name) }}</div>
+            <div class="assigned-info">
+              <span class="assigned-name">{{ job.assignedBy.name }}</span>
+              <span class="assigned-role">{{ job.assignedBy.role }}</span>
+            </div>
           </div>
         </div>
-      </div>
+  
     </div>
+
+
 
   </div>
 

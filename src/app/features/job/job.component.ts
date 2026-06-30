@@ -56,12 +56,26 @@ export class JobComponent implements OnInit, OnChanges {
 
   handleJobAction(event: { type: 'edit' | 'delete'; data: any }) {
     if (event.type === 'edit') {
-      this.router.navigate(['/supply/jobs/edit-job', event.data]);
+      // this.router.navigate(['/supply/jobs/edit-job', event.data]);
+      this.updateJob(event?.data);
     } else if (event.type === 'delete') {
       this.deleteJob(event.data);
     }
   }
-
+  async updateJob(jobId:any){
+    const obj={
+      jobId:jobId,
+      isOpen:false
+    }
+    const res:any=await this.jobApi.updateJobToClose(obj);
+    if(res?.responsecode=='00'){
+      this.notification.success(res?.message || res?.responsemessage  || res?.responseMessage);
+      this.getJobs();
+    }
+    else{
+      this.notification.error(res?.message || res?.responsemessage || res?.responseMessage)
+    }
+  }
   async deleteJob(jobId: any) {
     try {
       await this.jobApi.deleteJob(jobId);

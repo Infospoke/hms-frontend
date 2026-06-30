@@ -1,6 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
+
+
+import { InterviewServiceService } from '../../service/interview-service.service';
 
 interface InterviewInfo {
   interviewId: string;
@@ -32,11 +37,12 @@ interface Project {
   description: string;
 }
 
-interface Document {
+interface CandidateDocument {
   name: string;
   type: string;
   size: string;
   color: string;
+  url: string;
 }
 
 @Component({
@@ -46,85 +52,134 @@ interface Document {
   templateUrl: './today-interview-details.component.html',
   styleUrl: './today-interview-details.component.scss',
 })
-export class TodayInterviewDetailsComponent {
+export class TodayInterviewDetailsComponent implements OnInit {
+  isLoading = true;
+  error: string | null = null;
+
   interviewInfo: InterviewInfo = {
-    interviewId: 'INT-2025-0142',
-    jobTitle: 'Software Engineer - L2',
-    interviewType: 'Technical',
-    scheduledTime: '30 May 2025, 10:30 AM',
-    candidateName: 'Rohit Sharma',
-    department: 'Engineering',
-    interviewMode: 'Online',
-    duration: '45 Minutes',
-    candidateId: 'NSW-1023',
-    interviewRound: 'Round 1',
-    meetingPlatform: 'Google Meet',
+    interviewId: '',
+    jobTitle: '',
+    interviewType: '',
+    scheduledTime: '',
+    candidateName: '',
+    department: '',
+    interviewMode: '',
+    duration: '',
+    candidateId: '',
+    interviewRound: '',
+    meetingPlatform: '',
   };
 
-  experiences: Experience[] = [
-    {
-      years: '3.0 Years',
-      currentCompany: 'ABC Technologies',
-      currentRole: 'Software Engineer',
-      company: 'ABC Technologies',
-      role: 'Software Engineer',
-      duration: 'Jun 2021 – Present (1.4 Years)',
-    },
-    {
-      years: '',
-      currentCompany: '',
-      currentRole: '',
-      company: 'PQ Solutions',
-      role: 'Associate Software Engineer',
-      duration: 'Jul 2021 – Dec 2022 (1.5 Years)',
-    },
-    {
-      years: '',
-      currentCompany: '',
-      currentRole: '',
-      company: 'TechNova Systems',
-      role: 'Intern',
-      duration: 'Jan 2021 – Jun 2021 (6 Months)',
-    },
-  ];
+  experiences: Experience[] = [];
+  totalExperience = '';
+  currentCompany = '';
+  currentRole = '';
 
-  totalExperience = '3.0 Years';
-  currentCompany = 'ABC Technologies';
-  currentRole = 'Software Engineer';
+  projects: Project[] = [];
+  private interviewService=inject(InterviewServiceService)
 
-  projects: Project[] = [
-    {
-      name: 'E-Commerce Platform',
-      role: 'Developer',
-      technologies: 'Java, Spring Boot, MySQL, AWS',
-      description:
-        'Developed a full-stack e-commerce platform with user authentication, product management, order processing and payment integration.',
-    },
-    {
-      name: 'Employee Management System',
-      role: 'Developer',
-      technologies: 'Spring Boot, PostgreSQL, Angular',
-      description:
-        'Built an internal tool for employee data management, attendance tracking, leave management, and reporting.',
-    },
-    {
-      name: 'Task Management App',
-      role: 'Developer',
-      technologies: 'Spring Boot, MongoDB, MySQL, Docker',
-      description:
-        'Designed and developed a task management application with real-time updates, team collaboration, and notification system.',
-    },
-  ];
+  resumeDocument: CandidateDocument | null = null;
 
-  documents: Document[] = [
-    { name: 'Resume', type: 'PDF', size: '256.5 kB', color: '#e53935' },
-    { name: 'Portfolio', type: 'PDF', size: '112.8 kB', color: '#e53935' },
-    { name: 'Certifications', type: 'PDF', size: '98.2 kB', color: '#e53935' },
-  ];
+  constructor(
+    private route: ActivatedRoute,
+  
+  ) {}
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (!id) {
+      this.isLoading = false;
+      this.error = 'Interview ID was not found in the route.';
+      return;
+    }
+
+    this.loadInterviewDetails(id);
+  }
+
+  private async loadInterviewDetails(id: string): Promise<void> {
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      const response = await this.interviewService.getTodayInterviewDetails(id);
+
+      if (response?.responsecode === '00' && response?.data) {
+        this.mapInterviewData(response.data);
+      } else {
+        this.error = response?.message || 'Failed to load interview details.';
+      }
+    } catch (err) {
+      console.error('Error fetching interview details', err);
+      this.error = 'Something went wrong while loading interview details.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  
+
+  // Maps the API payload (response.data) onto the view model.
+  // Field names assume the same shape as InterviewInfo / Experience / Project below -
+  // adjust the property names here if your backend uses different keys.
+  private mapInterviewData(data: any): void {
+    this.interviewInfo = {
+      interviewId: data.interviewId ?? '',
+      jobTitle: data.jobTitle ?? '',
+      interviewType: data.interviewType ?? '',
+      scheduledTime: data.scheduledTime ?? '',
+      candidateName: data.candidateName ?? '',
+      department: data.department ?? '',
+      interviewMode: data.interviewMode ?? '',
+      duration: data.duration ?? '',
+      candidateId: data.candidateId ?? '',
+      interviewRound: data.interviewRound ?? '',
+      meetingPlatform: data.meetingPlatform ?? 'Google Meet',
+    };
+
+    this.totalExperience = data.totalExperience ?? '';
+    this.currentCompany = data.currentCompany ?? '';
+    this.currentRole = data.currentRole ?? '';
+    this.experiences = data.experiences ?? [];
+    this.projects = data.projects ?? [];
+
+    // Only pick out the resume - portfolio & certifications are intentionally dropped.
+    const resumeSource =
+      data.resume ?? (data.documents ?? []).find((doc: any) => doc?.name?.toLowerCase() === 'resume');
+
+    this.resumeDocument = resumeSource
+      ? {
+          name: resumeSource.name ?? 'Resume',
+          type: resumeSource.type ?? 'PDF',
+          size: resumeSource.size ?? '',
+          color: resumeSource.color ?? '#e53935',
+          url: resumeSource.url ?? resumeSource.downloadUrl ?? '',
+        }
+      : null;
+  }
 
   onBack() {}
   onViewJobDetails() {}
   onStartInterview() {}
   onComplete() {}
   onCancel() {}
+
+  onViewResume(): void {
+    if (this.resumeDocument?.url) {
+      window.open(this.resumeDocument.url, '_blank');
+    }
+  }
+
+  onDownloadResume(): void {
+    if (!this.resumeDocument?.url) {
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = this.resumeDocument.url;
+    link.download = this.resumeDocument.name || 'resume';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }

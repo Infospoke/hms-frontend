@@ -10,7 +10,11 @@ export const SUPPLY_ROUTES: Routes = [
     loadComponent:()=>import("../components/my-jobs-assignments/my-jobs-assignments.component").then(m=>m.MyJobsAssignmentsComponent)
   },
   {
-    path:'my-assigned-jobs/job-details/:id',
+    path:'my-assignend-jobs/job-details/:id',
+    loadComponent:()=>import("../components/job-approval-detail/job-approval-detail.component").then(m=>m.JobApprovalDetailComponent)
+  },
+  {
+    path:'my-interview-requests/job-details/:id',
     loadComponent:()=>import("../components/job-approval-detail/job-approval-detail.component").then(m=>m.JobApprovalDetailComponent)
   },
   {
@@ -18,7 +22,7 @@ export const SUPPLY_ROUTES: Routes = [
     loadComponent:()=>import("../../interview/components/assigned-interview-requests/assigned-interview-requests.component").then(m=>m.AssignedInterviewRequestsComponent)
   },
   {
-        path:"my-interview-requests/today-interview-details",
+        path:"my-interview-requests/today-interview-details/:id",
         loadComponent:()=>import("../../interview/components/today-interview-details/today-interview-details.component").then(m=>m.TodayInterviewDetailsComponent)
     },
     {
@@ -26,15 +30,15 @@ export const SUPPLY_ROUTES: Routes = [
         loadComponent:()=>import("../../interview/components/interview-assignment-response/interview-assignment-response.component").then(m=>m.InterviewAssignmentResponseComponent)
     },
     {
-        path:"my-interview-requests/reschedule-interview",
+        path:"my-interview-requests/reschedule-interview/:id",
         loadComponent:()=>import("../../interview/components/reschedule-interview/reschedule-interview.component").then(m=>m.RescheduleInterviewComponent)
     },
     {
-        path:"my-interview-requests/schedule-interview",
+        path:"my-interview-requests/schedule-interview/:id",
         loadComponent:()=>import("../../interview/components/schedule-interview/schedule-interview.component").then(m=>m.ScheduleInterviewComponent)
     },
     {
-        path:"my-interview-requests/provide-feedback",
+        path:"my-interview-requests/provide-feedback/:id",
         loadComponent:()=>import("../../interview/components/provide-feed-back/provide-feed-back.component").then(m=>m.ProvideFeedBackComponent)
     },
     {

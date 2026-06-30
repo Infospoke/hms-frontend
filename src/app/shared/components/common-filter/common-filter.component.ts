@@ -84,6 +84,23 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
     return this.dropdowns.find(d => d.isDateFilter);
   }
 
+  // A date filter can expand into an extra date-range box once "Custom" is
+  // picked. To keep the layout fixed (no resize when that happens), count it
+  // as an extra filter up front rather than after the fact — e.g. 3 dropdowns
+  // where one is a date filter is treated like 4, so it never qualifies for
+  // the "wide" layout in the first place.
+  get effectiveFilterCount(): number {
+    return this.dropdowns.length + (this.dateDropdown ? 1 : 0);
+  }
+
+  get isWideLayout(): boolean {
+    return this.effectiveFilterCount <= 3;
+  }
+
+  get isCompactLayout(): boolean {
+    return this.effectiveFilterCount >= 6;
+  }
+
 
   get isCustomDate(): boolean {
     const dd = this.dateDropdown;

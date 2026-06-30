@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Back Navigation -->
-  
+
 
   <!-- Page Header -->
   <div class="page-header">
@@ -11,6 +11,10 @@
       <span class="btn-arrow">&#8250;</span>
     </button>
   </div>
+
+  <!-- Loading / Error States -->
+  <div class="state-banner loading-banner" *ngIf="isLoading">Loading interview details…</div>
+  <div class="state-banner error-banner" *ngIf="error && !isLoading">{{ error }}</div>
 
   <!-- Interview Information -->
   <div class="section-card">
@@ -140,19 +144,26 @@
   <!-- Candidate Documents -->
   <div class="section-card">
     <h2 class="section-title">Candidate Documents</h2>
-    <div class="documents-row">
-      <div class="doc-card" *ngFor="let doc of documents">
+
+    <div class="documents-row" *ngIf="resumeDocument">
+      <div class="doc-card">
         <div class="doc-icon-wrap">
-          <div class="doc-icon" [style.background-color]="doc.color">
-            <span class="doc-type-label">{{ doc.type }}</span>
+          <div class="doc-icon" [style.background-color]="resumeDocument.color">
+            <span class="doc-type-label">{{ resumeDocument.type }}</span>
           </div>
         </div>
         <div class="doc-info">
-          <div class="doc-name">{{ doc.name }}</div>
-          <div class="doc-meta">{{ doc.type }} · {{ doc.size }}</div>
+          <div class="doc-name">{{ resumeDocument.name }}</div>
+          <div class="doc-meta">{{ resumeDocument.type }} · {{ resumeDocument.size }}</div>
+        </div>
+        <div class="doc-actions">
+          <button class="doc-action-btn view-doc-btn" (click)="onViewResume()">View</button>
+          <button class="doc-action-btn download-doc-btn" (click)="onDownloadResume()">Download</button>
         </div>
       </div>
     </div>
+
+    <p class="no-doc-text" *ngIf="!resumeDocument && !isLoading">No resume has been uploaded for this candidate.</p>
   </div>
 
   <!-- Bottom Action Bar -->

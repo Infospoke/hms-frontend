@@ -1,18 +1,48 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApprovalLayoutComponent } from "../../../approvals/components/approval-layout/approval-layout.component";
-import { interview } from '../../../../shared/constants/reusbale-filter';
+import { candidateManagement, interview } from '../../../../shared/constants/reusbale-filter';
 import { TableColumn, ReusableTableComponent } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CanDirective } from "../../../../shared/directives/can.directive";
 import { Router } from '@angular/router';
+import { InterviewServiceService } from '../../service/interview-service.service';
+import { ApprovalService } from '../../../approvals/services/approval-service';
+
+// ── API shapes ────────────────────────────────────────────────────────────────
+
+export interface RoundDetail {
+  roundName: string;
+  roundOrder: number;
+  stageTypeId: number;
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'PENDING';
+}
+
+export interface CandidateApiItem {
+  applicationId: number;
+  candidateName: string;
+  completedRounds: number;
+  currentStage: string;
+  currentStageId: number;
+  department: string;
+  email: string;
+  jobTitle: string;
+  lastActivity: string;
+  roundDetails: RoundDetail[];
+  totalRounds: number;
+}
+
+// ── Display shape (used by the table / template) ──────────────────────────────
 
 export interface Candidate {
+  applicationId: number;
   firstName: string;
   lastName: string;
   email: string;
   jobTitle: string;
+  department: string;
   roundsCompleted: number;
   totalRounds: number;
+  roundDetails: RoundDetail[];
   currentStage: string;
   stageStatus: 'Completed' | 'In Progress';
   lastActivity: string;
@@ -26,98 +56,241 @@ export interface Candidate {
   templateUrl: './offer-management.component.html',
   styleUrl: './offer-management.component.scss',
 })
-export class OfferManagementComponent {
+export class OfferManagementComponent implements OnInit {
 
+  // ── Summary cards (values populated from count API) ───────────────────────
   cards = [
     {
       label: 'Selected Candidates',
-      value: 18,
+      value: 0,
       percentage: '',
       iconClass: 'fa-solid fa-users',
       iconBgColor: '#eaf2ff',
       iconColor: '#3b82f6',
-      description: 'Completed all interview rounds'
+      description: 'Completed all interview rounds',
     },
     {
       label: 'AI Interview',
-      value: 4,
+      value: 0,
       percentage: '',
       iconClass: 'fa-regular fa-calendar-check',
       iconBgColor: '#fff7ed',
       iconColor: '#f97316',
-      description: 'Completed'
+      description: 'Completed',
     },
     {
       label: 'Technical Round',
-      value: 7,
+      value: 0,
       percentage: '',
       iconClass: 'fa-solid fa-code',
       iconBgColor: '#f3e8ff',
       iconColor: '#7c3aed',
-      description: 'Completed'
+      description: 'Completed',
     },
     {
       label: 'Managerial Round',
-      value: 12,
+      value: 0,
       percentage: '',
       iconClass: 'fa-regular fa-calendar-check',
       iconBgColor: '#ecfdf5',
       iconColor: '#16a34a',
-      description: 'Completed'
+      description: 'Completed',
     },
     {
       label: 'HR Round',
-      value: 15,
+      value: 0,
       percentage: '',
       iconClass: 'fa-regular fa-user',
       iconBgColor: '#fef2f2',
       iconColor: '#ef4444',
-      description: 'Completed'
-    }
+      description: 'Completed',
+    },
   ];
 
-  dropDownData = interview;
-  currentPage: number = 1;
-  totalItems: number = 18;
-  pageSize: number = 10;
-  private router=inject(Router);
+  dropDownData = candidateManagement;
+
+  // ── Pagination state ──────────────────────────────────────────────────────
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
+
+  // ── Table config ──────────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'candidate',       label: 'Candidate',        width: '220px', custom: true },
-    { key: 'jobTitle',        label: 'Job Title',        width: '180px', custom: true },
-    { key: 'roundProgress',   label: 'Round Progress',   width: '220px', custom: true, align: 'center' },
-    { key: 'currentStage',    label: 'Current Stage',    width: '160px', custom: true },
-    { key: 'lastActivity',    label: 'Last Activity',    width: '140px', custom: true },
-    { key: 'actions',         label: 'Actions',          width: '100px', custom: true, align: 'center' },
+    { key: 'candidate', label: 'Candidate', width: '220px', custom: true },
+    { key: 'jobTitle', label: 'Job Title', width: '180px', custom: true },
+    { key: 'roundProgress', label: 'Round Progress', width: '220px', custom: true, align: 'center' },
+    { key: 'currentStage', label: 'Current Stage', width: '160px', custom: true },
+    { key: 'lastActivity', label: 'Last Activity', width: '140px', custom: true },
+    { key: 'actions', label: 'Actions', width: '100px', custom: true, align: 'center' },
   ];
 
-  candidates: Candidate[] = [
-    { firstName: 'Rahul',  lastName: 'Mehta',   email: 'rahul.mehta@email.com',   jobTitle: 'Data Scientist',      roundsCompleted: 4, totalRounds: 4, currentStage: 'Completed',      stageStatus: 'Completed',  lastActivity: '22 May 2026', lastActivityTime: '10:30 AM' },
-    { firstName: 'Priya',  lastName: 'Sharma',  email: 'priya.sharma@email.com',  jobTitle: 'Backend Developer',   roundsCompleted: 3, totalRounds: 4, currentStage: 'HR Round',       stageStatus: 'In Progress', lastActivity: '21 May 2026', lastActivityTime: '04:15 PM' },
-    { firstName: 'Neha',   lastName: 'Verma',   email: 'neha.verma@email.com',    jobTitle: 'Product Manager',     roundsCompleted: 4, totalRounds: 4, currentStage: 'Completed',      stageStatus: 'Completed',  lastActivity: '20 May 2026', lastActivityTime: '11:20 AM' },
-    { firstName: 'Arjun',  lastName: 'Rao',     email: 'arjun.rao@email.com',     jobTitle: 'QA Engineer',         roundsCompleted: 2, totalRounds: 4, currentStage: 'Managerial Round', stageStatus: 'In Progress', lastActivity: '18 May 2026', lastActivityTime: '02:30 PM' },
-    { firstName: 'Sneha',  lastName: 'Reddy',   email: 'sneha.reddy@email.com',   jobTitle: 'UX Designer',         roundsCompleted: 4, totalRounds: 4, currentStage: 'Completed',      stageStatus: 'Completed',  lastActivity: '19 May 2026', lastActivityTime: '09:45 AM' },
-    { firstName: 'Vikram', lastName: 'Singh',   email: 'vikram.singh@email.com',  jobTitle: 'DevOps Engineer',     roundsCompleted: 3, totalRounds: 4, currentStage: 'HR Round',       stageStatus: 'In Progress', lastActivity: '22 May 2026', lastActivityTime: '01:10 PM' },
-    { firstName: 'Ankita', lastName: 'Sharma',  email: 'ankita.sharma@email.com', jobTitle: 'HR Business Partner', roundsCompleted: 4, totalRounds: 4, currentStage: 'Completed',      stageStatus: 'Completed',  lastActivity: '21 May 2026', lastActivityTime: '03:00 PM' },
-    { firstName: 'Karan',  lastName: 'Malhotra',email: 'karan.malhotra@email.com',jobTitle: 'Frontend Developer',  roundsCompleted: 2, totalRounds: 4, currentStage: 'Technical Round',stageStatus: 'In Progress', lastActivity: '17 May 2026', lastActivityTime: '05:25 PM' },
-  ];
+  candidates: Candidate[] = [];
 
-  /** First letter of first name + first letter of last name */
-  getInitials(candidate: Candidate): string {
-    return (candidate.firstName.charAt(0) + candidate.lastName.charAt(0)).toUpperCase();
+  isLoading = false;
+
+  private router = inject(Router);
+  private interviewService = inject(InterviewServiceService);
+  private approvalService=inject(ApprovalService)
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  ngOnInit(): void {
+    Promise.all([this.loadCountData(),this.loadListData(), this.loadJobs(),this.loadDepartments()])
   }
 
-  /** Deterministic background colour derived from name */
+  private loadDepartments() {
+    this.approvalService.departments()
+      .then((res: any) => {
+        if (res?.responsecode == '00') {
+          const data = this.map(res?.data);
+          this.dropDownData = this.dropDownData.map((item: any) =>
+            item.key === 'departments'
+              ? { ...item, options: data ?? [] }
+              : item
+          );
+        }
+       
+
+      })
+      .catch((error: any) => {
+        console.log(error);
+      })
+  }
+  private async loadJobs() {
+    const res: any = await this.interviewService.getAIInterviewZoneJobs();
+    if (res?.responsecode == '00') {
+      const fun = this.map(res?.data ?? {});
+      // ✅ Update only allJobs key, preserve everything else in allFilters
+      this.dropDownData = this.dropDownData.map((item: any) =>
+        item.key === 'allJobs' ? { ...item, options: fun } : item
+      );
+    }
+  }
+
+  private map(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.name,
+        label: item.name,
+      }))
+    ];
+  }
+  // ── Count API  (GET /hms/interview-plan/progress-count) ───────────────────
+  private async loadCountData(){
+    try {
+      const res: any = await this.interviewService.candidateMangementCount();
+      if (res?.responsecode === '00') {
+        const d = res.data;
+        this.cards[0].value = d.allClearedCandidates ?? 0;
+        this.cards[1].value = d.aiInterview ?? 0;
+        this.cards[2].value = d.technicalRound ?? 0;
+        this.cards[3].value = d.managerialRound ?? 0;
+        this.cards[4].value = d.hrRound ?? 0;
+      }
+    } catch (err) {
+      console.error('Failed to load candidate count', err);
+    }
+  }
+
+  // ── List API  (POST /hms/interview-plan/progress-list) ────────────────────
+  private async loadListData() {
+    this.isLoading = true;
+    try {
+      const payload = {
+        page: this.currentPage - 1,
+        size: this.pageSize,
+        sortBy: 'applicationId',
+        direction: 'ASC',
+        filters: {},
+      };
+
+      const res: any = await this.interviewService.candidateMangementList(payload);
+      if (res?.responsecode === '00') {
+        const pageData = res.data;
+        this.totalItems = pageData.totalElements ?? 0;
+        this.candidates = (pageData.content ?? []).map((item: CandidateApiItem) =>
+          this.mapCandidate(item)
+        );
+      }
+    } catch (err) {
+      console.error('Failed to load candidate list', err);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  // ── Map API item → display Candidate ─────────────────────────────────────
+  private mapCandidate(item: CandidateApiItem): Candidate {
+    const nameParts = (item.candidateName ?? '').trim().split(' ');
+    const firstName = nameParts[0] ?? '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    // Determine stageStatus from roundDetails
+    const inProgress = item.roundDetails?.some(r => r.status === 'IN_PROGRESS');
+    const allDone = item.roundDetails?.every(r => r.status === 'COMPLETED');
+    const stageStatus: 'Completed' | 'In Progress' =
+      allDone ? 'Completed' : (inProgress ? 'In Progress' : 'In Progress');
+
+    // Format lastActivity ISO string
+    const { datePart, timePart } = this.formatDateTime(item.lastActivity);
+
+    return {
+      applicationId: item.applicationId,
+      firstName,
+      lastName,
+      email: item.email,
+      jobTitle: item.jobTitle,
+      department: item.department,
+      roundsCompleted: item.completedRounds,
+      totalRounds: item.totalRounds,
+      roundDetails: item.roundDetails ?? [],
+      currentStage: item.currentStage,
+      stageStatus,
+      lastActivity: datePart,
+      lastActivityTime: timePart,
+    };
+  }
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadListData();
+  }
+
+  // ── Template helpers ──────────────────────────────────────────────────────
+
+  getInitials(candidate: Candidate): string {
+    const f = candidate.firstName?.charAt(0) ?? '';
+    const l = candidate.lastName?.charAt(0) ?? '';
+    return (f + l).toUpperCase() || '?';
+  }
+
   getAvatarBg(candidate: Candidate): string {
     const palette = [
       '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899',
       '#f97316', '#10b981', '#14b8a6', '#f59e0b',
     ];
-    const seed = (candidate.firstName.charCodeAt(0) + candidate.lastName.charCodeAt(0)) % palette.length;
+    const seed =
+      ((candidate.firstName?.charCodeAt(0) ?? 0) +
+        (candidate.lastName?.charCodeAt(0) ?? 0)) % palette.length;
     return palette[seed];
   }
 
-  /** Build round-progress dot states for a candidate */
+  /**
+   * Build dot states from the API roundDetails array.
+   * Falls back to the legacy completedRounds/totalRounds integers when
+   * roundDetails is not available.
+   */
   getRoundStates(candidate: Candidate): Array<'done' | 'active' | 'pending'> {
+    if (candidate.roundDetails?.length) {
+      return candidate.roundDetails
+        .sort((a, b) => a.roundOrder - b.roundOrder)
+        .map(r => {
+          if (r.status === 'COMPLETED') return 'done';
+          if (r.status === 'IN_PROGRESS') return 'active';
+          return 'pending';
+        });
+    }
+    // Fallback
     return Array.from({ length: candidate.totalRounds }, (_, i) => {
       if (i < candidate.roundsCompleted) return 'done';
       if (i === candidate.roundsCompleted && candidate.stageStatus === 'In Progress') return 'active';
@@ -125,11 +298,27 @@ export class OfferManagementComponent {
     });
   }
 
-  onPageChange(page: number): void {
-    this.currentPage = page;
+  viewDetails(candidate: Candidate): void {
+    this.router.navigate(
+      ['/supply/applicant-management/view-ai-interview-details'],
+      { state: { applicationId: candidate.applicationId } }
+    );
   }
 
-  viewDetails(candidate: Candidate): void {
-    this.router.navigate(['/supply/applicant-management/view-ai-interview-details'])
+  // ── Utilities ─────────────────────────────────────────────────────────────
+  private formatDateTime(iso: string): { datePart: string; timePart: string } {
+    if (!iso) return { datePart: '—', timePart: '' };
+    try {
+      const d = new Date(iso);
+      const datePart = d.toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric',
+      });
+      const timePart = d.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit', hour12: true,
+      });
+      return { datePart, timePart };
+    } catch {
+      return { datePart: iso, timePart: '' };
+    }
   }
 }

@@ -235,7 +235,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
             jobTitleName: item.jobTitle,
             departmentName: item.departmentName,
             requestbyName: item.requestedBy,
-            dateName: item.createdAt ? item.createdAt.split('T')[0] : '—',
+            dateName: item.createdAt,
             openings: item.openings,
             status: item.status,
           
@@ -292,6 +292,8 @@ export class MyJobsAssignmentsComponent implements OnInit {
   }
   handleView($event:any){
     console.log($event?._raw?.id);
-    this.router.navigateByUrl(`/supply/my-assigned-jobs/job-details/${$event?._raw?.id}`)
+    this.router.navigateByUrl(`/supply/my-assignend-jobs/job-details/${$event?._raw?.id}`)
   }
+
+  
 }

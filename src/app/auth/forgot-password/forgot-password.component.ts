@@ -40,7 +40,9 @@ export class ForgotPasswordComponent {
           this.router.navigate(['/login']);
           
         }
-
+        else{
+          this.notification.error(res?.responsemessage || res?.message)
+        }
 
       },
 

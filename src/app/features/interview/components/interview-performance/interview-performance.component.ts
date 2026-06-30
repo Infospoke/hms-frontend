@@ -5,6 +5,7 @@ import { EvaluationSummaryComponent } from '../evaluation-summary/evaluation-sum
 import { AiInterviewComponent } from '../ai-interview/ai-interview.component';
 import { RoundDetailComponent } from '../round-detail/round-detail.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
+import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 
 // Dummy data for development/testing
 const DUMMY_DATA = {
@@ -348,7 +349,8 @@ const DUMMY_DATA = {
     EvaluationSummaryComponent,
     AiInterviewComponent,
     RoundDetailComponent,
-  ],
+    HeadingComponent
+],
   templateUrl: './interview-performance.component.html',
   styleUrl:"./interview-performance.component.scss"
 })

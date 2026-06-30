@@ -4,7 +4,7 @@
   <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
 
   <app-common-filter
-    searchPlaceholder="Search by Candidate name, Job Title"
+    [searchPlaceholder]="searchPlaceholder"
     [dropdowns]="activeFilters"
     (filterChange)="filterChange($event)" />
 

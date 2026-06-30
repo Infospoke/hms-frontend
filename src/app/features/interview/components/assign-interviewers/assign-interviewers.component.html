@@ -7,7 +7,7 @@
 
   <!-- ── Reusable Table ──────────────────────────────────────────────────── -->
   <app-reusable-table [columns]="columns" [data]="tableData" emptyMessage="No interviewer assignments found."
-    [cellTemplate]="cellTpl" [showPagination]='true'>
+    [cellTemplate]="cellTpl" [showPagination]='true' [totalItems]="totalItems" [currentPage]="currentPage" [pageSize]="pageSize" (pageChange)="pageChange($event)">
   </app-reusable-table>
 
 </div>

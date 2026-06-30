@@ -240,6 +240,6 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('/interview/interview-approval-plans');
+    this.router.navigateByUrl('/approval/interview-plan-approval');
   }
 }

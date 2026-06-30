@@ -30,7 +30,7 @@ interface JdVersion {
   isCurrent: boolean;
   generatedAt: Date;
   content: string;
-  rawResponse: JdApiResponse; // ← add this
+  rawResponse: JdApiResponse;
   showMenu: boolean;
 }
 
@@ -95,35 +95,62 @@ export class AiJobDescriptionStepComponent
       this.form.addControl('jobDescription', new FormControl('', Validators.required));
     }
 
-    
+    // ── Step 1: try to restore all versions from localStorage ────────────────
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed: JdVersion[] = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Re-hydrate Date objects (JSON.parse gives strings)
+          this.versions = parsed.map(v => ({
+            ...v,
+            generatedAt: new Date(v.generatedAt),
+            showMenu: false,
+          }));
+
+          // The current version is whichever was marked isCurrent,
+          // falling back to the first one
+          const current =
+            this.versions.find(v => v.isCurrent) ?? this.versions[0];
+          this.selectedVersionId = current.id;
+
+          // Sync form value to the current version's raw response so the
+          // stepper still knows about a valid JD even before the editor mounts
+          this.form.get('jobDescription')?.setValue(current.rawResponse);
+          return; // skip the form-value fallback below
+        }
+      } catch {
+        // Corrupted storage — fall through to form-value restore
+        localStorage.removeItem(this.STORAGE_KEY);
+      }
+    }
+
+    // ── Step 2: nothing in localStorage — try the form value ─────────────────
     const existingJd = this.form.get('jobDescription')?.value;
     if (existingJd && typeof existingJd === 'object') {
       const html = this.formatJdResponse(existingJd);
       const restored: JdVersion = {
         id: Date.now(),
-        label: 'Version 1 (Current)',
+        label: 'Version 1',
         isCurrent: true,
         generatedAt: new Date(),
         content: html,
         rawResponse: existingJd,
-        showMenu: false
+        showMenu: false,
       };
       this.versions = [restored];
       this.selectedVersionId = restored.id;
       this.persistVersions();
-    } else {
-      // Fresh start — clear any stale localStorage from a prior session
-      localStorage.removeItem(this.STORAGE_KEY);
-      this.versions = [];
     }
+    // If neither source has data, versions stays [] — the "Generate" prompt shows
   }
 
   ngAfterViewInit(): void {
-    // If we restored an existing version, populate the editor DOM.
-    // Uses setTimeout(0) because *ngIf="hasContent" has just become true —
-    // the editor element needs one render cycle before innerHTML can be set.
+    // Paint the currently selected version into the editor
     if (this.selectedVersionId !== null && this.versions.length > 0) {
-      const v = this.versions.find(ver => ver.id === this.selectedVersionId);
+      const v =
+        this.versions.find(ver => ver.id === this.selectedVersionId) ??
+        this.versions[0];
       if (v) {
         setTimeout(() => {
           if (this.editorRef?.nativeElement) {
@@ -138,9 +165,7 @@ export class AiJobDescriptionStepComponent
 
   ngOnDestroy(): void {
     clearTimeout(this.saveTimer);
-    // Do NOT remove localStorage here — the form holds the source of truth,
-    // but keeping localStorage means versions survive a Back→Forward within
-    // the same stepper session.
+    // Keep localStorage — versions survive Back→Forward within the stepper
   }
 
   // ── Public API actions ──────────────────────────────────────────────────────
@@ -203,15 +228,12 @@ export class AiJobDescriptionStepComponent
       required_certifications: step1?.certificate || '',
       languages: step1?.languages || 'English',
       old_job_description: this.editorRef?.nativeElement?.innerHTML || '',
-      update_parameter: updateParameter
+      update_parameter: updateParameter,
     };
 
     try {
-      const res: any =
-        await this.jobService.generateJobDescription(payload);
-
+      const res: any = await this.jobService.generateJobDescription(payload);
       if (res) {
-        // Convert structured JSON → formatted HTML and store as a version
         const html = this.formatJdResponse(res);
         if (html) this.addVersion(html, res);
       }
@@ -226,31 +248,19 @@ export class AiJobDescriptionStepComponent
 
   private formatJdResponse(res: JdApiResponse): string {
 
-    /** Wraps items in a styled <ul> */
     const bulletList = (items: string[] | undefined): string => {
       if (!items?.length) return '';
       const lis = items.map(i => `<li>${i}</li>`).join('');
       return `<ul class="jd-list">${lis}</ul>`;
     };
 
-    /** Renders pill/tag badges for skills */
-    const skillTags = (
-      items: string[] | undefined,
-      type: 'must' | 'nice'
-    ): string => {
+    const skillTags = (items: string[] | undefined, type: 'must' | 'nice'): string => {
       if (!items?.length) return '';
-      const tags = items
-        .map(s => `<span class="jd-tag jd-tag--${type}">${s}</span>`)
-        .join('');
+      const tags = items.map(s => `<span class="jd-tag jd-tag--${type}">${s}</span>`).join('');
       return `<div class="jd-tags">${tags}</div>`;
     };
 
-    /** Single section block with a heading and body content */
-    const section = (
-      title: string,
-      // iconClass: string,
-      body: string
-    ): string => {
+    const section = (title: string, body: string): string => {
       if (!body.trim()) return '';
       return `
         <div class="jd-section">
@@ -262,7 +272,6 @@ export class AiJobDescriptionStepComponent
         </div>`;
     };
 
-    /** Single key–value row for the meta bar */
     const metaItem = (label: string, value: string | undefined): string => {
       if (!value) return '';
       return `
@@ -271,8 +280,6 @@ export class AiJobDescriptionStepComponent
           <span class="jd-meta__value">${value}</span>
         </div>`;
     };
-
-    // ── Assemble the full HTML ─────────────────────────────────────────────
 
     const metaBar = `
       <div class="jd-meta-bar">
@@ -285,52 +292,19 @@ export class AiJobDescriptionStepComponent
 
     const summarySection = section(
       'Job Description',
-      // 'fa-solid fa-align-left',
       res.job_summary ? `<p class="jd-summary">${res.job_summary}</p>` : ''
     );
-
-    const responsibilitiesSection = section(
-      'Key Responsibilities',
-      // 'fa-solid fa-list-check',
-      bulletList(res.key_responsibilities)
-    );
-
-    const basicQualSection = section(
-      'Basic Qualifications',
-      // 'fa-solid fa-circle-check',
-      bulletList(res.basic_qualifications)
-    );
-
-    const preferredQualSection = section(
-      'Preferred Qualifications',
-      // 'fa-solid fa-star',
-      bulletList(res.preferred_qualifications)
-    );
-
-    const mustSkillsSection = section(
-      'Must-Have Skills',
-      // 'fa-solid fa-code',
-      skillTags(res.skills_must_have, 'must')
-    );
-
-    const niceSkillsSection = section(
-      'Nice-to-Have Skills',
-      // 'fa-solid fa-plus',
-      skillTags(res.skills_nice_to_have, 'nice')
-    );
+    const responsibilitiesSection = section('Key Responsibilities', bulletList(res.key_responsibilities));
+    const basicQualSection        = section('Basic Qualifications',    bulletList(res.basic_qualifications));
+    const preferredQualSection    = section('Preferred Qualifications', bulletList(res.preferred_qualifications));
+    const mustSkillsSection       = section('Must-Have Skills',         skillTags(res.skills_must_have, 'must'));
+    const niceSkillsSection       = section('Nice-to-Have Skills',      skillTags(res.skills_nice_to_have, 'nice'));
 
     const eduBody = [
-      res.education_requirements
-        ? `<p class="jd-summary">${res.education_requirements}</p>`
-        : '',
-      bulletList(res.certifications_required)
+      res.education_requirements ? `<p class="jd-summary">${res.education_requirements}</p>` : '',
+      bulletList(res.certifications_required),
     ].join('');
-
-    const educationSection = section(
-      'Education & Certifications',
-      // 'fa-solid fa-graduation-cap',
-      eduBody
-    );
+    const educationSection = section('Education & Certifications', eduBody);
 
     return `
 <div class="jd-root">
@@ -354,16 +328,16 @@ export class AiJobDescriptionStepComponent
       isCurrent: true,
       generatedAt: new Date(),
       content: html,
-      rawResponse: raw, // ← store raw
-      showMenu: false
+      rawResponse: raw,
+      showMenu: false,
     };
 
     this.versions.unshift(version);
 
-    // Keep max 3 versions
+    // Keep max 3 versions — remove oldest
     if (this.versions.length > 3) this.versions.pop();
 
-    // Re-label all versions
+    // Re-label: newest = highest version number
     const total = this.versions.length;
     this.versions.forEach((v, i) => {
       v.label = `Version ${total - i}`;
@@ -376,14 +350,20 @@ export class AiJobDescriptionStepComponent
 
   loadVersion(v: JdVersion): void {
     this.selectedVersionId = v.id;
+
+    // Mark which is current without discarding the others
     this.versions.forEach(ver => (ver.isCurrent = ver.id === v.id));
 
-    this.form.get('jobDescription')?.setValue(v.rawResponse); // ← raw JSON
+    // Persist the selection so a Back→Forward restores the right version
+    this.persistVersions();
+
+    // Sync form value to the selected version's raw response
+    this.form.get('jobDescription')?.setValue(v.rawResponse);
 
     this.cdr.detectChanges();
     setTimeout(() => {
       if (this.editorRef?.nativeElement) {
-        this.editorRef.nativeElement.innerHTML = v.content; // display only
+        this.editorRef.nativeElement.innerHTML = v.content;
         this.updateWordCount();
       }
       this.cdr.detectChanges();
@@ -392,18 +372,34 @@ export class AiJobDescriptionStepComponent
 
   deleteVersion(v: JdVersion): void {
     this.versions = this.versions.filter(ver => ver.id !== v.id);
+
+    // Re-label remaining versions so numbers stay contiguous
+    const total = this.versions.length;
+    this.versions.forEach((ver, i) => {
+      ver.label = `Version ${total - i}`;
+    });
+
     this.persistVersions();
 
     if (this.versions.length) {
-      this.loadVersion(this.versions[0]);
+      // If the deleted version was the selected one, switch to the newest
+      if (this.selectedVersionId === v.id) {
+        this.versions[0].isCurrent = true;
+        this.loadVersion(this.versions[0]);
+      }
+    } else {
+      // No versions left — clear editor and form
+      this.selectedVersionId = null;
+      this.form.get('jobDescription')?.setValue('');
+      if (this.editorRef?.nativeElement) {
+        this.editorRef.nativeElement.innerHTML = '';
+      }
+      this.wordCount = 0;
     }
   }
 
   private persistVersions(): void {
-    localStorage.setItem(
-      this.STORAGE_KEY,
-      JSON.stringify(this.versions)
-    );
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.versions));
   }
 
   // ── Editor helpers ──────────────────────────────────────────────────────────
@@ -419,15 +415,7 @@ export class AiJobDescriptionStepComponent
     catch { return false; }
   }
 
-  // onEditorInput(): void {
-  //   const content = this.editorRef?.nativeElement.innerHTML || '';
-  //   this.form.get('jobDescription')?.setValue(content);
-  //   this.updateWordCount();
-  //   this.triggerSave();
-  // }
-
   onEditorInput(): void {
-    // removed: this.form.get('jobDescription')?.setValue(...)
     this.updateWordCount();
     this.triggerSave();
   }

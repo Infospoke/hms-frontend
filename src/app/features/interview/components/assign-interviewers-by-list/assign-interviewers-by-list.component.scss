@@ -1,5 +1,5 @@
 .page-wrapper {
- 
+
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -17,10 +17,25 @@
   font-weight: 600;
   flex-shrink: 0;
 
-  &--blue   { background: #dbeafe; color: #1d4ed8; }
-  &--purple { background: #ede9fe; color: #6d28d9; }
-  &--orange { background: #ffedd5; color: #c2410c; }
-  &--green  { background: #d1fae5; color: #065f46; }
+  &--blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  &--purple {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+
+  &--orange {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+
+  &--green {
+    background: #d1fae5;
+    color: #065f46;
+  }
 }
 
 /* ── Type badge ─────────────────────────────────────────────────────────── */
@@ -33,29 +48,34 @@
   margin-top: 4px;
 
   &--technical {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
 
-&--hr {
-  background: #d1fae5;
-  color: #065f46;
-}
+  &--hr {
+    background: #d1fae5;
+    color: #065f46;
+  }
 
-&--behavioral {
-  background: #ffedd5;
-  color: #c2410c;
-}
+  &--behavioral {
+    background: #ffedd5;
+    color: #c2410c;
+  }
 
-&--managerial {
-  background: #ede9fe;
-  color: #6d28d9;
-}
+  &--managerial {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
 
-&--final {
-  background: #f3f4f6;
-  color: #374151;
-}
+  &--techincal {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  &--ai {
+    background: #ffedd5;
+    color: #c2410c;
+  }
 }
 
 /* ── Round name / desc ──────────────────────────────────────────────────── */
@@ -65,6 +85,7 @@
   color: #111827;
   margin: 0 0 2px;
 }
+
 .round-desc {
   font-size: 12px;
   color: #6b7280;
@@ -90,7 +111,9 @@
   min-width: 200px;
   transition: border-color 0.15s;
 
-  &:hover { border-color: #a5b4fc; }
+  &:hover {
+    border-color: #a5b4fc;
+  }
 }
 
 .iv-info {
@@ -114,11 +137,13 @@
   color: #111827;
   margin: 0;
 }
+
 .iv-role {
   font-size: 11px;
   color: #6b7280;
   margin: 0;
 }
+
 .iv-placeholder {
   font-size: 13px;
   color: #9ca3af;
@@ -130,7 +155,9 @@
   transition: transform 0.2s;
   flex-shrink: 0;
 
-  &--open { transform: rotate(180deg); }
+  &--open {
+    transform: rotate(180deg);
+  }
 }
 
 .dropdown {
@@ -153,7 +180,9 @@
     cursor: pointer;
     transition: background 0.1s;
 
-    &:hover { background: #f5f3ff; }
+    &:hover {
+      background: #f5f3ff;
+    }
   }
 }
 
@@ -164,6 +193,7 @@
   border-radius: 10px;
   padding: 16px 20px;
 }
+
 .notes-label {
   display: block;
   font-size: 13px;
@@ -171,6 +201,7 @@
   color: #374151;
   margin-bottom: 8px;
 }
+
 .notes-textarea {
   width: 100%;
   min-height: 90px;
@@ -184,13 +215,17 @@
   font-family: inherit;
   transition: border-color 0.15s;
 
-  &::placeholder { color: #9ca3af; }
+  &::placeholder {
+    color: #9ca3af;
+  }
+
   &:focus {
     outline: none;
     border-color: #818cf8;
     box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.18);
   }
 }
+
 .char-count {
   display: block;
   text-align: right;
@@ -205,6 +240,7 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
 .tech-details {
   display: grid;
   grid-template-columns: 1fr 200px;
@@ -221,6 +257,7 @@
 .type-badge {
   justify-self: end;
 }
+
 .btn {
   padding: 9px 20px;
   border-radius: 8px;
@@ -232,19 +269,28 @@
   align-items: center;
   gap: 6px;
 
-  &:active { transform: scale(0.98); }
+  &:active {
+    transform: scale(0.98);
+  }
 
   &--cancel {
     background: #fff;
     border: 1px solid #d1d5db;
     color: #374151;
-    &:hover { background: #f9fafb; }
+
+    &:hover {
+      background: #f9fafb;
+    }
   }
+
   &--primary {
     background: #4f46e5;
     border: 1px solid #4f46e5;
     color: #fff;
-    &:hover { background: #4338ca; }
+
+    &:hover {
+      background: #4338ca;
+    }
   }
 }
 
@@ -281,7 +327,10 @@
     min-width: 120px;
     background: transparent;
     padding: 0;
-    &::placeholder { color: #9ca3af; }
+
+    &::placeholder {
+      color: #9ca3af;
+    }
   }
 }
 
@@ -318,12 +367,16 @@
   font-size: 14px;
   line-height: 1;
   color: #6366f1;
-  &:hover { color: #dc2626; }
+
+  &:hover {
+    color: #dc2626;
+  }
 }
 
 /* ── Fixed dropdown portal (renders above all table overflow) ── */
 .iv-dropdown-fixed {
-  position: fixed;           /* key: escapes every overflow:hidden ancestor */
+  position: fixed;
+  /* key: escapes every overflow:hidden ancestor */
   z-index: 9999;
   background: #fff;
   border: 1px solid #cbd5e1;
@@ -340,7 +393,10 @@
   padding: 8px 10px;
   cursor: pointer;
   transition: background 0.15s;
-  &:hover { background: #f1f5f9; }
+
+  &:hover {
+    background: #f1f5f9;
+  }
 }
 
 .avatar-initials {
@@ -373,6 +429,7 @@
   font-size: 11px;
   color: #6b7280;
 }
+
 /* ── Readonly tag-input (non-rejected rounds in reassign mode) ── */
 .tag-input--readonly {
   background: #f9fafb;

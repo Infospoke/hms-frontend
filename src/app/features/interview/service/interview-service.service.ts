@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { first, firstValueFrom } from 'rxjs';
 import { API } from '../../../shared/constants/api-endpoints';
+import { FrameImpl } from '@stomp/stompjs';
 
 @Injectable({
   providedIn: 'root',
@@ -126,6 +127,9 @@ export class InterviewServiceService {
     async getUpcommingAIInterviewList(payload:any):Promise<any>{
       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_UPCOMMING_LIST,payload))
     }
+     async getUpcommingAIInterviewInAssignedInterview(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_UPCOMMING_REQUEST_LIST,payload))
+    }
 
     async getApplicantDetailsById(id: any): Promise<any> {
       return await firstValueFrom(this.api.hrmsget(API.JOBS.GET_APPLICANT_DETAILS_BY_ID(id)));
@@ -175,5 +179,46 @@ export class InterviewServiceService {
 
     async submitTheInterviewFeedBack(payload:any):Promise<any>{
       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.SUBMIT_FEED_BACK,payload))
+    }
+
+    async getTodayInterviewDetails(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.TODAY_INTERVIEW_DETAILS(id)))
+    }
+
+    async getTodayInterviewList(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_TODAY_INTERVIEW_LIST,payload))
+    }
+
+     async getFeedBackList(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_FEED_BACK_LIST,payload))
+    }
+     async getScheduleList(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.GET_SCHEDULE_LIST,payload))
+    }
+
+
+    async loadFinalizedQuestions(id:any):Promise<any>{
+      return await firstValueFrom(this.api.aiGet(API.INTERVIEW.LOAD_FINALISED_QUESTIONS(id)))
+    }
+
+
+    async candidateMangementList(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.CANDIDATE_MANAGEMENT_LIST,payload))
+    }
+
+     async candidateMangementCount():Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.CANDIDATE_MANAGEMENT_LISt_COUNT))
+    }
+
+     async candidateSummaryDetails(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.CANDIDATE_SUMMARY_DETAILS(id)))
+    }
+
+    async getAIFeedBackDetails(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.AI_INTERVIEW_FEED_BACK,payload))
+    }
+
+    async scheduleInterviewToCandidate(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.SCHEDULE_INTERVIEW_TO_CANDIDATE,payload))
     }
 }

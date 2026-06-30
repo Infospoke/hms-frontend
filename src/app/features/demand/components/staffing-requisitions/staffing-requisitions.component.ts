@@ -311,7 +311,7 @@ export class StaffingRequisitionsComponent implements OnInit {
   viewSR(row: unknown): void {
     const sr = row as SrRow;
     if (!sr?.srId || sr.srId === 'Draft') return;
-    this.router.navigateByUrl(`/demand/view-sr/${sr?.srId}`, {
+    this.router.navigateByUrl(`/demand/my-jds/view-sr/${sr?.srId}`, {
       state: { srId: sr.srId, url: '/demand/my-jds', type: 'view' },
     })
   }

@@ -42,7 +42,8 @@ export const API = {
         CREATE_JOB_BY_SR_ID : (id : any) => `/hms/create-job/details/${id}`,
         CREATE_NEW_JOB : '/hms/create-job/new-job',
         CREATE_ASSIGNED_USERS:(id:any)=>`/hms/recruiter/assigned-recruiters/${id}`,
-        UPDATE_ASSIGN_USERS:`/hms/recruiter/assign-more-recruiters`
+        UPDATE_ASSIGN_USERS:`/hms/recruiter/assign-more-recruiters`,
+        UPDATE_JOB_TO_CLOSE:`/hms/create-job/update-job-details-by-jobid`
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -156,6 +157,17 @@ export const API = {
         SCHEDULE_CANDIDATE_OVERVIEW:(id:any)=>`/hms/interview-plan/candidate-overview/${id}`,
         INTERVIEW_PROVIDE_FEEDBACK:"/hms/interview-plan/interview-feedback",
         ROUNDS_LIST:'/hms/configurations/interview-rounds',
-        SUBMIT_FEED_BACK:`/hms/interview-plan/interview-feedback`
+        SUBMIT_FEED_BACK:`/hms/interview-plan/interview-feedback`,
+        TODAY_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/get-interview-details/${id}`,
+        GET_TODAY_INTERVIEW_LIST:`/hms/interview-plan/get-today-interviews`,
+        GET_FEED_BACK_LIST:`/hms/interview-plan/feedback-list`,
+        GET_SCHEDULE_LIST:`/hms/interview-plan/get-to-be-schedule-list`,
+        LOAD_FINALISED_QUESTIONS:(id:any)=>`/api/interview/get-all-generate-ai-questions?application_id=${id}`,
+        CANDIDATE_MANAGEMENT_LIST:`/hms/interview-plan/progress-list`,
+        CANDIDATE_MANAGEMENT_LISt_COUNT:`/hms/interview-plan/progress-count`,
+        GET_UPCOMMING_REQUEST_LIST:`/hms/interview-plan/interview-upcoming-list`,
+        CANDIDATE_SUMMARY_DETAILS:(id:any)=>`/hms/interview-plan/interview-summary/${id}`,
+        AI_INTERVIEW_FEED_BACK:`/api/interview/interview-feedback`,
+        SCHEDULE_INTERVIEW_TO_CANDIDATE:`/hms/interview-plan/interview-schedule`
     }
 };

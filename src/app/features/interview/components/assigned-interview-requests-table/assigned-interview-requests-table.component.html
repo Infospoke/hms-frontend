@@ -18,22 +18,19 @@
      ───────────────────────────────────────────────────────────────────────── -->
 <ng-template #interviewCell let-ctx>
 
-  <!-- ── CANDIDATE ──────────────────────────────────────────────────────── -->
-  <ng-container *ngIf="ctx.col.key === 'candidate'">
-    <div class="ir-candidate">
-      <div class="ir-avatar">{{ ctx.row.initials }}</div>
-      <div class="ir-candidate__info">
-        <span class="ir-candidate__name">{{ ctx.row.name }}</span>
-        <span class="ir-candidate__id">{{ ctx.row.id }}</span>
-      </div>
-    </div>
-  </ng-container>
+  
 
   <!-- ── JOB TITLE ──────────────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'jobTitle'">
     <div class="ir-job">
       <span class="ir-job__title">{{ ctx.row.jobTitle }}</span>
-      <span class="ir-job__dept">{{ ctx.row.department }}</span>
+      <!-- <span class="ir-job__dept">{{ ctx.row.department }}</span> -->
+    </div>
+  </ng-container>
+   <ng-container *ngIf="ctx.col.key === 'description'">
+    <div class="ir-job">
+      <span class="ir-job__title">{{ ctx.row.department }}</span>
+      <!-- <span class="ir-job__dept">{{ ctx.row.department }}</span> -->
     </div>
   </ng-container>
 

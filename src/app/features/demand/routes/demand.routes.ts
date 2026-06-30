@@ -13,7 +13,7 @@ export const DEMAND_ROUTES: Routes = [
     loadComponent:()=>import("../components/my-approved-srs/my-approved-srs.component").then(e=>e.MyApprovedSrsComponent)
   },
   {
-    path:'view-sr/:srId',
+    path:'my-jds/view-sr/:srId',
     loadComponent:()=>import("../../approvals/components/view-sr/view-sr.component").then(m=>m.ViewSrComponent)
   },
   {

@@ -17,6 +17,7 @@ export interface Interviewer {
   username?: string;
   roleName?: string;
   email?: string;
+  userId?:string |number
 }
 
 export interface InterviewRound {
@@ -115,7 +116,8 @@ export class AssignInterviewersByListComponent implements OnInit {
 
   columns: TableColumn[] = [
     { key: 'round', label: 'Round', width: '80px', custom: true },
-    { key: 'details', label: 'Round Name & Description', width: '500px', custom: true },
+    { key: 'details', label: 'Round Name & Description', width: '300px', custom: true },
+    { key: 'detailsType', label: 'Round Type', width: '300px', custom: true },
     { key: 'interviewer', label: 'Interviewer *', width: '280px', custom: true },
   ];
 
@@ -199,8 +201,10 @@ export class AssignInterviewersByListComponent implements OnInit {
       const apiRounds = res?.data?.rounds ?? [];
 
       this.rounds = apiRounds.map((r: any, i: any) => {
-        // Latest history entry = current assignment
-        const latestHistory = r.assignmentHistory.at(0);
+
+        // assignmentHistory is ordered oldest → newest, so the last entry is the latest one.
+        const assignmentHistory: AssignmentHistory[] = r.assignmentHistory ?? [];
+        const latestHistory = assignmentHistory.at(assignmentHistory.length - 1) ?? null;
         const isRejected = latestHistory?.status === 'Rejected';
 
         const prefilledInterviewer: Interviewer | null = latestHistory && !isRejected
@@ -305,6 +309,7 @@ export class AssignInterviewersByListComponent implements OnInit {
   }
 
   selectInterviewer(round: InterviewRound, user: Interviewer): void {
+    console.log(user);
     round.interviewer = user;
     round.searchText = '';
     round.showDropdown = false;
@@ -338,13 +343,13 @@ export class AssignInterviewersByListComponent implements OnInit {
       alert('Please assign an interviewer to every required round before saving.');
       return;
     }
-
+    console.log(roundsToValidate)
     const payload = {
       jobId: this.jobId,
       planId: this.planId,
       assignments: roundsToValidate.map(r => ({
         roundId: r.roundId,
-        interviewerUserId: r.interviewer!.id,
+        interviewerUserId: r.interviewer!.userId,
         interviewerName: r.interviewer!.name || r.interviewer!.username || '',
         roleName: r.interviewer!.roleName || '',
       })),

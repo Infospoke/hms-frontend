@@ -487,6 +487,96 @@
 @media (max-width: 600px) {
   .jad-ov-grid { grid-template-columns: 1fr; }
   .jad-section { padding: 1rem; }
+  .jad-modal { padding: 1.25rem; }
+}
+
+// ── Comment Modal (assignment accept/reject) ──────────────────────────────────
+.jad-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, .45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.jad-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, .18);
+}
+
+.jad-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 1rem;
+}
+
+// ── Job Description structured blocks ────────────────────────────────────────
+.jad-jd-block {
+  padding: 12px 0;
+  border-bottom: 0.5px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+}
+
+.jad-jd-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d1d1d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  i { font-size: 11px; opacity: 0.8; }
+}
+
+.jad-jd-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.65;
+    padding-left: 4px;
+
+    &::marker { color: #4a494a; }
+  }
+
+  &--preferred li::marker { color: #454444; }
+}
+
+.jad-jd-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2rem;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; gap: 12px 0; }
+}
+
+.jad-chip--cert {
+  background: #FDF4FF;
+  color: #7E22CE;
+  border: 0.5px solid #E9D5FF;
+}
+
+.jad-chip--lang {
+  background: #F0F9FF;
+  color: #0369A1;
+  border: 0.5px solid #BAE6FD;
 }
 
 // ── Read-only decision banner ─────────────────────────────────────────────────

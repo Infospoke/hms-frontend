@@ -70,7 +70,9 @@ export class AssignedInterviewRequestsComponent implements OnInit {
     this.loadCount();
   }
 
-  // ── Filters ───────────────────────────────────────────────────────────────
+  get searchPlaceholder():any{
+    return this.activeStageId=='ar' ? 'Search by Job Title,Department':'Search by Candidate name,Job Title'
+  }
   get activeFilters() {
     const noPriorityStages = ['ti', 'ui'];
     return noPriorityStages.includes(this.activeStageId)
@@ -127,7 +129,6 @@ export class AssignedInterviewRequestsComponent implements OnInit {
     return {
       page: this.currentPage - 1,
       size: this.pageSize,
-      sortBy: 'createdAt',
       direction: 'DESC',
       filters,
     };
@@ -155,4 +156,7 @@ export class AssignedInterviewRequestsComponent implements OnInit {
   get selectedStageMeta() {
     return this.stageMeta.find(x => x.id === this.activeStageId);
   }
+
+
+  
 }

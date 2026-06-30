@@ -34,8 +34,9 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
   @Output() pageChange = new EventEmitter<number>();
   private router = inject(Router);
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '210px' },
+   
     { key: 'jobTitle', label: 'Job Title', custom: true, width: '200px' },
+     { key: 'description', label: 'Department', custom: true, width: '200px' },
     { key: 'round', label: 'Round', custom: true, width: '200px' },
     { key: 'priority', label: 'Priority', custom: true, width: '110px', align: 'center' },
     { key: 'requestedOn', label: 'Requested On', custom: true, width: '160px' },
@@ -58,7 +59,11 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   private async loadData(): Promise<void> {
     try {
-      const res: any = await this.interviewService.getInterviewListByAssignment(this.payload);
+      const payload={
+        ...this.payload,
+        sortBy: "createdAt",
+      }
+      const res: any = await this.interviewService.getInterviewListByAssignment(payload);
       if (res?.responsecode === '00') {
         const d = res.data;
         this.totalItems = d.totalPages;
@@ -110,8 +115,8 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   onViewDetails(req: InterviewRequest): void {
     this.router.navigate(
-      [`/supply/my-interview-requests/response/${req?.assignmentId}/${req?.jobId}`],
-      
+      [`/supply/my-interview-requests/job-details/${req?.jobId}`],
+      {state:{type:'assignment',assignmentId:req?.assignmentId}}
     );
   }
 

@@ -138,7 +138,7 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
 
     this.responses = (data.rounds ?? []).map((round: any, index: number) => {
       const history: any[] = round.assignmentHistory ?? [];
-      const current = history[0] ?? {};
+      const current = history[history?.length-1] ?? {};
 
       const { date, time } = formatRespondedAt(current.respondedAt ?? null);
 

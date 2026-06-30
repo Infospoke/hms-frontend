@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrl: './approved-srs.component.scss',
 })
 export class ApprovedSrsComponent {
-  private router=inject(Router);
+  private router = inject(Router);
   @Input() heading: string = '';
   @Input() subheading: string = '';
   @Input() dropDownData: any[] = [];
@@ -23,17 +23,17 @@ export class ApprovedSrsComponent {
   @Input() currentPage: number = 1;
   @Input() pageSize: number = 10;
   @Input() totalElements: number = 0;
-  @Input() url:string='';
+  @Input() url: string = '';
   @Input() cards: any[] = [];
   @Input() tabs: { key: string; label: string; count: number }[] = [];
   @Input() activeTab: string = '';
-  @Input() typeOfPermission:string='';
+  @Input() typeOfPermission: string = '';
   @Output() filtersChange = new EventEmitter<any>();
   @Output() pageChange = new EventEmitter<number>();
   @Output() tabChange = new EventEmitter<string>();
   @Output() createJob = new EventEmitter<any>();
 
-  @Output() viewJob=new EventEmitter<any>();
+  @Output() viewJob = new EventEmitter<any>();
   filtersResponse(filters: any): void {
     this.filtersChange.emit(filters);
   }
@@ -52,7 +52,7 @@ export class ApprovedSrsComponent {
   }
 
 
-   initials(name: string): string {
+  initials(name: string): string {
     if (!name) return '?';
     return name
       .split(' ')
@@ -63,10 +63,10 @@ export class ApprovedSrsComponent {
 
   statusClass(status: string): string {
     switch (status?.toLowerCase()) {
-      case 'pending':  return 'status-pending';
+      case 'pending': return 'status-pending';
       case 'accepted': return 'status-accepted';
       case 'rejected': return 'status-declined';
-      default:         return 'status-pending';
+      default: return 'status-pending';
     }
   }
   avatarColor(name: string): string {
@@ -75,12 +75,12 @@ export class ApprovedSrsComponent {
     const idx = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) % palette.length;
     return palette[idx];
   }
-   onViewDetails(row: any): void {
+  onViewDetails(row: any): void {
     this.viewJob.emit(row);
-   }
+  }
 
 
-   formatDate(iso: string): string {
+  formatDate(iso: string): string {
     if (!iso) return '—';
     try {
       return new Date(iso).toLocaleDateString('en-GB', {
@@ -90,16 +90,46 @@ export class ApprovedSrsComponent {
       return iso.split('T')[0];
     }
   }
- 
-   formatTime(iso: string): string {
-    if (!iso) return '';
-    try {
-      return new Date(iso).toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit', hour12: true,
-      });
-    } catch {
+
+  formatTime(dateStr: any): string {
+    if (!dateStr || typeof dateStr !== 'string') {
       return '';
     }
+
+    if (!dateStr.includes('T')) {
+      return '';
+    }
+
+    const parts = dateStr.split('T');
+
+    if (parts.length < 2) {
+      return '';
+    }
+
+    const datePart = parts[0];
+    const timePart = parts[1];
+
+    const dateParts = datePart.split('-');
+    const timeParts = timePart.split(':');
+
+    if (dateParts.length < 3 || timeParts.length < 2) {
+      return '';
+    }
+
+    const year = Number(dateParts[0]);
+    const month = Number(dateParts[1]);
+    const day = Number(dateParts[2]);
+
+    const hour = Number(timeParts[0]);
+    const minute = Number(timeParts[1]);
+
+    const date = new Date(year, month - 1, day, hour, minute);
+
+    return date.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
   }
 
   truncate(value: string, limit = 10): string {

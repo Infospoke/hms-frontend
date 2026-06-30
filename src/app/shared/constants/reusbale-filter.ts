@@ -162,6 +162,51 @@ export const approvedSrs: any = [
 
 
 
+export const candidateManagement: any = [
+  {
+    key: 'allJobs',
+    label: 'All jobs',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'departments',
+    label: 'Departments',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'currentStage',
+    label: 'Current Stage',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: 'thisMonth',
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];
 
 
 export const interview: any = [
@@ -228,14 +273,14 @@ export const aiInterview: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',  
+    selected: 'thisMonth',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
-      { value: 'today', label: 'Today' },           // ✅ was 'TODAY'
+      { value: 'TODAY', label: 'Today' },
       { value: 'thisWeek', label: 'This Week' },
-      { value: 'thisMonth', label: 'This Month' },  // ✅ selected matches this
-      { value: 'custom', label: 'Custom Range' },   // ✅ was 'CUSTOM'
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
     ],
   },
 ];

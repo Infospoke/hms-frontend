@@ -49,11 +49,16 @@ export class AssignedInterviewRequestsComponent implements OnInit {
   private lastFilterPayload: any = {
     filters: {
       priority: '',
-      dateFilter: 'thisMonth'
+      dateFilter: ''
     }
   };
   currentPage = 1;
   pageSize = 10;
+
+  // Toggled off/on (via resetFilterUi) to force app-common-filter to be
+  // destroyed and recreated, so its own internal search/dropdown state
+  // clears whenever the pipeline stage tab changes.
+  showFilter = true;
 
   tablePayload: object = this.buildRequestBody();
 
@@ -90,7 +95,9 @@ export class AssignedInterviewRequestsComponent implements OnInit {
   onStageSelected(stage: any): void {
     this.activeStageId = stage.id;
     this.currentPage = 1;
+    this.lastFilterPayload = this.resetFilters();
     this.tablePayload = this.buildRequestBody();
+    this.resetFilterUi();
   }
 
   onPageChange(page: number): void {
@@ -158,5 +165,18 @@ export class AssignedInterviewRequestsComponent implements OnInit {
   }
 
 
+  private resetFilters() {
+    return {
+      filters: {
+        priority: '',
+        dateFilter: ''
+      }
+    };
+  }
+
   
+  private resetFilterUi(): void {
+    this.showFilter = false;
+    setTimeout(() => (this.showFilter = true));
+  }
 }

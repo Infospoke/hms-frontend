@@ -22,7 +22,8 @@ export interface Interviewer {
 
 export interface InterviewRound {
   id: string;
-  roundId?: number;           // server round id
+  roundId?: number; 
+  stageTypeId?: number;      // server stage type id
   label: string;
   colorClass: string;
   name: string;
@@ -133,8 +134,10 @@ export class AssignInterviewersByListComponent implements OnInit {
     this.pageMode = type === 'reassign' ? 'reassign' : 'assign';
 
     if (this.pageMode === 'assign') {
+      const jobId = state?.id;
       this.initFromLocalStorage();
       this.loadUsers();
+      
     } else {
       const jobId = state?.id;
       if (jobId) {
@@ -170,6 +173,7 @@ export class AssignInterviewersByListComponent implements OnInit {
       this.rounds = row.assignmentStatus.map((s: any, i: any) => ({
         id: `r${i + 1}`,
         roundId: s.roundId,
+        stageTypeId: s?.stageTypeId,
         label: `R${i + 1}`,
         colorClass: ROUND_COLORS[i % ROUND_COLORS.length],
         name: s?.roundName,        // will be overridden after API load if available
@@ -194,7 +198,7 @@ export class AssignInterviewersByListComponent implements OnInit {
 
   // ── REASSIGN mode ────────────────────────────────────────────────────────────
 
-  private async loadReassignData(jobId: number): Promise<void> {
+  private async loadReassignData(jobId: any): Promise<void> {
     try {
       const res: any = await this.interviewService.getInterviewAssignmentDetails(jobId);
 
@@ -218,6 +222,7 @@ export class AssignInterviewersByListComponent implements OnInit {
         return {
           id: `r${i + 1}`,
           roundId: r.roundId,
+          stageTypeId: r.stageTypeId,
           label: `R${i + 1}`,
           colorClass: ROUND_COLORS[i % ROUND_COLORS.length],
           name: r.stageName,
@@ -348,7 +353,7 @@ export class AssignInterviewersByListComponent implements OnInit {
       jobId: this.jobId,
       planId: this.planId,
       assignments: roundsToValidate.map(r => ({
-        roundId: r.roundId,
+        stageTypeId: r.stageTypeId,
         interviewerUserId: r.interviewer!.userId,
         interviewerName: r.interviewer!.name || r.interviewer!.username || '',
         roleName: r.interviewer!.roleName || '',

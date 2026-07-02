@@ -4,6 +4,7 @@
   <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
 
   <app-common-filter
+    *ngIf="showFilter"
     [searchPlaceholder]="searchPlaceholder"
     [dropdowns]="activeFilters"
     (filterChange)="filterChange($event)" />

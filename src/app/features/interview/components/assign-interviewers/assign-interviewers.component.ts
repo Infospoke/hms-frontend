@@ -42,7 +42,7 @@ export class AssignInterviewersComponent implements OnInit {
   ];
 
   tableData: any[] = [];
-  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
+  private activeFilters: Partial<any> = { dateFilter: '' };
   currentPage: any = 1;
   pageSize: any = 10;
   totalItems:any;

@@ -5,7 +5,7 @@
 .ipc-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   position: relative;
 }
 
@@ -20,7 +20,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 20px 24px 16px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid #f1f5f9;
   }
 }
@@ -56,16 +56,47 @@
 .ipc-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px 24px;
-  padding: 20px 24px 20px;
+  gap: 16px 20px;
+  padding: 16px 20px 18px;
+  align-items: start;
 
   @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  // Plan Name | Status | Description, all in a single row
+  &--three {
+    grid-template-columns: 1fr 1fr 1.3fr;
+
+    @media (max-width: 900px) { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 640px) { grid-template-columns: 1fr; }
+  }
+}
+
+// Left column: stacks Plan Name on top of Description, tightly spaced
+.ipc-form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
 .ipc-form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0px;
+  min-width: 0;
+
+  // Status fills the right column, matching the combined height of
+  // Plan Name + Description instead of leaving space empty below it
+  &--status {
+    // align-self: stretch;
+    // height: 100%;
+    gap: 8px;
+
+    .ipc-status-infobox {
+      flex: 1;
+      align-items: center;
+    }
+  }
 }
 
 .ipc-label {
@@ -112,7 +143,7 @@
 }
 
 .ipc-input    { height: 36px; }
-.ipc-textarea { resize: vertical; min-height: 80px; line-height: 1.5; padding-top: 8px; }
+.ipc-textarea { resize: vertical; min-height: 72px; line-height: 1.5; padding-top: 8px; }
 
 // ── Char counter ──────────────────────────────────────────────────────────────
 .ipc-char-count {
@@ -138,16 +169,8 @@
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ── Status section ────────────────────────────────────────────────────────────
+// ── Status field ──────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────────────────
-.ipc-status-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0 24px 24px;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 20px;
-}
 
 // ── Inactive locked badge (create mode) ───────────────────────────────────────
 .ipc-status-badge {
@@ -180,14 +203,14 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: #eff6ff;
   border: 1px solid #bfdbfe;
   border-radius: 8px;
   font-size: 13px;
   color: #1e40af;
-  line-height: 1.55;
-  max-width: 560px;
+  line-height: 1.5;
+  max-width: 100%;
 
   strong { font-weight: 600; }
 
@@ -257,7 +280,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.875rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: 8px;
   background: #fff1f0;
   border: 1px solid #ffa39e;

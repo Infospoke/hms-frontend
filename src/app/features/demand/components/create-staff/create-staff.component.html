@@ -92,17 +92,6 @@
                         {{ getError(step0Form, 'manager','Reporting manager') }}
                     </span>
                 </div>
-
-                <!-- Location -->
-                <div class="field">
-                    <label class="lbl">Location <span class="astrick">*</span></label>
-                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad"
-                        [class.err]="hasError(step0Form, 'location')" />
-                    <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
-                        {{ getError(step0Form, 'location','Location') }}
-                    </span>
-                </div>
-
                 <div class="field">
                     <label class="lbl">Country <span class="astrick">*</span></label>
                     <nz-select formControlName="country" nzPlaceHolder="Select Country" [nzOptionOverflowSize]="5"
@@ -113,6 +102,17 @@
                         {{ getError(step0Form, 'country','Country') }}
                     </span>
                 </div>
+                <!-- Location -->
+                <div class="field">
+                    <label class="lbl">Location <span class="astrick">*</span></label>
+                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad"
+                        [class.err]="hasError(step0Form, 'location')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
+                        {{ getError(step0Form, 'location','Location') }}
+                    </span>
+                </div>
+
+                
                 <!-- Seniority -->
                 <div class="field">
                     <label class="lbl">Seniority Level <span class="astrick">*</span></label>
@@ -702,7 +702,7 @@
                     </div>
                 </div>
 
-                <div class="field">
+                <!-- <div class="field">
                     <label class="lbl">Assessment Required</label>
                     <div class="toggle-row">
                         <label class="toggle">
@@ -715,7 +715,7 @@
                         <div *ngFor="let t of assessmentOpts" class="rbtn" [class.sel]="assessmentTypes.includes(t)"
                             (click)="toggleAssessType(t)">{{ t }}</div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="footer-btns">
@@ -995,7 +995,7 @@
                         <span class="review-label">Languages</span>
                         <span class="review-val">{{ langs.length ? langs.join(', ') : '—' }}</span>
                     </div>
-                    <div class="review-row">
+                    <!-- <div class="review-row">
                         <span class="review-label">Assessment Required</span>
                         <span class="review-val">
                             <span [style.color]="step3Form.get('assessmentOn')?.value ? '#16a34a' : '#dc2626'">
@@ -1005,7 +1005,7 @@
                                 — {{ assessmentTypes.join(', ') }}
                             </span>
                         </span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

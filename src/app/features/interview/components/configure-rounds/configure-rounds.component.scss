@@ -17,7 +17,7 @@
 .cr-page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 // ── Section ───────────────────────────────────────────────────────────────────
@@ -28,14 +28,14 @@
   overflow: hidden;
 
   &--eval {
-    padding: 20px 24px 24px;
+    padding: 16px 20px 20px;
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px 16px;
+    padding: 16px 20px 12px;
     gap: 12px;
   }
 
@@ -43,7 +43,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 20px 24px 16px;
+    padding: 16px 20px 12px;
   }
 
   // when title-group is inside header, remove its padding
@@ -248,7 +248,7 @@
     color: #475569;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding: 10px 8px;
+    padding: 8px 8px;
   }
 }
 
@@ -267,7 +267,7 @@
 .cr-row {
   display: flex;
   align-items: center;
-  padding: 6px 16px;
+  padding: 4px 16px;
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
   transition: background 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
@@ -286,7 +286,11 @@
     box-shadow: inset 0 2px 0 var(--cr-blue);
   }
 
-  .cr-col { padding: 5px 8px; }
+  &--locked {
+    background: #fafbfc;
+  }
+
+  .cr-col { padding: 4px 8px; }
 }
 
 // ── Order badge ───────────────────────────────────────────────────────────────
@@ -318,6 +322,14 @@
 
   &:hover { color: #94a3b8; }
   &:active { cursor: grabbing; }
+
+  &--disabled {
+    cursor: not-allowed;
+    color: #e2e8f0;
+
+    &:hover { color: #e2e8f0; }
+    &:active { cursor: not-allowed; }
+  }
 }
 
 // ── Toggle ────────────────────────────────────────────────────────────────────
@@ -350,6 +362,13 @@
 
   &--on .cr-toggle__track { background: var(--cr-blue); }
   &--on .cr-toggle__thumb { transform: translateX(18px); }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    input { cursor: not-allowed; }
+  }
 }
 
 // ── Delete button ─────────────────────────────────────────────────────────────
@@ -368,18 +387,26 @@
   transition: background 0.15s;
 
   &:hover { background: var(--cr-red-light); }
+
+  &:disabled {
+    color: #cbd5e1;
+    cursor: not-allowed;
+    opacity: 0.6;
+
+    &:hover { background: transparent; }
+  }
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────
 .cr-empty {
-  padding: 40px 24px;
+  padding: 28px 24px;
   text-align: center;
   color: #94a3b8;
 
   &__icon {
-    font-size: 28px;
+    font-size: 26px;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     opacity: 0.5;
   }
 
@@ -395,8 +422,8 @@
 .cr-eval-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 24px;
-  margin-top: 16px;
+  gap: 14px 24px;
+  margin-top: 12px;
 
   @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
@@ -419,7 +446,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  padding: 16px 24px 24px;
+  padding: 12px 20px 20px;
 }
 
 // ── View mode ─────────────────────────────────────────────────────────────────

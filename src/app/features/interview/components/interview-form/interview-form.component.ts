@@ -45,6 +45,32 @@ export function meetingLinkValidator(control: AbstractControl): ValidationErrors
   return isRecognized ? null : { invalidMeetingLink: true };
 }
 
+export interface TimeSlot {
+  /** "HH:mm" 24-hour value stored on the form control */
+  value: string;
+  /** Human friendly label, e.g. "9:30 AM" */
+  label: string;
+}
+
+/** Interview hours: 9:00 AM - 7:00 PM in 30 minute increments. */
+const SLOT_START_MINUTES = 9 * 60;
+const SLOT_END_MINUTES = 19 * 60;
+const SLOT_STEP_MINUTES = 30;
+
+function buildTimeSlots(): TimeSlot[] {
+  const slots: TimeSlot[] = [];
+  for (let mins = SLOT_START_MINUTES; mins <= SLOT_END_MINUTES; mins += SLOT_STEP_MINUTES) {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    const label = `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    slots.push({ value, label });
+  }
+  return slots;
+}
+
 @Component({
   selector: 'app-interview-form',
   standalone: true,
@@ -66,6 +92,9 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   form!: FormGroup;
   private router=inject(Router);
+
+  /** Pre-computed interview-hours slot list (9:00 AM - 7:00 PM, 30 min steps). */
+  readonly timeSlots: TimeSlot[] = buildTimeSlots();
   /**
    * Maps summary.candidate (the shape used by interview-form) to the
    * CandidateData interface expected by InterviewCandidateInfoComponent.
@@ -148,6 +177,44 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     return this.form?.get('interviewType')?.value === 'Offline';
   }
 
+  /** Today's date as "yyyy-MM-dd", matching the native date input's value format. */
+  get todayIso(): string {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  /** Used as the date input's [min] so past dates can't be picked at all. */
+  get minInterviewDate(): string {
+    return this.todayIso;
+  }
+
+  get isSelectedDateToday(): boolean {
+    const date = this.form?.get('interviewDate')?.value;
+    return !!date && date === this.todayIso;
+  }
+
+  private get nowHHmm(): string {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
+
+  /** A start-time slot is unavailable once its time has already passed today. */
+  isSlotDisabled(slot: string): boolean {
+    return this.isSelectedDateToday && slot <= this.nowHHmm;
+  }
+
+  /** An end-time slot is unavailable if it's already passed today, or isn't after the chosen start time. */
+  isEndSlotDisabled(slot: string): boolean {
+    if (this.isSlotDisabled(slot)) {
+      return true;
+    }
+    const start = this.form?.get('startTime')?.value;
+    return !!start && slot <= start;
+  }
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -181,6 +248,24 @@ export class InterviewFormComponent implements OnInit, OnChanges {
         this.form.get('meetingLink')?.setValue('');
       }
     });
+
+    // If the date changes to today (or was already today), drop any selected
+    // start/end slot that has now fallen in the past so it can't be submitted.
+    this.form.get('interviewDate')?.valueChanges.subscribe(() => this.clearPastSlotsIfStale());
+  }
+
+  private clearPastSlotsIfStale(): void {
+    if (!this.isSelectedDateToday) {
+      return;
+    }
+    const startCtrl = this.form.get('startTime');
+    const endCtrl = this.form.get('endTime');
+    if (startCtrl?.value && this.isSlotDisabled(startCtrl.value)) {
+      startCtrl.setValue('');
+    }
+    if (endCtrl?.value && this.isEndSlotDisabled(endCtrl.value)) {
+      endCtrl.setValue('');
+    }
   }
 
   private patchNewSchedule(): void {

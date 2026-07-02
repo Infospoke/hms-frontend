@@ -61,7 +61,7 @@ export class ApprovalChainConfigComponent implements OnInit {
     { key: 'inactive', label: 'Inactive', count: 0 },
     
   ];
-  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
+  private activeFilters: Partial<any> = { dateFilter: '' };
 
 
   ngOnInit(): void {
@@ -278,5 +278,9 @@ export class ApprovalChainConfigComponent implements OnInit {
    truncate(value: string, limit = 20): string {
     if (!value || value === '—') return value;
     return value.length > limit ? value.slice(0, limit) + '..' : value;
+  }
+
+  get disableCreateButton():boolean{
+    return this.cards?.[3]?.value ==this.cards?.[4]?.value;
   }
 }

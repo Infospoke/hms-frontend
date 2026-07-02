@@ -27,14 +27,14 @@ import { NotificationService } from '../../../../core/services/notification.serv
   templateUrl: './provide-feed-back.component.html',
   styleUrl: './provide-feed-back.component.scss',
 })
-export class ProvideFeedBackComponent implements OnInit{
+export class ProvideFeedBackComponent implements OnInit {
 
   // ── Submission state ───────────────────────────────────────────────────────
   isSubmitting = false;
 
-  interview:any;
+  interview: any;
 
-  candidate:any;
+  candidate: any;
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -44,43 +44,48 @@ export class ProvideFeedBackComponent implements OnInit{
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
 
   private readonly DECISION_LABEL: Record<string, string> = {
-    next:     'Move to next round',
-    hold:     'On Hold',
+    next: 'Move to next round',
+    hold: 'On Hold',
     rejected: 'Rejected',
-    null:''
+    null: ''
   };
   ngOnInit(): void {
-    const applicantId=this.route.snapshot.params['id'];
-    // this.getInterviewSummary(applicantId);
+    const applicantId = this.route.snapshot.params['id'];
+    this.getInterviewSummary(applicantId);
   }
 
- private async getInterviewSummary(scheduleId: number) {
-  const res:any=await this.interviewService.candidateSummaryDetails(scheduleId);
-      if (res?.responsecode === '00') {
-        const data = res.data;
+  private async getInterviewSummary(scheduleId: number) {
+    const res: any = await this.interviewService.candidateSummaryDetails(scheduleId);
+    if (res?.responsecode === '00') {
+      const data = res.data;
 
-        this.interview = {
-          type: data.interviewType,
-          jobApplied: data.jobTitle,
-          jobBadge: data.round,
-          completedOn: '',          // API doesn't provide this
-          time: '',                 // API doesn't provide this
-          venue: data.interviewMode,
-          interviewId: scheduleId.toString(),
-        };
+      this.interview = {
+        type: data.interviewType,
+        jobApplied: data.jobTitle,
+        jobBadge: data.round,
+        completedOn: data?.interviewCompletedOn ?? '',          // API doesn't provide this
+        time: new Date(data?.interviewCompletedOn).toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        }),                // API doesn't provide this
+        venue: data.interviewMode,
+        interviewId: scheduleId.toString(),
+      };
 
-        this.candidate = {
-          candidateId: scheduleId, // or applicantId if your API returns it
-          firstName: data.candidateName?.split(' ')[0] || '',
-          lastName: data.candidateName?.split(' ').slice(1).join(' ') || '',
-          currentRole: data.jobTitle,
-          email: data.email,
-          phone: data.phone,
-          currentLocation: data.currentLocation,
-          stage: data.currentStage,
-        };
-      } 
+      this.candidate = {
+        candidateId: scheduleId, // or applicantId if your API returns it
+        firstName: data.candidateName?.split(' ')[0] || '',
+        lastName: data.candidateName?.split(' ').slice(1).join(' ') || '',
+        currentRole: data.jobTitle,
+        email: data.email,
+        phone: data.phone,
+        currentLocation: data.currentLocation,
+        stage: data.currentStage,
+      };
     }
+  }
   async onFeedbackSubmit(value: any): Promise<void> {
     if (this.isSubmitting) return;
 
@@ -89,19 +94,19 @@ export class ProvideFeedBackComponent implements OnInit{
       value.competencies?.find((c: any) => c.key === key)?.rating ?? 0;
 
     const payload = {
-      applicantId:          this.candidate?.candidateId ?? 1,           // replace with real id from route/state
-      interviewType:        this.interview.type,
-      roundType:            this.interview.jobBadge,
-      decision:             this.DECISION_LABEL[value.decision] ?? value.decision,
-      overallRating:        value.overallRating,
-      technicalKnowledge:   rating('technical'),
-      culturalFit:          rating('cultural'),
-      analyticalThinking:   rating('analytical'),
-      problemSolving:       rating('problem'),
-      communication:        rating('communication'),
-      strengths:            value.strengths ?? '',
-      areasOfImprovemnets:  value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
-      additionalComments:   value.additionalComments ?? '',
+      applicantId: this.candidate?.candidateId ?? 1,           // replace with real id from route/state
+      interviewType: this.interview.type,
+      roundType: this.interview.jobBadge,
+      decision: this.DECISION_LABEL[value.decision] ?? value.decision,
+      overallRating: value.overallRating,
+      technicalKnowledge: rating('technical'),
+      culturalFit: rating('cultural'),
+      analyticalThinking: rating('analytical'),
+      problemSolving: rating('problem'),
+      communication: rating('communication'),
+      strengths: value.strengths ?? '',
+      areasOfImprovemnets: value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
+      additionalComments: value.additionalComments ?? '',
     };
 
     this.isSubmitting = true;

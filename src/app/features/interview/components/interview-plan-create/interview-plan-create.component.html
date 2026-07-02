@@ -30,101 +30,106 @@
 
     <form [formGroup]="planForm" novalidate autocomplete="off">
 
-      <!-- ── Row 1: Name + Description ──────────────────────────────────── -->
+      <!-- ── Row 1: Plan Name+Description | Status ────────────────────── -->
       <div class="ipc-form-grid">
 
-        <!-- Plan Name -->
-        <div class="ipc-form-group">
-          <label class="ipc-label" for="planName">
-            Plan Name
-            <span class="ipc-required" *ngIf="!isEditMode">*</span>
-          </label>
-          <input
-            id="planName"
-            class="ipc-input"
-            [class.ipc-input--error]="planName.invalid && (planName.touched || planName.dirty)"
-            [class.ipc-input--success]="planName.valid && (planName.touched || planName.dirty) && !isEditMode"
-            type="text"
-            formControlName="planName"
-            placeholder="e.g. Two Round Interview"
-          />
-          <span class="ipc-char-count"
-            *ngIf="!isEditMode"
-            [class.ipc-char-count--warn]="planName.value?.length >= MAX_PLAN_NAME - 10">
-            {{ planName.value?.length ?? 0 }} / {{ MAX_PLAN_NAME }}
-          </span>
-          <span class="ipc-field-error" *ngIf="getPlanNameError()" role="alert">
-            <i class="fas fa-triangle-exclamation"></i>
-            {{ getPlanNameError() }}
-          </span>
+        <!-- Left column: Plan Name + Description -->
+        <div class="ipc-form-col">
+
+          <!-- Plan Name -->
+          <div class="ipc-form-group">
+            <label class="ipc-label" for="planName">
+              Plan Name
+              <span class="ipc-required" *ngIf="!isEditMode">*</span>
+            </label>
+            <input
+              id="planName"
+              class="ipc-input"
+              [class.ipc-input--error]="planName.invalid && (planName.touched || planName.dirty)"
+              [class.ipc-input--success]="planName.valid && (planName.touched || planName.dirty) && !isEditMode"
+              type="text"
+              formControlName="planName"
+              placeholder="e.g. Two Round Interview"
+            />
+            <span class="ipc-char-count"
+              *ngIf="!isEditMode"
+              [class.ipc-char-count--warn]="planName.value?.length >= MAX_PLAN_NAME - 10">
+              {{ planName.value?.length ?? 0 }} / {{ MAX_PLAN_NAME }}
+            </span>
+            <span class="ipc-field-error" *ngIf="getPlanNameError()" role="alert">
+              <!-- <i class="fas fa-triangle-exclamation"></i> -->
+              {{ getPlanNameError() }}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <div class="ipc-form-group">
+            <label class="ipc-label" for="description">Description</label>
+            <textarea
+              id="description"
+              class="ipc-textarea"
+              [class.ipc-input--error]="description.invalid && (description.touched || description.dirty)"
+              rows="3"
+              formControlName="description"
+              placeholder="Brief description of this interview plan…"
+            ></textarea>
+            <span class="ipc-char-count"
+              *ngIf="!isEditMode"
+              [class.ipc-char-count--warn]="descLength >= MAX_DESC - 50"
+              [class.ipc-char-count--error]="descLength >= MAX_DESC">
+              {{ descLength }} / {{ MAX_DESC }}
+            </span>
+            <span class="ipc-field-error" *ngIf="getDescriptionError()" role="alert">
+              <i class="fas fa-triangle-exclamation"></i>
+              {{ getDescriptionError() }}
+            </span>
+          </div>
+
         </div>
 
-        <!-- Description -->
-        <div class="ipc-form-group">
-          <label class="ipc-label" for="description">Description</label>
-          <textarea
-            id="description"
-            class="ipc-textarea"
-            [class.ipc-input--error]="description.invalid && (description.touched || description.dirty)"
-            rows="3"
-            formControlName="description"
-            placeholder="Brief description of this interview plan…"
-          ></textarea>
-          <span class="ipc-char-count"
-            *ngIf="!isEditMode"
-            [class.ipc-char-count--warn]="descLength >= MAX_DESC - 50"
-            [class.ipc-char-count--error]="descLength >= MAX_DESC">
-            {{ descLength }} / {{ MAX_DESC }}
-          </span>
-          <span class="ipc-field-error" *ngIf="getDescriptionError()" role="alert">
-            <i class="fas fa-triangle-exclamation"></i>
-            {{ getDescriptionError() }}
-          </span>
+        <!-- Status -->
+        <div class="ipc-form-group ipc-form-group--status">
+          <label class="ipc-label">Status</label>
+
+          <!-- CREATE MODE -->
+          <ng-container *ngIf="!isEditMode">
+            <div class="ipc-status-badge ipc-status-badge--inactive">
+              <i class="fas fa-lock"></i>
+              Inactive
+            </div>
+            <div class="ipc-status-infobox">
+              <i class="fas fa-circle-info ipc-status-infobox__icon"></i>
+              <span>
+                Status is set to <strong>Inactive</strong> by default.
+                The plan will become <strong>Active</strong> once the approval request is approved.
+              </span>
+            </div>
+          </ng-container>
+
+          <!-- EDIT MODE -->
+          <ng-container *ngIf="isEditMode">
+            <button
+              type="button"
+              class="ipc-toggle"
+              [class.ipc-toggle--on]="activeValue"
+              (click)="toggleActive()"
+              [attr.aria-pressed]="activeValue"
+              [attr.aria-label]="activeValue ? 'Deactivate plan' : 'Activate plan'"
+            >
+              <span class="ipc-toggle__track">
+                <span class="ipc-toggle__thumb"></span>
+              </span>
+              <span class="ipc-toggle__label">
+                {{ activeValue ? 'Active' : 'Inactive' }}
+              </span>
+            </button>
+            <div class="ipc-status-infobox">
+              <i class="fas fa-circle-info ipc-status-infobox__icon"></i>
+              <span>Changing the status will open a comment prompt for audit purposes.</span>
+            </div>
+          </ng-container>
+
         </div>
-
-      </div>
-
-      <!-- ── Row 2: Status ──────────────────────────────────────────────── -->
-      <div class="ipc-status-section">
-        <p class="ipc-label">Status</p>
-
-        <!-- CREATE MODE -->
-        <ng-container *ngIf="!isEditMode">
-          <div class="ipc-status-badge ipc-status-badge--inactive">
-            <i class="fas fa-lock"></i>
-            Inactive
-          </div>
-          <div class="ipc-status-infobox">
-            <i class="fas fa-circle-info ipc-status-infobox__icon"></i>
-            <span>
-              Status is set to <strong>Inactive</strong> by default.
-              The plan will become <strong>Active</strong> once the approval request is approved.
-            </span>
-          </div>
-        </ng-container>
-
-        <!-- EDIT MODE -->
-        <ng-container *ngIf="isEditMode">
-          <button
-            type="button"
-            class="ipc-toggle"
-            [class.ipc-toggle--on]="activeValue"
-            (click)="toggleActive()"
-            [attr.aria-pressed]="activeValue"
-            [attr.aria-label]="activeValue ? 'Deactivate plan' : 'Activate plan'"
-          >
-            <span class="ipc-toggle__track">
-              <span class="ipc-toggle__thumb"></span>
-            </span>
-            <span class="ipc-toggle__label">
-              {{ activeValue ? 'Active' : 'Inactive' }}
-            </span>
-          </button>
-          <div class="ipc-status-infobox">
-            <i class="fas fa-circle-info ipc-status-infobox__icon"></i>
-            <span>Changing the status will open a comment prompt for audit purposes.</span>
-          </div>
-        </ng-container>
 
       </div>
 

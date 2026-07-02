@@ -107,7 +107,9 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
       sortBy:'moveToScheduleDateTime'
     };
     const res: any = await this.interviewService.getScheduleList(payload);
-    if (res?.responsecode == '00') {
+    console.log(res);
+    if (res?.responsecode== '00') {
+      console.log(res?.data?.content);
       this.requests = this.mapInterviews(res?.data?.content);
       this.totalItems = res?.data?.totalElements;
     }

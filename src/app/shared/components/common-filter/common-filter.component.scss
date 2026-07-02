@@ -187,7 +187,7 @@ $ctrl-h: 38px;
       // ── Scroll after 5 items ─────────────────────────────────────────────
       // Each item is ~34px (8px top + 8px bottom padding + ~18px text).
       // 5 items × 34px + 2×4px panel padding = ~178px.
-      max-height: 168px;
+      max-height: 195px;
       overflow-y: auto;
 
       // Thin, subtle scrollbar
@@ -424,9 +424,9 @@ $ctrl-h: 38px;
   white-space: nowrap;
 
 
-  &:not(:last-child) {
+  // &:not() {
     border-right: 1px solid #e2e8f0;
-  }
+  // }
 
   &:hover {
     color: #1e40af;

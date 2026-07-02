@@ -101,7 +101,7 @@
                         [class.offline]="currentSchedule.interviewType === 'Offline'">
                         {{ currentSchedule.interviewType }}
                     </span>
-                    <span *ngIf="currentSchedule.interviewType === 'Online'" class="platform-tag">Google Meet</span>
+                    <!-- <span *ngIf="currentSchedule.interviewType === 'Online'" class="platform-tag">Google Meet</span> -->
                 </div>
             </div>
         </div>
@@ -127,31 +127,53 @@
                             <path d="M5 1.5v3M11 1.5v3" stroke="#9ca3af" stroke-width="1.3" stroke-linecap="round" />
                         </svg>
                         <input id="interviewDate" type="date" class="form-input" formControlName="interviewDate"
-                            [class.error]="isInvalid('interviewDate')" />
+                            [min]="minInterviewDate" [class.error]="isInvalid('interviewDate')" />
                     </div>
                     <span class="field-error" *ngIf="isInvalid('interviewDate')">Date is required</span>
                 </div>
                 <div class="form-field">
                     <label class="field-label" for="startTime">Start Time <span class="req">*</span></label>
-                    <div class="input-icon-wrap">
+                    <div class="input-icon-wrap select-wrap">
                         <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <circle cx="8" cy="8" r="6.5" stroke="#9ca3af" stroke-width="1.3" />
                             <path d="M8 5v3l2 2" stroke="#9ca3af" stroke-width="1.3" stroke-linecap="round" />
                         </svg>
-                        <input id="startTime" type="time" class="form-input" formControlName="startTime"
-                            [class.error]="isInvalid('startTime')" />
+                        <select id="startTime" class="form-input select-input" formControlName="startTime"
+                            [class.error]="isInvalid('startTime')">
+                            <option value="" disabled>Select a time slot</option>
+                            <option *ngFor="let slot of timeSlots" [value]="slot.value"
+                                [disabled]="isSlotDisabled(slot.value)">
+                                {{ slot.label }}{{ isSlotDisabled(slot.value) ? ' · Past' : '' }}
+                            </option>
+                        </select>
+                        <svg class="select-caret" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5l3 3 3-3" stroke="#6b7280" stroke-width="1.4" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </div>
                     <span class="field-error" *ngIf="isInvalid('startTime')">Start time is required</span>
+                    <p class="field-hint" *ngIf="isSelectedDateToday && !isInvalid('startTime')">Slots already
+                        passed today are disabled.</p>
                 </div>
                 <div class="form-field">
                     <label class="field-label" for="endTime">End Time <span class="req">*</span></label>
-                    <div class="input-icon-wrap">
+                    <div class="input-icon-wrap select-wrap">
                         <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <circle cx="8" cy="8" r="6.5" stroke="#9ca3af" stroke-width="1.3" />
                             <path d="M8 5v3l2 2" stroke="#9ca3af" stroke-width="1.3" stroke-linecap="round" />
                         </svg>
-                        <input id="endTime" type="time" class="form-input" formControlName="endTime"
-                            [class.error]="isInvalid('endTime')" />
+                        <select id="endTime" class="form-input select-input" formControlName="endTime"
+                            [class.error]="isInvalid('endTime')">
+                            <option value="" disabled>Select a time slot</option>
+                            <option *ngFor="let slot of timeSlots" [value]="slot.value"
+                                [disabled]="isEndSlotDisabled(slot.value)">
+                                {{ slot.label }}{{ isEndSlotDisabled(slot.value) ? ' · Past' : '' }}
+                            </option>
+                        </select>
+                        <svg class="select-caret" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5l3 3 3-3" stroke="#6b7280" stroke-width="1.4" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
                     </div>
                     <span class="field-error" *ngIf="isInvalid('endTime')">End time is required</span>
                 </div>
@@ -239,17 +261,24 @@
             <!-- Venue Details -->
             <div class="form-row" *ngIf="showVenueDetails || showMeetingLink">
                 <div class="form-field full-width">
-                    <label class="field-label" for="venueDetails">Venue Details</label>
-                    <div class="input-icon-wrap">
-                        <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path
-                                d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6c0-2.5-2-4.5-4.5-4.5z"
-                                stroke="#9ca3af" stroke-width="1.3" />
-                            <circle cx="8" cy="6" r="1.5" stroke="#9ca3af" stroke-width="1.3" />
-                        </svg>
-                        <input id="venueDetails" type="text" class="form-input" formControlName="venueDetails"
-                            placeholder="Nexus Tech Park, 5th Floor, Interview Room 2" />
+                    <label class="field-label" for="venueDetails">
+                        Venue Details
+                        <span class="optional-tag" *ngIf="showMeetingLink">(Optional)</span>
+                    </label>
+                    <div class="venue-box">
+                        <span class="venue-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path
+                                    d="M9 2c-2.9 0-5.25 2.3-5.25 5.13C3.75 10.94 9 16 9 16s5.25-5.06 5.25-8.87C14.25 4.3 11.9 2 9 2z"
+                                    stroke="currentColor" stroke-width="1.4" />
+                                <circle cx="9" cy="7.1" r="1.9" stroke="currentColor" stroke-width="1.4" />
+                            </svg>
+                        </span>
+                        <textarea id="venueDetails" class="venue-textarea" formControlName="venueDetails" rows="3"
+                            placeholder="e.g. Nexus Tech Park, 5th Floor, Interview Room 2 — near the main reception"></textarea>
                     </div>
+                    <p class="field-hint">Include the building, floor, and room number so the candidate can find
+                        it without trouble.</p>
                 </div>
             </div>
 

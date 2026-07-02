@@ -1,12 +1,16 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+export type StageColor =
+  | 'purple' | 'blue' | 'teal' | 'amber' | 'green'
+  | 'red' | 'pink' | 'indigo' | 'cyan' | 'orange';
+
 export interface PipelineStage {
   id: string;
   label: string;
-  icon: string;         // Tabler icon name e.g. 'ti-file-text'
+  icon: string;
   count: number;
-  countColor?: 'purple' | 'blue' | 'teal' | 'amber';
+  countColor?: StageColor;
 }
 
 @Component({
@@ -26,10 +30,12 @@ export interface PipelineStage {
         (keydown.enter)="selectStage(stage)"
         (keydown.space)="selectStage(stage)"
       >
-        <i class="{{ stage.icon }} stage-icon" aria-hidden="true"></i>
+        <span class="stage-icon-badge" [ngClass]="'badge-' + resolveColor(stage.countColor)">
+          <i class="{{ stage.icon }}" aria-hidden="true"></i>
+        </span>
         <div class="stage-body">
           <span class="stage-name">{{ stage.label }}</span>
-          <span class="stage-count" [ngClass]="'count-' + (stage.countColor || 'purple')">
+          <span class="stage-count" [ngClass]="'count-' + resolveColor(stage.countColor)">
             {{ stage.count }} Candidates
           </span>
         </div>
@@ -42,6 +48,15 @@ export class PipeLineStagesComponent {
   @Input() stages: PipelineStage[] = [];
   @Input() activeStageId: string | null = null;
   @Output() stageSelected = new EventEmitter<PipelineStage>();
+
+  private readonly validColors: StageColor[] = [
+    'purple', 'blue', 'teal', 'amber', 'green',
+    'red', 'pink', 'indigo', 'cyan', 'orange'
+  ];
+
+  resolveColor(color?: StageColor): StageColor {
+    return color && this.validColors.includes(color) ? color : 'blue';
+  }
 
   selectStage(stage: PipelineStage): void {
     this.activeStageId = stage.id;

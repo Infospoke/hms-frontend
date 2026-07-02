@@ -112,7 +112,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
   
   private async loadQuestionsForAlreadyFinalised(){
     const res:any=await this.interviewService.loadFinalizedQuestions(this.applicationId);
-    if(res?.hasOwnProperty('questions')){
+    if(res?.hasOwnProperty('questions') && res?.questions?.length>0){
        this.questions = this.mapApiQuestions(res?.questions ?? []);
        this.isQuestionsFinalized=false;
        this.disabledQuestions=true;

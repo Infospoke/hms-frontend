@@ -22,7 +22,7 @@ export class MyApprovedSrsComponent implements OnInit{
   private router = inject(Router);
   private jobService = inject(JobService);
   currentPage = 1;
-  activeFilters: any={ chainName: '', filters: {},dateFilter: 'thisMonth' };
+  activeFilters: any={ chainName: '', filters: {},dateFilter: '' };
   searchPlaceholder = 'Search by SR Id, Title..';
 
   columns = [

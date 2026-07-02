@@ -3,8 +3,10 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild
 } from '@angular/core';
@@ -40,7 +42,7 @@ export interface Interview {
   templateUrl: './interview-upcomming-table.component.html',
   styleUrl: './interview-upcomming-table.component.scss',
 })
-export class InterviewUpcommingTableComponent implements OnInit {
+export class InterviewUpcommingTableComponent implements OnInit,OnChanges {
   @Input() payload!: any;
   @Output() pageChange = new EventEmitter<number>();
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
@@ -53,7 +55,11 @@ export class InterviewUpcommingTableComponent implements OnInit {
     { key: 'typeLocation', label: 'Type & Location', custom: true, width: '200px' },
     { key: 'action', label: 'Action', custom: true, align: 'center', width: '130px' }
   ];
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['payload']){
+      this.loadList();
+    }
+  }
   interviews: any[] = [];
 
   totalItems = 5;

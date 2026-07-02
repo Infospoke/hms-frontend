@@ -43,12 +43,7 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
   sortableColumns = ['interviewDate'];
 
   feedBackList: any[] = [
-    { id: '1', candidateInitials: 'RM', candidateName: 'Rahul Mehta', candidateId: 'NXH-1026', jobTitle: 'Data Scientist', department: 'Data Science', round: 'Technical Round 1', roundLabel: 'Round 1 of 4', interviewDate: '20 May 2026', interviewTime: '11:30 AM', priority: 'High' },
-    { id: '2', candidateInitials: 'PS', candidateName: 'Priya Sharma', candidateId: 'NXH-1027', jobTitle: 'Backend Developer', department: 'Engineering', round: 'Technical Round 2', roundLabel: 'Round 2 of 3', interviewDate: '19 May 2026', interviewTime: '10:15 AM', priority: 'Medium' },
-    { id: '3', candidateInitials: 'AR', candidateName: 'Arjun Rao', candidateId: 'NXH-1028', jobTitle: 'QA Engineer', department: 'Quality Assurance', round: 'Manager Round', roundLabel: 'Round 1 of 4', interviewDate: '18 May 2026', interviewTime: '04:20 PM', priority: 'High' },
-    { id: '4', candidateInitials: 'SR', candidateName: 'Sneha Reddy', candidateId: 'NXH-1029', jobTitle: 'Product Manager', department: 'Product', round: 'Final Round', roundLabel: 'Round 5 of 5', interviewDate: '17 May 2026', interviewTime: '03:05 PM', priority: 'Low' },
-    { id: '5', candidateInitials: 'VK', candidateName: 'Vikram Singh', candidateId: 'NXH-1030', jobTitle: 'DevOps Engineer', department: 'Engineering', round: 'Technical Round 1', roundLabel: 'Round 1 of 4', interviewDate: '16 May 2026', interviewTime: '02:45 PM', priority: 'Low' },
-    { id: '6', candidateInitials: 'AN', candidateName: 'Ananya Iyer', candidateId: 'NXH-1031', jobTitle: 'UX Designer', department: 'Design', round: 'Technical Round 2', roundLabel: 'Round 2 of 3', interviewDate: '15 May 2026', interviewTime: '11:50 AM', priority: 'Medium' },
+   
   ];
 
   totalItems = 6;

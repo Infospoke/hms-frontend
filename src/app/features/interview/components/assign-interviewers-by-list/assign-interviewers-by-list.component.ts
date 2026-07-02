@@ -279,8 +279,16 @@ export class AssignInterviewersByListComponent implements OnInit {
   }
 
   isEditable(round: InterviewRound): boolean {
+    if (this.isAiInterview(round)) return false;
     if (this.pageMode === 'assign') return true;
     return !!round.isRejected;
+  }
+
+  /** AI Interview rounds are automated — no interviewer needs to be picked. */
+  isAiInterview(round: InterviewRound): boolean {
+    const type = (round.type || '').trim().toLowerCase();
+    console.log(type);
+    return type === 'ai ' || type.includes('ai interview round');
   }
 
   // ── Dropdown ─────────────────────────────────────────────────────────────────
@@ -339,10 +347,13 @@ export class AssignInterviewersByListComponent implements OnInit {
   }
 
   onSaveAssignments(): void {
-    // In reassign mode only rejected rounds need a new interviewer
-    const roundsToValidate = this.pageMode === 'reassign'
-      ? this.rounds.filter(r => r.isRejected)
-      : this.rounds;
+    // In reassign mode only rejected rounds need a new interviewer.
+    // AI Interview rounds never need one — they're automated in either mode.
+    const roundsToValidate = (
+      this.pageMode === 'reassign'
+        ? this.rounds.filter(r => r.isRejected)
+        : this.rounds
+    ).filter(r => !this.isAiInterview(r));
 
     if (roundsToValidate.some(r => r.interviewer === null)) {
       alert('Please assign an interviewer to every required round before saving.');

@@ -8,11 +8,17 @@ import { ApprovalService } from '../../../approvals/services/approval-service';
 import { UserService } from '../../../settings/users/servics/user-service';
 import { SupplyService } from '../../services/supply-service';
 import { InterviewServiceService } from '../../../interview/service/interview-service.service';
+// NOTE: adjust this path to match where the shared modal actually lives in your project
+import {
+  CommonModalComponent,
+  CommentModalAction,
+  CommentModalResult,
+} from '../../../../shared/components/common-modal/common-modal.component';
 
 @Component({
   selector: 'app-job-approval-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CommonModalComponent],
   templateUrl: './job-approval-detail.component.html',
   styleUrl: './job-approval-detail.component.scss',
 })
@@ -60,25 +66,11 @@ export class JobApprovalDetailComponent implements OnInit {
 }
 
   private route = inject(ActivatedRoute);
-  // ── Decision form
-  decision: 'Accepted' | 'Rejected' | null = null;
-  comment = '';
+
+  // ── Decision modal (shared app-common-modal) ────────────────────────────
   isSubmitting = false;
-
-  readonly MAX_COMMENT = 500;
-
-  // ── Comment modal (assignment accept/reject flow)
-  isCommentModalOpen = false;
-  commentModalAction: 'approve' | 'reject' | null = null;
-  modalComment = '';
-
-  get charCount(): number {
-    return this.comment.length;
-  }
-
-  get canSubmit(): boolean {
-    return this.decision !== null && this.comment.trim().length > 0 && !this.isSubmitting;
-  }
+  isDecisionModalOpen = false;
+  decisionModalAction: CommentModalAction | null = null;
 
   get experienceLabel(): string {
     if (!this.overview) return '—';
@@ -108,6 +100,10 @@ export class JobApprovalDetailComponent implements OnInit {
 
   get enabledChannelCount(): number {
     return this.sourcingChannels.filter(c => c.enabled).length;
+  }
+
+  get enabledSourcingChannels(): ChannelDisplay[] {
+    return this.sourcingChannels.filter(c => c.enabled);
   }
 
   ngOnInit(): void {
@@ -221,43 +217,71 @@ export class JobApprovalDetailComponent implements OnInit {
     }));
   }
 
-  // ── Decision
+  // ── Decision (opens the shared comment modal; API call happens on confirm)
 
-  setDecision(d: 'Accepted' | 'Rejected'): void {
-    this.decision = this.decision === d ? null : d;
+  openDecisionModal(action: CommentModalAction): void {
+    this.decisionModalAction = action;
+    this.isDecisionModalOpen = true;
   }
 
-  onSubmit(): void {
-    if (!this.canSubmit) return;
+  closeDecisionModal(): void {
+    this.isDecisionModalOpen = false;
+    this.decisionModalAction = null;
+  }
+
+  async onDecisionConfirmed(result: CommentModalResult): Promise<void> {
+    const status = result.action === 'approve' ? 'Accepted' : 'Rejected';
     this.isSubmitting = true;
 
-    const payload = {
-      jobId: this.jobId,
-      status: this.decision,
-      comments: this.comment.trim() || null,
-    };
+    try {
+      if (this.isAssignmentMode) {
+        if (!this.assignmentId) return;
 
-    this.jobService.submitJobDecision(payload)
-      .then((res: any) => {
+        const payload = {
+          Id: this.assignmentId,
+          status,
+          comments: result.comment,
+        };
+        const res: any = await this.interviewService.updateIntervieAssignement(payload);
         if (res?.responsecode === '00') {
+          this.closeDecisionModal();
           this.notificationService.success(
-            this.decision === 'Accepted'
+            status === 'Accepted'
+              ? 'Assignment accepted successfully'
+              : 'Assignment rejected successfully'
+          );
+          this.router.navigate(['/supply/my-interview-requests'], {
+            state: { activeType: 'ar' },
+          });
+        } else {
+          this.notificationService.error(res?.message ?? 'Failed to update assignment');
+        }
+      } else {
+        const payload = {
+          jobId: this.jobId,
+          status,
+          comments: result.comment,
+        };
+        const res: any = await this.jobService.submitJobDecision(payload);
+        if (res?.responsecode === '00') {
+          this.closeDecisionModal();
+          this.notificationService.success(
+            status === 'Accepted'
               ? 'Job accepted successfully'
               : 'Job declined successfully'
           );
-          this.router.navigate(['/supply/my-assignend-jobs'],{
-          state: { activeType: 'ar' },
-        });
+          this.router.navigate(['/supply/my-assignend-jobs'], {
+            state: { activeType: 'ar' },
+          });
         } else {
           this.notificationService.error(res?.message ?? 'Failed to submit decision');
         }
-      })
-      .catch((err: any) => {
-        this.notificationService.error(err?.message ?? 'Failed to submit decision');
-      })
-      .finally(() => {
-        this.isSubmitting = false;
-      });
+      }
+    } catch (err: any) {
+      this.notificationService.error(err?.message ?? 'Failed to submit decision');
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 
   onCancel(): void {
@@ -266,54 +290,6 @@ export class JobApprovalDetailComponent implements OnInit {
           state: { activeType: 'ar' },
         }
     );
-  }
-
-  // ── Assignment accept/reject (comment modal flow)
-
-  openCommentModal(action: 'approve' | 'reject'): void {
-    this.commentModalAction = action;
-    this.modalComment = '';
-    this.isCommentModalOpen = true;
-  }
-
-  closeCommentModal(): void {
-    this.isCommentModalOpen = false;
-    this.commentModalAction = null;
-    this.modalComment = '';
-  }
-
-  async onModalConfirmed(comment: any): Promise<void> {
-    if (!this.assignmentId || !this.commentModalAction) return;
-
-    const status = this.commentModalAction === 'approve' ? 'Accepted' : 'Rejected';
-
-    const payload = {
-      Id:       this.assignmentId,
-      status,
-      comments: comment?.comment ?? '',
-    };
-
-    this.isSubmitting = true;
-    try {
-      const res: any = await this.interviewService.updateIntervieAssignement(payload);
-      if (res?.responsecode === '00') {
-        this.closeCommentModal();
-        this.notificationService.success(
-          status === 'Accepted'
-            ? 'Assignment accepted successfully'
-            : 'Assignment rejected successfully'
-        );
-        this.router.navigate(['/supply/my-interview-requests'], {
-          state: { activeType: 'ar' },
-        });
-      } else {
-        this.notificationService.error(res?.message ?? 'Failed to update assignment');
-      }
-    } catch (err: any) {
-      this.notificationService.error(err?.message ?? 'Failed to update assignment');
-    } finally {
-      this.isSubmitting = false;
-    }
   }
 
   // ── Utilities

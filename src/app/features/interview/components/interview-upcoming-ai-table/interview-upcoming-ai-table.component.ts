@@ -53,8 +53,8 @@ export class InterviewUpcomingAiTableComponent implements OnChanges, OnInit {
         const content = res.data?.content ?? [];
         this.tableData = content.map((item: any) => {
           const { date, time } = this.parseScheduledAt(item.scheduledAt);
-          const scheduledByType = item.scheduledBy ? 'recruiter' : 'self';
-          const scheduledByLabel = item.scheduledBy ?? 'Self Scheduled';
+          const scheduledByType = item.scheduledBy;
+          const scheduledByLabel = item.scheduledBy==='recruiter' ? 'Recruiter' : item?.scheduledBy==='applicant' ? 'Applicant' : item?.scheduledBy==='self' ? 'Self':item?.scheduledBy;
           return {
             sessionId: item.sessionId,
             jobId: item.jobId,

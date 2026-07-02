@@ -254,7 +254,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       expMax: [5],
       interviewMin: [1],
       interviewMax: [2],
-      assessmentOn: [false],
+      // assessmentOn: [false],
       travel: ['']
     });
 
@@ -698,7 +698,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       maxInterviewRounds: f.interviewMax,
       certificationsRequired: this.certs,
       languages: this.langs,
-      assessmentRequired: f.assessmentOn
+      // assessmentRequired: f.assessmentOn
     };
   }
 
@@ -801,7 +801,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         expMax: rr.maxExperience ?? 1,
         interviewMin: rr.minInterviewRounds ?? 1,
         interviewMax: rr.maxInterviewRounds ?? 2,
-        assessmentOn: !!rr.assessmentRequired
+        // assessmentOn: !!rr.assessmentRequired
       });
       this.mustSkills = this.splitCsv(rr.skillsMustHave);
       this.niceSkills = this.splitCsv(rr.niceToHaveSkills);
@@ -1281,7 +1281,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       expMax: f.expMax,
       interviewMin: f.interviewMin,
       interviewMax: f.interviewMax,
-      assessmentOn: f.assessmentOn
+      // assessmentOn: f.assessmentOn
     };
   }
 

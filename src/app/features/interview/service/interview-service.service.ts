@@ -221,4 +221,21 @@ export class InterviewServiceService {
     async scheduleInterviewToCandidate(payload:any):Promise<any>{
       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.SCHEDULE_INTERVIEW_TO_CANDIDATE,payload))
     }
+
+
+    async rescheduleIntervewForCandidate(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.RESCHEDULE_INTERVIEW_FOR_CANDIDATE,payload))
+    }
+
+    async getScheduleInterviewDetailsForCandidate(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.SCHEDULE_INTERVIEW_DETAILS_FOR_CANDIDATE(id)))
+    }
+
+    async getEvaluationSummaryForCandidate(id:any):Promise<any>{
+      return await firstValueFrom(this.api.aiGet(API.INTERVIEW.AI_EVALUATION_SUMMARY(id)))
+    }
+
+    async calculateEvaluationSummaryForCandidate(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.aiPost(API.INTERVIEW.CALCULATE_EVALUATION_SUMMARY,payload))
+    }
 }

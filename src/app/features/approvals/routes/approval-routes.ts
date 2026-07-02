@@ -6,7 +6,7 @@ export const APPROVAL_ROUTES: Routes = [
     loadComponent: () => import("../components/approval-srs/approval-srs.component").then(m => m.ApprovalSrsComponent)
   },
   {
-    path: 'view-sr/:srId',
+    path: 'sr-list/view-sr/:srId',
     loadComponent: () => import("../components/view-sr/view-sr.component").then(m => m.ViewSrComponent)
   },
   {

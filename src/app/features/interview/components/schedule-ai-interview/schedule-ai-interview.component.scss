@@ -1,4 +1,3 @@
-
 $primary:       #2563eb;
 $primary-light: #eff6ff;
 $primary-mid:   #bfdbfe;
@@ -133,6 +132,7 @@ $radius-xl:     18px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  align-items: start;
 }
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
@@ -147,6 +147,16 @@ $radius-xl:     18px;
   gap: 18px;
 }
 
+// Both panels in the calendar/time-slot row are capped to the same height —
+// sized to comfortably fit the (fixed, 6-row) calendar — instead of the
+// Select Date panel stretching to match however tall the slot list happens
+// to be. Anything that overflows inside a panel scrolls internally instead
+// of growing the card.
+.sai-main-grid > .sai-panel {
+  height: 500px;
+  overflow: hidden;
+}
+
 .sai-panel-heading {
   display: flex;
   align-items: center;
@@ -154,6 +164,7 @@ $radius-xl:     18px;
   font-size: 14px;
   font-weight: 700;
   color: $gray-900;
+  flex-shrink: 0;
 
   i { color: $primary; font-size: 15px; }
 }
@@ -163,7 +174,9 @@ $radius-xl:     18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 4px;
+  padding: 2px 2px 14px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid $gray-100;
 }
 
 .sai-cal-month {
@@ -184,33 +197,42 @@ $radius-xl:     18px;
   align-items: center;
   justify-content: center;
   color: $gray-600;
-  font-size: 11px;
-  transition: all .2s;
+  font-size: 12px;
+  transition: all .15s;
 
   &:hover {
     background: $primary-light;
     border-color: $primary-mid;
     color: $primary;
   }
+
+  &:active {
+    transform: scale(.92);
+  }
 }
 
 .sai-cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
+  gap: 6px 0;
 }
 
 .sai-cal-dow {
   text-align: center;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: $gray-400;
-  padding: 4px 0 6px;
-  letter-spacing: .3px;
+  padding: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
 }
 
 .sai-cal-day {
   aspect-ratio: 1;
+  width: 100%;
+  max-width: 38px;
+  max-height: 38px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -219,7 +241,7 @@ $radius-xl:     18px;
   color: $gray-700;
   border-radius: 50%;
   cursor: default;
-  transition: all .15s;
+  transition: background-color .15s, color .15s, box-shadow .15s, transform .1s;
   position: relative;
 
   &.other-month {
@@ -239,10 +261,22 @@ $radius-xl:     18px;
     color: $primary;
   }
 
+  // Today indicator: an inset ring sized relative to the cell, rather than a
+  // border on the cell itself — keeps the ring compact even if the grid
+  // column (and therefore the cell) is large.
   &.is-today {
-    border: 1.5px solid $primary-mid;
     color: $primary;
     font-weight: 700;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 18%;
+      border: 1.5px solid $primary-mid;
+      border-radius: 50%;
+      z-index: -1;
+      pointer-events: none;
+    }
   }
 
   &.is-selected {
@@ -250,6 +284,7 @@ $radius-xl:     18px;
     color: $white !important;
     font-weight: 700;
     box-shadow: 0 2px 8px rgba($primary, .35);
+    transform: scale(1.04);
   }
 
   &.is-past {
@@ -272,6 +307,8 @@ $radius-xl:     18px;
   border: 1.5px dashed $gray-300;
   border-radius: $radius-md;
   text-align: center;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .sai-no-slots-icon {
@@ -330,10 +367,34 @@ $radius-xl:     18px;
 }
 
 // ─── Time Slots ───────────────────────────────────────────────────────────────
+// Fills whatever vertical space remains in the (fixed-height) panel after the
+// heading and info banner, and scrolls internally once slots overflow it —
+// rather than growing the panel to fit every slot.
 .sai-slots-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-right: -6px;
+
+  // Slim, unobtrusive scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $gray-200;
+    border-radius: 999px;
+
+    &:hover {
+      background: $gray-300;
+    }
+  }
 }
 
 .sai-slot {
@@ -416,6 +477,7 @@ $radius-xl:     18px;
   font-size: 12.5px;
   color: $gray-600;
   line-height: 1.5;
+  flex-shrink: 0;
 }
 
 .sai-info-icon {

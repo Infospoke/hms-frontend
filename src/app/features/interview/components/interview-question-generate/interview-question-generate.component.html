@@ -103,20 +103,13 @@
       </div>
 
       <!-- Estimated Duration -->
-      <div class="iq-duration-row">
+      <!-- <div class="iq-duration-row">
         <i class="fa-regular fa-clock iq-clock-icon"></i>
         <span class="iq-duration-text">{{ estimatedDuration }}</span>
-      </div>
+      </div> -->
 
       <!-- Minimum Pass Criteria -->
       <div class="iq-pass-criteria">
-        <div class="iq-pass-header">
-          <i class="fa-solid fa-shield-halved iq-pass-icon"></i>
-          <span class="iq-pass-title">Minimum Pass Criteria</span>
-        </div>
-        <p class="iq-pass-desc">Set the minimum pass criteria based on the final overall score for candidates to move to
-          the next stage.</p>
-
         <div class="iq-pass-field">
           <label class="iq-label">Minimum Pass Percentage (%)</label>
           <div class="iq-pass-input-row">
@@ -162,7 +155,7 @@
       </div>
 
       <!-- Generate Button -->
-      <button class="iq-generate-btn" (click)="generateQuestions()" [class.loading]="isGenerating">
+      <button class="iq-generate-btn" (click)="generateQuestions()" [class.loading]="isGenerating" [disabled]="isGenerating || !isQuestionsFinalized">
         <span *ngIf="!isGenerating">
           <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Questions
         </span>
@@ -318,7 +311,7 @@
         <button class="iq-btn-schedule" (click)="moveToSchedule()"
           [disabled]="isScheduling || !questions.length || isQuestionsFinalized">
           <i class="fa-regular fa-calendar-plus"></i>
-          {{ isScheduling ? 'Processing...' : 'Move to Schedule' }}
+          {{ isScheduling ? 'Scheduling...' : 'Move to Schedule' }}
         </button>
         <button class="iq-btn-plain" (click)="handleBack()">Cancel</button>
       </div>

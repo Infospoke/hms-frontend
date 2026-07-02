@@ -1,19 +1,8 @@
 <div class="aid-page">
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="aid-loading">
-    <div class="aid-spinner"></div>
-    <p>Loading interview details…</p>
-  </div>
+  
 
-  <!-- Error -->
-  <div *ngIf="!loading && error" class="aid-error">
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="10" stroke="#ef4444" stroke-width="1.5"/>
-      <path d="M12 7v5M12 16h.01" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
-    <p>{{ error }}</p>
-  </div>
+ 
 
   <ng-container *ngIf="!loading && !error && candidate">
 
@@ -23,13 +12,13 @@
     <div class="aid-cand-card">
 
       <div class="aid-cand-ident">
-        <div class="aid-avatar">{{ candidate.avatarInitials }}</div>
+        <!-- <div class="aid-avatar">{{ candidate.avatarInitials }}</div> -->
         <div class="aid-cand-details">
           <div class="aid-name-row">
-            <span class="aid-name">{{ candidate.name }}</span>
-            <span *ngIf="candidate.tag" class="aid-tag" [ngClass]="tagClass(candidate.tag)">
+            <span class="aid-name text-break">{{ candidate.name }}</span>
+            <!-- <span *ngIf="candidate.tag" class="aid-tag" [ngClass]="tagClass(candidate.tag)">
               {{ candidate.tag }}
-            </span>
+            </span> -->
           </div>
           <div class="aid-contact-row">
             <span *ngIf="candidate.email">
@@ -61,19 +50,19 @@
       <div class="aid-meta-grid">
         <div class="aid-meta-item">
           <div class="aid-meta-label">Job Title</div>
-          <div class="aid-meta-value">{{ candidate.jobTitle }}</div>
+          <div class="aid-meta-value aid-meta-value--primary">{{ candidate.jobTitle }}</div>
         </div>
         <div class="aid-meta-item">
           <div class="aid-meta-label">Job ID</div>
-          <div class="aid-meta-value">{{ candidate.jobId }}</div>
+          <div class="aid-meta-value aid-meta-value--primary">{{ candidate.jobId }}</div>
         </div>
         <div class="aid-meta-item">
           <div class="aid-meta-label">Interview Type</div>
-          <div class="aid-meta-value">{{ candidate.interviewType }}</div>
+          <div class="aid-meta-value aid-meta-value--primary">{{ candidate.interviewType }}</div>
         </div>
         <div class="aid-meta-item">
           <div class="aid-meta-label">Interview Date</div>
-          <div class="aid-meta-value">{{ candidate.interviewDate }}</div>
+          <div class="aid-meta-value aid-meta-value--primary">{{ candidate.interviewDate }}</div>
         </div>
         <div class="aid-meta-item">
           <div class="aid-meta-label">Experience</div>
@@ -139,7 +128,25 @@
 
     <!-- Tab Content -->
     <div class="aid-content">
-      <app-evaluation-summary *ngIf="activeTab === 'evaluation'" [data]="evaluationData" />
+      <ng-container *ngIf="activeTab === 'evaluation'">
+        <!-- No evaluation calculated yet: show a button to trigger calculation -->
+        <div class="aid-eval-empty" *ngIf="evaluationNotFound">
+          <svg width="40" height="40" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="8" width="3" height="6" rx="1" stroke="currentColor" stroke-width="1.1"/>
+            <rect x="6.5" y="5" width="3" height="9" rx="1" stroke="currentColor" stroke-width="1.1"/>
+            <rect x="11" y="2" width="3" height="12" rx="1" stroke="currentColor" stroke-width="1.1"/>
+          </svg>
+          <p class="aid-eval-empty-title">No Evaluation Summary Yet</p>
+          <p class="aid-eval-empty-sub">This candidate's evaluation summary hasn't been calculated yet.</p>
+          <button type="button" class="aid-eval-calc-btn" (click)="calculateEvaluationSummary()" [disabled]="calculatingEvaluation">
+            <span *ngIf="calculatingEvaluation" class="aid-eval-calc-spinner"></span>
+            {{ calculatingEvaluation ? 'Calculating…' : 'Calculate Evaluation Summary' }}
+          </button>
+        </div>
+
+        <!-- Evaluation summary available -->
+        <app-evaluation-summary *ngIf="!evaluationNotFound && evaluationData" [data]="evaluationData" />
+      </ng-container>
       <app-ai-interview      *ngIf="activeTab === 'ai-interview'" [data]="aiInterviewData" />
       <app-round-detail      *ngIf="activeTab === 'technical'"   [data]="technicalData"   roundTitle="Technical Round" />
       <app-round-detail      *ngIf="activeTab === 'managerial'"  [data]="managerialData"  roundTitle="Managerial Round" />

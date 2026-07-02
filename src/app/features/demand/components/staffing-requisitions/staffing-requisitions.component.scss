@@ -4,6 +4,51 @@
   color: #1e293b;
 }
 
+// ── Page shell ─────────────────────────────────────────────────────────────────
+// Single source of truth for vertical rhythm between sections, instead of
+// relying on default margins bubbling up from child components (which is
+// what was causing the uneven, oversized gaps between header/cards/filters/table).
+.sr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sr-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  // Strip default heading/paragraph margins so app-heading doesn't add its
+  // own extra space on top of the gap already set by .sr-page.
+  ::ng-deep app-heading {
+    h1, h2, h3, p {
+      margin: 0;
+    }
+  }
+}
+
+.btn-new {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+
+  &:hover { background: #1d4ed8; }
+}
+
+.card-dd {
+  margin: 0;
+}
+
 .rt-connector {
   flex: 1;
   height: 1.5px;
@@ -191,7 +236,7 @@ tbody {
 .rt-cell-user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
 }
 
@@ -264,8 +309,8 @@ tbody {
 
 // ── One fixed-width stage slot ────────────────────────────────────────────────
 .rt-step-node {
-  width: 72px;
-  flex: 0 0 72px;            // never grow, never shrink
+  width: 52px;
+  flex: 0 0 52px;            // never grow, never shrink
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -277,25 +322,6 @@ tbody {
   display: flex;
   align-items: center;
   width: 100%;
-}
-
-// Connector lines fill the space on either side of the icon
-.rt-connector {
-  flex: 1;
-  height: 1.5px;
-  background: repeating-linear-gradient(
-    90deg,
-    #cbd5e1 0,
-    #cbd5e1 4px,
-    transparent 4px,
-    transparent 8px
-  );
-
-  &--left  { margin-right: 2px; }
-  &--right { margin-left: 2px; }
-
-  // First node: hide left connector; last node: hide right (via [class.rt-connector--hidden])
-  &--hidden { visibility: hidden; }
 }
 
 // First node's left connector is always invisible
@@ -367,7 +393,7 @@ tbody {
 .rt-cell-status {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap:6px;
 }
 
 // ── Actions cell ──────────────────────────────────────────────────────────────
@@ -378,8 +404,8 @@ tbody {
 }
 
 .rt-action-btn {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border: none;
   background: transparent;
   border-radius: 6px;

@@ -46,74 +46,87 @@
     <!-- Interviewer column -->
     <ng-container *ngIf="ctx.col.key === 'interviewer'">
 
-      <!-- ══ READONLY chip (reassign mode, non-rejected rounds) ══ -->
-      <ng-container *ngIf="ctx.row.isReadonly; else editableField">
+      <!-- ══ AI Interview round — automated, no interviewer needed ══ -->
+      <ng-container *ngIf="isAiInterview(ctx.row); else humanRound">
         <div class="iv-field">
           <div class="tag-input tag-input--readonly">
-            <span class="tag" *ngIf="ctx.row.interviewer; else emptyReadonly">
-              <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
-              {{ getDisplayName(ctx.row.interviewer) }}
-            </span>
-            <ng-template #emptyReadonly>
-              <span class="iv-placeholder">—</span>
-            </ng-template>
+            <span class="iv-placeholder">Not required — AI Interview</span>
           </div>
         </div>
       </ng-container>
 
-      <!-- ══ EDITABLE field (assign mode, or rejected rounds in reassign mode) ══ -->
-      <ng-template #editableField>
-        <div class="iv-field" (click)="$event.stopPropagation()">
+      <ng-template #humanRound>
 
-          <!-- Rejected badge shown in reassign mode -->
-          <span class="status-badge status-badge--rejected" *ngIf="ctx.row.isRejected">
-            Rejected — reassign required
-          </span>
+        <!-- ══ READONLY chip (reassign mode, non-rejected rounds) ══ -->
+        <ng-container *ngIf="ctx.row.isReadonly; else editableField">
+          <div class="iv-field">
+            <div class="tag-input tag-input--readonly">
+              <span class="tag" *ngIf="ctx.row.interviewer; else emptyReadonly">
+                <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
+                {{ getDisplayName(ctx.row.interviewer) }}
+              </span>
+              <ng-template #emptyReadonly>
+                <span class="iv-placeholder">—</span>
+              </ng-template>
+            </div>
+          </div>
+        </ng-container>
 
-          <!-- Anchor element measured on open -->
-          <div class="tag-input" #anchorEl (click)="openDropdown(ctx.row, anchorEl)">
+        <!-- ══ EDITABLE field (assign mode, or rejected rounds in reassign mode) ══ -->
+        <ng-template #editableField>
+          <div class="iv-field" (click)="$event.stopPropagation()">
 
-            <!-- Selected chip -->
-            <span class="tag" *ngIf="ctx.row.interviewer">
-              <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
-              {{ getDisplayName(ctx.row.interviewer) }}
-              <span class="tx" (click)="$event.stopPropagation(); removeInterviewer(ctx.row)">×</span>
+            <!-- Rejected badge shown in reassign mode -->
+            <span class="status-badge status-badge--rejected" *ngIf="ctx.row.isRejected">
+              Rejected — reassign required
             </span>
 
-            <!-- Search input — visible only when nothing selected -->
-            <input
-              *ngIf="!ctx.row.interviewer"
-              type="text"
-              [(ngModel)]="ctx.row.searchText"
-              placeholder="Search interviewer..."
-              (input)="onSearchInterviewer(ctx.row, anchorEl)"
-              (blur)="hideRoundDropdown(ctx.row)"
-            />
-          </div>
+            <!-- Anchor element measured on open -->
+            <div class="tag-input" #anchorEl (click)="openDropdown(ctx.row, anchorEl)">
 
-          <!-- ── Dropdown rendered with position:fixed so it escapes overflow ── -->
-          <div
-            class="iv-dropdown-fixed"
-            *ngIf="ctx.row.showDropdown && ctx.row.filteredUsers.length"
-            [style.top.px]="ctx.row.dropdownTop"
-            [style.left.px]="ctx.row.dropdownLeft"
-            [style.width.px]="ctx.row.dropdownWidth"
-            (click)="$event.stopPropagation()">
+              <!-- Selected chip -->
+              <span class="tag" *ngIf="ctx.row.interviewer">
+                <span class="tag-initials">{{ getInitials(ctx.row.interviewer) }}</span>
+                {{ getDisplayName(ctx.row.interviewer) }}
+                <span class="tx" (click)="$event.stopPropagation(); removeInterviewer(ctx.row)">×</span>
+              </span>
 
+              <!-- Search input — visible only when nothing selected -->
+              <input
+                *ngIf="!ctx.row.interviewer"
+                type="text"
+                [(ngModel)]="ctx.row.searchText"
+                placeholder="Search interviewer..."
+                (input)="onSearchInterviewer(ctx.row, anchorEl)"
+                (blur)="hideRoundDropdown(ctx.row)"
+              />
+            </div>
+
+            <!-- ── Dropdown rendered with position:fixed so it escapes overflow ── -->
             <div
-              class="option"
-              *ngFor="let u of ctx.row.filteredUsers"
-              (mousedown)="selectInterviewer(ctx.row, u)">
-              <div class="avatar-initials">{{ getInitials(u) }}</div>
-              <div class="info">
-                <div class="name">{{ getDisplayName(u) }}</div>
-                <div class="role">{{ u.roleName }}</div>
+              class="iv-dropdown-fixed"
+              *ngIf="ctx.row.showDropdown && ctx.row.filteredUsers.length"
+              [style.top.px]="ctx.row.dropdownTop"
+              [style.left.px]="ctx.row.dropdownLeft"
+              [style.width.px]="ctx.row.dropdownWidth"
+              (click)="$event.stopPropagation()">
+
+              <div
+                class="option"
+                *ngFor="let u of ctx.row.filteredUsers"
+                (mousedown)="selectInterviewer(ctx.row, u)">
+                <div class="avatar-initials">{{ getInitials(u) }}</div>
+                <div class="info">
+                  <div class="name">{{ getDisplayName(u) }}</div>
+                  <div class="role">{{ u.roleName }}</div>
+                </div>
               </div>
+
             </div>
 
           </div>
+        </ng-template>
 
-        </div>
       </ng-template>
 
     </ng-container>

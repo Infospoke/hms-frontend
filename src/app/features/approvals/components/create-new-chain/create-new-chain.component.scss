@@ -245,36 +245,28 @@
 }
 
 // ── Editable form layout (create) ─────────────────────────────────────────────
+// Two independent columns (flex, not grid) so each column's field spacing is
+// based on its own content height — a taller field in one column (e.g. the
+// Description textarea) no longer pushes extra blank space into the other
+// column (e.g. under Chain Name, before Status).
 .cnc-form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.cnc-form-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .cnc-field {
     display: flex;
     flex-direction: column;
     gap: 6px;
-
-    &--chain-name {
-        grid-column: 1;
-        grid-row: 1;
-    }
-
-    &--description {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    &--status {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
-    &--functionality {
-        grid-column: 2;
-        grid-row: 2;
-    }
 }
 
 .cnc-label {
@@ -1143,17 +1135,13 @@ textarea:disabled {
 
 @media (max-width: 680px) {
 
-    .cnc-form-grid,
+    .cnc-form-grid {
+        flex-direction: column;
+        gap: 20px;
+    }
+
     .cnc-detail-grid {
         grid-template-columns: 1fr;
-
-        .cnc-field--chain-name,
-        .cnc-field--description,
-        .cnc-field--status,
-        .cnc-field--functionality {
-            grid-column: 1;
-            grid-row: auto;
-        }
     }
 
     .cnc-level-head,

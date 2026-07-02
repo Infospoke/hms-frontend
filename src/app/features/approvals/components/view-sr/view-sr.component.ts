@@ -370,7 +370,7 @@ export class ViewSrComponent implements OnInit {
       eduReq: roles.educationRequirement, travel: getTravelName(roles.travelRequirement ?? ''),
       expMin: roles.minExperience, expMax: roles.maxExperience,
       interviewMin: roles.minInterviewRounds, interviewMax: roles.maxInterviewRounds,
-      assessmentOn: roles.assessmentRequired,
+      // assessmentOn: roles.assessmentRequired,
     };
 
     this.step4 = {

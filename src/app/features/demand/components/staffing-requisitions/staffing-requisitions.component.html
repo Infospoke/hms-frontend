@@ -51,6 +51,13 @@
       </div>
     </ng-container>
 
+
+    <ng-container *ngIf="ctx.col.key === 'status'">
+      <span class="rt-badge" [ngClass]="badgeClass(ctx.row['status'])">
+        {{ ctx.row['status'] }}
+      </span>
+    </ng-container>
+
     <!-- Current Status (stepper) -->
     <!-- Current Status (stepper) -->
     <ng-container *ngIf="ctx.col.key === 'currentStatus'">

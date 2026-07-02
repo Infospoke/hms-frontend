@@ -38,7 +38,7 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
     transition: border-color 0.15s, box-shadow 0.15s;
 
     .btn-arrow {
-      font-size: 18px;
+      font-size: 12px;
       color: $primary;
     }
 
@@ -77,10 +77,18 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
   padding: 24px;
 
   .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 15px;
     font-weight: 700;
     color: $text-primary;
     margin: 0 0 20px;
+
+    .section-icon {
+      color: $primary;
+      font-size: 14px;
+    }
   }
 }
 
@@ -97,11 +105,19 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
   gap: 4px;
 
   .info-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 11px;
     font-weight: 500;
     color: $text-muted;
     text-transform: uppercase;
     letter-spacing: 0.4px;
+
+    i {
+      font-size: 10px;
+      color: $text-muted;
+    }
   }
 
   .info-value {
@@ -165,11 +181,18 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
     margin-bottom: 12px;
 
     .sidebar-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 11px;
       color: $text-muted;
       text-transform: uppercase;
       letter-spacing: 0.4px;
       margin-bottom: 2px;
+
+      i {
+        font-size: 10px;
+      }
     }
 
     .sidebar-value {
@@ -272,6 +295,9 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .doc-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border-radius: 6px;
   padding: 7px 14px;
   font-size: 12px;
@@ -300,9 +326,18 @@ $shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 }
 
-.no-doc-text {
+.no-data-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
   color: $text-muted;
+  padding: 8px 0;
+
+  i {
+    color: $text-muted;
+    font-size: 13px;
+  }
 }
 
 .doc-icon-wrap {

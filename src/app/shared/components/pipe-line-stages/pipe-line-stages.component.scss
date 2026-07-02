@@ -59,3 +59,28 @@
   &.count-teal   { color: #0F6E56; }
   &.count-amber  { color: #854F0B; }
 }
+
+
+
+.stage-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i { font-size: 20px; }
+
+  &.badge-purple { background: #F1ECFE; color: #7C3AED; }
+  &.badge-blue   { background: #EAF2FF; color: #3399FF; }
+  &.badge-teal   { background: #E6FBF7; color: #14B8A6; }
+  &.badge-amber  { background: #FFF6E5; color: #F59E0B; }
+  &.badge-green  { background: #E8F8EE; color: #22C55E; }
+  &.badge-red    { background: #FDEAEA; color: #EF4444; }
+  &.badge-pink   { background: #FDEAF3; color: #EC4899; }
+  &.badge-indigo { background: #EBEAFE; color: #6366F1; }
+  &.badge-cyan   { background: #E5F9FC; color: #06B6D4; }
+  &.badge-orange { background: #FFF0E5; color: #F97316; }
+}

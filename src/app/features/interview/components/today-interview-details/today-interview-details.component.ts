@@ -120,28 +120,33 @@ export class TodayInterviewDetailsComponent implements OnInit {
   
 
   // Maps the API payload (response.data) onto the view model.
-  // Field names assume the same shape as InterviewInfo / Experience / Project below -
-  // adjust the property names here if your backend uses different keys.
+  // The backend returns a mix of casings (InterviewType / interviewType) and
+  // uses scheduleDate + scheduleTime as two separate fields, plus
+  // experienceDetails / projectDetails as the array keys — normalize all of
+  // that here so the template only ever deals with one consistent shape.
   private mapInterviewData(data: any): void {
     this.interviewInfo = {
       interviewId: data.interviewId ?? '',
       jobTitle: data.jobTitle ?? '',
-      interviewType: data.interviewType ?? '',
-      scheduledTime: data.scheduledTime ?? '',
+      interviewType: data.InterviewType ?? data.interviewType ?? '',
+      scheduledTime: this.formatScheduledTime(data.scheduleDate, data.scheduleTime),
       candidateName: data.candidateName ?? '',
       department: data.department ?? '',
-      interviewMode: data.interviewMode ?? '',
+      interviewMode: data.InterviewMode ?? data.interviewMode ?? '',
       duration: data.duration ?? '',
       candidateId: data.candidateId ?? '',
-      interviewRound: data.interviewRound ?? '',
+      interviewRound:
+        data.InterviewRound !== undefined && data.InterviewRound !== null
+          ? String(data.InterviewRound)
+          : (data.interviewRound ?? ''),
       meetingPlatform: data.meetingPlatform ?? 'Google Meet',
     };
 
     this.totalExperience = data.totalExperience ?? '';
     this.currentCompany = data.currentCompany ?? '';
-    this.currentRole = data.currentRole ?? '';
-    this.experiences = data.experiences ?? [];
-    this.projects = data.projects ?? [];
+    this.currentRole = data.designation ?? data.currentRole ?? '';
+    this.experiences = data.experienceDetails ?? data.experiences ?? [];
+    this.projects = data.projectDetails ?? data.projects ?? [];
 
     // Only pick out the resume - portfolio & certifications are intentionally dropped.
     const resumeSource =
@@ -156,6 +161,25 @@ export class TodayInterviewDetailsComponent implements OnInit {
           url: resumeSource.url ?? resumeSource.downloadUrl ?? '',
         }
       : null;
+  }
+
+  /** Combines the separate scheduleDate + scheduleTime API fields into one readable string. */
+  private formatScheduledTime(date?: string, time?: string): string {
+    if (!date && !time) return '';
+    if (date && time) {
+      const parsed = new Date(`${date}T${time}`);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+        });
+      }
+      return `${date} ${time}`;
+    }
+    return date || time || '';
   }
 
   onBack() {}
@@ -181,5 +205,11 @@ export class TodayInterviewDetailsComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  /** Displays a friendly placeholder for any field the API didn't return. */
+  display(value: string | number | null | undefined): string {
+    if (value === null || value === undefined || value === '') return 'Not Mentioned';
+    return String(value);
   }
 }

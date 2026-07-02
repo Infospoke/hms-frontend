@@ -133,9 +133,26 @@ export class OfferManagementComponent implements OnInit {
   private approvalService=inject(ApprovalService)
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit(): void {
-    Promise.all([this.loadCountData(),this.loadListData(), this.loadJobs(),this.loadDepartments()])
+    Promise.all([this.loadCountData(),this.loadListData(), this.loadJobs(),this.loadDepartments(),this.loadStageTypes()])
   }
-
+   private async loadStageTypes(): Promise<void> {
+  try {
+    const res: any = await this.interviewService.getInterviewRoundsList();
+    if (res?.responsecode === '00' && Array.isArray(res.data)) {
+      const data = this.mapByIds(res?.data);
+          this.dropDownData = this.dropDownData.map((item: any) =>
+            item.key === 'currentStage'
+              ? { ...item, options: data ?? [] }
+              : item
+          );
+    } else {
+     
+    }
+  } catch (err) {
+    console.error('[loadStageTypes]', err);
+   
+  }
+}
   private loadDepartments() {
     this.approvalService.departments()
       .then((res: any) => {
@@ -174,6 +191,16 @@ export class OfferManagementComponent implements OnInit {
       }))
     ];
   }
+  private mapByIds(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.name,
+      }))
+    ];
+  }
+  
   // ── Count API  (GET /hms/interview-plan/progress-count) ───────────────────
   private async loadCountData(){
     try {

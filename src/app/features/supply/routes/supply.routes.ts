@@ -62,7 +62,7 @@ export const SUPPLY_ROUTES: Routes = [
       loadComponent:()=>import("../../interview/components/offer-management/offer-management.component").then(m=>m.OfferManagementComponent)
     },
     {
-      path:"applicant-management/view-ai-interview-details",
+      path:"applicant-management/view-ai-interview-details/:applicationId",
       loadComponent:()=>import("../../interview/components/interview-performance/interview-performance.component").then(m=>m.InterviewPerformanceComponent)
     }
 ];

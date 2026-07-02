@@ -112,6 +112,44 @@
   position: relative;
 }
 
+// Trigger button once an option has been chosen — shows the selected value
+// itself (like a select control), instead of a separate floating chip.
+.ajd-btn--outline.ajd-btn--selected {
+  background: var(--color-primary-light, #eff6ff);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-light, #eff6ff);
+    border-color: var(--color-primary);
+  }
+}
+
+.ajd-btn__selected-text {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ajd-btn__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  border-radius: 50%;
+  font-size: 10px;
+  color: var(--color-primary);
+  opacity: 0.75;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+
 .ajd-dropdown {
   position: absolute;
   top: calc(100% + 6px);
@@ -147,6 +185,15 @@
   }
 
   &:hover { background: var(--color-bg-hover); }
+
+  &--active {
+    background: var(--color-primary-light, #eff6ff);
+    color: var(--color-primary);
+    font-weight: 600;
+
+    i { color: var(--color-primary); }
+    &:hover { background: var(--color-primary-light, #eff6ff); }
+  }
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────
@@ -533,6 +580,16 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 420px;
+  overflow-y: auto;
+
+  // Slim scrollbar so it doesn't fight the card's rounded corners
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong, #cbd5e1);
+    border-radius: 10px;
+  }
 }
 
 .ajd-version-item {

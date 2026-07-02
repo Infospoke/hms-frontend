@@ -86,7 +86,7 @@ export class AllJobsComponent implements OnInit {
   cards: any[] = [];
   dropDownData = statusOptionsForDepartment;
   currentPage = 1;
-  activeFilters: any = { chainName: '', filters: {}, dateFilter: 'thisMonth' };
+  activeFilters: any = { chainName: '', filters: {}, dateFilter: '' };
   columnGroups: any[] = [
     { label: '', colspan: 4, blankGroup: true },
     { label: 'Assignee Responses', colspan: 3 }, 

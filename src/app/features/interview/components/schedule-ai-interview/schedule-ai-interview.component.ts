@@ -39,14 +39,65 @@ interface CandidateOverview {
   duration: string;
 }
 
-const ALL_SLOT_DEFINITIONS = [
-  { id: 1, label: '09:00 AM – 10:00 AM', startHour: 9,  startMinute: 0,  endHour: 10, endMinute: 0  },
-  { id: 2, label: '10:30 AM – 11:30 AM', startHour: 10, startMinute: 30, endHour: 11, endMinute: 30 },
-  { id: 3, label: '12:00 PM – 01:00 PM', startHour: 12, startMinute: 0,  endHour: 13, endMinute: 0  },
-  { id: 4, label: '02:00 PM – 03:00 PM', startHour: 14, startMinute: 0,  endHour: 15, endMinute: 0  },
-  { id: 5, label: '03:30 PM – 04:30 PM', startHour: 15, startMinute: 30, endHour: 16, endMinute: 30 },
-  { id: 6, label: '05:00 PM – 06:00 PM', startHour: 17, startMinute: 0,  endHour: 18, endMinute: 0  },
-];
+// ── Slot generation config ───────────────────────────────────────────────────
+// Slots are generated on the fly (rather than hardcoded) so changing the
+// duration or working-day window only requires touching these constants.
+const SLOT_DURATION_MINUTES = 30;
+const WORK_DAY_START = { hour: 9, minute: 0 };   // 09:00 AM
+const WORK_DAY_END = { hour: 18, minute: 0 };    // 06:00 PM
+
+/** Formats an hour/minute pair as a 12-hour clock string, e.g. "09:00 AM". */
+function formatTime(hour: number, minute: number): string {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const h12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${String(h12).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${period}`;
+}
+
+/** Builds fixed-length slot definitions across the working day. */
+function generateSlotDefinitions(): Array<{
+  id: number;
+  label: string;
+  startHour: number;
+  startMinute: number;
+  endHour: number;
+  endMinute: number;
+}> {
+  const slots: Array<{
+    id: number;
+    label: string;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+  }> = [];
+
+  let id = 1;
+  let cursor = WORK_DAY_START.hour * 60 + WORK_DAY_START.minute;
+  const end = WORK_DAY_END.hour * 60 + WORK_DAY_END.minute;
+
+  while (cursor + SLOT_DURATION_MINUTES <= end) {
+    const startHour = Math.floor(cursor / 60);
+    const startMinute = cursor % 60;
+    const next = cursor + SLOT_DURATION_MINUTES;
+    const endHour = Math.floor(next / 60);
+    const endMinute = next % 60;
+
+    slots.push({
+      id: id++,
+      label: `${formatTime(startHour, startMinute)} – ${formatTime(endHour, endMinute)}`,
+      startHour,
+      startMinute,
+      endHour,
+      endMinute,
+    });
+
+    cursor = next;
+  }
+
+  return slots;
+}
+
+const ALL_SLOT_DEFINITIONS = generateSlotDefinitions();
 
 // Fallback values used only when the API doesn't return interviewType/duration
 const DEFAULT_INTERVIEW_TYPE = 'AI Video Interview';
@@ -293,12 +344,16 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     this.buildTimeSlots();
   }
 
+  // ── Time slots ────────────────────────────────────────────────────────────
+
   buildTimeSlots() {
     const now = this.today;
     const isToday = this.selectedDate
       ? this.selectedDate.toDateString() === now.toDateString()
       : false;
 
+    // Minutes-since-midnight for "now" (bug fix: was previously `getHours() * 30`,
+    // which under-counted elapsed time and let already-passed slots stay visible).
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
     // Previous selected slot label (to re-select if still available)

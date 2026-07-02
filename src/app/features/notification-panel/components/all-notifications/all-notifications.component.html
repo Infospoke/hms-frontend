@@ -3,7 +3,7 @@
   <div class="an-page-header">
     <div class="an-title-row">
       <app-heading [heading]="'All Notifications'" [subHeading]="'Stay updated on all activities and actions'"
-        [showBackButton]="true" [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'"  (backClick)="goBack()"> 
+        [showBackButton]="false" [buttonText]="'Back to Notifications'" [backButtonUrl]="'/'"  (backClick)="goBack()"> 
       </app-heading>
       <div class="an-header-actions">
         <button class="an-mark-all-btn" (click)="markAllAsRead()" [disabled]="!hasUnreadRows">

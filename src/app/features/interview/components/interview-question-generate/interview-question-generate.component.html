@@ -1,39 +1,26 @@
-<div class="iq-root">
+<div class="iq-root" #iqRoot>
   <app-heading heading="" subHeading="" [showBackButton]="true" backButtonUrl="/supply/ai-interview-zone"
     buttonText="Back to Generate AI Questions" />
   <div class="iq-header">
-    <div class="iq-candidate-info">
-      <div class="iq-avatar">{{ candidate.initials }}</div>
-      <div class="iq-candidate-details">
-        <div class="iq-name-row">
-          <span class="iq-name">{{ candidate.name }}</span>
-          <span class="iq-badge">{{ candidate.status }}</span>
-        </div>
-        <div class="iq-meta">
-          <span>{{ candidate.role }}</span>
-          <span class="iq-dot">•</span>
-          <span>{{ candidate.noOfRounds }} Round Plan</span>
-        </div>
-        <div class="iq-contact">
-          <i class="fa-regular fa-envelope iq-contact-icon"></i>
-          <span>{{ candidate.email }}</span>
-          <span class="iq-dot">•</span>
-          <i class="fa-solid fa-phone iq-contact-icon"></i>
-          <span>{{ candidate.phone }}</span>
-        </div>
+    <div class="iq-candidate-details">
+      <div class="iq-meta-row">
+        <i class="fa-solid fa-circle-user iq-candidate-icon"></i>
+        <span class="iq-name">{{ candidate.name }}</span>
+        <!-- <span class="iq-badge">{{ candidate.status }}</span> -->
+        <span class="iq-dot">•</span>
+        <span>{{ candidate.role }}</span>
+        <span class="iq-dot">•</span>
+        <span>{{ candidate.noOfRounds }} Round Plan</span>
+        <span class="iq-dot">•</span>
+        <i class="fa-regular fa-envelope iq-contact-icon"></i>
+        <span>{{ candidate.email }}</span>
+        <span class="iq-dot">•</span>
+        <i class="fa-solid fa-phone iq-contact-icon"></i>
+        <span>{{ candidate.phone }}</span>
+        <span class="iq-dot">•</span>
+        <i class="fa-regular fa-calendar-days iq-contact-icon"></i>
+        <span>Applied on {{ candidate.appliedOn }}</span>
       </div>
-    </div>
-    <div class="iq-header-stats">
-      <div class="iq-stat">
-        <div class="iq-stat-icon-wrap">
-          <i class="fa-regular fa-calendar-days"></i>
-        </div>
-        <div>
-          <div class="iq-stat-label">Applied on</div>
-          <div class="iq-stat-value">{{ candidate.appliedOn }}</div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -42,6 +29,7 @@
 
     <!-- Left Panel: Settings -->
     <div class="iq-settings-panel">
+      <div class="iq-settings-scroll">
       <h3 class="iq-panel-title">Question Generation Settings</h3>
 
       <!-- Interview Plan -->
@@ -80,6 +68,7 @@
         <label class="iq-label">Difficulty Level <span class="astrick">*</span></label>
         <div class="iq-select-wrapper">
           <select class="iq-select" [(ngModel)]="difficultyLevel">
+            <option>All</option>
             <option>Easy</option>
             <option>Medium</option>
             <option>Hard</option>
@@ -154,21 +143,6 @@
         </div> -->
       </div>
 
-      <!-- Generate Button -->
-      <button class="iq-generate-btn" (click)="generateQuestions()" [class.loading]="isGenerating" [disabled]="isGenerating || !isQuestionsFinalized">
-        <span *ngIf="!isGenerating">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Questions
-        </span>
-        <span *ngIf="isGenerating" class="iq-spinner-wrap">
-          <i class="fa-solid fa-circle-notch fa-spin"></i> Generating...
-        </span>
-      </button>
-      <p class="ajd-empty__hint">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M6.5 0.5l1 3.1 3.1 1-3.1 1-1 3.1-1-3.1-3.1-1 3.1-1z" fill="#F59E0B" />
-        </svg>
-        Usually takes less than 10 seconds
-      </p>
       <!-- <div class="iq-ai-note">
         <i class="fa-solid fa-robot iq-ai-icon"></i>
         <div>
@@ -180,10 +154,30 @@
           </ul>
         </div>
       </div> -->
+      </div>
+
+      <!-- Sticky Generate Button Footer -->
+      <div class="iq-settings-sticky-footer">
+        <button class="iq-generate-btn" (click)="generateQuestions()" [class.loading]="isGenerating" [disabled]="isGenerating || !isQuestionsFinalized">
+          <span *ngIf="!isGenerating">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate AI Questions
+          </span>
+          <span *ngIf="isGenerating" class="iq-spinner-wrap">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Generating...
+          </span>
+        </button>
+        <p class="ajd-empty__hint">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M6.5 0.5l1 3.1 3.1 1-3.1 1-1 3.1-1-3.1-3.1-1 3.1-1z" fill="#F59E0B" />
+          </svg>
+          Usually takes less than 10 seconds
+        </p>
+      </div>
     </div>
 
     <!-- Right Panel: Questions -->
     <div class="iq-questions-panel">
+      <div class="iq-questions-scroll">
       <div class="iq-questions-header">
         <h3 class="iq-questions-title">
           AI Generated Questions
@@ -292,8 +286,9 @@
       <!-- <button class="iq-add-custom-btn" (click)="showAddForm = !showAddForm" *ngIf="!showAddForm">
         <i class="fa-solid fa-plus"></i> Add Custom Question
       </button> -->
+      </div>
 
-      <!-- Footer Actions -->
+      <!-- Footer Actions (sticky) -->
       <div class="iq-footer-actions">
         <button class="iq-btn-finalize" (click)="finalizeQuestions()"
           [disabled]="isFinalizing || !questions.length || !isQuestionsFinalized">

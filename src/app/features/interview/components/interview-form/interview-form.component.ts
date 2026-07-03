@@ -6,6 +6,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  HostListener,
   inject,
 } from '@angular/core';
 import {
@@ -95,6 +96,45 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   /** Pre-computed interview-hours slot list (9:00 AM - 7:00 PM, 30 min steps). */
   readonly timeSlots: TimeSlot[] = buildTimeSlots();
+
+  /** Which time-slot dropdown (if any) is currently open. */
+  activeTimeField: 'start' | 'end' | null = null;
+
+  toggleTimeDropdown(field: 'start' | 'end'): void {
+    this.activeTimeField = this.activeTimeField === field ? null : field;
+  }
+
+  /** Closes any open time-slot dropdown when the user clicks elsewhere on the page. */
+  @HostListener('document:click')
+  closeTimeDropdowns(): void {
+    this.activeTimeField = null;
+  }
+
+  selectStartTime(slot: string): void {
+    if (this.isSlotDisabled(slot)) return;
+    const ctrl = this.form.get('startTime');
+    ctrl?.setValue(slot);
+    ctrl?.markAsTouched();
+    this.activeTimeField = null;
+  }
+
+  selectEndTime(slot: string): void {
+    if (this.isEndSlotDisabled(slot)) return;
+    const ctrl = this.form.get('endTime');
+    ctrl?.setValue(slot);
+    ctrl?.markAsTouched();
+    this.activeTimeField = null;
+  }
+
+  get startTimeLabel(): string {
+    const v = this.form?.get('startTime')?.value;
+    return this.timeSlots.find((s) => s.value === v)?.label ?? '';
+  }
+
+  get endTimeLabel(): string {
+    const v = this.form?.get('endTime')?.value;
+    return this.timeSlots.find((s) => s.value === v)?.label ?? '';
+  }
   /**
    * Maps summary.candidate (the shape used by interview-form) to the
    * CandidateData interface expected by InterviewCandidateInfoComponent.
@@ -231,10 +271,10 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     const prefill = this.currentSchedule;
 
     this.form = this.fb.group({
-      interviewDate: [prefill?.interviewDate ?? '', Validators.required],
-      startTime:     [prefill?.startTime ?? '',     Validators.required],
-      endTime:       [prefill?.endTime ?? '',        Validators.required],
-      interviewType: [prefill?.interviewType ?? 'Online', Validators.required],
+      interviewDate: [this.toDateOnly(prefill?.interviewDate), Validators.required],
+      startTime:     [this.toHHmm(prefill?.startTime),     Validators.required],
+      endTime:       [this.toHHmm(prefill?.endTime),        Validators.required],
+      interviewType: [prefill ? this.normalizeInterviewType(prefill.interviewType) : 'Online', Validators.required],
       meetingLink:   [prefill?.meetingLink ?? '', [meetingLinkValidator]],
       venueDetails:  [prefill?.venueDetails ?? ''],
     });
@@ -271,13 +311,42 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   private patchNewSchedule(): void {
     if (!this.currentSchedule) return;
     this.form.patchValue({
-      interviewDate: this.currentSchedule.interviewDate,
-      startTime:     this.currentSchedule.startTime,
-      endTime:       this.currentSchedule.endTime,
-      interviewType: this.currentSchedule.interviewType,
+      interviewDate: this.toDateOnly(this.currentSchedule.interviewDate),
+      startTime:     this.toHHmm(this.currentSchedule.startTime),
+      endTime:       this.toHHmm(this.currentSchedule.endTime),
+      interviewType: this.normalizeInterviewType(this.currentSchedule.interviewType),
       meetingLink:   this.currentSchedule.meetingLink ?? '',
       venueDetails:  this.currentSchedule.venueDetails ?? '',
     });
+  }
+
+  /**
+   * Normalizes an ISO datetime (or date-only) string to "yyyy-MM-dd" so it
+   * matches what the native date input requires to display a pre-filled value.
+   */
+  private toDateOnly(value: string | undefined | null): string {
+    if (!value) return '';
+    // Handles "2026-07-10T00:00:00.000Z" as well as plain "2026-07-10".
+    return value.slice(0, 10);
+  }
+
+  /**
+   * Normalizes a time value (which may include seconds, e.g. "14:30:00") to
+   * "HH:mm" so it matches one of the <select> option values in timeSlots.
+   */
+  private toHHmm(value: string | undefined | null): string {
+    if (!value) return '';
+    return value.slice(0, 5);
+  }
+
+  /**
+   * Normalizes interviewType to exactly 'Online' or 'Offline' (case-insensitive
+   * match against whatever casing the API returns), since showMeetingLink /
+   * showVenueDetails and the radio-card `selected` state do strict '===' checks.
+   */
+  private normalizeInterviewType(value: string | undefined | null): 'Online' | 'Offline' {
+    const v = (value ?? '').trim().toLowerCase();
+    return v === 'offline' ? 'Offline' : 'Online';
   }
 
   onCancel(): void {

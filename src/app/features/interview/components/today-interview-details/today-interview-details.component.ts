@@ -6,6 +6,7 @@ import { HeadingComponent } from "../../../../shared/components/heading/heading.
 
 
 import { InterviewServiceService } from '../../service/interview-service.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 interface InterviewInfo {
   interviewId: string;
@@ -79,7 +80,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
   private interviewService=inject(InterviewServiceService)
 
   resumeDocument: CandidateDocument | null = null;
-
+  private notificationService=inject(NotificationService)
   constructor(
     private route: ActivatedRoute,
   
@@ -182,12 +183,22 @@ export class TodayInterviewDetailsComponent implements OnInit {
     return date || time || '';
   }
 
-  onBack() {}
-  onViewJobDetails() {}
-  onStartInterview() {}
+  
+  onViewJobDetails() {
+
+  }
+  onStartInterview() {
+    
+  }
   onComplete() {}
   onCancel() {}
 
+  private async updateStatusOfInterview(payload:any){
+    const res: any = await this.interviewService.updateInterviewCompletionStatus(payload);
+    if(res?.responsecode=='00'){
+      this.notificationService.success(res?.message ||res?.responsemessage ||  'Interview completed successfully');
+    }
+  }
   onViewResume(): void {
     if (this.resumeDocument?.url) {
       window.open(this.resumeDocument.url, '_blank');

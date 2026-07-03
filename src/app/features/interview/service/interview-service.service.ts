@@ -238,4 +238,8 @@ export class InterviewServiceService {
     async calculateEvaluationSummaryForCandidate(payload:any):Promise<any>{
       return await firstValueFrom(this.api.aiPost(API.INTERVIEW.CALCULATE_EVALUATION_SUMMARY,payload))
     }
+
+    async updateInterviewCompletionStatus(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.UPDATE_INTERVIEW_COMPLETE,payload))
+    }
 }

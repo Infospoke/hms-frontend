@@ -27,16 +27,23 @@ export class RescheduleInterviewComponent implements OnInit {
     this.interviewId = this.route.snapshot.paramMap.get('id');
 
 
-
-    this.currentScheduleData();
+    Promise.all([this.loadCandidateDetails(), this.currentScheduleData()])
+    ;
 
   }
 
   private async currentScheduleData() {
-    const res: any = await this.interviewService.candidateSummaryDetails(this.interviewId);
+    const res: any = await this.interviewService.getScheduleInterviewDetailsForCandidate(this.interviewId);
     if (res?.responsecode == '00') {
       const data = res?.data;
-      this.currentSchedule = data;
+      this.currentSchedule={
+        startTime:data?.startTime,
+        endTime:data?.endTime,
+        interviewDate:data?.InterviewDate,
+        interviewType:data?.InterviewType,
+        venueDetails:data?.venueDetails,
+        meetingLink:data?.meetingLink
+      };
 
     }
     else {
@@ -44,7 +51,7 @@ export class RescheduleInterviewComponent implements OnInit {
     }
   }
   private async loadCandidateDetails() {
-    const res: any = await this.interviewService.getInterviewCandidateDetails(this.interviewId);
+    const res: any = await this.interviewService.candidateSummaryDetails(this.interviewId);
     if (res?.responsecode == '00') {
       const data = res.data;
       this.summary = {

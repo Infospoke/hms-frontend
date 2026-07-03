@@ -1,4 +1,4 @@
-<div class="detail-page candidate-info">
+<div class="detail-page candidate-info" [class.compact]="compact">
   <div class="panel panel-right">
 
     <div class="panel-header no-border">
@@ -69,7 +69,7 @@
   </div>
 
   <!-- ── Tab Content ─────────────────────────────────────────── -->
-  <div class="tab-content">
+  <div class="tab-content" *ngIf="tabs.length">
 
     <!-- ── Personal ────────────────────────────────────────────── -->
     <ng-container *ngIf="activeTab === 'personal'">

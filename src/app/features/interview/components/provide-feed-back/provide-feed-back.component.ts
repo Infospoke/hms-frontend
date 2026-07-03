@@ -23,7 +23,8 @@ import { NotificationService } from '../../../../core/services/notification.serv
     HeadingComponent,
     // InterviewCandidateInfoComponent,
     InterviewFeedbackFormComponent,
-  ],
+    InterviewCandidateInfoComponent
+],
   templateUrl: './provide-feed-back.component.html',
   styleUrl: './provide-feed-back.component.scss',
 })
@@ -40,7 +41,7 @@ export class ProvideFeedBackComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private interviewService = inject(InterviewServiceService);
   private notificationService = inject(NotificationService);
-
+  interiviewMode:string|null=null;
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
 
   private readonly DECISION_LABEL: Record<string, string> = {
@@ -58,7 +59,7 @@ export class ProvideFeedBackComponent implements OnInit {
     const res: any = await this.interviewService.candidateSummaryDetails(scheduleId);
     if (res?.responsecode === '00') {
       const data = res.data;
-
+      this.interiviewMode=data.interviewMode;
       this.interview = {
         type: data.interviewType,
         jobApplied: data.jobTitle,
@@ -107,6 +108,7 @@ export class ProvideFeedBackComponent implements OnInit {
       strengths: value.strengths ?? '',
       areasOfImprovemnets: value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
       additionalComments: value.additionalComments ?? '',
+      interiviewMode:this.interiviewMode
     };
 
     this.isSubmitting = true;

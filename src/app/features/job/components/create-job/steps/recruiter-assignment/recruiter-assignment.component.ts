@@ -290,7 +290,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
       this.form?.get('selectedRecruiterDetails')?.value || [];
 
     if (!selectedRecruiters.length) {
-      this.notificationService.error('Please assign at least one recruiter.');
+      this.notificationService.info('Please assign at least one recruiter.');
       return;
     }
 

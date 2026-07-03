@@ -86,6 +86,14 @@ export class InterviewCandidateInfoComponent implements OnInit {
 
   @Input() tabs: any[] = [];
 
+  /**
+   * When true, uses tighter spacing (smaller padding/margins) suited to
+   * contexts like a side-by-side summary card where this component has no
+   * tabs and shouldn't reserve extra vertical room. Defaults to false so
+   * existing full-page usages are unaffected.
+   */
+  @Input() compact = false;
+
   activeTab: 'personal' | 'education' | 'experience' | 'projects' | 'certifications' = 'personal';
 
   get initials(): string {

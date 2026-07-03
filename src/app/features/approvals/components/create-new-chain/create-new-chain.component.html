@@ -166,44 +166,53 @@
           <ng-container *ngIf="isCreate">
             <div class="cnc-form-grid">
 
-              <div class="cnc-field cnc-field--chain-name">
-                <label class="cnc-label">Chain Name <span class="cnc-req">*</span></label>
-                <input class="cnc-input" type="text" placeholder="Enter chain name" maxlength="100"
-                  formControlName="chainName" />
-                <div class="cnc-field-footer">
-                  <span class="cnc-error-msg" *ngIf="fieldError('chainName')">{{ fieldError('chainName') }}</span>
-                  <span class="cnc-counter">{{ chainNameLength }}/100</span>
+              <div class="cnc-form-col">
+
+                <div class="cnc-field cnc-field--chain-name">
+                  <label class="cnc-label">Chain Name <span class="cnc-req">*</span></label>
+                  <input class="cnc-input" type="text" placeholder="Enter chain name" maxlength="100"
+                    formControlName="chainName" />
+                  <div class="cnc-field-footer">
+                    <span class="cnc-error-msg" *ngIf="fieldError('chainName')">{{ fieldError('chainName') }}</span>
+                    <!-- <span class="cnc-counter">{{ chainNameLength }}/100</span> -->
+                  </div>
                 </div>
+
+                <div class="cnc-field cnc-field--status">
+                  <label class="cnc-label">Status</label>
+                  <div class="cnc-status-banner">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>
+                      Status is set to <strong>Inactive</strong> by default.
+                      The chain will become <strong>Active</strong> once the approval request is approved.
+                    </span>
+                  </div>
+                </div>
+
               </div>
 
-              <div class="cnc-field cnc-field--description">
-                <label class="cnc-label">Description <span class="cnc-req">*</span></label>
-                <textarea class="cnc-textarea" placeholder="Enter Chain Description" maxlength="250" [rows]="2"
-                  formControlName="description"></textarea>
-                <div class="cnc-field-footer">
-                  <span class="cnc-error-msg" *ngIf="fieldError('description')">{{ fieldError('description') }}</span>
-                  <span class="cnc-counter">{{ descriptionLength }}/250</span>
-                </div>
-              </div>
+              <div class="cnc-form-col">
 
-              <div class="cnc-field cnc-field--status">
-                <label class="cnc-label">Status</label>
-                <div class="cnc-status-banner">
-                  <i class="fa-solid fa-circle-info"></i>
-                  <span>
-                    Status is set to <strong>Inactive</strong> by default.
-                    The chain will become <strong>Active</strong> once the approval request is approved.
-                  </span>
-                </div>
-              </div>
 
-              <div class="cnc-field cnc-field--functionality">
-                <label class="cnc-label">Functionality <span class="cnc-req">*</span></label>
-                <nz-select formControlName="functionality" nzPlaceHolder="Select functionality"
-                  [nzOptionOverflowSize]="5" class="nz-field-select">
-                  <nz-option *ngFor="let opt of functionalityOptions" [nzValue]="opt.value"
-                    [nzLabel]="opt.label"></nz-option>
-                </nz-select>
+
+                <div class="cnc-field cnc-field--functionality">
+                  <label class="cnc-label">Functionality <span class="cnc-req">*</span></label>
+                  <nz-select formControlName="functionality" nzPlaceHolder="Select functionality"
+                    [nzOptionOverflowSize]="5" class="nz-field-select">
+                    <nz-option *ngFor="let opt of functionalityOptions" [nzValue]="opt.value"
+                      [nzLabel]="opt.label"></nz-option>
+                  </nz-select>
+                </div>
+                <div class="cnc-field cnc-field--description">
+                  <label class="cnc-label">Description <span class="cnc-req">*</span></label>
+                  <textarea class="cnc-textarea" placeholder="Enter Chain Description" maxlength="250" [rows]="2"
+                    formControlName="description"></textarea>
+                  <div class="cnc-field-footer">
+                    <span class="cnc-error-msg" *ngIf="fieldError('description')">{{ fieldError('description') }}</span>
+                    <span class="cnc-counter">{{ descriptionLength }}/250</span>
+                  </div>
+                </div>
+
               </div>
 
             </div>

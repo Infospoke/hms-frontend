@@ -74,6 +74,13 @@ export class ConfigureRoundsComponent implements OnInit, OnChanges {
   /** Ensures the default round is only ever inserted once */
   private defaultRoundInitialized = false;
 
+  /**
+   * Id of the auto-seeded default "AI Interview" round, if one was created.
+   * Used to lock that row's stage type + position (can't reorder or drop
+   * something into its slot) since it must always remain the first round.
+   */
+  defaultRoundId: number | null = null;
+
   ngOnInit(): void {
     this.maybeAddDefaultRound();
   }
@@ -112,6 +119,12 @@ export class ConfigureRoundsComponent implements OnInit, OnChanges {
         mandatory: true,
       },
     ];
+    this.defaultRoundId = 1;
+  }
+
+  /** True when this round is the auto-seeded, fixed-first "AI Interview" round. */
+  isDefaultRound(round: InterviewRound): boolean {
+    return this.defaultRoundId !== null && round.id === this.defaultRoundId;
   }
 
   /**
@@ -144,17 +157,25 @@ export class ConfigureRoundsComponent implements OnInit, OnChanges {
   dragOverIndex: number | null = null;
 
   onDragStart(index: number): void {
+    // The fixed default round can never be picked up and moved.
+    if (this.isDefaultRound(this.rounds[index])) return;
     this.dragIndex = index;
   }
 
   onDragOver(event: DragEvent, index: number): void {
     event.preventDefault();
+    // Don't show a drop indicator over the default round's locked slot.
+    if (this.isDefaultRound(this.rounds[index])) return;
     this.dragOverIndex = index;
   }
 
   onDrop(event: DragEvent, dropIndex: number): void {
     event.preventDefault();
-    if (this.dragIndex === null || this.dragIndex === dropIndex) {
+    if (
+      this.dragIndex === null ||
+      this.dragIndex === dropIndex ||
+      this.isDefaultRound(this.rounds[dropIndex])
+    ) {
       this.dragIndex = null;
       this.dragOverIndex = null;
       return;

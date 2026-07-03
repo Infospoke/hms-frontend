@@ -1,1 +1,32 @@
 @import '../../styles/aid';
+
+// Local-only styles for the loading / error / empty state, kept separate
+// from the shared `aid` partial since it doesn't define these.
+.aid-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  text-align: center;
+}
+.aid-state-text {
+  font-size: 13.5px;
+  color: var(--gray-500, #6b7280);
+  margin: 0;
+}
+.aid-state-error {
+  color: var(--red, #dc2626);
+}
+.aid-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--gray-200, #e5e7eb);
+  border-top-color: var(--color-primary, #4f46e5);
+  border-radius: 50%;
+  animation: aid-spin 0.7s linear infinite;
+}
+@keyframes aid-spin {
+  to { transform: rotate(360deg); }
+}

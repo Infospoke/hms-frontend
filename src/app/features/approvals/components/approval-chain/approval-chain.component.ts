@@ -111,7 +111,7 @@ export class ApprovalChainComponent implements OnInit {
   loading = false;
 
 
-  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
+  private activeFilters: Partial<any> = { dateFilter: '' };
 
   get rangeStart(): number { return (this.currentPage - 1) * this.pageSize + 1; }
   get rangeEnd(): number { return Math.min(this.currentPage * this.pageSize, this.totalItems); }

@@ -68,7 +68,7 @@ export class ApprovalSrsComponent {
   currentPage = 1;
   pageSize = 10;
 
-  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
+  private activeFilters: Partial<any> = { dateFilter: '' };
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private approvalService = inject(ApprovalService);
@@ -170,13 +170,13 @@ export class ApprovalSrsComponent {
   }
 
   onView(row: any): void {
-    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+    this.router.navigateByUrl(`/approval/sr-list/view-sr/${row.srId}`, {
       state: { srId: row.srId, url: '/approval/sr-list' ,type:'view'},
     });
   }
 
   onEdit(row: any): void {
-    this.router.navigateByUrl(`/approval/view-sr/${row.srId}`, {
+    this.router.navigateByUrl(`/approval/sr-list/view-sr/${row.srId}`, {
       state: { srId: row.srId, url: '/approval/sr-list',type:'approve' },
     });
   }

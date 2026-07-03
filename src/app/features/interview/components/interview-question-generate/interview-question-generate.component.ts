@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
@@ -12,7 +12,11 @@ import { NotificationService } from '../../../../core/services/notification.serv
   templateUrl: './interview-question-generate.component.html',
   styleUrl: './interview-question-generate.component.scss',
 })
-export class InterviewQuestionGenerateComponent implements OnInit {
+export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit {
+
+  // ── Root element ref, used to lock height to the exact remaining viewport
+  //    space so the outer page never scrolls — only the inner panels do ──────────
+  @ViewChild('iqRoot') iqRootRef!: ElementRef<HTMLElement>;
 
   // ── Route context ────────────────────────────────────────────────────────────
   applicationId: number = 0;
@@ -112,7 +116,7 @@ export class InterviewQuestionGenerateComponent implements OnInit {
   
   private async loadQuestionsForAlreadyFinalised(){
     const res:any=await this.interviewService.loadFinalizedQuestions(this.applicationId);
-    if(res?.hasOwnProperty('questions')){
+    if(res?.hasOwnProperty('questions') && res?.questions?.length>0){
        this.questions = this.mapApiQuestions(res?.questions ?? []);
        this.isQuestionsFinalized=false;
        this.disabledQuestions=true;
@@ -338,6 +342,30 @@ export class InterviewQuestionGenerateComponent implements OnInit {
     return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
+
+  ngAfterViewInit(): void {
+    // Wait a tick so the layout (topbar/sidebar/etc.) has settled before measuring.
+    setTimeout(() => this.lockAvailableHeight());
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.lockAvailableHeight();
+  }
+
+  // Measures exactly how much vertical space is left below whatever sits above
+  // this component (topbar, breadcrumbs, etc.) and locks the root to that height.
+  // This works regardless of how the surrounding app shell is laid out, since it
+  // reads the real rendered position instead of relying on percentage-height
+  // chains up through ancestors. Only the inner settings/questions panels scroll;
+  // the outer page never does.
+  private lockAvailableHeight(): void {
+    const el = this.iqRootRef?.nativeElement;
+    if (!el) return;
+    el.style.height = 'auto';
+    const top = el.getBoundingClientRect().top;
+    el.style.height = `calc(100vh - ${top}px)`;
+  }
 
   handleBack(){
     this.router.navigate(['/supply/ai-interview-zone']

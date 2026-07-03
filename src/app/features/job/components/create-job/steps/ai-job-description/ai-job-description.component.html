@@ -22,37 +22,44 @@
         <!-- Action buttons -->
         <div class="ajd-actions">
 
-          <button class="ajd-btn ajd-btn--generate" (click)="generateJD()" [disabled]="isGenerating || isRegenerating">
-            <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating"></i>
-            <i class="fa-solid fa-stars" *ngIf="!isGenerating"></i>
-            {{ isGenerating ? 'Generating…' : 'Generate JD' }}
-          </button>
+          <div class="ajd-generate-wrap">
+            <button class="ajd-btn ajd-btn--generate" (click)="generateJD()" [disabled]="isGenerating || isRegenerating">
+              <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating || isRegenerating"></i>
+              <i class="fa-solid fa-rotate" *ngIf="!isGenerating && !isRegenerating && renameButton"></i>
+              <i class="fa-solid fa-stars" *ngIf="!isGenerating && !isRegenerating && !renameButton"></i>
+              {{ isGenerating ? 'Generating…' : isRegenerating ? 'Regenerating…' : (renameButton ? 'Regenerate JD' : 'Generate JD') }}
+            </button>
+          </div>
 
           <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
-            <button class="ajd-btn ajd-btn--outline" (click)="toggleMoreAIOptions($event)"
-              [disabled]="isGenerating || isRegenerating">
-              More AI Options
+            <button class="ajd-btn ajd-btn--outline" [class.ajd-btn--selected]="renameButton"
+              (click)="toggleMoreAIOptions($event)" [disabled]="isGenerating || isRegenerating">
+              <ng-container *ngIf="renameButton; else defaultOptionLabel">
+                <span class="ajd-btn__selected-text">{{ options }}</span>
+                <i class="fa-solid fa-xmark ajd-btn__clear" title="Clear this option" (click)="cancelOption($event)"></i>
+              </ng-container>
+              <ng-template #defaultOptionLabel>More AI Options</ng-template>
               <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
             </button>
 
             <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Rewrite for Senior level')">
+              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Senior level'" (click)="applyAIOption('Rewrite for Senior level')">
                 <i class="fa-solid fa-arrow-trend-up"></i>
                 Rewrite for senior levels
               </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Rewrite for Junior Level')">
+              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Junior Level'" (click)="applyAIOption('Rewrite for Junior Level')">
                 <i class="fa-solid fa-arrow-trend-down"></i>
                 Rewrite for junior levels
               </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Expand Responsibilities')">
+              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Expand Responsibilities'" (click)="applyAIOption('Expand Responsibilities')">
                 <i class="fa-solid fa-list-check"></i>
                 Expand Responsibilities
               </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Make more Technical')">
+              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make more Technical'" (click)="applyAIOption('Make more Technical')">
                 <i class="fa-solid fa-microchip"></i>
                 Make more technical
               </button>
-              <button class="ajd-dropdown-item" (click)="applyAIOption('Make Concise')">
+              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make Concise'" (click)="applyAIOption('Make Concise')">
                 <i class="fa-solid fa-compress"></i>
                 Make concise
               </button>

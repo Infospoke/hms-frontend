@@ -51,17 +51,20 @@ export class ReviewSubmitStepComponent implements OnInit {
 
   private buildChannels(): void {
     const stored: any[] = this.step3Form?.get('selectedChannels')?.value || [];
-    this.reviewChannels = stored.map((ch: any) => ({
-      id: ch.channelName?.toLowerCase().replace(/\s+/g, ''),
-      name: ch.channelName,
-      iconText: ch.iconText ?? ch.channelName?.[0]?.toUpperCase() ?? '?',
-      iconBg: ch.iconBg ?? '#e2e8f0',
-      iconColor: ch.iconColor ?? '#1e293b',
-      bestFor: ch.bestFor ?? '—',
-      cost: ch.cost ?? 'Free',
-      enabled: !!ch.postJob,
-      referralAmount: ch.referralAmount ? Number(ch.referralAmount) : 0,
-    }));
+
+    this.reviewChannels = stored
+      .filter((ch: any) => ch.postJob)   // Only enabled channels
+      .map((ch: any) => ({
+        id: ch.channelName?.toLowerCase().replace(/\s+/g, ''),
+        name: ch.channelName,
+        iconText: ch.iconText ?? ch.channelName?.[0]?.toUpperCase() ?? '?',
+        iconBg: ch.iconBg ?? '#e2e8f0',
+        iconColor: ch.iconColor ?? '#1e293b',
+        bestFor: ch.bestFor ?? '—',
+        cost: ch.cost ?? 'Free',
+        enabled: true,
+        referralAmount: Number(ch.referralAmount || 0),
+      }));
   }
 
   private buildRecruiters(): void {

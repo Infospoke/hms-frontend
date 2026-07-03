@@ -1,7 +1,7 @@
 <div class="ai-interview-zone">
   <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
 
-  <app-approval-layout heading="Generate AI Questions"
+  <app-approval-layout *ngIf="showFilter" heading="Generate AI Questions"
     subHeading="Create, manage and monitor AI generated questions before scheduling the interview."
     searchPlaceholder="Search by name, email or job title..." [dropDownData]="displayFilters"
     (filterChange)="filterChange($event)" />

@@ -45,8 +45,9 @@ $gray-900: #111827;
 // ── Candidate Card ────────────────────────────────────────────────────────────
 .aid-cand-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
+  flex-wrap: wrap;
   background: #fff;
   border: 1px solid $gray-200;
   border-radius: 12px;
@@ -59,7 +60,7 @@ $gray-900: #111827;
   align-items: flex-start;
   gap: 16px;
   padding: 20px 24px;
-  min-width: 340px;
+  min-width: 250px;
   flex-shrink: 0;
 }
 
@@ -109,16 +110,17 @@ $gray-900: #111827;
 
 .aid-contact-row {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
+  flex-direction: column;
+  gap: 7px;
   color: $gray-500;
   font-size: 12px;
 
   span {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 7px;
+
+    svg { color: $primary; flex-shrink: 0; }
   }
 }
 
@@ -129,21 +131,24 @@ $gray-900: #111827;
   flex-shrink: 0;
 }
 
+@media (max-width: 720px) {
+  .aid-cand-ident { min-width: 100%; }
+  .aid-vert-sep { display: none; }
+  .aid-meta-grid { grid-template-columns: repeat(2, 1fr); border-top: 1px solid $gray-200; }
+}
+
 // ── Meta Grid ─────────────────────────────────────────────────────────────────
 .aid-meta-grid {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  gap: 18px 24px;
+  padding: 20px 24px;
+  min-width: 280px;
 }
 
 .aid-meta-item {
-  padding: 14px 18px;
-  border-right: 1px solid $gray-200;
-  border-bottom: 1px solid $gray-200;
-
-  &:nth-child(4n) { border-right: none; }
-  &:nth-child(n+5) { border-bottom: none; }
+  padding: 4px 0;
 }
 
 .aid-meta-label {
@@ -157,6 +162,8 @@ $gray-900: #111827;
   font-size: 13px;
   font-weight: 600;
   color: $gray-900;
+
+  // &--primary { color: $primary; }
 }
 
 .aid-score-pct {
@@ -277,4 +284,64 @@ $gray-900: #111827;
   text-align: center;
   padding: 40px;
   p { margin: 0; max-width: 340px; line-height: 1.6; }
+}
+
+// ── Evaluation Summary — "not calculated yet" empty state ──────────────────────
+.aid-eval-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 280px;
+  padding: 40px;
+  background: #fff;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  text-align: center;
+  color: $gray-400;
+}
+
+.aid-eval-empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $gray-900;
+  margin-top: 6px;
+}
+
+.aid-eval-empty-sub {
+  font-size: 13px;
+  color: $gray-500;
+  max-width: 340px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.aid-eval-calc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: $primary;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:hover:not(:disabled) { background: darken($primary, 6%); }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.aid-eval-calc-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  display: inline-block;
+  animation: aid-spin 0.7s linear infinite;
 }

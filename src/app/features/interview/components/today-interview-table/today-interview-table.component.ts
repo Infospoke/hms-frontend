@@ -68,7 +68,7 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
 
   // ── Actions ───────────────────────────────────────────────────────────────
   onViewDetails(interview: TodayInterview): void {
-    this.router.navigateByUrl('/supply/my-interview-requests/today-interview-details')
+    this.router.navigateByUrl(`/supply/my-interview-requests/today-interview-details/${interview.id}`)
   }
 
   onRowClick(row: TodayInterview): void {
@@ -94,14 +94,15 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
   }
   private mapInterviews(data: any[]): TodayInterview[] {
     return data.map((item: any) => ({
-      id: item.candidateId || item.id,
-      name: item.candidateName,
-      initials: this.getInitials(item.candidateName),
+      id: item.applicationId || item.id,
+      name: item.applicantName,
+      initials: this.getInitials(item.applicantName),
       jobTitle: item.jobTitle,
+      jobCode: item.jobCode,
       department: item.departmentName || '',
-      time: item.interviewTime,
-      round: item.roundName,
-      type: item.interviewType as InterviewType,
+      time: item.startTime,
+      round:'Round ' + item.currentStageType,
+      type: item.stageName ,
     }));
   }
   private getInitials(name: string): string {

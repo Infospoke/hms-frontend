@@ -120,6 +120,15 @@ export class CreateJobComponent implements OnInit {
     // Persist SR ID to localStorage when coming fresh from signal
     const signalData = this.jobService.jobDetailsBySrIdSignal();
     if (signalData?.srId) {
+      const previousSrId = localStorage.getItem(SR_ID_KEY);
+
+      // A different (or first-time) SR means this is a genuinely new job.
+      // Clear any JD versions left over from a previous session that was
+      // abandoned without hitting Cancel/Submit — otherwise the old job's
+      // generated JDs bleed into this new job's AI Job Description step.
+      if (previousSrId !== signalData.srId) {
+        localStorage.removeItem('ai_jd_versions');
+      }
       localStorage.setItem(SR_ID_KEY, signalData.srId);
     }
 
@@ -205,7 +214,14 @@ export class CreateJobComponent implements OnInit {
     if (this.currentStep === 3) {
       const selected = this.step4Form.get('selectedRecruiterDetails')?.value ?? [];
       if (!selected.length) {
-        this.notificationService.error('Please assign at least one recruiter before proceeding.');
+        this.notificationService.info('Please assign at least one recruiter before proceeding.');
+        return;
+      }
+    }
+    if(this.currentStep === 4) {
+      const selectedPlan = this.step5Form.get('planId')?.value;
+      if (!selectedPlan) {
+        this.notificationService.info('Please select an interview plan before proceeding.');
         return;
       }
     }

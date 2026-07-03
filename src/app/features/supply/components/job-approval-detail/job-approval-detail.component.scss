@@ -104,21 +104,27 @@
 // ── Overview two-column grid ──────────────────────────────────────────────────
 .jad-ov-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 0 2rem;
 }
-
-.jad-ov-col { display: flex; flex-direction: column; }
 
 .jad-ov-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
+  padding: 10px 24px 10px 0;
   border-bottom: 0.5px solid #f1f5f9;
 
-  &:last-child { border-bottom: none; }
   &--top { align-items: flex-start; }
+}
+
+.jad-ov-skills-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 2rem;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
 .jad-ov-icon {
@@ -323,93 +329,50 @@
 }
 
 // ── Decision form ────────────────────────────────────────────────────────────
-.jad-field-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: #374151;
-  margin: 0 0 8px;
-}
-
-.jad-field-hint {
-  font-size: 12px;
-  color: #94a3b8;
-  margin: 0 0 8px;
-}
-
-.jad-req    { color: #DC2626; }
-.jad-optional { color: #94a3b8; font-weight: 400; font-size: 11px; }
-
 .jad-dec-btns {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 1.25rem;
 }
 
 .jad-dec-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 7px 20px;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 28px;
   border-radius: 8px;
-  border: 0.5px solid;
+  border: 1.5px solid transparent;
   cursor: pointer;
   transition: all .15s;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .06);
+
+  i { font-size: 13px; }
 
   &--accept {
-    background: #F0FDF4;
-    color: #166534;
-    border-color: #86EFAC;
-    &:hover, &.active {
-      background: #16A34A;
-      color: #fff;
-      border-color: #16A34A;
+    background: #16A34A;
+    color: #fff;
+    border-color: #16A34A;
+    &:hover {
+      background: #15803D;
+      border-color: #15803D;
+      box-shadow: 0 4px 10px rgba(22, 163, 74, .25);
     }
   }
 
   &--decline {
-    background: #FEF2F2;
-    color: #991B1B;
+    background: #fff;
+    color: #DC2626;
     border-color: #FECACA;
-    &:hover, &.active {
+    &:hover {
       background: #DC2626;
       color: #fff;
       border-color: #DC2626;
+      box-shadow: 0 4px 10px rgba(220, 38, 38, .2);
     }
   }
-}
-
-// ── Textarea ─────────────────────────────────────────────────────────────────
-.jad-ta-wrap { position: relative; }
-
-.jad-textarea {
-  width: 100%;
-  border: 0.5px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 13px;
-  font-family: inherit;
-  color: #1e293b;
-  background: #fff;
-  resize: vertical;
-  min-height: 96px;
-  transition: border-color .15s;
-
-  &::placeholder { color: #cbd5e1; }
-  &:focus {
-    outline: none;
-    border-color: #93C5FD;
-    box-shadow: 0 0 0 3px rgba(147,197,253,.2);
-  }
-}
-
-.jad-char {
-  display: block;
-  text-align: right;
-  font-size: 11px;
-  color: #94a3b8;
-  margin-top: 4px;
 }
 
 // ── Footer ───────────────────────────────────────────────────────────────────
@@ -433,25 +396,6 @@
   font-family: inherit;
   transition: background .15s;
   &:hover { background: #F8FAFC; }
-}
-
-.jad-btn-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #1D4ED8;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 22px;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background .15s, opacity .15s;
-
-  &:hover:not(:disabled) { background: #1E40AF; }
-  &:disabled { opacity: .38; cursor: not-allowed; }
 }
 
 // ── Skeleton ─────────────────────────────────────────────────────────────────
@@ -487,35 +431,6 @@
 @media (max-width: 600px) {
   .jad-ov-grid { grid-template-columns: 1fr; }
   .jad-section { padding: 1rem; }
-  .jad-modal { padding: 1.25rem; }
-}
-
-// ── Comment Modal (assignment accept/reject) ──────────────────────────────────
-.jad-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, .45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.jad-modal {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 10px 40px rgba(15, 23, 42, .18);
-}
-
-.jad-modal-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0 0 1rem;
 }
 
 // ── Job Description structured blocks ────────────────────────────────────────

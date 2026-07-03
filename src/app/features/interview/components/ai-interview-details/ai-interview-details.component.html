@@ -1,100 +1,77 @@
 <div class="ic-root">
 
-  
   <app-heading heading="AI Interview Session Details" subHeading="Access interview schedules, candidate profiles, evaluation metrics, and assessment questions in one place." [showBackButton]="true" backButtonUrl="/" buttonText="Back to AI Interview Zone"  (backClick)="onBack()"/>
-  <!-- ══ Error State ════════════════════════════════════════════════════════ -->
-  <ng-container *ngIf="!loading && error">
-    <div class="ic-state-box ic-state-box--error">
-      <i class="fa-solid fa-circle-exclamation ic-state-icon ic-state-icon--error"></i>
-      <span class="ic-state-text">{{ error }}</span>
-    </div>
-  </ng-container>
 
-  <!-- ══ Main Content ═══════════════════════════════════════════════════════ -->
   <ng-container *ngIf="!loading && !error">
 
-    <!-- ══ Candidate Header Card ════════════════════════════════════════════ -->
-    <div class="ic-header-card">
+    <!-- ══ Top Card: Candidate + Job Details (left/middle) + Quick Stats (top-right) ══ -->
+    <div class="ic-top-card">
 
-      <!-- Left: Avatar + Info -->
-      <div class="ic-cand-section">
-        <div class="ic-avatar">{{ candidate.initials }}</div>
-        <div class="ic-cand-details">
-          <div class="ic-name-row">
-            <span class="ic-name">{{ candidate.name }}</span>
-            <span class="ic-status-badge">
-              <i class="fa-solid fa-circle-check ic-badge-icon"></i>
-              {{ candidate.status }}
+      <div class="ic-header-card">
+
+        <!-- Left: Avatar + Info -->
+        <div class="ic-cand-section">
+          <div class="ic-cand-details">
+            <div class="ic-name-row">
+              <span class="ic-name">{{ candidate.name }}</span>
+            </div>
+            <div class="ic-contact-row">
+              <i class="fa-regular fa-envelope ic-contact-icon"></i>
+              <span>{{ candidate.email }}</span>
+            </div>
+            <div class="ic-contact-row">
+              <i class="fa-solid fa-phone ic-contact-icon"></i>
+              <span>{{ candidate.phone }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ic-header-divider"></div>
+
+        <!-- Middle: Job Details Grid (now also includes the 3 quick-stat fields) -->
+        <div class="ic-job-grid">
+          <div class="ic-job-field">
+            <span class="ic-field-label">Job Title</span>
+            <span class="ic-field-value">{{ jobDetails.jobTitle }}</span>
+          </div>
+          <div class="ic-job-field">
+            <span class="ic-field-label">Job ID</span>
+            <span class="ic-field-value">{{ jobDetails.jobId }}</span>
+          </div>
+          <div class="ic-job-field">
+            <span class="ic-field-label">Department</span>
+            <span class="ic-field-value">{{ jobDetails.department }}</span>
+          </div>
+          <div class="ic-job-field">
+            <span class="ic-field-label">Experience</span>
+            <span class="ic-field-value">{{ jobDetails.experience }}</span>
+          </div>
+
+          <div class="ic-job-field">
+            <span class="ic-field-label">Scheduled At</span>
+            <span class="ic-field-value ic-field-value--blue">{{ jobDetails.scheduledAt }}</span>
+          </div>
+          <div class="ic-job-field">
+            <span class="ic-field-label">Scheduled By</span>
+            <div class="ic-scheduled-by">
+              <i class="fa-regular fa-user ic-sched-icon"></i>
+              <span class="ic-field-value">{{ jobDetails.scheduledBy }}</span>
+            </div>
+          </div>
+
+          <div class="ic-job-field" *ngFor="let stat of stats">
+            <span class="ic-field-label">{{ stat.label }}
+              <i class="fa-regular fa-circle-question ic-info-icon"
+                 *ngIf="stat.hasInfo"
+                 title="Minimum score required to pass"></i>
             </span>
-          </div>
-          <div class="ic-contact-row">
-            <i class="fa-regular fa-envelope ic-contact-icon"></i>
-            <span>{{ candidate.email }}</span>
-          </div>
-          <div class="ic-contact-row">
-            <i class="fa-solid fa-phone ic-contact-icon"></i>
-            <span>{{ candidate.phone }}</span>
+            <span class="ic-field-value">{{ stat.value }}</span>
+            <span class="ic-field-sub" *ngIf="stat.sub">{{ stat.sub }}</span>
           </div>
         </div>
+
       </div>
 
-      <div class="ic-header-divider"></div>
-
-      <!-- Right: Job Details Grid -->
-      <div class="ic-job-grid">
-        <div class="ic-job-field">
-          <span class="ic-field-label">Job Title</span>
-          <span class="ic-field-value">{{ jobDetails.jobTitle }}</span>
-        </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Job ID</span>
-          <span class="ic-field-value">{{ jobDetails.jobId }}</span>
-        </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Department</span>
-          <span class="ic-field-value">{{ jobDetails.department }}</span>
-        </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Experience</span>
-          <span class="ic-field-value">{{ jobDetails.experience }}</span>
-        </div>
-
-        <div class="ic-job-field">
-          <span class="ic-field-label">Scheduled At</span>
-          <span class="ic-field-value ic-field-value--blue">{{ jobDetails.scheduledAt }}</span>
-        </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Scheduled By</span>
-          <div class="ic-scheduled-by">
-            <i class="fa-regular fa-user ic-sched-icon"></i>
-            <span class="ic-field-value">{{ jobDetails.scheduledBy }}</span>
-          </div>
-        </div>
-        <div class="ic-job-field">
-          <span class="ic-field-label">Interview Type</span>
-          <span class="ic-field-value">{{ jobDetails.interviewType }}</span>
-        </div>
-        
-      </div>
-
-    </div>
-
-    <!-- ══ Stats Row ════════════════════════════════════════════════════════ -->
-    <div class="ic-stats-row">
-      <div class="ic-stat-card" *ngFor="let stat of stats">
-        <div class="ic-stat-icon-wrap" [style.background]="stat.iconBg">
-          <i [class]="stat.icon" [style.color]="stat.iconColor"></i>
-        </div>
-        <div class="ic-stat-body">
-          <span class="ic-stat-label">{{ stat.label }}
-            <i class="fa-regular fa-circle-question ic-info-icon"
-               *ngIf="stat.hasInfo"
-               title="Minimum score required to pass"></i>
-          </span>
-          <span class="ic-stat-value">{{ stat.value }}</span>
-          <span class="ic-stat-sub" *ngIf="stat.sub">{{ stat.sub }}</span>
-        </div>
-      </div>
     </div>
 
     <!-- ══ Question Set Preview ════════════════════════════════════════════ -->
@@ -104,30 +81,23 @@
         <p class="ic-qs-sub">Preview of questions in this interview</p>
       </div>
 
-      <div class="ic-table-wrap">
-        <table class="ic-table">
-          <thead>
-            <tr>
-              <th class="ic-th ic-th-num">#</th>
-              <th class="ic-th">QUESTION</th>
-              <th class="ic-th">TYPE</th>
-              <th class="ic-th ic-th-right">DIFFICULTY</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="ic-tr" *ngFor="let q of visibleQuestions">
-              <td class="ic-td ic-td-num">{{ q.id }}</td>
-              <td class="ic-td ic-td-question">{{ q.text }}</td>
-              <td class="ic-td">
-                <span class="ic-type-tag" [ngClass]="getTypeClass(q.type)">{{ q.type }}</span>
-              </td>
-              <td class="ic-td ic-td-right">
-                <span class="ic-diff-badge" [ngClass]="getDifficultyClass(q.difficulty)">{{ q.difficulty }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <app-reusable-table
+        [columns]="questionColumns"
+        [data]="visibleQuestions"
+        [showHeader]="true"
+        [showPagination]="false"
+        [tableLayout]="'fixed'"
+        [cellTemplate]="questionCellTpl"
+        emptyMessage="No questions have been added to this interview yet.">
+      </app-reusable-table>
+
+      <ng-template #questionCellTpl let-ctx>
+        <ng-container [ngSwitch]="ctx.col.key">
+          <span *ngSwitchCase="'text'" class="ic-question-text">{{ ctx.row.text }}</span>
+          <span *ngSwitchCase="'type'" class="ic-type-tag" [ngClass]="getTypeClass(ctx.row.type)">{{ ctx.row.type }}</span>
+          <span *ngSwitchCase="'difficulty'" class="ic-diff-badge" [ngClass]="getDifficultyClass(ctx.row.difficulty)">{{ ctx.row.difficulty }}</span>
+        </ng-container>
+      </ng-template>
 
       <button class="ic-view-all-btn" (click)="showAll = !showAll">
         <span *ngIf="!showAll">View all {{ totalQuestions }} questions</span>

@@ -7,98 +7,97 @@
   <div class="page-header">
     <app-heading heading="Interview Details" subHeading="Review candidate profile and conduct the scheduled interview." [showBackButton]="true" buttonText="Back to Interviews" backButtonUrl="/supply/my-interview-requests"/>
     <button class="view-job-btn" (click)="onViewJobDetails()">
+      <i class="fas fa-user-tie"></i>
       View Job &amp; Candidate Details
-      <span class="btn-arrow">&#8250;</span>
+      <i class="fas fa-chevron-right btn-arrow"></i>
     </button>
   </div>
 
   <!-- Loading / Error States -->
-  <div class="state-banner loading-banner" *ngIf="isLoading">Loading interview details…</div>
-  <div class="state-banner error-banner" *ngIf="error && !isLoading">{{ error }}</div>
+  <div class="state-banner loading-banner" *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i> Loading interview details…</div>
+  <div class="state-banner error-banner" *ngIf="error && !isLoading"><i class="fas fa-triangle-exclamation"></i> {{ error }}</div>
 
   <!-- Interview Information -->
-  <div class="section-card">
-    <h2 class="section-title">Interview Information</h2>
+  <div class="section-card" *ngIf="!isLoading && !error">
+    <h2 class="section-title"><i class="fas fa-circle-info section-icon"></i> Interview Information</h2>
     <div class="info-grid">
       <div class="info-item">
-        <span class="info-label">Interview ID</span>
-        <span class="info-value">{{ interviewInfo.interviewId }}</span>
+        <span class="info-label"><i class="fas fa-hashtag"></i> Interview ID</span>
+        <span class="info-value">{{ display(interviewInfo.interviewId) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Job Title</span>
-        <span class="info-value">{{ interviewInfo.jobTitle }}</span>
+        <span class="info-label"><i class="fas fa-briefcase"></i> Job Title</span>
+        <span class="info-value">{{ display(interviewInfo.jobTitle) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Interview Type</span>
-        <span class="info-value">{{ interviewInfo.interviewType }}</span>
+        <span class="info-label"><i class="fas fa-comments"></i> Interview Type</span>
+        <span class="info-value">{{ display(interviewInfo.interviewType) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Scheduled Time</span>
-        <span class="info-value">{{ interviewInfo.scheduledTime }}</span>
+        <span class="info-label"><i class="fas fa-clock"></i> Scheduled Time</span>
+        <span class="info-value">{{ display(interviewInfo.scheduledTime) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Candidate Name</span>
-        <span class="info-value">{{ interviewInfo.candidateName }}</span>
+        <span class="info-label"><i class="fas fa-user"></i> Candidate Name</span>
+        <span class="info-value">{{ display(interviewInfo.candidateName) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Department</span>
-        <span class="info-value">{{ interviewInfo.department }}</span>
+        <span class="info-label"><i class="fas fa-building"></i> Department</span>
+        <span class="info-value">{{ display(interviewInfo.department) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Interview Mode</span>
-        <span class="info-value">{{ interviewInfo.interviewMode }}</span>
+        <span class="info-label"><i class="fas fa-video"></i> Interview Mode</span>
+        <span class="info-value">{{ display(interviewInfo.interviewMode) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Duration</span>
-        <span class="info-value">{{ interviewInfo.duration }}</span>
+        <span class="info-label"><i class="fas fa-hourglass-half"></i> Duration</span>
+        <span class="info-value">{{ display(interviewInfo.duration) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Candidate ID</span>
-        <span class="info-value">{{ interviewInfo.candidateId }}</span>
+        <span class="info-label"><i class="fas fa-id-card"></i> Candidate ID</span>
+        <span class="info-value">{{ display(interviewInfo.candidateId) }}</span>
       </div>
       <div class="info-item">
-        <span class="info-label">Interview Round</span>
-        <span class="info-value">{{ interviewInfo.interviewRound }}</span>
+        <span class="info-label"><i class="fas fa-layer-group"></i> Interview Round</span>
+        <span class="info-value">{{ display(interviewInfo.interviewRound) }}</span>
       </div>
-      <div class="info-item">
-        <span class="info-label">Meeting Platform</span>
-        <span class="info-value meet-value">
+      <!-- <div class="info-item">
+        <span class="info-label"><i class="fas fa-display"></i> Meeting Platform</span>
+        <span class="info-value meet-value" *ngIf="interviewInfo.meetingPlatform; else noPlatform">
           <img src="https://www.google.com/favicon.ico" alt="Google Meet" class="meet-icon" />
           {{ interviewInfo.meetingPlatform }}
         </span>
-      </div>
+        <ng-template #noPlatform><span class="info-value">Not Mentioned</span></ng-template>
+      </div> -->
     </div>
   </div>
 
   <!-- Experience Details -->
-  <div class="section-card">
-    <h2 class="section-title">Experience Details</h2>
+  <div class="section-card card-dd" *ngIf="!isLoading && !error">
+    <h2 class="section-title"><i class="fas fa-briefcase section-icon"></i> Experience Details</h2>
     <div class="experience-layout">
       <!-- Left sidebar -->
       <div class="experience-sidebar">
         <div class="exp-badge">
           <div class="exp-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6c63ff" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2"/>
-              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-            </svg>
+            <i class="fas fa-briefcase" style="color:#6c63ff; font-size:22px;"></i>
           </div>
-          <div class="exp-years">{{ totalExperience }}</div>
+          <div class="exp-years">{{ totalExperience || '0' }}</div>
           <div class="exp-label">Total Experience</div>
         </div>
         <div class="sidebar-info">
-          <div class="sidebar-label">Current Company</div>
-          <div class="sidebar-value">{{ currentCompany }}</div>
+          <div class="sidebar-label"><i class="fas fa-building"></i> Current Company</div>
+          <div class="sidebar-value">{{ display(currentCompany) }}</div>
         </div>
         <div class="sidebar-info">
-          <div class="sidebar-label">Current Role</div>
-          <div class="sidebar-value">{{ currentRole }}</div>
+          <div class="sidebar-label"><i class="fas fa-user-tie"></i> Current Role</div>
+          <div class="sidebar-value">{{ display(currentRole) }}</div>
         </div>
       </div>
 
       <!-- Experience table -->
       <div class="experience-table-wrap">
-        <table class="experience-table">
+        <table class="experience-table" *ngIf="experiences.length; else noExperience">
           <thead>
             <tr>
               <th>Company</th>
@@ -114,14 +113,17 @@
             </tr>
           </tbody>
         </table>
+        <ng-template #noExperience>
+          <p class="no-data-text"><i class="fas fa-circle-info"></i> No experience details found for this candidate.</p>
+        </ng-template>
       </div>
     </div>
   </div>
 
   <!-- Projects Details -->
-  <div class="section-card">
-    <h2 class="section-title">Projects Details</h2>
-    <table class="projects-table">
+  <div class="section-card card-dd " *ngIf="!isLoading && !error">
+    <h2 class="section-title"><i class="fas fa-diagram-project section-icon"></i> Projects Details</h2>
+    <table class="projects-table" *ngIf="projects.length; else noProjects">
       <thead>
         <tr>
           <th>Project Name</th>
@@ -139,11 +141,14 @@
         </tr>
       </tbody>
     </table>
+    <ng-template #noProjects>
+      <p class="no-data-text"><i class="fas fa-circle-info"></i> No project details found for this candidate.</p>
+    </ng-template>
   </div>
 
   <!-- Candidate Documents -->
-  <div class="section-card">
-    <h2 class="section-title">Candidate Documents</h2>
+  <div class="section-card card-dd" *ngIf="!isLoading && !error">
+    <h2 class="section-title"><i class="fas fa-file-lines section-icon"></i> Candidate Documents</h2>
 
     <div class="documents-row" *ngIf="resumeDocument">
       <div class="doc-card">
@@ -157,27 +162,27 @@
           <div class="doc-meta">{{ resumeDocument.type }} · {{ resumeDocument.size }}</div>
         </div>
         <div class="doc-actions">
-          <button class="doc-action-btn view-doc-btn" (click)="onViewResume()">View</button>
-          <button class="doc-action-btn download-doc-btn" (click)="onDownloadResume()">Download</button>
+          <button class="doc-action-btn view-doc-btn" (click)="onViewResume()"><i class="fas fa-eye"></i> View</button>
+          <button class="doc-action-btn download-doc-btn" (click)="onDownloadResume()"><i class="fas fa-download"></i> Download</button>
         </div>
       </div>
     </div>
 
-    <p class="no-doc-text" *ngIf="!resumeDocument && !isLoading">No resume has been uploaded for this candidate.</p>
+    <p class="no-data-text" *ngIf="!resumeDocument"><i class="fas fa-circle-info"></i> No resume has been uploaded for this candidate.</p>
   </div>
 
   <!-- Bottom Action Bar -->
-  <div class="action-bar">
+  <div class="action-bar" *ngIf="!isLoading && !error">
     <button class="action-btn start-btn" (click)="onStartInterview()">
-      <span class="btn-icon start-icon">&#9654;</span>
+      <i class="fas fa-play btn-icon"></i>
       Start Interview
     </button>
     <button class="action-btn complete-btn" (click)="onComplete()">
-      <span class="btn-icon complete-icon">&#10003;</span>
+      <i class="fas fa-check btn-icon"></i>
       Complete
     </button>
     <button class="action-btn cancel-btn" (click)="onCancel()">
-      <span class="btn-icon cancel-icon">&#10005;</span>
+      <i class="fas fa-xmark btn-icon"></i>
       Cancel
     </button>
   </div>

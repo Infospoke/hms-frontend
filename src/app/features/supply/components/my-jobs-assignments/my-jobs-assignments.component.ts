@@ -237,7 +237,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
             requestbyName: item.requestedBy,
             dateName: item.createdAt,
             openings: item.openings,
-            status: item.status,
+            status: item.status ==='PENDING'?'Pending':item.status,
           
             _raw: item,
           }));

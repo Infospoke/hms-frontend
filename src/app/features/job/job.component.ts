@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { JobsCardComponent } from '../../shared/components/jobs-card/jobs-card.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ConfirmModalComponent } from '../../shared/components/modal-component/confirm-modal.component';
 
 @Component({
   selector: 'app-job',
@@ -17,6 +19,7 @@ export class JobComponent implements OnInit, OnChanges {
   @Output() selectedJobIdChange = new EventEmitter<any>();
   private job = inject(JobService);
   private router = inject(Router);
+  private modal = inject(NzModalService);
 
   selectedJobId: any;
   jobsListData: any[] = [];
@@ -56,26 +59,51 @@ export class JobComponent implements OnInit, OnChanges {
 
   handleJobAction(event: { type: 'edit' | 'delete'; data: any }) {
     if (event.type === 'edit') {
-      // this.router.navigate(['/supply/jobs/edit-job', event.data]);
-      this.updateJob(event?.data);
+      // This action closes/deactivates the job — confirm with the user
+      // before calling the API, instead of firing it immediately.
+      this.openConfirmModal('deactivate', event?.data);
     } else if (event.type === 'delete') {
       this.deleteJob(event.data);
     }
   }
-  async updateJob(jobId:any){
-    const obj={
-      jobId:jobId,
-      isOpen:false
+
+  /**
+   * Opens the shared confirm modal for the given mode, and only runs the
+   * corresponding API call if the user confirms.
+   */
+  private openConfirmModal(mode: 'activate' | 'deactivate', jobId: any): void {
+    const modal = this.modal.create<ConfirmModalComponent>({
+      nzContent: ConfirmModalComponent,
+      nzData: { mode },
+      nzClassName: 'custom-confirm-modal custom-edit-modal',
+      nzFooter: null,
+      nzCentered: true,
+      nzWidth: 360,
+      nzClosable: false,
+    });
+
+    modal.afterClose.subscribe((result: string) => {
+      if (result === 'confirm') {
+        this.updateJob(jobId, mode === 'activate');
+      }
+    });
+  }
+
+  async updateJob(jobId: any, isOpen: boolean = false) {
+    const obj = {
+      jobId: jobId,
+      isOpen: isOpen
     }
-    const res:any=await this.jobApi.updateJobToClose(obj);
-    if(res?.responsecode=='00'){
-      this.notification.success(res?.message || res?.responsemessage  || res?.responseMessage);
+    const res: any = await this.jobApi.updateJobToClose(obj);
+    if (res?.responsecode == '00') {
+      this.notification.success(res?.message || res?.responsemessage || res?.responseMessage);
       this.getJobs();
     }
-    else{
+    else {
       this.notification.error(res?.message || res?.responsemessage || res?.responseMessage)
     }
   }
+
   async deleteJob(jobId: any) {
     try {
       await this.jobApi.deleteJob(jobId);

@@ -23,7 +23,7 @@ $col-perm : 90px;
 :host {
   display        : flex;
   flex-direction : column;
-  height         : 98vh;
+  height         : 84vh;
   overflow       : hidden;
 }
 
@@ -32,7 +32,7 @@ $col-perm : 90px;
   display        : flex;
   flex-direction : column;
   flex           : 1;
-  height         : 98vh;
+  height         : 100vh;
   overflow       : hidden;
   background     : $bg-white;
   border         : 1px solid $border;

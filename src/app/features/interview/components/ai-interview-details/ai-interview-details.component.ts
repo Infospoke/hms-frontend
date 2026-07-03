@@ -4,6 +4,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
+import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 
 // ── API response shape ────────────────────────────────────────────────────────
 interface ApiQuestion {
@@ -77,7 +78,7 @@ interface Question {
 
 @Component({
   selector: 'app-ai-interview-details',
-  imports: [CommonModule, HeadingComponent],
+  imports: [CommonModule, HeadingComponent, ReusableTableComponent],
   templateUrl: './ai-interview-details.component.html',
   styleUrl: './ai-interview-details.component.scss',
 })
@@ -91,12 +92,21 @@ export class AiInterviewDetailsComponent implements OnInit {
   error: string | null = null;
 
   // ── View-model (populated after API call) ──────────────────────────────────
-  candidate!: Candidate;
-  jobDetails!: JobDetails;
-  stats: Stat[] = [];
-  allQuestions: Question[] = [];
+  candidate!: any;
+  jobDetails!: any;
+  stats: any[] = [];
+  allQuestions:any[] = [];
   showAll = false;
   private interviewSerice=inject(InterviewServiceService)
+
+  // ── Reusable table config for Question Set Preview ─────────────────────────
+  questionColumns: TableColumn[] = [
+    { key: 'id',         label: '#',          width: '56px',  align: 'center' },
+    { key: 'text',       label: 'Question',   custom: true }, // custom:true is required or it silently falls back to the default 280px-capped cell
+    { key: 'type',       label: 'Type',       width: '140px', custom: true },
+    { key: 'difficulty', label: 'Difficulty', width: '130px', align: 'right', custom: true },
+  ];
+
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   ngOnInit(): void {
     
@@ -115,7 +125,7 @@ export class AiInterviewDetailsComponent implements OnInit {
   }
 
   // ── Mapping ────────────────────────────────────────────────────────────────
-  private mapToViewModel(d: ApiData): void {
+  private mapToViewModel(d: any): void {
 
     /* ---------- Candidate ---------- */
     this.candidate = {
@@ -123,7 +133,7 @@ export class AiInterviewDetailsComponent implements OnInit {
       name:     d.applicantName,
       email:    d.applicantEmail,
       phone:    d.applicantPhoneNumber,
-      status:   'AI Interview Scheduled',
+
     };
 
     /* ---------- Job Details ---------- */
@@ -135,9 +145,7 @@ export class AiInterviewDetailsComponent implements OnInit {
       scheduledAt:   d.interviewScheduledAt
                        ? this.formatDate(d.interviewScheduledAt)
                        : 'Not Scheduled',
-      scheduledBy:   d.scheduledBy ?? 'Candidate (Self Scheduled)',
-      interviewType: 'AI Interview',
-      timeZone:      'IST (Asia/Kolkata)',
+      scheduledBy:   d.scheduledBy ==='recruiter' ? 'Recruiter' : d.scheduledBy ==='applicant'?'Applicant':d?.scheduledB,
     };
 
     /* ---------- Stats ---------- */
@@ -151,14 +159,6 @@ export class AiInterviewDetailsComponent implements OnInit {
         sub:        d.interviewMailSentAt ? this.formatDate(d.interviewMailSentAt) : null,
       },
       {
-        icon:       'fa-regular fa-clock',
-        iconColor:  '#0891b2',
-        iconBg:     '#cffafe',
-        label:      'Interview Duration',
-        value:      `${d.noOfQuestions * 2}–${d.noOfQuestions * 3} Minutes`,
-        sub:        null,
-      },
-      {
         icon:       'fa-regular fa-file-lines',
         iconColor:  '#059669',
         iconBg:     '#d1fae5',
@@ -170,7 +170,7 @@ export class AiInterviewDetailsComponent implements OnInit {
     ];
 
     /* ---------- Questions ---------- */
-    this.allQuestions = d.questions.map(q => ({
+    this.allQuestions = d.questions.map((q:any) => ({
       id:         q.question_id,
       text:       q.question,
       type:       this.capitalizeType(q.question_type),

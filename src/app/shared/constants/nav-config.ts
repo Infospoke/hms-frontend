@@ -33,6 +33,12 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/demand/my-jds',
         permissionName: 'MYSRS',
       },
+        {
+        label: 'Interview Plans Config',
+        icon: 'fa-solid fa-user-pen',
+        path: '/demand/interview-plan-config',
+        permissionName: 'INTERVIEWPLANCONFIG',
+      },
       {
         label: "Job Requisitions",
         icon: 'fa-solid fa-briefcase',
@@ -45,12 +51,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: "/demand/recruiter-assignment-management",
         permissionName: "RECRUITERASSIGNMENTMANAGEMENT",
       },
-      {
-        label: 'Interview Plans Config',
-        icon: 'fa-solid fa-user-pen',
-        path: '/demand/interview-plan-config',
-        permissionName: 'INTERVIEWPLANCONFIG',
-      },
+    
       {
         label: 'Assign Interviewers',
         icon: 'fa-solid fa-user-check',
@@ -84,13 +85,13 @@ export const NAV_ITEMS: NavItem[] = [
         permissionName: 'KANBAN',
       },
       {
-        label: "My Job Assignments",
+        label: "Job Assignments",
         icon: "fa-solid fa-briefcase",
         path: "/supply/my-assignend-jobs",
         permissionName: "MYJOBASSIGNMENTS",
       },
       {
-        label: 'My Interview Requests',
+        label: 'Interview Assignments',
         icon: 'fa-solid fa-file-signature',
         path: '/supply/my-interview-requests',
         permissionName: 'MYINTERVIEWREQUESTS',

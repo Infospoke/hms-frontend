@@ -47,8 +47,13 @@ export class AiInterviewZoneComponent implements OnInit {
 
   currentPage: any = 1;
   tableData: any[] = [];
-  activeFilters: any = { dateFilter: 'thisMonth' };
+  activeFilters: any = { dateFilter: '' };
   sortableColumns: string[] = ['name', 'jobTitle', 'lastUpdated', 'totalQuestions'];
+
+  // Toggled off/on (via resetFilterUi) to force app-approval-layout to be
+  // destroyed and recreated, so its own internal search/dropdown state
+  // clears whenever the pipeline stage tab changes.
+  showFilter = true;
   private interviewService = inject(InterviewServiceService)
   ngOnInit(): void {
     // this.setFiltersForStage();
@@ -107,7 +112,9 @@ export class AiInterviewZoneComponent implements OnInit {
 
   onStageSelected(stage: any): void {
     this.activeStageId = stage.id;
+    this.activeFilters = { dateFilter: '' };
     this.setFiltersForStage();
+    this.resetFilterUi();
   }
 
   filterChange(event: any): void {
@@ -135,5 +142,16 @@ export class AiInterviewZoneComponent implements OnInit {
         filterMap[this.activeStageId]?.includes(f.key)
       )
     );
+  }
+
+  /**
+   * app-approval-layout keeps its own internal state for the search box and
+   * dropdown selections. Changing @Input()s alone won't clear that UI, so
+   * briefly removing and re-adding the component via *ngIf forces it to
+   * re-init with fresh defaults.
+   */
+  private resetFilterUi(): void {
+    this.showFilter = false;
+    setTimeout(() => (this.showFilter = true));
   }
 }

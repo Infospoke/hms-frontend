@@ -50,15 +50,20 @@
           class="cr-row"
           [class.cr-row--dragging]="!viewMode && dragIndex === i"
           [class.cr-row--dragover]="!viewMode && dragOverIndex === i && dragIndex !== i"
-          [draggable]="!viewMode"
+          [class.cr-row--locked]="isDefaultRound(round)"
+          [draggable]="!viewMode && !isDefaultRound(round)"
           (dragstart)="!viewMode && onDragStart(i)"
           (dragover)="!viewMode && onDragOver($event, i)"
           (drop)="!viewMode && onDrop($event, i)"
           (dragend)="!viewMode && onDragEnd()"
         >
-          <!-- Drag handle (hidden in view mode via CSS) -->
+          <!-- Drag handle (hidden in view mode via CSS; disabled for the fixed default round) -->
           <div class="cr-col cr-col--drag">
-            <span class="cr-drag-handle" title="Drag to reorder">
+            <span
+              class="cr-drag-handle"
+              [class.cr-drag-handle--disabled]="isDefaultRound(round)"
+              [title]="isDefaultRound(round) ? 'This round is fixed as the first round' : 'Drag to reorder'"
+            >
               <i class="fas fa-grip-vertical"></i>
             </span>
           </div>
@@ -94,7 +99,9 @@
               <select
                 class="cr-select"
                 [(ngModel)]="round.stageType"
+                [disabled]="isDefaultRound(round)"
                 [class.cr-select--placeholder]="!round.stageType"
+                [title]="isDefaultRound(round) ? 'Stage type is fixed for the default AI Interview round' : ''"
               >
                 <option value="" disabled hidden>Select stage type</option>
                 <option
@@ -103,7 +110,7 @@
                   [disabled]="opt.disabled"
                   [class.cr-option--disabled]="opt.disabled"
                 >
-                  {{ opt.name }}{{ opt.disabled ? ' (selected)' : '' }}
+                  {{ opt.name }}
                 </option>
               </select>
               <i class="fas fa-chevron-down cr-select-arrow"></i>
@@ -113,7 +120,12 @@
           <!-- Interview Mode -->
           <div class="cr-col cr-col--mode">
             <div class="cr-select-wrap">
-              <select class="cr-select" [(ngModel)]="round.interviewMode">
+              <select
+                class="cr-select"
+                [(ngModel)]="round.interviewMode"
+                [disabled]="isDefaultRound(round)"
+                [title]="isDefaultRound(round) ? 'Interview mode is fixed for the default AI Interview round' : ''"
+              >
                 <option *ngFor="let opt of interviewModeOptions" [value]="opt">{{ opt }}</option>
               </select>
               <i class="fas fa-chevron-down cr-select-arrow"></i>
@@ -122,8 +134,13 @@
 
           <!-- Mandatory toggle -->
           <div class="cr-col cr-col--mandatory">
-            <label class="cr-toggle" [class.cr-toggle--on]="round.mandatory">
-              <input type="checkbox" [(ngModel)]="round.mandatory" />
+            <label
+              class="cr-toggle"
+              [class.cr-toggle--on]="round.mandatory"
+              [class.cr-toggle--disabled]="isDefaultRound(round)"
+              [title]="isDefaultRound(round) ? 'The AI Interview round is always mandatory' : ''"
+            >
+              <input type="checkbox" [(ngModel)]="round.mandatory" [disabled]="isDefaultRound(round)" />
               <span class="cr-toggle__track">
                 <span class="cr-toggle__thumb"></span>
               </span>
@@ -132,7 +149,12 @@
 
           <!-- Delete -->
           <div class="cr-col cr-col--actions" *ngIf="!viewMode">
-            <button class="cr-delete-btn" title="Remove round" (click)="deleteRound(i)">
+            <button
+              class="cr-delete-btn"
+              (click)="deleteRound(i)"
+              [disabled]="isDefaultRound(round)"
+              [title]="isDefaultRound(round) ? 'The default AI Interview round cannot be removed' : 'Remove round'"
+            >
               <i class="fas fa-trash-can"></i>
             </button>
           </div>
@@ -207,7 +229,7 @@
   <!-- ── Footer actions ───────────────────────────────────────────────────── -->
   <div class="cr-footer" *ngIf="!viewMode">
     <button class="cr-btn cr-btn--ghost" (click)="onDiscard()">
-      <i class="fas fa-xmark"></i> Discard
+      <i class="fas fa-xmark"></i> Cancel
     </button>
     <button class="cr-btn cr-btn--primary" (click)="onSave()">
       <i class="fas fa-floppy-disk"></i> Save Plan

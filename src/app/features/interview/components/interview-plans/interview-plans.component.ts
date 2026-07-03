@@ -29,7 +29,7 @@ export class InterviewPlansComponent implements OnInit {
   private router = inject(Router);
   private interviewService = inject(InterviewServiceService);
 
-  private activeFilters: Record<string, string> = {dateFilter: "thisWeek"};
+  private activeFilters: Record<string, string> = {dateFilter: ""};
 
   // ── Cards ───────────────────────────────────────────────────────────────────
   cards = [

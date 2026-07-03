@@ -168,6 +168,11 @@ export const API = {
         GET_UPCOMMING_REQUEST_LIST:`/hms/interview-plan/interview-upcoming-list`,
         CANDIDATE_SUMMARY_DETAILS:(id:any)=>`/hms/interview-plan/interview-summary/${id}`,
         AI_INTERVIEW_FEED_BACK:`/api/interview/interview-feedback`,
-        SCHEDULE_INTERVIEW_TO_CANDIDATE:`/hms/interview-plan/interview-schedule`
+        SCHEDULE_INTERVIEW_TO_CANDIDATE:`/hms/interview-plan/interview-schedule`,
+        RESCHEDULE_INTERVIEW_FOR_CANDIDATE:`/hms/interview-plan/rescedule-interview`,
+        SCHEDULE_INTERVIEW_DETAILS_FOR_CANDIDATE:(id:any)=>`/hms/interview-plan/get-interview-schedule-details-by-id/${id}`,
+        AI_EVALUATION_SUMMARY:(id:any)=>`/api/interview/evaluation-summary?application_id=${id}`,
+        CALCULATE_EVALUATION_SUMMARY:`/api/interview/calculate-evaluation-summary`,
+        UPDATE_INTERVIEW_COMPLETE:`/hms/interview-plan/update-interview-completion-status`
     }
 };

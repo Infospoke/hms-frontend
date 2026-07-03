@@ -13,7 +13,7 @@ export const filterDropdowns: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -45,7 +45,7 @@ export const statusOptions: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -72,7 +72,7 @@ export const statusOptionsForDepartment: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -91,7 +91,7 @@ export const chainOptions: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -148,7 +148,7 @@ export const approvedSrs: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -196,7 +196,7 @@ export const candidateManagement: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -224,7 +224,7 @@ export const interview: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -273,7 +273,7 @@ export const aiInterview: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -311,7 +311,7 @@ export const assignRecruters: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },
@@ -346,7 +346,7 @@ export const interviewPriority: any = [
   {
     key: 'dateFilter',
     label: 'Date',
-    selected: 'thisMonth',
+    selected: '',
     isDateFilter: true,
     options: [
       { value: '', label: 'All Time' },

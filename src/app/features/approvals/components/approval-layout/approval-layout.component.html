@@ -1,7 +1,7 @@
 <div class="approval-component">
     <div class="heading-info sr-header">
         <app-heading [heading]="heading" [subHeading]="subHeading" [showInfo]="showInfo" [infoTooltip]="infoTooltip" [showBackButton]="showBackButton" [buttonText]="buttonText" [backButtonUrl]="buttonUrl"/>
-         <button class="btn-new" *appCan="showBtn" (click)="handleNavigate()">+ {{buttonType}}</button>
+         <button class="btn-new" *appCan="showBtn" (click)="handleNavigate()" [disabled]="disableCreateButton">+ {{buttonType}}</button>
     </div>
     <div class="stats-grid">
 

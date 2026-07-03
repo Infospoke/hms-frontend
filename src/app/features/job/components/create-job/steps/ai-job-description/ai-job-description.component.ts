@@ -85,7 +85,8 @@ export class AiJobDescriptionStepComponent
   saveStatus: 'idle' | 'saving' | 'saved' = 'idle';
   wordCount = 0;
   showMoreAIOptions = false;
-
+  options:any='';
+  renameButton:boolean=false;
   private saveTimer: any;
 
   // ── Lifecycle ───────────────────────────────────────────────────────────────
@@ -171,6 +172,9 @@ export class AiJobDescriptionStepComponent
   // ── Public API actions ──────────────────────────────────────────────────────
 
   async generateJD(): Promise<void> {
+    // If an AI option has been selected, this click regenerates using it.
+    const updateParameter = this.renameButton ? this.options : '';
+
     if (this.versions.length >= 3) {
       const modal = this.modal.create<ConfirmModalComponent>({
         nzContent: ConfirmModalComponent,
@@ -183,21 +187,29 @@ export class AiJobDescriptionStepComponent
       });
       modal.afterClose.subscribe((result: string) => {
         if (result === 'confirm') {
-          this.callGenerateApi('');
+          this.callGenerateApi(updateParameter);
         }
       });
       return;
     }
-    await this.callGenerateApi('');
+    await this.callGenerateApi(updateParameter);
   }
 
   async regenerate(): Promise<void> {
     await this.callGenerateApi('');
   }
 
-  async applyAIOption(option: string): Promise<void> {
+  applyAIOption(option: string): void {
     this.showMoreAIOptions = false;
-    await this.callGenerateApi(option);
+    this.renameButton = true;
+    this.options = option;
+  }
+
+  /** Lets the user back out of an option-based regenerate and return to plain "Generate JD". */
+  cancelOption(event: Event): void {
+    event.stopPropagation();
+    this.renameButton = false;
+    this.options = '';
   }
 
   // ── Core API call ───────────────────────────────────────────────────────────
@@ -240,6 +252,8 @@ export class AiJobDescriptionStepComponent
     } finally {
       this.isGenerating = false;
       this.isRegenerating = false;
+      this.renameButton = false;
+      this.options = '';
       this.cdr.detectChanges();
     }
   }

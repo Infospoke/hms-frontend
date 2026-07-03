@@ -70,15 +70,16 @@ export class StaffingRequisitionsComponent implements OnInit {
   isLoading = false;
 
  
-  private lastFilterPayload: any = { chainName: '', filters: {},dateFilter: 'thisMonth' };
+  private lastFilterPayload: any = { chainName: '', filters: {},dateFilter: '' };
 
   // ── Column definitions ──────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'srId', label: 'SR ID', width: '100px', custom: true },
-    { key: 'department', label: 'Department', width: '100px', custom: true },
-    { key: 'requestedBy', label: 'Requested By', width: '100px', custom: true },
+    { key: 'srId', label: 'SR ID', width: '80px', custom: true },
+    { key: 'department', label: 'Department', width: '80px', custom: true },
+    { key: 'requestedBy', label: 'Requested By', width: '80px', custom: true },
     { key: 'requestedOn', label: 'Requested On', width: '90px', custom: true },
-    { key: 'currentStatus', label: 'Pipeline', width: '390px', custom: true, align: 'center' },
+    { key: 'currentStatus', label: 'Pipeline', width: '240px', custom: true, align: 'center' },
+    { key: 'status', label: 'Status', width: '90px', custom: true, align: 'center' },
     { key: 'actions', label: 'Actions', width: '70px', align: 'center', custom: true },
   ];
 

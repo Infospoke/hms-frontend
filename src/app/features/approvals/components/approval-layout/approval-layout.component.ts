@@ -32,7 +32,7 @@ export class ApprovalLayoutComponent {
   @Output() tabChange = new EventEmitter<any>();
   @Output() filterChange = new EventEmitter<any>();
   @Input() buttonUrl:string='';
-
+  @Input() disableCreateButton:boolean=false;
   handleNavigate(){
     this.handle.emit();
   }

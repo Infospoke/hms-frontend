@@ -44,7 +44,7 @@
               <path d="M1 5.5h12" stroke="#6b7280" stroke-width="1.1"/>
               <path d="M4 1v2M10 1v2" stroke="#6b7280" stroke-width="1.1" stroke-linecap="round"/>
             </svg>
-            <span>{{ interview?.completedOn }}</span>
+            <span>{{ interview?.completedOn | date:'MMM d, y' }}</span>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <circle cx="7" cy="7" r="5.5" stroke="#6b7280" stroke-width="1.1"/>
               <path d="M7 4.5v2.5l1.5 1.5" stroke="#6b7280" stroke-width="1.1" stroke-linecap="round"/>
@@ -72,17 +72,20 @@
     <!-- Vertical divider -->
     <div class="summary-divider"></div>
 
-    <!-- <app-interview-candidate-info
-      [candidate]="candidate"
-      [tabs]="[]"
-    /> -->
+    <div class="candidate-panel">
+      <app-interview-candidate-info
+        [candidate]="candidate"
+        [tabs]="[]"
+        [compact]="true"
+      />
+    </div>
 
   </section>
 
   <!-- ── REUSABLE FEEDBACK FORM ────────────────────────────────────────── -->
   <app-interview-feedback-form
     [competencies]="competencies"
-    [initialRating]="4"
+    [initialRating]="1"
     [showCancel]="true"
     submitLabel="Submit Feedback"
     [readonly]="false"

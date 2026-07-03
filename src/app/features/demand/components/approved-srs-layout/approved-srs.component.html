@@ -63,7 +63,7 @@
                 <span class="cell-job-avatar" [style.background]="avatarColor(ctx.row.jobTitleName)">
                     {{initials(ctx.row.jobTitleName) }}
                 </span>
-                <span class="cell-text-primary">{{ truncate(ctx.row.jobTitleName,40) }}</span>
+                <span class="cell-text-primary text-break">{{ ctx.row.jobTitleName }}</span>
             </div>
         </ng-container>
 
@@ -78,7 +78,7 @@
                 <span class="cell-avatar" [style.background]="avatarColor(ctx.row.requestbyName)">
                     {{ initials(ctx.row.requestbyName) }}
                 </span>
-                <span class="cell-person-name">{{ truncate(ctx.row.requestbyName,30) }}</span>
+                <span class="cell-person-name text-break">{{ ctx.row.requestbyName }}</span>
             </div>
         </ng-container>
 

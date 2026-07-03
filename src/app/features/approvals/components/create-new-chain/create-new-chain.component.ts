@@ -34,7 +34,7 @@ export class CreateNewChainComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
 
-  url: string = '';
+  url: string = '/approval/chain-config';
   mode: PageMode = 'create';
 
   functionalityOptions: { value: any; label: string }[] = [];

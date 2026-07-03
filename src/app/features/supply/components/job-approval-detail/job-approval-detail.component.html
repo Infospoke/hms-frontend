@@ -43,68 +43,79 @@
 
       <div class="jad-ov-grid">
 
-        <!-- Left column -->
-        <div class="jad-ov-col">
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-hashtag jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Job Code</p>
-              <p class="jad-ov-val">{{ overview?.jobCode || '—' }}</p>
-            </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-hashtag jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Job Code</p>
+            <p class="jad-ov-val">{{ overview?.jobCode || '—' }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-building jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Department</p>
-              <p class="jad-ov-val">{{ departmentName }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-building jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Department</p>
+            <p class="jad-ov-val">{{ departmentName }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-location-dot jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Location</p>
-              <p class="jad-ov-val">{{ overview?.location || '—' }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-location-dot jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Location</p>
+            <p class="jad-ov-val">{{ overview?.location || '—' }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-file-contract jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Employment Type</p>
-              <p class="jad-ov-val">{{ overview?.employmentType || '—' }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-file-contract jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Employment Type</p>
+            <p class="jad-ov-val">{{ overview?.employmentType || '—' }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-laptop-house jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Work Mode</p>
-              <p class="jad-ov-val">{{ overview?.workMode || '—' }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-laptop-house jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Work Mode</p>
+            <p class="jad-ov-val">{{ overview?.workMode || '—' }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-calendar-day jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Target Start Date</p>
-              <p class="jad-ov-val">{{ targetStartDate }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-calendar-day jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Target Start Date</p>
+            <p class="jad-ov-val">{{ targetStartDate }}</p>
           </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-users jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Number of Openings</p>
-              <p class="jad-ov-val">{{ overview?.openings ?? '—' }}</p>
-            </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-users jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Number of Openings</p>
+            <p class="jad-ov-val">{{ overview?.openings ?? '—' }}</p>
+          </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-chart-line jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Experience</p>
+            <p class="jad-ov-val">{{ experienceLabel }}</p>
+          </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-note-sticky jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Additional Notes</p>
+            <p class="jad-ov-val">{{ overview?.additionalNotes || 'None' }}</p>
+          </div>
+        </div>
+        <div class="jad-ov-row">
+          <i class="fa-solid fa-sitemap jad-ov-icon"></i>
+          <div>
+            <p class="jad-ov-label">Business Unit</p>
+            <p class="jad-ov-val">{{ businessUnitName }}</p>
           </div>
         </div>
 
-        <!-- Right column -->
-        <div class="jad-ov-col">
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-chart-line jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Experience</p>
-              <p class="jad-ov-val">{{ experienceLabel }}</p>
-            </div>
-          </div>
+        <!-- Skills — 2 per row, shown last -->
+        <div class="jad-ov-skills-row">
           <div class="jad-ov-row jad-ov-row--top">
             <i class="fa-solid fa-star jad-ov-icon"></i>
             <div>
@@ -123,20 +134,6 @@
                 <span class="jad-chip jad-chip--nice" *ngFor="let sk of niceToHaveSkills">{{ sk }}</span>
                 <span class="jad-ov-val" *ngIf="niceToHaveSkills.length === 0">None</span>
               </div>
-            </div>
-          </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-note-sticky jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Additional Notes</p>
-              <p class="jad-ov-val">{{ overview?.additionalNotes || 'None' }}</p>
-            </div>
-          </div>
-          <div class="jad-ov-row">
-            <i class="fa-solid fa-sitemap jad-ov-icon"></i>
-            <div>
-              <p class="jad-ov-label">Business Unit</p>
-              <p class="jad-ov-val">{{ businessUnitName }}</p>
             </div>
           </div>
         </div>
@@ -256,17 +253,15 @@
       <div class="jad-channels">
         <div
           class="jad-ch-card"
-          [class.jad-ch-card--off]="!ch.enabled"
-          *ngFor="let ch of sourcingChannels">
+          *ngFor="let ch of enabledSourcingChannels">
           <div class="jad-ch-logo" [style.background]="ch.iconBg">{{ ch.icon }}</div>
           <div class="jad-ch-body">
             <span class="jad-ch-name">{{ ch.name }}</span>
             <!-- <span class="jad-ch-type">@ {{ ch.type }}</span> -->
           </div>
-          <span class="jad-ch-pill" [class.jad-ch-pill--on]="ch.enabled" [class.jad-ch-pill--off]="!ch.enabled">
-            {{ ch.enabled ? 'On' : 'Off' }}
-          </span>
+          <span class="jad-ch-pill jad-ch-pill--on">On</span>
         </div>
+        <p class="jad-empty" *ngIf="enabledSourcingChannels.length === 0">No sourcing channels enabled.</p>
       </div>
 
       <div class="jad-referral-tag" *ngIf="referralEnabled && referralAmount">
@@ -342,111 +337,34 @@
 
       <!-- ── Not yet submitted ── -->
       <ng-template #decisionForm>
-
-        <!-- ── Assignment mode: Accept/Reject open a comment modal ── -->
-        <ng-container *ngIf="isAssignmentMode; else jobDecisionForm">
-          <p class="jad-body-text jad-mb-16">
-            Please review the assignment details and let us know your decision.
-          </p>
-          <div class="jad-dec-btns">
-            <button
-              class="jad-dec-btn jad-dec-btn--accept"
-              (click)="openCommentModal('approve')">
-              <i class="fa-solid fa-check"></i> Accept the Assignment
-            </button>
-            <button
-              class="jad-dec-btn jad-dec-btn--decline"
-              (click)="openCommentModal('reject')">
-              <i class="fa-solid fa-xmark"></i> Reject the Assignment
-            </button>
-          </div>
-        </ng-container>
-
-        <!-- ── Default mode: existing inline decision form ── -->
-        <ng-template #jobDecisionForm>
-          <p class="jad-body-text jad-mb-16">
-            Please review the job details and let us know your decision.
-          </p>
-
-          <p class="jad-field-label">Decision <span class="jad-req">*</span></p>
-          <div class="jad-dec-btns">
-            <button
-              class="jad-dec-btn jad-dec-btn--accept"
-              [class.active]="decision === 'Accepted'"
-              (click)="setDecision('Accepted')">
-              <i class="fa-solid fa-check"></i> Accept
-            </button>
-            <button
-              class="jad-dec-btn jad-dec-btn--decline"
-              [class.active]="decision === 'Rejected'"
-              (click)="setDecision('Rejected')">
-              <i class="fa-solid fa-xmark"></i> Decline
-            </button>
-          </div>
-
-          <p class="jad-field-label">
-            Comments <span class="astrick">*</span>
-          </p>
-          <p class="jad-field-hint">Provide a reason for your decision (recommended).</p>
-          <div class="jad-ta-wrap">
-            <textarea
-              class="jad-textarea"
-              [(ngModel)]="comment"
-              [maxlength]="MAX_COMMENT"
-              rows="4"
-              placeholder="Write your comments here...">
-            </textarea>
-            <span class="jad-char">{{ charCount }} / {{ MAX_COMMENT }}</span>
-          </div>
-
-          <div class="jad-footer">
-            <button class="jad-btn-cancel" (click)="onCancel()">Cancel</button>
-            <button
-              class="jad-btn-submit"
-              [disabled]="!canSubmit"
-              (click)="onSubmit()">
-              <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
-              {{ isSubmitting ? 'Submitting...' : 'Submit Decision' }}
-              <i class="fa-solid fa-arrow-right" *ngIf="!isSubmitting"></i>
-            </button>
-          </div>
-        </ng-template>
-
+        <p class="jad-body-text jad-mb-16">
+          {{ isAssignmentMode
+              ? 'Please review the assignment details and let us know your decision.'
+              : 'Please review the job details and let us know your decision.' }}
+        </p>
+        <div class="jad-dec-btns">
+          <button
+            class="jad-dec-btn jad-dec-btn--accept"
+            (click)="openDecisionModal('approve')">
+            <i class="fa-solid fa-check"></i> {{ isAssignmentMode ? 'Accept the Assignment' : 'Accept' }}
+          </button>
+          <button
+            class="jad-dec-btn jad-dec-btn--decline"
+            (click)="openDecisionModal('reject')">
+            <i class="fa-solid fa-xmark"></i> {{ isAssignmentMode ? 'Reject the Assignment' : 'Decline' }}
+          </button>
+        </div>
       </ng-template>
     </div>
 
-    <!-- ══ Comment Modal — Accept/Reject Assignment ══ -->
-    <div class="jad-modal-backdrop" *ngIf="isCommentModalOpen" (click)="closeCommentModal()">
-      <div class="jad-modal" (click)="$event.stopPropagation()">
-        <h3 class="jad-modal-title">
-          {{ commentModalAction === 'approve' ? 'Accept the Assignment' : 'Reject the Assignment' }}
-        </h3>
-
-        <p class="jad-field-label">Comments <span class="jad-req">*</span></p>
-        <p class="jad-field-hint">Provide a reason for your decision.</p>
-        <div class="jad-ta-wrap">
-          <textarea
-            class="jad-textarea"
-            [(ngModel)]="modalComment"
-            [maxlength]="MAX_COMMENT"
-            rows="4"
-            placeholder="Write your comments here...">
-          </textarea>
-          <span class="jad-char">{{ modalComment.length }} / {{ MAX_COMMENT }}</span>
-        </div>
-
-        <div class="jad-footer">
-          <button class="jad-btn-cancel" (click)="closeCommentModal()">Cancel</button>
-          <button
-            class="jad-btn-submit"
-            [disabled]="isSubmitting || !modalComment.trim()"
-            (click)="onModalConfirmed({ comment: modalComment })">
-            <i class="fa-solid fa-spinner fa-spin" *ngIf="isSubmitting"></i>
-            {{ isSubmitting ? 'Submitting...' : (commentModalAction === 'approve' ? 'Confirm Acceptance' : 'Confirm Rejection') }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- ══ Shared comment modal — Accept/Reject decision ══ -->
+    <app-common-modal
+      [visible]="isDecisionModalOpen"
+      [action]="decisionModalAction"
+      [submitting]="isSubmitting"
+      (cancelled)="closeDecisionModal()"
+      (confirmed)="onDecisionConfirmed($event)">
+    </app-common-modal>
 
   </ng-container>
 </div>

@@ -1,3 +1,5 @@
+<ng-container *ngIf="data; else stateBlock">
+
 <!-- AI Interview Card -->
 <div class="aid-card">
   <div class="aid-ai-header-row">
@@ -177,15 +179,31 @@
         </td>
         <td style="color:var(--gray-700);font-size:12px">{{ v.description }}</td>
         <td>
-          <div *ngIf="v.snapshots?.length" style="display:flex;gap:4px">
+          <div *ngIf="v.snapshots.length" style="display:flex;gap:4px">
             <div *ngFor="let snap of v.snapshots"
                  style="width:36px;height:28px;background:var(--gray-200);border-radius:4px;overflow:hidden">
               <img *ngIf="snap" [src]="snap" style="width:100%;height:100%;object-fit:cover" alt="snapshot"/>
             </div>
           </div>
-          <span *ngIf="!v.snapshots?.length" style="color:var(--gray-400);font-size:12px">—</span>
+          <span *ngIf="!v.snapshots.length" style="color:var(--gray-400);font-size:12px">—</span>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
+
+</ng-container>
+
+<ng-template #stateBlock>
+  <div class="aid-card aid-state-card">
+    <ng-container *ngIf="loading; else errorOrEmpty">
+      <div class="aid-spinner"></div>
+      <p class="aid-state-text">Loading interview analysis…</p>
+    </ng-container>
+    <ng-template #errorOrEmpty>
+      <p class="aid-state-text" [class.aid-state-error]="error">
+        {{ error || 'No AI interview analysis available yet.' }}
+      </p>
+    </ng-template>
+  </div>
+</ng-template>

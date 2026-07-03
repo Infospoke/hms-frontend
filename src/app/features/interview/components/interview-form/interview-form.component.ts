@@ -6,6 +6,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
+  HostListener,
   inject,
 } from '@angular/core';
 import {
@@ -45,6 +46,32 @@ export function meetingLinkValidator(control: AbstractControl): ValidationErrors
   return isRecognized ? null : { invalidMeetingLink: true };
 }
 
+export interface TimeSlot {
+  /** "HH:mm" 24-hour value stored on the form control */
+  value: string;
+  /** Human friendly label, e.g. "9:30 AM" */
+  label: string;
+}
+
+/** Interview hours: 9:00 AM - 7:00 PM in 30 minute increments. */
+const SLOT_START_MINUTES = 9 * 60;
+const SLOT_END_MINUTES = 19 * 60;
+const SLOT_STEP_MINUTES = 30;
+
+function buildTimeSlots(): TimeSlot[] {
+  const slots: TimeSlot[] = [];
+  for (let mins = SLOT_START_MINUTES; mins <= SLOT_END_MINUTES; mins += SLOT_STEP_MINUTES) {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 === 0 ? 12 : h % 12;
+    const label = `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+    slots.push({ value, label });
+  }
+  return slots;
+}
+
 @Component({
   selector: 'app-interview-form',
   standalone: true,
@@ -66,6 +93,48 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   form!: FormGroup;
   private router=inject(Router);
+
+  /** Pre-computed interview-hours slot list (9:00 AM - 7:00 PM, 30 min steps). */
+  readonly timeSlots: TimeSlot[] = buildTimeSlots();
+
+  /** Which time-slot dropdown (if any) is currently open. */
+  activeTimeField: 'start' | 'end' | null = null;
+
+  toggleTimeDropdown(field: 'start' | 'end'): void {
+    this.activeTimeField = this.activeTimeField === field ? null : field;
+  }
+
+  /** Closes any open time-slot dropdown when the user clicks elsewhere on the page. */
+  @HostListener('document:click')
+  closeTimeDropdowns(): void {
+    this.activeTimeField = null;
+  }
+
+  selectStartTime(slot: string): void {
+    if (this.isSlotDisabled(slot)) return;
+    const ctrl = this.form.get('startTime');
+    ctrl?.setValue(slot);
+    ctrl?.markAsTouched();
+    this.activeTimeField = null;
+  }
+
+  selectEndTime(slot: string): void {
+    if (this.isEndSlotDisabled(slot)) return;
+    const ctrl = this.form.get('endTime');
+    ctrl?.setValue(slot);
+    ctrl?.markAsTouched();
+    this.activeTimeField = null;
+  }
+
+  get startTimeLabel(): string {
+    const v = this.form?.get('startTime')?.value;
+    return this.timeSlots.find((s) => s.value === v)?.label ?? '';
+  }
+
+  get endTimeLabel(): string {
+    const v = this.form?.get('endTime')?.value;
+    return this.timeSlots.find((s) => s.value === v)?.label ?? '';
+  }
   /**
    * Maps summary.candidate (the shape used by interview-form) to the
    * CandidateData interface expected by InterviewCandidateInfoComponent.
@@ -148,6 +217,44 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     return this.form?.get('interviewType')?.value === 'Offline';
   }
 
+  /** Today's date as "yyyy-MM-dd", matching the native date input's value format. */
+  get todayIso(): string {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  /** Used as the date input's [min] so past dates can't be picked at all. */
+  get minInterviewDate(): string {
+    return this.todayIso;
+  }
+
+  get isSelectedDateToday(): boolean {
+    const date = this.form?.get('interviewDate')?.value;
+    return !!date && date === this.todayIso;
+  }
+
+  private get nowHHmm(): string {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
+
+  /** A start-time slot is unavailable once its time has already passed today. */
+  isSlotDisabled(slot: string): boolean {
+    return this.isSelectedDateToday && slot <= this.nowHHmm;
+  }
+
+  /** An end-time slot is unavailable if it's already passed today, or isn't after the chosen start time. */
+  isEndSlotDisabled(slot: string): boolean {
+    if (this.isSlotDisabled(slot)) {
+      return true;
+    }
+    const start = this.form?.get('startTime')?.value;
+    return !!start && slot <= start;
+  }
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -164,10 +271,10 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     const prefill = this.currentSchedule;
 
     this.form = this.fb.group({
-      interviewDate: [prefill?.interviewDate ?? '', Validators.required],
-      startTime:     [prefill?.startTime ?? '',     Validators.required],
-      endTime:       [prefill?.endTime ?? '',        Validators.required],
-      interviewType: [prefill?.interviewType ?? 'Online', Validators.required],
+      interviewDate: [this.toDateOnly(prefill?.interviewDate), Validators.required],
+      startTime:     [this.toHHmm(prefill?.startTime),     Validators.required],
+      endTime:       [this.toHHmm(prefill?.endTime),        Validators.required],
+      interviewType: [prefill ? this.normalizeInterviewType(prefill.interviewType) : 'Online', Validators.required],
       meetingLink:   [prefill?.meetingLink ?? '', [meetingLinkValidator]],
       venueDetails:  [prefill?.venueDetails ?? ''],
     });
@@ -181,18 +288,65 @@ export class InterviewFormComponent implements OnInit, OnChanges {
         this.form.get('meetingLink')?.setValue('');
       }
     });
+
+    // If the date changes to today (or was already today), drop any selected
+    // start/end slot that has now fallen in the past so it can't be submitted.
+    this.form.get('interviewDate')?.valueChanges.subscribe(() => this.clearPastSlotsIfStale());
+  }
+
+  private clearPastSlotsIfStale(): void {
+    if (!this.isSelectedDateToday) {
+      return;
+    }
+    const startCtrl = this.form.get('startTime');
+    const endCtrl = this.form.get('endTime');
+    if (startCtrl?.value && this.isSlotDisabled(startCtrl.value)) {
+      startCtrl.setValue('');
+    }
+    if (endCtrl?.value && this.isEndSlotDisabled(endCtrl.value)) {
+      endCtrl.setValue('');
+    }
   }
 
   private patchNewSchedule(): void {
     if (!this.currentSchedule) return;
     this.form.patchValue({
-      interviewDate: this.currentSchedule.interviewDate,
-      startTime:     this.currentSchedule.startTime,
-      endTime:       this.currentSchedule.endTime,
-      interviewType: this.currentSchedule.interviewType,
+      interviewDate: this.toDateOnly(this.currentSchedule.interviewDate),
+      startTime:     this.toHHmm(this.currentSchedule.startTime),
+      endTime:       this.toHHmm(this.currentSchedule.endTime),
+      interviewType: this.normalizeInterviewType(this.currentSchedule.interviewType),
       meetingLink:   this.currentSchedule.meetingLink ?? '',
       venueDetails:  this.currentSchedule.venueDetails ?? '',
     });
+  }
+
+  /**
+   * Normalizes an ISO datetime (or date-only) string to "yyyy-MM-dd" so it
+   * matches what the native date input requires to display a pre-filled value.
+   */
+  private toDateOnly(value: string | undefined | null): string {
+    if (!value) return '';
+    // Handles "2026-07-10T00:00:00.000Z" as well as plain "2026-07-10".
+    return value.slice(0, 10);
+  }
+
+  /**
+   * Normalizes a time value (which may include seconds, e.g. "14:30:00") to
+   * "HH:mm" so it matches one of the <select> option values in timeSlots.
+   */
+  private toHHmm(value: string | undefined | null): string {
+    if (!value) return '';
+    return value.slice(0, 5);
+  }
+
+  /**
+   * Normalizes interviewType to exactly 'Online' or 'Offline' (case-insensitive
+   * match against whatever casing the API returns), since showMeetingLink /
+   * showVenueDetails and the radio-card `selected` state do strict '===' checks.
+   */
+  private normalizeInterviewType(value: string | undefined | null): 'Online' | 'Offline' {
+    const v = (value ?? '').trim().toLowerCase();
+    return v === 'offline' ? 'Offline' : 'Online';
   }
 
   onCancel(): void {

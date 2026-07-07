@@ -62,6 +62,12 @@ $gray-300:#d9dbdf;
   margin: 0 0 18px;
 }
 
+.iff-error {
+  font-size: 12px;
+  color: $red;
+  margin: 10px 0 0;
+}
+
 // ── Stars ─────────────────────────────────────────────────────────────────────
 .iff-star-row {
   display: flex;

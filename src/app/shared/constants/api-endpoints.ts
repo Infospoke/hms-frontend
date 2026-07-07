@@ -173,6 +173,8 @@ export const API = {
         SCHEDULE_INTERVIEW_DETAILS_FOR_CANDIDATE:(id:any)=>`/hms/interview-plan/get-interview-schedule-details-by-id/${id}`,
         AI_EVALUATION_SUMMARY:(id:any)=>`/api/interview/evaluation-summary?application_id=${id}`,
         CALCULATE_EVALUATION_SUMMARY:`/api/interview/calculate-evaluation-summary`,
-        UPDATE_INTERVIEW_COMPLETE:`/hms/interview-plan/update-interview-completion-status`
+        UPDATE_INTERVIEW_COMPLETE:`/hms/interview-plan/update-interview-completion-status`,
+        INTERVIEW_COMPLETE_TO_CANDIDATE:`/hms/interview-plan/interview-complete`,
+        INTERVIEW_ASSIGNMENTS_COUNT:`/hms/interviewer-assignment/interviewers-assignment-counts`
     }
 };

@@ -68,7 +68,7 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
 
   // ── Actions ───────────────────────────────────────────────────────────────
   onViewDetails(interview: TodayInterview): void {
-    this.router.navigateByUrl(`/supply/my-interview-requests/today-interview-details/${interview.id}`)
+    this.router.navigateByUrl(`/candidate-management/in-person-interview/today-interview-details/${interview.id}`)
   }
 
   onRowClick(row: TodayInterview): void {

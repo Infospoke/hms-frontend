@@ -3,10 +3,11 @@ import { ReusableTableComponent, TableColumn } from "../../../../shared/componen
 import { CommonModule } from '@angular/common';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { Router } from '@angular/router';
+import { CanDirective } from '../../../../shared/directives/can.directive';
 
 @Component({
   selector: 'app-interview-questions-table',
-  imports: [ReusableTableComponent, CommonModule],
+  imports: [ReusableTableComponent, CommonModule,CanDirective],
   templateUrl: './interview-questions-table.component.html',
   styleUrl: './interview-questions-table.component.scss',
 })
@@ -171,7 +172,7 @@ export class InterviewQuestionsTableComponent implements OnInit, OnChanges {
 
   handleGenerateQuestions(applicationId: number): void {
     this.router.navigate(
-      ['/supply/ai-interview-zone/generate-ai-questions'],
+      ['/candidate-management/ai-interview-zone/generate-ai-questions'],
       { queryParams: { applicationId } }
     );
   }

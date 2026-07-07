@@ -60,7 +60,7 @@ export class AssignInterviewersComponent implements OnInit {
       .then((res: any) => {
         if (res?.responsecode == '00') {
           this.tableData = res?.data?.content;
-          this.totalItems=res?.data?.totalPages * this.pageSize;
+          this.totalItems=res?.data?.totalElements;
         }
         else {
           this.notificationSerivce.error(res?.message || res?.responsemessage)

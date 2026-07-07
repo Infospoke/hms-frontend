@@ -24,6 +24,7 @@
     </span>
     <span class="iff-star-count">{{ overallRating || 0 }} out of 5</span>
   </div>
+  <p class="iff-error" *ngIf="overallRatingError">{{ overallRatingError }}</p>
 </section>
 
 <!-- ── COMPETENCY EVALUATION ─────────────────────────────────────────── -->
@@ -55,6 +56,7 @@
                 [name]="comp.key"
                 [value]="col.value"
                 [(ngModel)]="comp.rating"
+                (ngModelChange)="onCompetencyRatingChange()"
                 [disabled]="readonly"
                 class="iff-radio-hidden"
               />
@@ -65,6 +67,7 @@
       </tbody>
     </table>
   </div>
+  <p class="iff-error" *ngIf="competencyError">{{ competencyError }}</p>
 </section>
 
 <!-- ── STRENGTHS ─────────────────────────────────────────────────────── -->
@@ -76,13 +79,15 @@
       class="iff-textarea"
       [class.iff-textarea--readonly]="readonly"
       rows="4"
-      maxlength="500"
+      [maxlength]="maxLength"
       placeholder="Write your feedback here..."
       [(ngModel)]="strengths"
+      (ngModelChange)="onStrengthsChange()"
       [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count" *ngIf="!readonly">{{ strengths.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ strengths.length }}/{{ maxLength }}</span>
   </div>
+  <p class="iff-error" *ngIf="strengthsError">{{ strengthsError }}</p>
 </section>
 
 <!-- ── AREAS OF IMPROVEMENT ──────────────────────────────────────────── -->
@@ -94,13 +99,15 @@
       class="iff-textarea"
       [class.iff-textarea--readonly]="readonly"
       rows="4"
-      maxlength="500"
+      [maxlength]="maxLength"
       placeholder="Write your feedback here..."
       [(ngModel)]="areasOfImprovement"
+      (ngModelChange)="onAreasOfImprovementChange()"
       [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count" *ngIf="!readonly">{{ areasOfImprovement.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ areasOfImprovement.length }}/{{ maxLength }}</span>
   </div>
+  <p class="iff-error" *ngIf="areasOfImprovementError">{{ areasOfImprovementError }}</p>
 </section>
 
 <!-- ── ADDITIONAL COMMENTS ───────────────────────────────────────────── -->
@@ -115,12 +122,12 @@
       class="iff-textarea"
       [class.iff-textarea--readonly]="readonly"
       rows="4"
-      maxlength="500"
+      [maxlength]="maxLength"
       placeholder="Write your comments here..."
       [(ngModel)]="additionalComments"
       [readonly]="readonly"
     ></textarea>
-    <span class="iff-char-count" *ngIf="!readonly">{{ additionalComments.length }}/500</span>
+    <span class="iff-char-count" *ngIf="!readonly">{{ additionalComments.length }}/{{ maxLength }}</span>
   </div>
 </section>
 
@@ -162,6 +169,7 @@
       <span class="iff-radio-custom" [class.selected]="decision === opt.key"></span>
     </label>
   </div>
+  <p class="iff-error" *ngIf="decisionError">{{ decisionError }}</p>
 </section>
 
 <!-- ── ACTIONS (hidden in readonly mode) ─────────────────────────────── -->

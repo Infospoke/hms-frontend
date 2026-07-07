@@ -14,10 +14,7 @@
     [payload]="tablePayload"
     (pageChange)="onPageChange($event)" />
 
-  <app-assigned-interview-requests-table
-    *ngIf="activeStageId === 'ar'"
-    [payload]="tablePayload"
-    (pageChange)="onPageChange($event)" />
+ 
 
   <app-scheduled-table
     *ngIf="activeStageId === 'ts'"

@@ -60,7 +60,7 @@ export class ScheduleInterviewComponent implements OnInit {
     }
   }
   onCancel(): void {
-    this.router.navigate(['/supply/my-interview-requests'],{state:{activeType:'ts'}});
+    this.router.navigate(['/candidate-management/in-person-interview'],{state:{activeType:'ts'}});
   }
 
   async onSubmit(schedule: any) {

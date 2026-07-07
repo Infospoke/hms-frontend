@@ -12,6 +12,9 @@ export interface CompetencyRow {
 
 export type DecisionType = 'next' | 'hold' | 'reject' | null;
 
+/** Shared max character limit for Strengths, Areas of Improvement, and Additional Comments. */
+export const FEEDBACK_TEXT_MAX_LENGTH = 1000;
+
 export interface FeedbackFormValue {
   overallRating: number;
   competencies: { key: string; rating: number | null }[];
@@ -72,6 +75,16 @@ export class InterviewFeedbackFormComponent implements OnInit {
 
   readonly starsArray = [1, 2, 3, 4, 5];
 
+  /** Max characters allowed in Strengths / Areas of Improvement / Additional Comments. */
+  readonly maxLength = FEEDBACK_TEXT_MAX_LENGTH;
+
+  // Validation error messages — null/empty means that section is valid.
+  overallRatingError: string | null = null;
+  competencyError: string | null = null;
+  strengthsError: string | null = null;
+  areasOfImprovementError: string | null = null;
+  decisionError: string | null = null;
+
   readonly competencyColumns = [
     { value: 1, label: 'Poor' },
     { value: 2, label: 'Below Avg' },
@@ -98,17 +111,74 @@ export class InterviewFeedbackFormComponent implements OnInit {
   // Handlers
   setRating(value: number): void {
     this.overallRating = value;
+    if (this.overallRating > 0) {
+      this.overallRatingError = null;
+    }
   }
 
   setDecision(key: DecisionType): void {
     this.decision = key;
+    if (this.decision) {
+      this.decisionError = null;
+    }
+  }
+
+  onCompetencyRatingChange(): void {
+    if (this.competencies.every(c => c.rating != null)) {
+      this.competencyError = null;
+    }
+  }
+
+  onStrengthsChange(): void {
+    if (this.strengths.trim().length > 0) {
+      this.strengthsError = null;
+    }
+  }
+
+  onAreasOfImprovementChange(): void {
+    if (this.areasOfImprovement.trim().length > 0) {
+      this.areasOfImprovementError = null;
+    }
   }
 
   onCancel(): void {
     this.formCancel.emit();
   }
 
+  /** Validates all required sections. Returns true when the form is valid. */
+  private validate(): boolean {
+    this.overallRatingError = this.overallRating > 0
+      ? null
+      : 'Please provide an overall rating.';
+
+    this.competencyError = this.competencies.every(c => c.rating != null)
+      ? null
+      : 'Please rate every competency.';
+
+    this.strengthsError = this.strengths.trim().length > 0
+      ? null
+      : 'Please share the candidate\'s strengths.';
+
+    this.areasOfImprovementError = this.areasOfImprovement.trim().length > 0
+      ? null
+      : 'Please share areas of improvement.';
+
+    this.decisionError = (this.showDecision && !this.decision)
+      ? 'Please select a decision.'
+      : null;
+
+    return !this.overallRatingError
+      && !this.competencyError
+      && !this.strengthsError
+      && !this.areasOfImprovementError
+      && !this.decisionError;
+  }
+
   onSubmit(): void {
+    if (!this.validate()) {
+      return;
+    }
+
     const value: FeedbackFormValue = {
       overallRating:      this.overallRating,
       competencies:       this.competencies.map(c => ({ key: c.key, rating: c.rating })),

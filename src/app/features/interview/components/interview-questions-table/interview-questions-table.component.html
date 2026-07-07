@@ -40,7 +40,7 @@
 
     <!-- Actions column -->
     <ng-container *ngIf="ctx.col.key === 'actions'">
-        <div class="aiz-actions">
+        <div class="aiz-actions" *appCan="'CANDIDATEMANAGEMENT:AIINTERVIEWZONE:EDIT'">
             <button class="aiz-btn-manage" [class.aiz-btn-manage--generating]="ctx.row.statusType === 'generating'"
                 (click)="handleGenerateQuestions(ctx.row.applicationId)">
                 {{ ctx.row.actionLabel }}

@@ -74,7 +74,7 @@
 
   <!-- Actions column -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
-    <div class="sit-actions">
+    <div class="sit-actions" *appCan="'CANDIDATEMANAGEMENT:AIINTERVIEWZONE:EDIT'">
       <button
         class="sit-btn-view"
         (click)="onViewDetails(ctx.row, $event)"

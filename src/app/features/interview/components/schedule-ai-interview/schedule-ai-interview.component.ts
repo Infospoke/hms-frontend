@@ -429,7 +429,7 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     try {
       await this.interviewService.scheduleInterviewTime(payload);
 
-      this.router.navigate(['/supply/ai-interview-zone'], { state: { activeType: 'is' } });
+      this.router.navigate(['/candidate-management/ai-interview-zone'], { state: { activeType: 'is' } });
     } catch (err) {
       console.error('Failed to schedule interview', err);
       this.scheduleError = 'Something went wrong while scheduling the interview. Please try again.';
@@ -440,7 +440,7 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
 
   onCancel() {
     console.log("clicked");
-    this.router.navigate(['/supply/ai-interview-zone'],
+    this.router.navigate(['/candidate-management/ai-interview-zone'],
       { state: { activeType: 'is' } }
     );
   }

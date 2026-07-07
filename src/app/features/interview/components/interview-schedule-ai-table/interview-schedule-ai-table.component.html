@@ -46,7 +46,7 @@
     </ng-container>
   <!-- Actions column -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
-    <div class="ist-actions">
+    <div class="ist-actions" *appCan="'CANDIDATEMANAGEMENT:AIINTERVIEWZONE:EDIT'">
       <button class="ist-btn-schedule" (click)="onSchedule(ctx.row, $event)"
         aria-label="Schedule interview for {{ ctx.row.name }}">
         <!-- Calendar icon -->

@@ -327,7 +327,7 @@ export class OfferManagementComponent implements OnInit {
 
   viewDetails(candidate: Candidate): void {
     this.router.navigate(
-      ['/supply/applicant-management/view-ai-interview-details'],
+      ['/candidate-management/interview-pipe-line/view-ai-interview-details/' + candidate.applicationId],
       { state: { applicationId: candidate.applicationId } }
     );
   }

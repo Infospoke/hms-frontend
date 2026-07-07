@@ -242,4 +242,13 @@ export class InterviewServiceService {
     async updateInterviewCompletionStatus(payload:any):Promise<any>{
       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.UPDATE_INTERVIEW_COMPLETE,payload))
     }
+
+    async updateInterviewCandidate(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.INTERVIEW_COMPLETE_TO_CANDIDATE,payload))
+    }
+
+
+    async getAssignedInterviewCount():Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_ASSIGNMENTS_COUNT))
+    }
 }

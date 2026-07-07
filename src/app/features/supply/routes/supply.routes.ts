@@ -14,55 +14,11 @@ export const SUPPLY_ROUTES: Routes = [
     loadComponent:()=>import("../components/job-approval-detail/job-approval-detail.component").then(m=>m.JobApprovalDetailComponent)
   },
   {
-    path:'my-interview-requests/job-details/:id',
+    path:'in-person-interview/job-details/:id',
     loadComponent:()=>import("../components/job-approval-detail/job-approval-detail.component").then(m=>m.JobApprovalDetailComponent)
   },
-  {
-    path:"my-interview-requests",
-    loadComponent:()=>import("../../interview/components/assigned-interview-requests/assigned-interview-requests.component").then(m=>m.AssignedInterviewRequestsComponent)
-  },
-  {
-        path:"my-interview-requests/today-interview-details/:id",
-        loadComponent:()=>import("../../interview/components/today-interview-details/today-interview-details.component").then(m=>m.TodayInterviewDetailsComponent)
-    },
     {
-        path:"my-interview-requests/response/:id/:jobId",
-        loadComponent:()=>import("../../interview/components/interview-assignment-response/interview-assignment-response.component").then(m=>m.InterviewAssignmentResponseComponent)
-    },
-    {
-        path:"my-interview-requests/reschedule-interview/:id",
-        loadComponent:()=>import("../../interview/components/reschedule-interview/reschedule-interview.component").then(m=>m.RescheduleInterviewComponent)
-    },
-    {
-        path:"my-interview-requests/schedule-interview/:id",
-        loadComponent:()=>import("../../interview/components/schedule-interview/schedule-interview.component").then(m=>m.ScheduleInterviewComponent)
-    },
-    {
-        path:"my-interview-requests/provide-feedback/:id",
-        loadComponent:()=>import("../../interview/components/provide-feed-back/provide-feed-back.component").then(m=>m.ProvideFeedBackComponent)
-    },
-    {
-        path:"ai-interview-zone",
-        loadComponent:()=>import("../../interview/components/ai-interview-zone/ai-interview-zone.component").then(m=>m.AiInterviewZoneComponent)
-    },
-    {
-        path:"ai-interview-zone/generate-ai-questions",
-        loadComponent:()=>import("../../interview/components/interview-question-generate/interview-question-generate.component").then(m=>m.InterviewQuestionGenerateComponent)
-    },
-    {
-        path:"ai-interview-zone/schedule-ai-interview/:applicantionId",
-        loadComponent:()=>import("../../interview/components/schedule-ai-interview/schedule-ai-interview.component").then(m=>m.ScheduleAiInterviewComponent)
-    },
-    {
-        path:"ai-interview-zone/ai-interview-details/:id",
-        loadComponent:()=>import("../../interview/components/ai-interview-details/ai-interview-details.component").then(m=>m.AiInterviewDetailsComponent)
-    },
-    {
-      path:'applicant-management',
-      loadComponent:()=>import("../../interview/components/offer-management/offer-management.component").then(m=>m.OfferManagementComponent)
-    },
-    {
-      path:"applicant-management/view-ai-interview-details/:applicationId",
-      loadComponent:()=>import("../../interview/components/interview-performance/interview-performance.component").then(m=>m.InterviewPerformanceComponent)
+      path:'my-interview-requests',
+      loadComponent:()=>import("../../interview/components/interview-assignments-list-progress/interview-assignments-list-progress.component").then(m=>m.InterviewAssignmentsListProgressComponent)
     }
 ];

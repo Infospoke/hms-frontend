@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { OnChangeType } from 'ng-zorro-antd/core/types';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { Router } from '@angular/router';
+import { CanDirective } from '../../../../shared/directives/can.directive';
 
 @Component({
   selector: 'app-interview-schedule-ai-table',
-  imports: [ReusableTableComponent, CommonModule],
+  imports: [ReusableTableComponent, CommonModule,CanDirective],
   templateUrl: './interview-schedule-ai-table.component.html',
   styleUrl: './interview-schedule-ai-table.component.scss',
 })
@@ -91,7 +92,7 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
   onSchedule(row: any, event: MouseEvent): void {
     event.stopPropagation();
     console.log('Schedule clicked for:', row.name);
-    this.router.navigate([`/supply/ai-interview-zone/schedule-ai-interview/${row?.applicationId}`])
+    this.router.navigate([`/candidate-management/ai-interview-zone/schedule-ai-interview/${row?.applicationId}`])
   }
 
   private getInitials(name: string): string {

@@ -255,7 +255,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
         // move_to_schedule: true,
       });
       this.notification.success('Moved to schedule successfully');
-      this.router.navigate(['/supply/ai-interview-zone'], {
+      this.router.navigate(['/candidate-management/ai-interview-zone'], {
         relativeTo: this.route,
         queryParams: { applicationId: this.applicationId, sessionId: this.interviewSessionId },
       });
@@ -368,7 +368,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
   }
 
   handleBack(){
-    this.router.navigate(['/supply/ai-interview-zone']
+    this.router.navigate(['/candidate-management/ai-interview-zone']
     );
   }
 }

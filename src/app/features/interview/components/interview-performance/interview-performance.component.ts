@@ -7,236 +7,7 @@ import { RoundDetailComponent } from '../round-detail/round-detail.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 import { JobService } from '../../../job/services/job.service';
-
-// Dummy data for development/testing
-const DUMMY_DATA = {
-  candidate: {
-    avatarInitials: 'AK',
-    name: 'Arjun Kumar',
-    tag: 'Strong Hire',
-    email: 'arjun.kumar@example.com',
-    phone: '+91 98765 43210',
-    location: 'Hyderabad, India',
-    jobTitle: 'Senior Frontend Developer',
-    jobId: 'JOB-2024-0042',
-    interviewType: 'AI Technical Interview',
-
-    interviewDate: '14 Jun 2025',
-    experience: '4 - 7 Yrs',
-    department: 'Engineering',
-    interviewDuration: '60 Minutes',
-
-    aiScore: 82,
-  },
-
-  evaluationData: {
-    averageAiScore: 82,
-    totalRoundsCompleted: 4,
-    totalRounds: 4,
-    totalQuestionsAttempted: 15,
-    averageScoreAcrossRounds: 82,
-    status: 'Cleared',
-    minimumPassScore: 60,
-    overallScore: 82,
-    rounds: [
-      {
-        round: 1,
-        roundType: 'AI Interview',
-        interviewerName: 'AI System',
-        interviewerTitle: 'Automated Evaluation',
-        score: 82,
-        recommendation: 'Pass',
-        expanded: false,
-        evalSummary: {
-          skills: [
-            { label: 'Technical Knowledge', score: '4.1' },
-            { label: 'Problem Solving', score: '4.0' },
-            { label: 'Communication', score: '4.2' },
-          ],
-          totalScore: '82/100',
-        },
-        interviewerFeedback: 'Strong overall performance. Demonstrated solid Angular knowledge and clear problem-solving ability.',
-      },
-      {
-        round: 2,
-        roundType: 'Technical Round',
-        interviewerName: 'Ravi Shankar',
-        interviewerTitle: 'Principal Engineer',
-        score: 85,
-        recommendation: 'Pass',
-        expanded: false,
-        evalSummary: {
-          skills: [
-            { label: 'Technical Knowledge', score: '4.5' },
-            { label: 'Problem Solving', score: '4.0' },
-            { label: 'Analytical Thinking', score: '4.0' },
-            { label: 'Communication', score: '4.0' },
-            { label: 'Cultural Fit', score: '5.0' },
-          ],
-          totalScore: '85/100',
-        },
-        interviewerFeedback: 'Excellent Angular knowledge, clean code practices, and ability to explain complex concepts clearly.',
-      },
-      {
-        round: 3,
-        roundType: 'Managerial Round',
-        interviewerName: 'Priya Reddy',
-        interviewerTitle: 'Engineering Manager',
-        score: 78,
-        recommendation: 'Pass',
-        expanded: false,
-        evalSummary: {
-          skills: [
-            { label: 'Leadership & Ownership', score: '4.0' },
-            { label: 'Strategic Thinking', score: '3.5' },
-            { label: 'Problem Solving & Decision', score: '4.0' },
-            { label: 'Communication', score: '4.0' },
-            { label: 'People Management', score: '3.5' },
-          ],
-          totalScore: '78/100',
-        },
-        interviewerFeedback: 'Good ownership mindset, team-oriented, and proactive in communication.',
-      },
-      {
-        round: 4,
-        roundType: 'HR Round',
-        interviewerName: 'Neha Gupta',
-        interviewerTitle: 'HR Business Partner',
-        score: 84,
-        recommendation: 'Strong Hire',
-        expanded: false,
-        evalSummary: null,
-        interviewerFeedback: 'Very professional, great attitude, and strong alignment with company values.',
-      },
-    ],
-    keyStrengths: [
-      'Strong Angular fundamentals and modern framework patterns',
-      'Excellent problem-solving with structured thinking',
-      'Clear and confident communication skills',
-      'High cultural fit and ownership mindset',
-    ],
-    areasOfImprovement: [
-      'Could deepen backend and system design knowledge',
-      'Improve estimation skills for complex projects',
-      'More exposure to large-scale distributed systems',
-    ],
-    aiRecommendation: 'Arjun demonstrated strong technical skills, cultural alignment, and excellent communication. Recommended for the role with high confidence.',
-    aiRecommendationScore: 82,
-  },
-
-  aiInterviewData: {
-    totalQuestions: 5,
-    attempted: 5,
-    averageAiScore: 8.2,
-    questions: [
-      {
-        id: 1,
-        question: 'Explain the difference between Angular services and components.',
-        type: 'Technical',
-        difficulty: 'Easy',
-        time: '2m 15s',
-        aiScore: 9,
-        maxScore: 10,
-        rating: 'Excellent',
-        expanded: false,
-        idealAnswer: 'Angular services are singleton classes managed by the DI container. They handle business logic, HTTP calls, and data sharing across components. Components are tree-node UI elements with a template, lifecycle hooks, and a change-detection cycle. The key distinction is that services have no view, while components own a template and are tied to the DOM.',
-        candidateAnswer: 'Services are singleton classes used for business logic and data sharing across components. Components handle the view layer with templates and lifecycle hooks.',
-        aiEvaluation: 'The candidate clearly distinguished services from components. Mentioned singleton pattern and lifecycle hooks. A well-structured answer.',
-        evalDetail: { relevance: 5, completeness: 4, accuracy: 5, clarity: 5 },
-      },
-      {
-        id: 2,
-        question: 'How do you optimize performance in a large Angular application?',
-        type: 'Technical',
-        difficulty: 'Medium',
-        time: '3m 40s',
-        aiScore: 8,
-        maxScore: 10,
-        rating: 'Good',
-        expanded: false,
-        idealAnswer: 'Key strategies: (1) Lazy-load feature modules so initial bundle is minimal. (2) Use OnPush change detection to limit rerender scope. (3) Use trackBy in *ngFor to avoid full list re-renders. (4) Virtual scrolling with CdkVirtualScrollViewport for large lists. (5) Unsubscribe from Observables using async pipe or takeUntilDestroyed. (6) Pre-load critical routes with a PreloadingStrategy.',
-        candidateAnswer: 'Use lazy loading, OnPush change detection strategy, trackBy in ngFor, and avoid unnecessary subscriptions.',
-        aiEvaluation: 'Good coverage of key strategies. Mentioned lazy loading and OnPush which are high-impact. Could have elaborated on virtual scrolling and RxJS cleanup patterns.',
-        evalDetail: { relevance: 5, completeness: 3, accuracy: 5, clarity: 4 },
-      },
-      {
-        id: 3,
-        question: 'Describe a challenging project and how you handled it.',
-        type: 'Behavioural',
-        difficulty: 'Medium',
-        time: '4m 05s',
-        aiScore: 8,
-        maxScore: 10,
-        rating: 'Good',
-        expanded: false,
-        idealAnswer: 'A strong STAR-method answer should clearly define the Situation (context and stakes), Task (your role and responsibility), Action (specific steps you took), and Result (measurable outcomes). The best answers include cross-team collaboration, technical decision-making under constraints, and quantifiable impact.',
-        candidateAnswer: 'Led a migration from AngularJS to Angular 14 for a large e-commerce platform with 50+ components, coordinating with 3 teams over 6 months.',
-        aiEvaluation: 'Structured response with a clear situation, task, and result. Good emphasis on cross-team coordination. Measurable outcome (50+ components, 6 months) is a positive indicator.',
-        evalDetail: { relevance: 5, completeness: 4, accuracy: 4, clarity: 4 },
-      },
-      {
-        id: 4,
-        question: 'What is the purpose of RxJS in Angular and give an example use case?',
-        type: 'Technical',
-        difficulty: 'Medium',
-        time: '3m 10s',
-        aiScore: 8,
-        maxScore: 10,
-        rating: 'Good',
-        expanded: false,
-        idealAnswer: 'RxJS enables reactive, event-driven programming via Observables. In Angular it powers HttpClient, Router events, and reactive forms. A concrete example: use switchMap to cancel a pending HTTP search request when the user types a new character, preventing race conditions. Use takeUntilDestroyed to auto-unsubscribe when a component is destroyed.',
-        candidateAnswer: 'RxJS provides reactive programming in Angular through Observables. I use it for HTTP requests, combining streams with operators like switchMap, and managing component state.',
-        aiEvaluation: 'Solid answer demonstrating practical knowledge. Mentioned switchMap which shows depth. Could have mentioned takeUntil/async pipe for subscription cleanup.',
-        evalDetail: { relevance: 5, completeness: 3, accuracy: 5, clarity: 4 },
-      },
-      {
-        id: 5,
-        question: 'How do you approach code reviews in a team setting?',
-        type: 'Behavioural',
-        difficulty: 'Easy',
-        time: '2m 50s',
-        aiScore: 8,
-        maxScore: 10,
-        rating: 'Good',
-        expanded: false,
-        idealAnswer: 'Effective code reviews focus on understanding intent before critiquing style. Review for correctness, edge cases, security, testability, and readability. Use a "suggest, not mandate" approach. Comment with context ("This pattern could cause N+1 here"), not just labels. Separate review from approval — and use automated lint/format checks so humans focus on logic.',
-        candidateAnswer: 'I focus on understanding intent before critiquing. I comment on logic, readability, and edge cases, and prefer suggesting alternatives rather than mandating changes.',
-        aiEvaluation: 'Reflects a mature and collaborative approach. Emphasis on constructive feedback and understanding intent are positive leadership signals.',
-        evalDetail: { relevance: 5, completeness: 4, accuracy: 5, clarity: 5 },
-      },
-    ],
-    proctoring: {
-      totalViolations: 3,
-      highSeverity: 0,
-      mediumSeverity: 2,
-      lowSeverity: 1,
-      overallRisk: 'Low',
-      violations: [
-        {
-          time: '00:04:12',
-          violation: 'Tab Switch',
-          severity: 'Medium',
-          description: 'Candidate switched browser tab briefly. Returned within 5 seconds.',
-          snapshots: [],
-        },
-        {
-          time: '00:18:47',
-          violation: 'Tab Switch',
-          severity: 'Medium',
-          description: 'Second tab switch detected. Duration: 3 seconds.',
-          snapshots: [],
-        },
-        {
-          time: '00:31:05',
-          violation: 'Audio Flag',
-          severity: 'Low',
-          description: 'Background noise detected briefly. Did not affect response quality.',
-          snapshots: [],
-        },
-      ],
-    },
-  },
-};
+import { NotificationService } from '../../../../core/services/notification.service';
 
 /** Round keys that are backed by the interview-feedback API. */
 type FeedbackRoundKey = 'technical' | 'managerial' | 'hr';
@@ -258,7 +29,7 @@ export class InterviewPerformanceComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private interviewService = inject(InterviewServiceService);
-
+  private notificationService=inject(NotificationService)
   loading = false;
   error: string | null = null;
 
@@ -288,11 +59,49 @@ export class InterviewPerformanceComponent implements OnInit {
   private jobService = inject(JobService);
 
 
-  private readonly stageIdByRound: Record<FeedbackRoundKey, number> = {
+  /** current_stage_id to send per round when calling the interview-feedback API — populated from
+   *  the applicant-details response (see extractStageIds), keyed by round. Falls back to these
+   *  defaults only if the applicant-details response doesn't include stage ids for a round. */
+  private stageIdByRound: Record<FeedbackRoundKey, number> = {
     technical: 2,
     managerial: 3,
     hr: 4,
   };
+
+  /** How many interview stages/rounds the applicant has completed so far, and the total round count.
+   *  Both come from the applicant-details API response. */
+  completedStages = 0;
+  noOfRounds = 0;
+
+  /** True while an accept/hold/reject decision call is in flight. */
+  updatingStatus = false;
+
+  /** Order of each round tab, used to decide which tabs are unlocked based on completedStages.
+   *  The 'evaluation' summary tab has no entry here, so it's always shown. */
+  private readonly stageOrderByTab: Record<string, number> = {
+    'ai-interview': 1,
+    technical: 2,
+    managerial: 3,
+    hr: 4,
+  };
+
+  /** Tabs to actually render — a tab for a round is only shown once that round's stage is completed. */
+  get visibleTabs(): { key: string; label: string; icon: string }[] {
+    return this.tabs.filter((tab) => {
+      const order = this.stageOrderByTab[tab.key];
+      return order == null || order <= this.completedStages;
+    });
+  }
+
+  /** Accept/Hold/Reject decision buttons are only relevant while reviewing an interview round. */
+  get showDecisionActions(): boolean {
+    return ['ai-interview', 'technical', 'managerial'].includes(this.activeTab);
+  }
+
+  /** "Calculate Evaluation Summary" only makes sense once every round has been completed. */
+  get canCalculateEvaluation(): boolean {
+    return this.noOfRounds > 0 && this.completedStages === this.noOfRounds;
+  }
 
   ngOnInit(): void {
     this.applicationId = this.activeRouter.snapshot.paramMap.get('applicationId');
@@ -314,6 +123,15 @@ export class InterviewPerformanceComponent implements OnInit {
         const fullName = `${d.firstName ?? ''} ${d.lastName ?? ''}`.trim();
 
         this.jobId = d.jobId;
+
+        // Drives which round tabs are unlocked, and whether the evaluation summary
+        // can be calculated yet (only once every round is completed).
+        this.completedStages = d.completedStages ?? 0;
+        this.noOfRounds = d.noOfRounds ?? 0;
+
+        // The stage/round ids used to call the interview-feedback API come from
+        // applicant-details itself rather than being hardcoded.
+        this.stageIdByRound = this.extractStageIds(d);
 
         this.candidate = {
 
@@ -352,11 +170,61 @@ export class InterviewPerformanceComponent implements OnInit {
       console.log(e);
     }
   }
+
+  /**
+   * Pulls the technical/managerial/hr stage ids out of the applicant-details response so
+   * the interview-feedback API can be called with the correct current_stage_id per round,
+   * instead of a hardcoded value.
+   *
+   * Supports either shape the applicant-details API may return:
+   *  - an array, e.g. `stages: [{ stageType: 'Technical', stageId: 12 }, ...]`
+   *  - a flat object, e.g. `stageIds: { technical: 12, managerial: 13, hr: 14 }`
+   *
+   * Falls back to the existing stageIdByRound value for any round not present in the response.
+   */
+  private extractStageIds(d: any): Record<FeedbackRoundKey, number> {
+    const result: Record<FeedbackRoundKey, number> = { ...this.stageIdByRound };
+
+    const stagesList: any[] = Array.isArray(d?.stages)
+      ? d.stages
+      : Array.isArray(d?.interviewStages)
+        ? d.interviewStages
+        : [];
+
+    for (const stage of stagesList) {
+      const type = (stage?.stageType ?? stage?.type ?? stage?.roundType ?? '').toString();
+      const id = stage?.stageId ?? stage?.id ?? stage?.stage_id;
+      const key = this.roundKeyForStageType(type);
+      if (key && id != null) {
+        result[key] = id;
+      }
+    }
+
+    if (d?.stageIds && typeof d.stageIds === 'object') {
+      Object.keys(d.stageIds).forEach((rawKey) => {
+        const key = this.roundKeyForStageType(rawKey);
+        if (key && d.stageIds[rawKey] != null) {
+          result[key] = d.stageIds[rawKey];
+        }
+      });
+    }
+
+    return result;
+  }
+
+  private roundKeyForStageType(type: string): FeedbackRoundKey | null {
+    const normalized = type.replace(/[\s_-]/g, '').toLowerCase();
+    if (normalized.includes('technical')) return 'technical';
+    if (normalized.includes('managerial') || normalized.includes('manager')) return 'managerial';
+    if (normalized.includes('hr')) return 'hr';
+    return null;
+  }
+
   async loadApplicantDetailsAIInterview(applicationId: any): Promise<void> {
     this.loading = true;
     this.error = null;
     try {
-      const obj = { applicationId };
+      const obj = { application_id: applicationId };
       const res: any = await this.jobService.fetchInterViewAnalysis(obj);
       if (!res?.success || !res?.data) {
         throw new Error(res?.message || 'No interview analysis available for this application.');
@@ -525,6 +393,37 @@ export class InterviewPerformanceComponent implements OnInit {
   setTab(key: string): void {
     this.activeTab = key;
     this.helperToLoadData(key);
+  }
+
+  /** Handles the bottom-right Accept / Hold / Reject decision buttons. */
+  async updateApplicantStatus(status: 'accepted' | 'hold' | 'rejected'): Promise<void> {
+    if (this.updatingStatus || !this.applicationId) {
+      return;
+    }
+
+    this.updatingStatus = true;
+    this.error = null;
+
+    const payload = {
+      applicantId: this.applicationId,
+      status,
+    };
+
+    try {
+      const res: any = await this.interviewService.updateInterviewCompletionStatus(payload);
+
+     if(res?.responsecode !== '00') {
+        this.notificationService.error(res?.message || res?.responsemessage|| 'Failed to update applicant status. Please try again.');
+      }
+      else{
+        this.notificationService.success(res?.message|| res?.resposemessage || res?.data)
+      }
+     
+    } catch (err: any) {
+      this.error = err?.message || 'Failed to update applicant status. Please try again.';
+    } finally {
+      this.updatingStatus = false;
+    }
   }
   private async loadEvalutionData() {
     this.loading = true;

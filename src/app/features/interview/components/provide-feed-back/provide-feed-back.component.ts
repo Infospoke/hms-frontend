@@ -118,7 +118,7 @@ export class ProvideFeedBackComponent implements OnInit {
 
       if (res?.responsecode === '00') {
         this.notificationService.success(res?.data || res?.message || 'Feedback submitted successfully.');
-        this.router.navigate(['/supply/my-interview-requests'], { state: { activeType: 'fp' } });
+        this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
       } else {
         this.notificationService.error(
           res?.message ?? res?.data ?? 'Failed to submit feedback. Please try again.',
@@ -139,6 +139,11 @@ export class ProvideFeedBackComponent implements OnInit {
   }
 
   handleBack(): void {
-    this.router.navigate(['/supply/my-interview-requests'], { state: { activeType: 'fp' } });
+    this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
+  }
+
+
+  private async loadFeedBackDetails(){
+    
   }
 }

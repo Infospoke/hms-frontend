@@ -82,7 +82,7 @@ export class RescheduleInterviewComponent implements OnInit {
     }
   }
   onCancel(): void {
-    this.router.navigate(['/supply/my-interview-requests/'],{state:{activeType:'ui'}});
+    this.router.navigate(['/candidate-management/in-person-interview/'],{state:{activeType:'ui'}});
   }
 
   async onSubmit(newSchedule: any) {

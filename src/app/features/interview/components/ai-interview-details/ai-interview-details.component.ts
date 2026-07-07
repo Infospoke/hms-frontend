@@ -241,7 +241,7 @@ export class AiInterviewDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/supply/ai-interview-zone'],
+    this.router.navigate(['/candidate-management/ai-interview-zone'],
       {state: { activeType: 'si' }}
     );
   }

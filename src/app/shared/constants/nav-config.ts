@@ -33,7 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/demand/my-jds',
         permissionName: 'MYSRS',
       },
-        {
+      {
         label: 'Interview Plans Config',
         icon: 'fa-solid fa-user-pen',
         path: '/demand/interview-plan-config',
@@ -46,12 +46,12 @@ export const NAV_ITEMS: NavItem[] = [
         permissionName: 'JOBREQUISITIONS',
       },
       {
-        label: "Recruiter Assignment Management",
+        label: "Recruiter Management",
         icon: "fa-solid fa-users-gear",
         path: "/demand/recruiter-assignment-management",
         permissionName: "RECRUITERASSIGNMENTMANAGEMENT",
       },
-    
+
       {
         label: 'Assign Interviewers',
         icon: 'fa-solid fa-user-check',
@@ -111,32 +111,31 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    id: 'System & Admins',
-    permissionName: 'SYSTEM&ADMINS',
-    label: 'System & Admins',
-    icon: 'fa-solid fa-gear',
+    id: 'Candidate Management',
+    permissionName: 'CANDIDATEMANAGEMENT',
+    label: 'Candidate Management',
+    icon: 'fa-solid fa-user-tie',
     children: [
       {
-        label: 'Users',
-        icon: 'fa-solid fa-users',
-        path: '/users/user-onboard-roles',
-        permissionName: 'USERS',
+        label: 'AI Interview Zone',
+        icon: 'fa-solid fa-robot',
+        path: '/candidate-management/ai-interview-zone',
+        permissionName: 'AIINTERVIEWZONE',
       },
       {
-        label: 'Role & Permissions',
-        icon: 'fa-solid fa-shield-halved',
-        path: '/users/role-permissions',
-        permissionName: 'ROLES&PERMISSIONS',
+        label: 'In-Person Interview',
+        icon: 'fa-solid fa-user-group',
+        path: '/candidate-management/in-person-interview',
+        permissionName: 'INPERSONINTERVIEW',
       },
       {
-        label: 'Approval Chain Configuration',
-        icon: 'fa-solid fa-network-wired',
-        path: '/approval/chain-config',
-        permissionName: 'APPROVALCHAINCONFIGURATION',
-      },
+        label: 'Interview Pipeline',
+        icon: 'fa-solid fa-diagram-project',
+        path: '/candidate-management/interview-pipe-line',
+        permissionName: 'INTERVIEWPIPELINE',
+      }
     ],
   },
-
   {
     id: 'My Approvals',
     permissionName: 'MYAPPROVAL',
@@ -164,6 +163,32 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    id: 'System & Admins',
+    permissionName: 'SYSTEM&ADMINS',
+    label: 'System & Admins',
+    icon: 'fa-solid fa-gear',
+    children: [
+      {
+        label: 'Users',
+        icon: 'fa-solid fa-users',
+        path: '/users/user-onboard-roles',
+        permissionName: 'USERS',
+      },
+      {
+        label: 'Role & Permissions',
+        icon: 'fa-solid fa-shield-halved',
+        path: '/users/role-permissions',
+        permissionName: 'ROLES&PERMISSIONS',
+      },
+      {
+        label: 'Approval Chain Configuration',
+        icon: 'fa-solid fa-network-wired',
+        path: '/approval/chain-config',
+        permissionName: 'APPROVALCHAINCONFIGURATION',
+      },
+    ],
+  },
+  {
     id: 'interview',
     permissionName: 'INTERVIEW',
     label: 'Interview',
@@ -173,4 +198,5 @@ export const NAV_ITEMS: NavItem[] = [
 
     ],
   },
+
 ];

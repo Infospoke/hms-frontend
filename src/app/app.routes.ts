@@ -20,6 +20,11 @@ export const routes: Routes = [
       {path:'approval',loadChildren:()=>import("./features/approvals/routes/approval-routes").then(r=>r.APPROVAL_ROUTES)},
       {path:'notifications',loadChildren:()=>import("./features/notification-panel/routes/notification-routes").then(r=>r.NOTIFICATION_ROUTES)},
       {path:"interview",loadChildren:()=>import("./features/interview/routes/interview-routes").then(r=>r.INTERVIEW_ROUTES)},
+      {
+        path:'candidate-management',
+        loadChildren:()=>import("./features/candidate-management/routes/candidate-routes").then(r=>r.CANDIDATE_ROUTES)
+      },
+      
     //   { path: 'candidates', loadChildren: () => import('./features/candidates/candidates.routes').then(r => r.CANDIDATES_ROUTES) },
     //   { path: 'interviews', loadChildren: () => import('./features/interviews/interviews.routes').then(r => r.INTERVIEWS_ROUTES) },
     //   { path: 'offers', loadChildren: () => import('./features/offers/offers.routes').then(r => r.OFFERS_ROUTES) },

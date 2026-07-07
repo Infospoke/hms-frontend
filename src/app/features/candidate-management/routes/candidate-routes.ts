@@ -1,0 +1,53 @@
+import { Routes } from '@angular/router';
+
+export const CANDIDATE_ROUTES: Routes = [
+    {
+        path:'ai-interview-zone',
+        loadComponent:()=>import("../components/ai-interview-zone/ai-interview-zone.component").then(m=>m.AiInterviewZoneComponent)
+    },
+     {
+        path:"ai-interview-zone/generate-ai-questions",
+        loadComponent:()=>import("../../interview/components/interview-question-generate/interview-question-generate.component").then(m=>m.InterviewQuestionGenerateComponent)
+    },
+    {
+        path:"ai-interview-zone/schedule-ai-interview/:applicantionId",
+        loadComponent:()=>import("../../interview/components/schedule-ai-interview/schedule-ai-interview.component").then(m=>m.ScheduleAiInterviewComponent)
+    },
+    {
+        path:"ai-interview-zone/ai-interview-details/:id",
+        loadComponent:()=>import("../../interview/components/ai-interview-details/ai-interview-details.component").then(m=>m.AiInterviewDetailsComponent)
+    },
+    {
+        path:'in-person-interview',
+        loadComponent:()=>import("../components/assigned-interview-requests/assigned-interview-requests.component").then(m=>m.AssignedInterviewRequestsComponent)
+    },
+  {
+        path:"in-person-interview/today-interview-details/:id",
+        loadComponent:()=>import("../../interview/components/today-interview-details/today-interview-details.component").then(m=>m.TodayInterviewDetailsComponent)
+    },
+    {
+        path:"in-person-interview/response/:id/:jobId",
+        loadComponent:()=>import("../../interview/components/interview-assignment-response/interview-assignment-response.component").then(m=>m.InterviewAssignmentResponseComponent)
+    },
+    {
+        path:"in-person-interview/reschedule-interview/:id",
+        loadComponent:()=>import("../../interview/components/reschedule-interview/reschedule-interview.component").then(m=>m.RescheduleInterviewComponent)
+    },
+    {
+        path:"in-person-interview/schedule-interview/:id",
+        loadComponent:()=>import("../../interview/components/schedule-interview/schedule-interview.component").then(m=>m.ScheduleInterviewComponent)
+    },
+    {
+        path:"in-person-interview/provide-feedback/:id",
+        loadComponent:()=>import("../../interview/components/provide-feed-back/provide-feed-back.component").then(m=>m.ProvideFeedBackComponent)
+    },
+    {
+        path:"interview-pipe-line",
+       loadComponent:()=>import("../../interview/components/offer-management/offer-management.component").then(m=>m.OfferManagementComponent)
+    },
+    {
+        path:'interview-pipe-line/view-ai-interview-details/:applicationId',
+        loadComponent:()=>import("../../interview/components/interview-performance/interview-performance.component").then(m=>m.InterviewPerformanceComponent)
+    },
+    
+]

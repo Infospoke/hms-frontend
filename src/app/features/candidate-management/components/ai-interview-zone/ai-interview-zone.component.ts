@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { PipeLineStagesComponent } from "../../../../shared/components/pipe-line-stages/pipe-line-stages.component";
 import { ApprovalLayoutComponent } from "../../../approvals/components/approval-layout/approval-layout.component";
 import { aiInterview } from '../../../../shared/constants/reusbale-filter';
-import { ReusableTableComponent, TableColumn } from "../../../../shared/components/reusable-table/reusable-table.component";
-import { InterviewQuestionsTableComponent } from "../interview-questions-table/interview-questions-table.component";
-import { InterviewScheduleAiTableComponent } from "../interview-schedule-ai-table/interview-schedule-ai-table.component";
-import { InterviewUpcomingAiTableComponent } from "../interview-upcoming-ai-table/interview-upcoming-ai-table.component";
-import { InterviewServiceService } from '../../service/interview-service.service';
+import { InterviewQuestionsTableComponent } from '../../../interview/components/interview-questions-table/interview-questions-table.component';
+import { InterviewScheduleAiTableComponent } from '../../../interview/components/interview-schedule-ai-table/interview-schedule-ai-table.component';
+import { InterviewUpcomingAiTableComponent } from '../../../interview/components/interview-upcoming-ai-table/interview-upcoming-ai-table.component';
+import { InterviewServiceService } from '../../../interview/service/interview-service.service';
 
 @Component({
   selector: 'app-ai-interview-zone',
@@ -144,14 +143,9 @@ export class AiInterviewZoneComponent implements OnInit {
     );
   }
 
-  /**
-   * app-approval-layout keeps its own internal state for the search box and
-   * dropdown selections. Changing @Input()s alone won't clear that UI, so
-   * briefly removing and re-adding the component via *ngIf forces it to
-   * re-init with fresh defaults.
-   */
+
   private resetFilterUi(): void {
     this.showFilter = false;
     setTimeout(() => (this.showFilter = true));
   }
-}
+} 

@@ -5,7 +5,7 @@
 
   <!-- Page Header -->
   <div class="page-header">
-    <app-heading heading="Interview Details" subHeading="Review candidate profile and conduct the scheduled interview." [showBackButton]="true" buttonText="Back to Interviews" backButtonUrl="/supply/my-interview-requests"/>
+    <app-heading heading="Interview Details" subHeading="Review candidate profile and conduct the scheduled interview." [showBackButton]="true" buttonText="Back to Interviews" backButtonUrl="/candidate-management/in-person-interview"/>
     <button class="view-job-btn" (click)="onViewJobDetails()">
       <i class="fas fa-user-tie"></i>
       View Job &amp; Candidate Details
@@ -170,6 +170,28 @@
 
     <p class="no-data-text" *ngIf="!resumeDocument"><i class="fas fa-circle-info"></i> No resume has been uploaded for this candidate.</p>
   </div>
+
+  <!-- Resume Preview Modal -->
+  <nz-modal
+    [(nzVisible)]="isPdfVisible"
+    nzTitle="Resume Preview"
+    [nzFooter]="null"
+    nzWidth="80%"
+    [nzCentered]="true"
+    nzClassName="pdf-preview-modal"
+    (nzOnCancel)="onPdfModalClose()">
+    <ng-container *nzModalContent>
+      <div class="pdf-loading" *ngIf="isResumeLoading">
+        <i class="fas fa-spinner fa-spin"></i> Loading resume…
+      </div>
+      <iframe
+        *ngIf="!isResumeLoading && pdfUrl"
+        [attr.src]="pdfUrl"
+        width="100%"
+        style="height: 75vh; border: none; display: block;">
+      </iframe>
+    </ng-container>
+  </nz-modal>
 
   <!-- Bottom Action Bar -->
   <div class="action-bar" *ngIf="!isLoading && !error">

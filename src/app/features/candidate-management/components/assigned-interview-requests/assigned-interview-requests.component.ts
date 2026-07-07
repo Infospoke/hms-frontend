@@ -2,20 +2,20 @@ import { Component, inject, OnInit } from '@angular/core';
 import { PipeLineStagesComponent } from "../../../../shared/components/pipe-line-stages/pipe-line-stages.component";
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 import { CommonFilterComponent } from "../../../../shared/components/common-filter/common-filter.component";
-import { TodayInterviewTableComponent } from "../today-interview-table/today-interview-table.component";
-import { AssignedInterviewRequestsTableComponent } from "../assigned-interview-requests-table/assigned-interview-requests-table.component";
-import { InterviewFeedbackTableComponent } from "../interview-feedback-table/interview-feedback-table.component";
+import { TodayInterviewTableComponent } from "../../../interview/components/today-interview-table/today-interview-table.component";
+
+import { InterviewFeedbackTableComponent } from "../../../interview/components/interview-feedback-table/interview-feedback-table.component";
 import { CommonModule } from '@angular/common';
 import { interviewPriority } from '../../../../shared/constants/reusbale-filter';
-import { InterviewscheduledTableComponent } from "../interview-scheduled-table/interview-scheduled-table.component";
-import { InterviewUpcommingTableComponent } from "../interview-upcomming-table/interview-upcomming-table.component";
-import { InterviewServiceService } from '../../service/interview-service.service';
+import { InterviewscheduledTableComponent } from "../../../interview/components/interview-scheduled-table/interview-scheduled-table.component";
+import { InterviewUpcommingTableComponent } from "../../../interview/components/interview-upcomming-table/interview-upcomming-table.component";
+import { InterviewServiceService } from '../../../interview/service/interview-service.service';
 
 @Component({
   selector: 'app-assigned-interview-requests',
   imports: [
     PipeLineStagesComponent, HeadingComponent, CommonFilterComponent,
-    TodayInterviewTableComponent, AssignedInterviewRequestsTableComponent,
+    TodayInterviewTableComponent,
     InterviewFeedbackTableComponent, CommonModule,
     InterviewscheduledTableComponent, InterviewUpcommingTableComponent
   ],
@@ -27,7 +27,7 @@ export class AssignedInterviewRequestsComponent implements OnInit {
 
   stages: any[] = [
     { id: 'ti', label: "Today's Interviews", icon: 'fa-solid fa-calendar-check', count: 0, countLabel: 'Candidates', countColor: 'green' },
-    { id: 'ar', label: 'Assigned Interview Requests', icon: 'fa-solid fa-file-lines', count: 0, countLabel: 'Candidates', countColor: 'purple' },
+    // { id: 'ar', label: 'Assigned Interview Requests', icon: 'fa-solid fa-file-lines', count: 0, countLabel: 'Candidates', countColor: 'purple' },
     { id: 'ts', label: 'To Schedule', icon: 'fa-solid fa-calendar-days', count: 0, countLabel: 'Candidates', countColor: 'blue' },
     { id: 'ui', label: 'Upcoming Interviews', icon: 'fa-solid fa-clock', count: 0, countLabel: 'Candidates', countColor: 'teal' },
     { id: 'fp', label: 'Feedback Pending', icon: 'fa-solid fa-user', count: 0, countLabel: 'Candidates', countColor: 'amber' },

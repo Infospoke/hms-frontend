@@ -73,7 +73,7 @@
     <!-- ── ACTION ─────────────────────────────────────────────────────────── -->
     <ng-container *ngSwitchCase="'action'">
       <div class="cell-action">
-        <button class="btn-schedule" *appCan="'SUPPLY:MYINTERVIEWREQUESTS:EDIT'"
+        <button class="btn-schedule" *appCan="'CANDIDATEMANAGEMENT:INPERSONINTERVIEW:VIEW'"
           (click)="scheduleInterview($event, asRequest(ctx.row))"
           title="Schedule Interview">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"

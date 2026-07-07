@@ -402,6 +402,6 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   handleBack(){
     const type=this.mode==='schedule'?'ts':'ui'
-    this.router.navigate(["/supply/my-interview-requests"],{state:{activeType:type}})
+    this.router.navigate(["/candidate-management/in-person-interview"],{state:{activeType:type}})
   }
 }

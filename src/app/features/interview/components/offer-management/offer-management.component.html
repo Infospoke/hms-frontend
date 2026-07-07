@@ -97,7 +97,7 @@
 
     <!-- Actions -->
     <ng-container *ngIf="ctx.col.key === 'actions'">
-      <div class="om-actions-cell" (click)="$event.stopPropagation()" *appCan="'SUPPLY:CANDIDATEMANAGEMENT:EDIT'">
+      <div class="om-actions-cell" (click)="$event.stopPropagation()" *appCan="'CANDIDATEMANAGEMENT:INTERVIEWPIPELINE:VIEW'">
         <button class="om-view-btn" (click)="viewDetails(ctx.row)">
           View Details
         </button>

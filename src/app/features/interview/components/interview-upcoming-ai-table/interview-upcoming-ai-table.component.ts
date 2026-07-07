@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { Router } from '@angular/router';
+import { CanDirective } from '../../../../shared/directives/can.directive';
 
 @Component({
   selector: 'app-interview-upcoming-ai-table',
   standalone: true,
-  imports: [ReusableTableComponent, CommonModule],
+  imports: [ReusableTableComponent, CommonModule,CanDirective],
   templateUrl: './interview-upcoming-ai-table.component.html',
   styleUrl: './interview-upcoming-ai-table.component.scss',
 })
@@ -182,7 +183,7 @@ export class InterviewUpcomingAiTableComponent implements OnChanges, OnInit {
   onViewDetails(row: any, data: any) {
     console.log(row, data);
     // this.router.navigateByUrl(`/interview/ai-interview-zone/ai-interview-details/`)
-    this.router.navigate([`/supply/ai-interview-zone/ai-interview-details/${row?.applicationId}`], {
+    this.router.navigate([`/candidate-management/ai-interview-zone/ai-interview-details/${row?.applicationId}`], {
     })
   }
 }

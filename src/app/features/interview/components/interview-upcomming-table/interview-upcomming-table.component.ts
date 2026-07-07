@@ -157,7 +157,7 @@ export class InterviewUpcommingTableComponent implements OnInit,OnChanges {
     // handle row click
   }
   handleview(row: any) {
-    this.router.navigateByUrl(`/supply/my-interview-requests/reschedule-interview/${row.id}`)
+    this.router.navigateByUrl(`/candidate-management/in-person-interview/reschedule-interview/${row.id}`)
   }
 
   onPageChange(page: number): void {

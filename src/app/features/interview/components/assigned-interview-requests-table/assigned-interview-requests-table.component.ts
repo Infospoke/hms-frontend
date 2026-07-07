@@ -115,7 +115,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   onViewDetails(req: InterviewRequest): void {
     this.router.navigate(
-      [`/supply/my-interview-requests/job-details/${req?.jobId}`],
+      [`/supply/in-person-interview/job-details/${req?.jobId}`],
       {state:{type:'assignment',assignmentId:req?.assignmentId}}
     );
   }

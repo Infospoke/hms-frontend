@@ -129,6 +129,6 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
   onRowClick(_r: InterviewFeedback): void { }
 
   handleProvide(row: any) {
-    this.router.navigateByUrl(`/supply/my-interview-requests/provide-feedback/${row.id}`)
+    this.router.navigateByUrl(`/candidate-management/in-person-interview/provide-feedback/${row.id}`)
   }
 }

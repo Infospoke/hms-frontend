@@ -88,7 +88,7 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
     event.stopPropagation();
     console.log('Schedule interview for:', row.candidate.name);
     // e.g. this.router.navigate(['/interviews/schedule'], { queryParams: { candidateId: row.id } });
-    this.router.navigateByUrl(`/supply/my-interview-requests/schedule-interview/${row.id}`)
+    this.router.navigateByUrl(`/candidate-management/in-person-interview/schedule-interview/${row.id}`)
   }
 
   toggleExpand(event: MouseEvent, row: InterviewRequest): void {

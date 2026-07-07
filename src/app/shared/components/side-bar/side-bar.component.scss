@@ -1,5 +1,5 @@
 .sidebar {
-  width: 200px;
+  width: 220px;
   height: 100%;
   background: #f8fafc;
   border-right: 1px solid #e2e8f0;
@@ -42,6 +42,13 @@
   gap: 6px;
   border-radius: 6px;
   cursor: pointer;
+  white-space: nowrap;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
 }
 
 .sub:hover {
@@ -142,8 +149,3 @@
   padding-left: 20px;
   font-size: 11.5px;
 }
-
-
-
-
-

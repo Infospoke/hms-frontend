@@ -1,8 +1,7 @@
 <div class="assigned-interview-requests">
 
-  <app-heading [heading]="selectedStageMeta?.heading" [subHeading]="selectedStageMeta?.subHeading" />
   <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
-
+  <app-heading [heading]="selectedStageMeta?.heading" [subHeading]="selectedStageMeta?.subHeading" />
   <app-common-filter
     *ngIf="showFilter"
     [searchPlaceholder]="searchPlaceholder"

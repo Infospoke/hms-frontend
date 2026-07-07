@@ -33,12 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/demand/my-jds',
         permissionName: 'MYSRS',
       },
-      {
-        label: 'Interview Plans Config',
-        icon: 'fa-solid fa-user-pen',
-        path: '/demand/interview-plan-config',
-        permissionName: 'INTERVIEWPLANCONFIG',
-      },
+
       {
         label: "Job Requisitions",
         icon: 'fa-solid fa-briefcase',
@@ -57,7 +52,13 @@ export const NAV_ITEMS: NavItem[] = [
         icon: 'fa-solid fa-user-check',
         path: '/demand/assign-interviewers',
         permissionName: 'ASSIGNINTERVIEWERS',
-      }
+      },
+       {
+        label: 'Interview Plans Config',
+        icon: 'fa-solid fa-user-pen',
+        path: '/demand/interview-plan-config',
+        permissionName: 'INTERVIEWPLANCONFIG',
+      },
     ],
   },
   {
@@ -123,7 +124,7 @@ export const NAV_ITEMS: NavItem[] = [
         permissionName: 'AIINTERVIEWZONE',
       },
       {
-        label: 'In-Person Interview',
+        label: 'In Person Interview Zone',
         icon: 'fa-solid fa-user-group',
         path: '/candidate-management/in-person-interview',
         permissionName: 'INPERSONINTERVIEW',

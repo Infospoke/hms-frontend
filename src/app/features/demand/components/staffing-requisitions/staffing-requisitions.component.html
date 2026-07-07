@@ -128,7 +128,8 @@
         </button>
       </div> -->
       <app-common-table-actions [viewPermission]="'DEMAND:MYSRS:VIEW'" [editPermission]="'DEMAND:MYSRS:EDIT'"
-        (view)="viewSR(ctx.row)" (edit)="editSR(ctx.row)"></app-common-table-actions>
+        [editDisabled]="ctx.row.status !== 'Draft'" (view)="viewSR(ctx.row)" (edit)="editSR(ctx.row)">
+      </app-common-table-actions>
     </ng-container>
 
   </ng-template>

@@ -126,13 +126,13 @@ export class InterviewPlansComponent implements OnInit {
     try {
       const res = await this.interviewService.plansCount();
       if (res?.responsecode === '00') {
-        const { allPlans, activePlans, inactivePlans, inProgressPlans } = res.data;
+        const { allPlans, activePlans, deactivePlans, inProgressPlans } = res.data;
         console.log(res?.data);
         // Update cards
         this.cards = [
           { ...this.cards[0], value: allPlans ?? 0 },
           { ...this.cards[1], value: activePlans ?? 0 },
-          { ...this.cards[2], value: inactivePlans ?? 0 },
+          { ...this.cards[2], value: deactivePlans ?? 0 },
          
         ];
 

@@ -231,8 +231,11 @@ export class KanbanComponent implements OnInit {
       const res = await this.jobsService.getJobsList();
       if (res?.responsecode == '00') {
         this.jobsList = res?.data;
-        if (this.jobsList.length > 0) {
-          this.selectedJrIds.push(this.jobsList[0].jobId);
+
+        // Nothing selected yet on initial load — explicitly select every JR
+        // and fetch candidates for all of them.
+        if (this.selectedJrIds.length === 0 && this.jobsList.length > 0) {
+          this.selectedJrIds = this.jobsList.map(j => j.jobId);
           this.onJrSelectionChange();
         }
       }
@@ -259,6 +262,13 @@ export class KanbanComponent implements OnInit {
     } else {
       this.selectedJrIds = [...this.selectedJrIds, jobId];
     }
+
+    // If that leaves nothing selected, fall back to "all selected" rather than
+    // showing an empty board.
+    if (this.selectedJrIds.length === 0) {
+      this.selectedJrIds = this.jobsList.map(j => j.jobId);
+    }
+
     // Keep dropdown open for multi-select; closes on outside click via HostListener
     this.onJrSelectionChange();
   }
@@ -269,6 +279,7 @@ export class KanbanComponent implements OnInit {
 
   getSelectedJrLabel(): string {
     if (this.selectedJrIds.length === 0) return 'Select JR';
+    if (this.jobsList.length > 0 && this.selectedJrIds.length === this.jobsList.length) return 'All JRs';
     if (this.selectedJrIds.length === 1) {
       const id = Array.from(this.selectedJrIds)[0];
       const job = this.jobsList.find(j => j.jobId === id);
@@ -285,7 +296,10 @@ export class KanbanComponent implements OnInit {
 
   //   // return `JR: ${this.selectedJrIds} selected`;
   // }
-  isJrSelected(jobId: string | number): boolean { return this.selectedJrIds.some((id: any) => id == jobId); }
+
+  isJrSelected(jobId: string | number): boolean {
+    return this.selectedJrIds.some((id: any) => id == jobId);
+  }
   // isJrSelected(jobId: string | number): boolean { return this.selectedJrIds === jobId; }
   openFilterPanel(): void {
     this.tempApplicantType = this.filterApplicantType;

@@ -15,7 +15,7 @@ export class CommonTableActionsComponent {
   @Input() editPermission = '';
   @Input() isCreate:boolean=false;
 
- 
+  @Input() editDisabled = false;
   @Output() view = new EventEmitter<void>();
   @Output() edit = new EventEmitter<void>();
 }

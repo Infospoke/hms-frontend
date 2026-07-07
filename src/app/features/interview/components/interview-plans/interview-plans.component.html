@@ -1,34 +1,17 @@
 <div class="interview-plans">
-  <app-approval-layout
-    heading="Interview Plan Config"
+  <app-approval-layout heading="Interview Plan Config"
     subHeading="View and manage all interview plans. You can create, edit, duplicate, activate or deactivate plans."
-    [infoTooltip]="false"
-    [cards]="cards"
-    [buttonType]="'Create Plan'"
-    [showBtn]="'DEMAND:INTERVIEWPLANCONFIG:CREATE'"
-    searchPlaceholder="Search plans by name or description"
-    (handle)="handleCreateNewPlan()"
-    [tabs]="tabs"
-    [activeTab]="activeTab"
-    (tabChange)="handleTabChange($event)"
-    [dropDownData]="dropDownData"
-    (filterChange)="filtersChange($event)"
-  >
+    [infoTooltip]="false" [cards]="cards" [buttonType]="'Create Plan'" [showBtn]="'DEMAND:INTERVIEWPLANCONFIG:CREATE'"
+    searchPlaceholder="Search plans by name or description" (handle)="handleCreateNewPlan()" [tabs]="tabs"
+    [activeTab]="activeTab" (tabChange)="handleTabChange($event)" [dropDownData]="dropDownData"
+    (filterChange)="filtersChange($event)">
   </app-approval-layout>
 
   <div class="card-dd">
-    <app-reusable-table
-      [columns]="columns"
-      [data]="allPlans"
-      [totalItems]="totalItems"
-      [pageSize]="pageSize"
-      [currentPage]="currentPage"
-      [showPagination]="true"
- 
-      emptyMessage="No interview plans found. Create your first plan to get started."
-      [cellTemplate]="customCell"
-      (pageChange)="handlePageChange($event)"
-    ></app-reusable-table>
+    <app-reusable-table [columns]="columns" [data]="allPlans" [totalItems]="totalItems" [pageSize]="pageSize"
+      [currentPage]="currentPage" [showPagination]="true"
+      emptyMessage="No interview plans found. Create your first plan to get started." [cellTemplate]="customCell"
+      (pageChange)="handlePageChange($event)"></app-reusable-table>
   </div>
 </div>
 
@@ -37,22 +20,39 @@
 
   <!-- Status badge -->
   <ng-container *ngIf="ctx.col.key === 'status'">
-    <span class="ip-status-badge"
-      [class.ip-status-badge--active]="ctx.row['status'] === 'ACTIVE'"
+    <span class="ip-status-badge" [class.ip-status-badge--active]="ctx.row['status'] === 'ACTIVE'"
       [class.ip-status-badge--inactive]="ctx.row['status'] === 'DEACTIVE'"
-      [class.ip-status-badge--in-progress]="ctx.row['status'] === 'INPROGRESS' || ctx.row['status'] === 'INPROGRESS'">
+      [class.ip-status-badge--in-progress]="ctx.row['status'] === 'INPROGRESS'">
+
       <span class="ip-status-dot"></span>
-      {{ ctx.row['status'] === 'In_Progress' ? 'In Progress' : ctx.row['status'] }}
+
+      {{
+      (ctx.row['status'] || '')
+      .toLowerCase()
+      .replace('_', ' ')
+      .replace(/\b\w/g, c => c.toUpperCase())
+      }}
     </span>
   </ng-container>
 
   <ng-container *ngIf="ctx.col.key === 'approvalStatus'">
-    <span class="ip-status-badge"
-      [class.ip-status-badge--active]="ctx.row['approvalStatus'] === 'APPROVED'"
-      [class.ip-status-badge--inactive]="ctx.row['approvalStatus'] === 'REJECTED' ||ctx.row['approvalStatus'] === 'Rejected'"
-      [class.ip-status-badge--in-progress]="ctx.row['approvalStatus'] == 'In_Progress' || ctx.row['approvalStatus'] === 'INPROGRESS' || ctx.row['approvalStatus'] === 'InProgress'">
+    <span class="ip-status-badge" [class.ip-status-badge--active]="ctx.row['approvalStatus'] === 'APPROVED'"
+      [class.ip-status-badge--inactive]="ctx.row['approvalStatus'] === 'REJECTED' || ctx.row['approvalStatus'] === 'Rejected'"
+      [class.ip-status-badge--in-progress]="
+      ctx.row['approvalStatus'] === 'INPROGRESS' ||
+      ctx.row['approvalStatus'] === 'IN_PROGRESS' ||
+      ctx.row['approvalStatus'] === 'InProgress' ||
+      ctx.row['approvalStatus'] === 'In_Progress'
+    ">
+
       <span class="ip-status-dot"></span>
-      {{ ctx.row['approvalStatus'] === 'In_Progress' ? 'IN PROGRESS' : ctx.row['approvalStatus']?.toUpperCase() }}
+
+      {{
+      (ctx.row['approvalStatus'] || '')
+      .toLowerCase()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase())
+      }}
     </span>
   </ng-container>
 
@@ -66,21 +66,18 @@
     <span class="ip-plan-name">{{ ctx.row['planName'] }}</span>
   </ng-container>
 
-   <ng-container *ngIf="ctx.col.key === 'createdOn'">
+  <ng-container *ngIf="ctx.col.key === 'createdOn'">
     <div class="cell-date">
-        <span class="cell-date-main">{{ formatDate(ctx.row['createdOn']) }}</span>
-        <span class="cell-date-sub">{{ formatTime(ctx.row['createdOn']) }}</span>
-      </div>
+      <span class="cell-date-main">{{ formatDate(ctx.row['createdOn']) }}</span>
+      <span class="cell-date-sub">{{ formatTime(ctx.row['createdOn']) }}</span>
+    </div>
   </ng-container>
 
   <!-- Actions icons -->
   <ng-container *ngIf="ctx.col.key === 'actions'">
-    <app-common-table-actions
-      [viewPermission]="'DEMAND:INTERVIEWPLANCONFIG:VIEW'"
-      [editPermission]="'DEMAND:INTERVIEWPLANCONFIG:EDIT'"
-      (view)="handleView(ctx?.row)"
-      (edit)="handleEdit(ctx?.row)"
-    />
+    <app-common-table-actions [viewPermission]="'DEMAND:INTERVIEWPLANCONFIG:VIEW'"
+      [editPermission]="'DEMAND:INTERVIEWPLANCONFIG:EDIT'" (view)="handleView(ctx?.row)"
+      (edit)="handleEdit(ctx?.row)" />
   </ng-container>
 
 </ng-template>

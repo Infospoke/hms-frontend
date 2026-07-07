@@ -175,6 +175,7 @@ export const API = {
         CALCULATE_EVALUATION_SUMMARY:`/api/interview/calculate-evaluation-summary`,
         UPDATE_INTERVIEW_COMPLETE:`/hms/interview-plan/update-interview-completion-status`,
         INTERVIEW_COMPLETE_TO_CANDIDATE:`/hms/interview-plan/interview-complete`,
-        INTERVIEW_ASSIGNMENTS_COUNT:`/hms/interviewer-assignment/interviewers-assignment-counts`
+        INTERVIEW_ASSIGNMENTS_COUNT:`/hms/interviewer-assignment/interviewers-assignment-counts`,
+        INTERVIEW_FEED_BACK_BY_ID:`/hms/interview-plan/applicant-feedback-by-id`
     }
 };

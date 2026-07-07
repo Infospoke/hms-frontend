@@ -95,7 +95,7 @@ export class InterviewPerformanceComponent implements OnInit {
 
   /** Accept/Hold/Reject decision buttons are only relevant while reviewing an interview round. */
   get showDecisionActions(): boolean {
-    return ['ai-interview', 'technical', 'managerial'].includes(this.activeTab);
+    return ['ai-interview', 'technical', 'managerial'].includes(this.activeTab) && this.candidate?.noOfStages===this.candidate?.completedStages;
   }
 
   /** "Calculate Evaluation Summary" only makes sense once every round has been completed. */
@@ -152,7 +152,8 @@ export class InterviewPerformanceComponent implements OnInit {
           jobId: d.jobCode,
 
           interviewType: d?.currentStage,
-
+          noOfStages:d?.noOfStages,
+          completedStages:d?.completedStages,
           interviewDate: this.formatDate(d.interviewDate),
 
           experience: d?.minExperience + '-' + d?.maxExperience,

@@ -251,4 +251,9 @@ export class InterviewServiceService {
     async getAssignedInterviewCount():Promise<any>{
       return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_ASSIGNMENTS_COUNT))
     }
+
+
+    async getInterviewFeedBackById(id:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_FEED_BACK_BY_ID))
+    }
 }

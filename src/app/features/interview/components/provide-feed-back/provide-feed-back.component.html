@@ -85,12 +85,72 @@
   <!-- ── REUSABLE FEEDBACK FORM ────────────────────────────────────────── -->
   <app-interview-feedback-form
     [competencies]="competencies"
-    [initialRating]="1"
+    [initialRating]="existingFeedback?.overallRating ?? 1"
     [showCancel]="true"
     submitLabel="Submit Feedback"
-    [readonly]="false"
+    [readonly]="isReadonly"
     (formSubmit)="onFeedbackSubmit($event)"
     (formCancel)="onFeedbackCancel()"
   />
+
+  <!-- ── DECISION ACTIONS — shown only once feedback already exists ─────── -->
+  <section class="card" *ngIf="isReadonly">
+    <p class="section-title">Update Decision</p>
+    <p class="section-sub">Feedback has already been submitted. Choose how to move this candidate forward.</p>
+
+    <div class="decision-group">
+      <div
+        class="decision-card"
+        data-color="green"
+        [class.disabled]="isSubmitting"
+        (click)="!isSubmitting && handleDecision('next')"
+      >
+        <span class="decision-icon-wrap" data-color="green">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="decision-text">
+          <span class="decision-label">Move to Next Round</span>
+          <span class="decision-sub">Advance this candidate to the next interview stage.</span>
+        </span>
+      </div>
+
+      <div
+        class="decision-card"
+        data-color="amber"
+        [class.disabled]="isSubmitting"
+        (click)="!isSubmitting && handleDecision('hold')"
+      >
+        <span class="decision-icon-wrap" data-color="amber">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="5.5" y="4" width="2.2" height="10" rx="1" fill="currentColor"/>
+            <rect x="10.3" y="4" width="2.2" height="10" rx="1" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="decision-text">
+          <span class="decision-label">On Hold</span>
+          <span class="decision-sub">Pause this candidate's progress for now.</span>
+        </span>
+      </div>
+
+      <div
+        class="decision-card"
+        data-color="red"
+        [class.disabled]="isSubmitting"
+        (click)="!isSubmitting && handleDecision('rejected')"
+      >
+        <span class="decision-icon-wrap" data-color="red">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M5 5l8 8M13 5l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="decision-text">
+          <span class="decision-label">Reject</span>
+          <span class="decision-sub">End this candidate's application.</span>
+        </span>
+      </div>
+    </div>
+  </section>
 
 </div>

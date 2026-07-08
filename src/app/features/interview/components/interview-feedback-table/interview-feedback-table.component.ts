@@ -37,6 +37,8 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
     { key: 'round', label: 'Round', custom: true, width: '170px' },
     { key: 'interviewDate', label: 'Interview Date', custom: true, width: '150px', sortable: true },
     { key: 'priority', label: 'Priority', custom: true, width: '110px' },
+    { key: 'status', label: 'Status', custom: true, width: '110px' },
+    
     { key: 'action', label: 'Action', custom: true, width: '160px', align: 'center' },
   ];
 
@@ -75,6 +77,8 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
       jobTitle: item.jobTitle,
       department: item.department,
       round: item.currentStageType,
+      status:item?.status,
+      currentStageId:item?.currentStageId,
       interviewDate: this.formatDate(item.interviewDate),
       interviewTime: this.formatTime(item.endTime),
       priority: this.toTitleCase(item.sla)
@@ -129,6 +133,7 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
   onRowClick(_r: InterviewFeedback): void { }
 
   handleProvide(row: any) {
-    this.router.navigateByUrl(`/candidate-management/in-person-interview/provide-feedback/${row.id}`)
+    console.log(row);
+    this.router.navigate([`/candidate-management/in-person-interview/provide-feedback/${row.id}`], { state: { currentStageId: row.currentStageId } });
   }
 }

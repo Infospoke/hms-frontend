@@ -110,7 +110,22 @@
   font-weight: 600;
   letter-spacing: 0.01em;
 }
-
+.status-pill {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.status-pill.s-pending {
+  background: #FEF3C7;
+  color: #D97706;
+}
+.status-pill.s-hold {
+  background: #F3F4F6;
+  color: #6B7280;
+}
 .priority-pill.p-high {
   background: #fee2e2;
   color: #dc2626;

@@ -286,7 +286,7 @@ export class JobApprovalDetailComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate([
-      this.isAssignmentMode ? '/supply/in-person-interview' : '/supply/my-assignend-jobs'],{
+      this.isAssignmentMode ? '/supply/my-interview-requests' : '/supply/my-assignend-jobs'],{
           state: { activeType: 'ar' },
         }
     );

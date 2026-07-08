@@ -37,22 +37,40 @@ export class ProvideFeedBackComponent implements OnInit {
 
   candidate: any;
 
+  // ── Existing-feedback state ────────────────────────────────────────────────
+  currentStageId: number | null = null;
+  existingFeedback: any = null;
+  /** true once we know feedback already exists for this applicant/stage */
+  isReadonly = false;
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private interviewService = inject(InterviewServiceService);
   private notificationService = inject(NotificationService);
   interiviewMode:string|null=null;
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
-
+  jobId:any|null=null;
   private readonly DECISION_LABEL: Record<string, string> = {
     next: 'Move to next round',
     hold: 'On Hold',
     rejected: 'Rejected',
     null: ''
   };
+
+  constructor() {
+
+    const navState = this.router.getCurrentNavigation()?.extras?.state;
+    this.currentStageId =
+      navState?.['currentStageId'] ??
+      history.state?.currentStageId ??
+      null;
+  }
+
   ngOnInit(): void {
     const applicantId = this.route.snapshot.params['id'];
+
     this.getInterviewSummary(applicantId);
+    this.loadFeedBackDetails(applicantId, this.currentStageId);
   }
 
   private async getInterviewSummary(scheduleId: number) {
@@ -74,7 +92,7 @@ export class ProvideFeedBackComponent implements OnInit {
         venue: data.interviewMode,
         interviewId: scheduleId.toString(),
       };
-
+      this.jobId=data.jobId;
       this.candidate = {
         candidateId: scheduleId, // or applicantId if your API returns it
         firstName: data.candidateName?.split(' ')[0] || '',
@@ -108,7 +126,9 @@ export class ProvideFeedBackComponent implements OnInit {
       strengths: value.strengths ?? '',
       areasOfImprovemnets: value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
       additionalComments: value.additionalComments ?? '',
-      interiviewMode:this.interiviewMode
+      interviewMode:this.interiviewMode,
+      jobId:this.jobId,
+      currentStageId:this.currentStageId
     };
 
     this.isSubmitting = true;
@@ -138,12 +158,84 @@ export class ProvideFeedBackComponent implements OnInit {
     this.handleBack();
   }
 
+ 
+  async handleDecision(decisionKey: 'next' | 'hold' | 'rejected'): Promise<void> {
+    if (this.isSubmitting) return;
+
+    const payload = {
+      decision: this.DECISION_LABEL[decisionKey],
+      jobId: this.jobId,
+      stageTypeId: this.currentStageId,
+      applicantId: this.candidate?.candidateId ?? null,
+    };
+
+    this.isSubmitting = true;
+
+    try {
+      const res: any = await this.interviewService.updateInterviewFeedBack(payload);
+
+      if (res?.responsecode === '00') {
+        this.notificationService.success(res?.data || res?.message || 'Decision updated successfully.');
+        this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
+      } else {
+        this.notificationService.error(
+          res?.message ?? res?.data ?? 'Failed to update decision. Please try again.',
+        );
+      }
+    } catch (err: any) {
+      console.error('[handleDecision]', err);
+      this.notificationService.error(
+        err?.error?.message ?? err?.message ?? 'An unexpected error occurred. Please try again.',
+      );
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
   handleBack(): void {
     this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
   }
 
+  private async loadFeedBackDetails(applicantId: number, currentStageId: number | null) {
+    try {
+      const res: any = await this.interviewService.getInterviewFeedBackById({
+        applicantId,
+        currentStageId,
+      });
 
-  private async loadFeedBackDetails(){
-    
+      if (res?.responsecode === '00' && res?.data) {
+        const data = res.data;
+
+        // Fields that don't count as "feedback has been given" on their own
+        const metaKeys = ['applicantId', 'currentStageId', 'interviewMode', 'interviewType'];
+        const hasFeedback = Object.entries(data).some(
+          ([key, value]) => !metaKeys.includes(key) && value !== null && value !== '' && value !== undefined,
+        );
+
+        if (hasFeedback) {
+          this.existingFeedback = data;
+          this.isReadonly = true;
+          this.populateCompetencies(data);
+        }
+      }
+    } catch (err) {
+      console.error('[loadFeedBackDetails]', err);
+    }
+  }
+
+  /** Maps the API's flat feedback fields onto the competency rows the form expects. */
+  private populateCompetencies(data: any): void {
+    const ratingByKey: Record<string, number> = {
+      technical: data.technicalKnowledge,
+      cultural: data.culturalFit,
+      analytical: data.analyticalThinking,
+      problem: data.problemSolving,
+      communication: data.communication,
+    };
+
+    this.competencies = this.competencies.map(c => ({
+      ...c,
+      rating: ratingByKey[c.key] ?? c.rating,
+    }));
   }
 }

@@ -253,7 +253,11 @@ export class InterviewServiceService {
     }
 
 
-    async getInterviewFeedBackById(id:any):Promise<any>{
-      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_FEED_BACK_BY_ID))
+    async getInterviewFeedBackById(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.INTERVIEW_FEED_BACK_BY_ID,payload))
+    }
+
+    async updateInterviewFeedBack(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.UPDATE_INTERVIEW_FEED_BACK,payload))
     }
 }

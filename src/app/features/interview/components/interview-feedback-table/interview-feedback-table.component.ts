@@ -77,7 +77,7 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
       jobTitle: item.jobTitle,
       department: item.department,
       round: item.currentStageType,
-      status:item?.status,
+      status:item?.feedbackStatus,
       currentStageId:item?.currentStageId,
       interviewDate: this.formatDate(item.interviewDate),
       interviewTime: this.formatTime(item.endTime),
@@ -134,6 +134,6 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
 
   handleProvide(row: any) {
     console.log(row);
-    this.router.navigate([`/candidate-management/in-person-interview/provide-feedback/${row.id}`], { state: { currentStageId: row.currentStageId } });
+    this.router.navigate([`/candidate-management/in-person-interview/provide-feedback/${row.id}`], { state: { currentStageId: row.currentStageId,type:row?.status==='Hold'?true:false } });
   }
 }

@@ -123,3 +123,20 @@
   }
 }
 
+// ── Confirm modal — force zoom-in to originate from screen center ──────────────
+// ant-design/ng-zorro records the coordinates of whatever element triggered
+// the modal (here: the Submit button) and sets an inline `transform-origin`
+// on the modal equal to that click point. Even with nzCentered:true, the
+// modal still zooms in FROM that point TOWARD the center, which reads as
+// "sliding in from the button". `::ng-deep` is required because ng-zorro
+// renders the modal into a CDK overlay outside this component's view.
+::ng-deep .custom-confirm-modal,
+::ng-deep .custom-edit-modal {
+  .ant-modal {
+    transform-origin: center center !important;
+  }
+
+  .ant-modal-content {
+    transform-origin: center center !important;
+  }
+}

@@ -40,9 +40,9 @@ export class ProvideFeedBackComponent implements OnInit {
   // ── Existing-feedback state ────────────────────────────────────────────────
   currentStageId: number | null = null;
   existingFeedback: any = null;
-  /** true once we know feedback already exists for this applicant/stage */
-  isReadonly = false;
 
+  isReadonly = false;
+  roundId:any;
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private interviewService = inject(InterviewServiceService);
@@ -56,7 +56,7 @@ export class ProvideFeedBackComponent implements OnInit {
     rejected: 'Rejected',
     null: ''
   };
-
+  isHolded:boolean=false;
   constructor() {
 
     const navState = this.router.getCurrentNavigation()?.extras?.state;
@@ -64,13 +64,15 @@ export class ProvideFeedBackComponent implements OnInit {
       navState?.['currentStageId'] ??
       history.state?.currentStageId ??
       null;
+    this.isHolded=navState?.['type']??history.state?.type??false;
   }
 
   ngOnInit(): void {
     const applicantId = this.route.snapshot.params['id'];
-
     this.getInterviewSummary(applicantId);
-    this.loadFeedBackDetails(applicantId, this.currentStageId);
+    if(this.isHolded){
+      this.loadFeedBackDetails(applicantId, this.currentStageId);
+    }
   }
 
   private async getInterviewSummary(scheduleId: number) {
@@ -93,6 +95,7 @@ export class ProvideFeedBackComponent implements OnInit {
         interviewId: scheduleId.toString(),
       };
       this.jobId=data.jobId;
+      this.roundId=data?.roundId;
       this.candidate = {
         candidateId: scheduleId, // or applicantId if your API returns it
         firstName: data.candidateName?.split(' ')[0] || '',
@@ -128,7 +131,8 @@ export class ProvideFeedBackComponent implements OnInit {
       additionalComments: value.additionalComments ?? '',
       interviewMode:this.interiviewMode,
       jobId:this.jobId,
-      currentStageId:this.currentStageId
+      currentStageId:this.currentStageId,
+      stageTypeId:this.roundId
     };
 
     this.isSubmitting = true;

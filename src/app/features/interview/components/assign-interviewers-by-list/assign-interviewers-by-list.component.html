@@ -114,11 +114,15 @@
               <div
                 class="option"
                 *ngFor="let u of ctx.row.filteredUsers"
+                [class.option--disabled]="isAssignedElsewhere(u, ctx.row)"
                 (mousedown)="selectInterviewer(ctx.row, u)">
                 <div class="avatar-initials">{{ getInitials(u) }}</div>
                 <div class="info">
                   <div class="name">{{ getDisplayName(u) }}</div>
-                  <div class="role">{{ u.roleName }}</div>
+                  <div class="role" *ngIf="!isAssignedElsewhere(u, ctx.row); else assignedElsewhere">{{ u.roleName }}</div>
+                  <ng-template #assignedElsewhere>
+                    <div class="role option--disabled-label">Already assigned to {{ assignedRoundLabel(u, ctx.row) }}</div>
+                  </ng-template>
                 </div>
               </div>
 

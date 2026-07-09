@@ -158,7 +158,7 @@ export const API = {
         INTERVIEW_PROVIDE_FEEDBACK:"/hms/interview-plan/interview-feedback",
         ROUNDS_LIST:'/hms/configurations/interview-rounds',
         SUBMIT_FEED_BACK:`/hms/interview-plan/interview-feedback`,
-        TODAY_INTERVIEW_DETAILS:(id:any)=>`/hms/interview-plan/get-interview-details/${id}`,
+        TODAY_INTERVIEW_DETAILS:`/hms/interview-plan/today-interview-details`,
         GET_TODAY_INTERVIEW_LIST:`/hms/interview-plan/get-today-interviews`,
         GET_FEED_BACK_LIST:`/hms/interview-plan/feedback-list`,
         GET_SCHEDULE_LIST:`/hms/interview-plan/get-to-be-schedule-list`,

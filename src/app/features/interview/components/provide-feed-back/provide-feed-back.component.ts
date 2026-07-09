@@ -21,10 +21,9 @@ import { NotificationService } from '../../../../core/services/notification.serv
   imports: [
     CommonModule,
     HeadingComponent,
-    // InterviewCandidateInfoComponent,
     InterviewFeedbackFormComponent,
     InterviewCandidateInfoComponent
-],
+  ],
   templateUrl: './provide-feed-back.component.html',
   styleUrl: './provide-feed-back.component.scss',
 })
@@ -34,43 +33,84 @@ export class ProvideFeedBackComponent implements OnInit {
   isSubmitting = false;
 
   interview: any;
-
   candidate: any;
 
   // ── Existing-feedback state ────────────────────────────────────────────────
   currentStageId: number | null = null;
   existingFeedback: any = null;
-
+  /** true once we know feedback already exists for this applicant/stage */
   isReadonly = false;
-  roundId:any;
+  roundId: any;
+
+  /** Comes from router state (row.status === 'Hold'). Only fetch existing feedback when true. */
+  shouldFetchExistingFeedback = false;
+
+  /** Normalized current decision from the GET-by-id response, e.g. 'Hold' -> 'hold'. Used to highlight the active button. */
+  currentDecisionKey: 'next' | 'hold' | 'rejected' | null = null;
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private interviewService = inject(InterviewServiceService);
   private notificationService = inject(NotificationService);
-  interiviewMode:string|null=null;
+  interiviewMode: string | null = null;
   competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
-  jobId:any|null=null;
-  private readonly DECISION_LABEL: Record<string, string> = {
-    next: 'Move to next round',
-    hold: 'On Hold',
+  jobId: any | null = null;
+
+  readonly DECISION_LABEL: Record<string, string> = {
+    next: 'Move to Next Round',
+    hold: 'Hold',
     rejected: 'Rejected',
     null: ''
   };
-  isHolded:boolean=false;
-  constructor() {
 
+  /** Reverse lookup: API's stored decision string -> our internal key (case-insensitive, tolerant of old/alternate labels). */
+  private readonly DECISION_KEY_BY_LABEL: Record<string, 'next' | 'hold' | 'rejected'> = {
+    'move to next round': 'next',
+    'move to interview': 'next',
+    'hold': 'hold',
+    'on hold': 'hold',
+    'rejected': 'rejected',
+    'reject': 'rejected',
+  };
+
+  /** Maps the reusable form's decision key ('next'|'hold'|'reject') -> the label the API expects. Used on first-time submit. */
+  private readonly FORM_DECISION_LABEL: Record<string, string> = {
+    next: 'Move to Next Round',
+    hold: 'Hold',
+    reject: 'Rejected',
+  };
+
+  /** Maps our internal decision key ('rejected') to the reusable form's key ('reject') for [initialDecision]. */
+  get feedbackFormDecision(): 'next' | 'hold' | 'reject' | null {
+    if (this.currentDecisionKey === 'rejected') return 'reject';
+    return this.currentDecisionKey;
+  }
+
+  /** Human-readable label for the candidate's current decision, shown once feedback already exists. */
+  get currentDecisionLabel(): string {
+    return this.currentDecisionKey ? this.DECISION_LABEL[this.currentDecisionKey] : '';
+  }
+
+  constructor() {
     const navState = this.router.getCurrentNavigation()?.extras?.state;
+
     this.currentStageId =
       navState?.['currentStageId'] ??
       history.state?.currentStageId ??
       null;
-    this.isHolded=navState?.['type']??history.state?.type??false;
+
+    this.shouldFetchExistingFeedback =
+      navState?.['type'] ??
+      history.state?.['type'] ??
+      false;
   }
 
   ngOnInit(): void {
     const applicantId = this.route.snapshot.params['id'];
+
     this.getInterviewSummary(applicantId);
-    if(this.isHolded){
+
+    if (this.shouldFetchExistingFeedback) {
       this.loadFeedBackDetails(applicantId, this.currentStageId);
     }
   }
@@ -79,25 +119,25 @@ export class ProvideFeedBackComponent implements OnInit {
     const res: any = await this.interviewService.candidateSummaryDetails(scheduleId);
     if (res?.responsecode === '00') {
       const data = res.data;
-      this.interiviewMode=data.interviewMode;
+      this.interiviewMode = data.interviewMode;
       this.interview = {
         type: data.interviewType,
         jobApplied: data.jobTitle,
         jobBadge: data.round,
-        completedOn: data?.interviewCompletedOn ?? '',          // API doesn't provide this
+        completedOn: data?.interviewCompletedOn ?? '',
         time: new Date(data?.interviewCompletedOn).toLocaleTimeString('en-IN', {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
           hour12: true
-        }),                // API doesn't provide this
+        }),
         venue: data.interviewMode,
         interviewId: scheduleId.toString(),
       };
-      this.jobId=data.jobId;
-      this.roundId=data?.roundId;
+      this.jobId = data.jobId;
+      this.roundId = data?.roundId;
       this.candidate = {
-        candidateId: scheduleId, // or applicantId if your API returns it
+        candidateId: scheduleId,
         firstName: data.candidateName?.split(' ')[0] || '',
         lastName: data.candidateName?.split(' ').slice(1).join(' ') || '',
         currentRole: data.jobTitle,
@@ -108,18 +148,19 @@ export class ProvideFeedBackComponent implements OnInit {
       };
     }
   }
+
+  /** Handles the reusable feedback form's submit — includes the decision picked in the form's own "Decision" step (first-time submit only; [showDecision]="!isReadonly"). */
   async onFeedbackSubmit(value: any): Promise<void> {
     if (this.isSubmitting) return;
 
-    // Helper: pull a competency rating by key, default 0 if missing
     const rating = (key: string): number =>
       value.competencies?.find((c: any) => c.key === key)?.rating ?? 0;
 
     const payload = {
-      applicantId: this.candidate?.candidateId ?? 1,           // replace with real id from route/state
+      decision: value.decision ? (this.FORM_DECISION_LABEL[value.decision] ?? '') : '',
+      applicantId: this.candidate?.candidateId ?? 1,
       interviewType: this.interview.type,
       roundType: this.interview.jobBadge,
-      decision: this.DECISION_LABEL[value.decision] ?? value.decision,
       overallRating: value.overallRating,
       technicalKnowledge: rating('technical'),
       culturalFit: rating('cultural'),
@@ -127,12 +168,12 @@ export class ProvideFeedBackComponent implements OnInit {
       problemSolving: rating('problem'),
       communication: rating('communication'),
       strengths: value.strengths ?? '',
-      areasOfImprovemnets: value.areasOfImprovement ?? '',   // note: backend typo kept intentionally
+      areasOfImprovemnets: value.areasOfImprovement ?? '',
       additionalComments: value.additionalComments ?? '',
-      interviewMode:this.interiviewMode,
-      jobId:this.jobId,
-      currentStageId:this.currentStageId,
-      stageTypeId:this.roundId
+      interviewMode: this.interiviewMode,
+      jobId: this.jobId,
+      currentStageId: this.currentStageId,
+      stageTypeId: this.roundId
     };
 
     this.isSubmitting = true;
@@ -162,15 +203,22 @@ export class ProvideFeedBackComponent implements OnInit {
     this.handleBack();
   }
 
- 
+  /** Old decision buttons (Move to Next Round / On Hold / Reject) — this is the only path for decision updates. */
   async handleDecision(decisionKey: 'next' | 'hold' | 'rejected'): Promise<void> {
     if (this.isSubmitting) return;
 
+    if (!this.candidate?.candidateId || !this.jobId) {
+      this.notificationService.error('Candidate details are still loading. Please try again in a moment.');
+      return;
+    }
+
     const payload = {
+      applicantId: this.candidate?.candidateId ?? null,
       decision: this.DECISION_LABEL[decisionKey],
       jobId: this.jobId,
-      stageTypeId: this.currentStageId,
-      applicantId: this.candidate?.candidateId ?? null,
+      currentStageId: this.currentStageId,
+      // stageTypeId: this.roundId,
+      // interviewMode: this.interiviewMode,
     };
 
     this.isSubmitting = true;
@@ -210,7 +258,6 @@ export class ProvideFeedBackComponent implements OnInit {
       if (res?.responsecode === '00' && res?.data) {
         const data = res.data;
 
-        // Fields that don't count as "feedback has been given" on their own
         const metaKeys = ['applicantId', 'currentStageId', 'interviewMode', 'interviewType'];
         const hasFeedback = Object.entries(data).some(
           ([key, value]) => !metaKeys.includes(key) && value !== null && value !== '' && value !== undefined,
@@ -220,6 +267,10 @@ export class ProvideFeedBackComponent implements OnInit {
           this.existingFeedback = data;
           this.isReadonly = true;
           this.populateCompetencies(data);
+
+          if (data.decision) {
+            this.currentDecisionKey = this.DECISION_KEY_BY_LABEL[String(data.decision).toLowerCase()] ?? null;
+          }
         }
       }
     } catch (err) {
@@ -227,7 +278,6 @@ export class ProvideFeedBackComponent implements OnInit {
     }
   }
 
-  /** Maps the API's flat feedback fields onto the competency rows the form expects. */
   private populateCompetencies(data: any): void {
     const ratingByKey: Record<string, number> = {
       technical: data.technicalKnowledge,

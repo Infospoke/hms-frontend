@@ -86,6 +86,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
   currentCompany = '';
   currentRole = '';
   currentStageType: any;
+  currentStageTypeId:any;
   projects: Project[] = [];
   private interviewService = inject(InterviewServiceService)
   interviewCompletedOn: any;
@@ -99,7 +100,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
   private pdfObjectUrl: string | null = null; // raw blob url, kept so we can revoke it
   isResumeLoading = false;
   private jobService = inject(JobService);
-  interviewRound:any;
+  interviewRound: any;
   constructor(
     private route: ActivatedRoute,
 
@@ -108,6 +109,8 @@ export class TodayInterviewDetailsComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.applicantionId = id;
+     this.currentStageTypeId =
+    this.route.snapshot.queryParamMap.get('currentStageType');
     if (!id) {
       this.isLoading = false;
       this.error = 'Interview ID was not found in the route.';
@@ -120,9 +123,12 @@ export class TodayInterviewDetailsComponent implements OnInit {
   private async loadInterviewDetails(id: string): Promise<void> {
     this.isLoading = true;
     this.error = null;
-
+    const obj = {
+      "applicantId": id,
+      "currentStageId":this.currentStageTypeId
+    }
     try {
-      const response = await this.interviewService.getTodayInterviewDetails(id);
+      const response = await this.interviewService.getTodayInterviewDetails(obj);
 
       if (response?.responsecode === '00' && response?.data) {
         this.mapInterviewData(response.data);
@@ -142,7 +148,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
 
   private mapInterviewData(data: any): void {
     this.currentStageType = data.currentStageType;
-    this.interviewRound=data?.InterviewRound;
+    this.interviewRound = data?.InterviewRound;
     this.interviewCompletedOn = data.interviewCompletedOn;
     this.interviewInfo = {
       interviewId: data.interviewId ?? '',

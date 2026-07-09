@@ -30,3 +30,80 @@
 @keyframes aid-spin {
   to { transform: rotate(360deg); }
 }
+
+// ── Question table alignment fix ────────────────────────────────────────────────
+// Fixed column widths + top-alignment so multi-line questions don't push the
+// score/actions columns out of line with the row above/below them.
+.aid-q-table {
+  table-layout: fixed;
+  width: 100%;
+
+  th:nth-child(1), td:nth-child(1) { width: 56px; text-align: center; }
+  th:nth-child(3), td:nth-child(3) { width: 180px; }
+  th:nth-child(4), td:nth-child(4) { width: 56px; text-align: center; }
+
+  td {
+    vertical-align: top;
+    padding-top: 16px;
+  }
+
+  th {
+    vertical-align: middle;
+  }
+}
+
+// Center the # badge within its (now text-align:center) column.
+.aid-q-num-badge {
+  margin: 0 auto;
+}
+
+// ── Question number badge — square, not circular ────────────────────────────────
+// .aid-q-num-badge {
+//   border-radius: 6px;
+// }
+
+// Proctoring Details can list dozens of violations — cap the height and let
+// it scroll internally instead of pushing the whole page down.
+.aid-proc-table-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 8px;
+
+  // Keep the header visible while scrolling through violations.
+  table.aid-round-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--gray-50, #f9fafb);
+    z-index: 1;
+  }
+
+  // Thin, unobtrusive scrollbar (WebKit browsers).
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--gray-300, #d1d5db);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400, #9ca3af);
+  }
+
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300, #d1d5db) transparent;
+}
+
+.aid-q-text,.aid-expand-section-title{
+  text-align: left;
+
+}
+.aid-expand-section-title{
+  font-weight: 700;
+}

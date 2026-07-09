@@ -12,7 +12,6 @@
   <!-- ── TOP SUMMARY CARD ──────────────────────────────────────────────── -->
   <section class="card summary-card">
 
-    <!-- Left: Interview Details -->
     <div class="interview-details">
       <div class="interview-title-row">
         <div class="interview-icon">
@@ -69,7 +68,6 @@
       </div>
     </div>
 
-    <!-- Vertical divider -->
     <div class="summary-divider"></div>
 
     <div class="candidate-panel">
@@ -86,6 +84,11 @@
   <app-interview-feedback-form
     [competencies]="competencies"
     [initialRating]="existingFeedback?.overallRating ?? 1"
+    [initialStrengths]="existingFeedback?.strengths ?? ''"
+    [initialAreasOfImprovement]="existingFeedback?.areasOfImprovemnets ?? ''"
+    [initialAdditionalComments]="existingFeedback?.additionalComments ?? ''"
+    [initialDecision]="feedbackFormDecision"
+    [showDecision]="!isReadonly"
     [showCancel]="true"
     submitLabel="Submit Feedback"
     [readonly]="isReadonly"
@@ -93,64 +96,82 @@
     (formCancel)="onFeedbackCancel()"
   />
 
-  <!-- ── DECISION ACTIONS — shown only once feedback already exists ─────── -->
-  <!-- <section class="card" *ngIf="isReadonly">
-    <p class="section-title">Update Decision</p>
-    <p class="section-sub">Feedback has already been submitted. Choose how to move this candidate forward.</p>
+  <!-- ── DECISION ACTIONS — shown only once feedback already exists ───────── -->
+  <!-- Card style intentionally mirrors app-interview-feedback-form's own "6. Decision" -->
+  <!-- step (icon + label + description, 3-column grid) for visual consistency. -->
+  <section class="card" *ngIf="isReadonly">
+    <p class="section-title">Decision</p>
+    <p class="section-sub current-decision" *ngIf="currentDecisionLabel">
+      Current decision: <strong>{{ currentDecisionLabel }}</strong>
+    </p>
+    <p class="section-sub" *ngIf="!currentDecisionLabel">
+      Choose how to move this candidate forward.
+    </p>
 
     <div class="decision-group">
-      <div
+      <button
+        type="button"
         class="decision-card"
         data-color="green"
-        [class.disabled]="isSubmitting"
-        (click)="!isSubmitting && handleDecision('next')"
+        [class.selected]="currentDecisionKey === 'next'"
+        [disabled]="isSubmitting"
+        (click)="handleDecision('next')"
       >
-        <span class="decision-icon-wrap" data-color="green">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M4 9l3.5 3.5L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <span class="decision-icon" data-color="green">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M7 10h6M10 7l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
         <span class="decision-text">
           <span class="decision-label">Move to Next Round</span>
-          <span class="decision-sub">Advance this candidate to the next interview stage.</span>
+          <span class="decision-sub">Candidate will move to the next round for further evaluation.</span>
         </span>
-      </div>
+        <span class="decision-radio" [class.selected]="currentDecisionKey === 'next'"></span>
+      </button>
 
-      <div
+      <button
+        type="button"
         class="decision-card"
         data-color="amber"
-        [class.disabled]="isSubmitting"
-        (click)="!isSubmitting && handleDecision('hold')"
+        [class.selected]="currentDecisionKey === 'hold'"
+        [disabled]="isSubmitting"
+        (click)="handleDecision('hold')"
       >
-        <span class="decision-icon-wrap" data-color="amber">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <rect x="5.5" y="4" width="2.2" height="10" rx="1" fill="currentColor"/>
-            <rect x="10.3" y="4" width="2.2" height="10" rx="1" fill="currentColor"/>
+        <span class="decision-icon" data-color="amber">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M8 7v6M12 7v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
         </span>
         <span class="decision-text">
-          <span class="decision-label">On Hold</span>
-          <span class="decision-sub">Pause this candidate's progress for now.</span>
+          <span class="decision-label">Hold</span>
+          <span class="decision-sub">Candidate will be put on hold. Review will occur at a later stage.</span>
         </span>
-      </div>
+        <span class="decision-radio" [class.selected]="currentDecisionKey === 'hold'"></span>
+      </button>
 
-      <div
+      <button
+        type="button"
         class="decision-card"
         data-color="red"
-        [class.disabled]="isSubmitting"
-        (click)="!isSubmitting && handleDecision('rejected')"
+        [class.selected]="currentDecisionKey === 'rejected'"
+        [disabled]="isSubmitting"
+        (click)="handleDecision('rejected')"
       >
-        <span class="decision-icon-wrap" data-color="red">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M5 5l8 8M13 5l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <span class="decision-icon" data-color="red">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+            <path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
         </span>
         <span class="decision-text">
           <span class="decision-label">Reject</span>
-          <span class="decision-sub">End this candidate's application.</span>
+          <span class="decision-sub">Candidate will not be selected for further rounds.</span>
         </span>
-      </div>
+        <span class="decision-radio" [class.selected]="currentDecisionKey === 'rejected'"></span>
+      </button>
     </div>
-  </section> -->
+  </section>
 
 </div>

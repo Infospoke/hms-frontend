@@ -9,7 +9,7 @@
 
     <app-heading heading="AI Interview Details" subHeading="Review interview performance and make an informed decision."
       [showBackButton]="true" [buttonText]="'Back to Candidate Management'"
-      backButtonUrl="/candidate-management/interview-pipe-line/view-ai-interview-details/" />
+      backButtonUrl="/candidate-management/interview-pipe-line" />
 
     <div class="aid-cand-card">
 
@@ -83,9 +83,9 @@
         <div class="aid-meta-item">
           <div class="aid-meta-label">AI Score</div>
           <div class="aid-meta-value">
-            <span class="aid-score-pct">{{ candidate.aiScore }}%</span>
+            <span class="aid-score-pct">{{ averageAiScore }}%</span>
             <div class="aid-score-bar">
-              <div class="aid-score-bar-fill" [style.width.%]="candidate.aiScore"></div>
+              <div class="aid-score-bar-fill" [style.width.%]="averageAiScore"></div>
             </div>
           </div>
         </div>

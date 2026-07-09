@@ -32,7 +32,7 @@ export class InterviewPerformanceComponent implements OnInit {
   private notificationService=inject(NotificationService)
   loading = false;
   error: string | null = null;
-
+  averageAiScore:any=0;
   /** True when the evaluation-summary API reports no evaluation exists yet for this candidate. */
   evaluationNotFound = false;
   /** True while the "calculate evaluation summary" API call is in flight. */
@@ -239,6 +239,7 @@ export class InterviewPerformanceComponent implements OnInit {
   }
 
   private mapToViewModel(raw: any) {
+    this.averageAiScore=raw?.average_ai_score;
     const qnaList: any[] = Array.isArray(raw.qna_analysis) ? raw.qna_analysis : [];
     const logs: any[] = Array.isArray(raw.proctoring_logs) ? raw.proctoring_logs : [];
 
@@ -249,7 +250,7 @@ export class InterviewPerformanceComponent implements OnInit {
     let previousTs = this.parseDate(raw.interview_timeline?.started_dt);
 
     const questions:any[] = qnaList.map((q, index) => {
-      const scoreOutOf10 = this.round1(this.toScale10(q.overall));
+      const scoreOutOf10 = this.scaled10(q.overall);
       const currentTs = this.parseDate(q.created_at);
       const timeTaken = this.formatDuration(previousTs, currentTs);
       previousTs = currentTs ?? previousTs;
@@ -273,6 +274,19 @@ export class InterviewPerformanceComponent implements OnInit {
           accuracy: this.toScale5(q.accuracy),
           clarity: this.toScale5(q.clarity),
         },
+        // AI's confidence in its own scoring for this answer — API returns
+        // final_confidence_score (0-100) and a confidence_level label
+        // (e.g. "Low Confidence"). Previously not mapped at all.
+        confidenceScore: q.final_confidence_score ?? null,
+        confidenceLevel: q.confidence_level ?? null,
+        // Per-criterion breakdown behind the overall score — also 0-100 scale,
+        // also previously dropped by the mapping.
+        breakdown: {
+          domainKnowledge: q.domain_knowledge ?? null,
+          communicationClarity: q.communication_clarity ?? null,
+          problemSolving: q.problem_solving ?? null,
+          jobRelevance: q.job_relevance ?? null,
+        },
       };
     });
 
@@ -288,9 +302,9 @@ export class InterviewPerformanceComponent implements OnInit {
       overallRisk: highSeverity > 0 ? 'High' : mediumSeverity > 0 ? 'Medium' : 'Low',
       violations: logs.map((l) => ({
         time: this.formatTime(this.parseDate(l.timestamp ?? l.time)),
-        violation: this.toTitleCase(l.violation_type ?? l.event_type ?? 'Violation'),
+        violation: this.toTitleCase(this.joinTextValues(l.violation_type ?? l.event_type) || 'Violation'),
         severity: this.severityFor(l),
-        description: l.description ?? l.details ?? '',
+        description: this.joinTextValues(l.description ?? l.details ?? ''),
         snapshots: [l.image_base64].filter((s): s is string => !!s),
       })),
     };
@@ -298,7 +312,7 @@ export class InterviewPerformanceComponent implements OnInit {
     return {
       totalQuestions: raw.total_questions ?? qnaList.length,
       attempted: raw.qna_count ?? qnaList.length,
-      averageAiScore: this.round1(this.toScale10(raw.average_ai_score ?? raw.total_score)),
+      averageAiScore: this.scaled10(raw.average_ai_score ?? raw.total_score),
       recommendation: raw.recommendation,
       questions,
       proctoring,
@@ -308,7 +322,8 @@ export class InterviewPerformanceComponent implements OnInit {
   private round1(value: number): number {
     return Math.round(value * 10) / 10;
   }
-  private ratingForScore(scoreOutOf10: number): 'Excellent' | 'Good' | 'Average' | 'Poor' {
+  private ratingForScore(scoreOutOf10: number | null): 'Excellent' | 'Good' | 'Average' | 'Poor' | null {
+    if (scoreOutOf10 == null) return null;
     if (scoreOutOf10 >= 9) return 'Excellent';
     if (scoreOutOf10 >= 7) return 'Good';
     if (scoreOutOf10 >= 5) return 'Average';
@@ -326,14 +341,29 @@ export class InterviewPerformanceComponent implements OnInit {
     return 'Low';
   }
 
-  /** Scores like `overall` / `average_ai_score` arrive on a 0-100 scale; the UI shows them out of 10. */
-  private toScale10(value: number | undefined | null): number {
-    return value == null ? 0 : value / 10;
+  /**
+   * Scores like `overall` / `average_ai_score` arrive on a 0-100 scale; the
+   * UI shows them out of 10. Returns null (not 0) when the field is genuinely
+   * absent from the API response, so the template can render "N/A" instead
+   * of a fake zero score.
+   */
+  private toScale10(value: number | undefined | null): number | null {
+    return value == null ? null : value / 10;
   }
 
-  /** Metrics like `relevance` / `accuracy` arrive on a 0-10 scale; the star display expects 0-5. */
-  private toScale5(value: number | undefined | null): number {
-    if (value == null) return 0;
+  /** toScale10 + rounding to 1 decimal, still null-preserving. */
+  private scaled10(value: number | undefined | null): number | null {
+    const v = this.toScale10(value);
+    return v == null ? null : this.round1(v);
+  }
+
+  /**
+   * Metrics like `relevance` / `accuracy` arrive on a 0-10 scale; the star
+   * display expects 0-5. Returns null (not 0) when missing, distinct from an
+   * explicit 0 the API actually sent.
+   */
+  private toScale5(value: number | undefined | null): number | null {
+    if (value == null) return null;
     return Math.max(0, Math.min(5, Math.round(value / 2)));
   }
 
@@ -371,6 +401,36 @@ export class InterviewPerformanceComponent implements OnInit {
     return value
       .replace(/_/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  /**
+   * Proctoring log fields like violation_type sometimes arrive as a real array
+   * (e.g. ["Looking Away (Right)", "Head Up"]) or as a JSON-stringified array
+   * (e.g. '["Looking Away (Right)", "Head Up"]') instead of a plain string.
+   * Feeding that straight into toTitleCase() left the brackets/quotes showing
+   * up in the UI verbatim (e.g. `["Looking Away (Right)", "Head Up"]`). This
+   * joins every entry into one readable, comma-separated string.
+   */
+  private joinTextValues(value: any): string {
+    if (value == null) return '';
+    if (Array.isArray(value)) {
+      return value.filter((v) => v != null).map((v) => String(v)).join(', ');
+    }
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.filter((v) => v != null).map((v) => String(v)).join(', ');
+          }
+        } catch {
+          // Not valid JSON — fall through and use the raw string.
+        }
+      }
+      return value;
+    }
+    return String(value);
   }
   private findRound(rounds: any[], type: string): any {
     if (!Array.isArray(rounds)) return null;
@@ -441,7 +501,13 @@ export class InterviewPerformanceComponent implements OnInit {
       this.evaluationData = this.mapEvaluationSummary(res.data);
 
       if (this.candidate) {
-        this.candidate.aiScore = res.data.average_score_across_rounds;
+        // Candidate card's "AI Score" bar renders this as a 0-100 percentage
+        // (see [style.width.%]="candidate.aiScore" in the template), and
+        // average_ai_score is the field that's on that 0-100 scale — it's the
+        // same field mapEvaluationSummary uses for `averageAiScore`.
+        // average_score_across_rounds is often missing/undefined for a
+        // candidate, which is why the bar never moved.
+        this.candidate.aiScore = res.data.average_ai_score ?? 0;
       }
     } catch (err: any) {
       const message: string = err?.message || '';

@@ -3,19 +3,26 @@ import { CommonModule } from '@angular/common';
 import { JobService } from '../../../job/services/job.service';
 
 interface EvalDetail {
-  relevance: number;
-  completeness: number;
-  accuracy: number;
-  clarity: number;
+  relevance: number | null;
+  completeness: number | null;
+  accuracy: number | null;
+  clarity: number | null;
+}
+
+interface EvalBreakdown {
+  domainKnowledge: number | null;
+  communicationClarity: number | null;
+  problemSolving: number | null;
+  jobRelevance: number | null;
 }
 
 interface QuestionVm {
   id: number;
   difficulty: 'Easy' | 'Medium' | 'Hard';
   question: string;
-  aiScore: number;
+  aiScore: number | null;
   maxScore: number;
-  rating: 'Excellent' | 'Good' | 'Average' | 'Poor';
+  rating: 'Excellent' | 'Good' | 'Average' | 'Poor' | null;
   expanded: boolean;
   type: string;
   time: string;
@@ -23,6 +30,9 @@ interface QuestionVm {
   candidateAnswer: string;
   aiEvaluation: string;
   evalDetail: EvalDetail;
+  confidenceScore: number | null;
+  confidenceLevel: string | null;
+  breakdown: EvalBreakdown;
 }
 
 interface ProctoringViolationVm {
@@ -45,7 +55,7 @@ interface ProctoringVm {
 interface AiInterviewVm {
   totalQuestions: number;
   attempted: number;
-  averageAiScore: number;
+  averageAiScore: number | null;
   recommendation?: string;
   questions: QuestionVm[];
   proctoring: ProctoringVm;
@@ -81,7 +91,7 @@ export class AiInterviewComponent implements OnInit {
     return map[risk] ?? 'pass';
   }
 
-  evalMetrics(q: any): { label: string; val: number }[] {
+  evalMetrics(q: any): { label: string; val: number | null }[] {
     if (!q.evalDetail) return [];
     return [
       { label: 'Relevance',    val: q.evalDetail.relevance },
@@ -89,6 +99,25 @@ export class AiInterviewComponent implements OnInit {
       { label: 'Accuracy',     val: q.evalDetail.accuracy },
       { label: 'Clarity',      val: q.evalDetail.clarity },
     ];
+  }
+
+  /** The per-criterion 0-100 breakdown behind the overall score. */
+  breakdownMetrics(q: any): { label: string; val: number | null }[] {
+    if (!q.breakdown) return [];
+    return [
+      { label: 'Domain Knowledge',      val: q.breakdown.domainKnowledge },
+      { label: 'Communication Clarity', val: q.breakdown.communicationClarity },
+      { label: 'Problem Solving',       val: q.breakdown.problemSolving },
+      { label: 'Job Relevance',         val: q.breakdown.jobRelevance },
+    ];
+  }
+
+  confidenceClass(level: string | null): string {
+    const l = (level ?? '').toLowerCase();
+    if (l.includes('high')) return 'pass';
+    if (l.includes('medium') || l.includes('moderate')) return 'hold';
+    if (l.includes('low')) return 'reject';
+    return '';
   }
 
 }

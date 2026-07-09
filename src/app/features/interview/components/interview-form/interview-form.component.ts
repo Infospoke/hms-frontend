@@ -189,6 +189,20 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     return this.mode === 'reschedule';
   }
 
+  /**
+   * The interview mode is decided by the job/round data (currentSchedule for
+   * reschedules, summary.job for new schedules) — not something the user
+   * should be able to flip here. Returns null only when neither source has a
+   * value yet, in which case the picker stays editable as a fallback.
+   */
+  get lockedInterviewType(): 'Online' | 'Offline' | null {
+    const raw = this.currentSchedule?.interviewType ?? this.summary?.job?.interviewType;
+    if (raw === undefined || raw === null || raw === '') {
+      return null;
+    }
+    return this.normalizeInterviewType(raw);
+  }
+
   get pageTitle(): string {
     return this.isReschedule ? 'Reschedule Interview' : 'Schedule Interview';
   }
@@ -259,11 +273,15 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.buildForm();
+    console.log(this.summary,this.currentSchedule)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currentSchedule'] && this.form) {
       this.patchNewSchedule();
+    }
+    if (changes['summary'] && this.form && !changes['currentSchedule']) {
+      this.applyInterviewTypeLock();
     }
   }
 
@@ -278,6 +296,8 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       meetingLink:   [prefill?.meetingLink ?? '', [meetingLinkValidator]],
       venueDetails:  [prefill?.venueDetails ?? ''],
     });
+
+    this.applyInterviewTypeLock();
 
     // If the candidate switches between Online / Offline, clear out whichever
     // field no longer applies so a stale value can't block submission later.
@@ -318,6 +338,32 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       meetingLink:   this.currentSchedule.meetingLink ?? '',
       venueDetails:  this.currentSchedule.venueDetails ?? '',
     });
+    this.applyInterviewTypeLock();
+  }
+
+  /**
+   * Forces the interviewType control to whatever mode the job/round data
+   * dictates and disables it so the user can't switch between Online and
+   * Offline here. If neither source has a value (lockedInterviewType is
+   * null), the control is left enabled as a fallback.
+   */
+  private applyInterviewTypeLock(): void {
+    const ctrl = this.form.get('interviewType');
+    if (!ctrl) return;
+    const locked = this.lockedInterviewType;
+    if (locked) {
+      ctrl.setValue(locked, { emitEvent: false });
+      ctrl.disable({ emitEvent: false });
+      // The value-change subscription above only fires on emitEvent — since
+      // we suppressed it, clear the now-inapplicable field ourselves.
+      if (locked === 'Online') {
+        this.form.get('venueDetails')?.setValue('');
+      } else {
+        this.form.get('meetingLink')?.setValue('');
+      }
+    } else {
+      ctrl.enable({ emitEvent: false });
+    }
   }
 
   /**

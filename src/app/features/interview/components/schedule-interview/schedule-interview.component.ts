@@ -37,6 +37,7 @@ export class ScheduleInterviewComponent implements OnInit {
           name: data.candidateName,
           role: data.jobTitle,
           badge: data.currentStage,
+          interviewMode:data?.interviewMode,
           // avatarUrl: 'assets/avatars/default-avatar.jpg', // Default avatar
           email: data.email,
           phone: data.phone,

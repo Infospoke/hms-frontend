@@ -24,14 +24,14 @@ export interface TodayInterview {
   templateUrl: './today-interview-table.component.html',
   styleUrl: './today-interview-table.component.scss',
 })
-export class TodayInterviewTableComponent implements OnInit,OnChanges{
+export class TodayInterviewTableComponent implements OnInit, OnChanges {
   @Input() payload!: any;
   @Input() date: any = 'May 20, 2025';
-  @Input() interviews: TodayInterview[] = [];
+  @Input() interviews: any[] = [];
   showPagination: boolean = true;
   @Input() currentPage: number = 1;
   @Input() pageSize: number = 10;
-  private interviewService=inject(InterviewServiceService);
+  private interviewService = inject(InterviewServiceService);
   @Output() viewDetails = new EventEmitter<TodayInterview>();
   @Output() rowClick = new EventEmitter<TodayInterview>();
   @Output() pageChange = new EventEmitter<number>();
@@ -46,14 +46,14 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
     { key: 'action', label: 'Action', custom: true, width: '180px', align: 'right' },
   ];
 
-  totalItems:any;
+  totalItems: any;
   ngOnInit(): void {
     // console.log(this.payload)
     // this.loadDataOfInterviewList();
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['payload']){
-      
+    if (changes['payload']) {
+
       this.loadDataOfInterviewList();
     }
   }
@@ -67,8 +67,12 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
-  onViewDetails(interview: TodayInterview): void {
-    this.router.navigateByUrl(`/candidate-management/in-person-interview/today-interview-details/${interview.id}`)
+  onViewDetails(interview: any): void {
+    this.router.navigate([`/candidate-management/in-person-interview/today-interview-details/${interview.id}`], {
+      queryParams: {
+        currentStageType: interview.currentStageType
+      }
+    })
   }
 
   onRowClick(row: TodayInterview): void {
@@ -84,7 +88,7 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
   private async loadDataOfInterviewList() {
     const payload = {
       ...this.payload,
-      sortBy:'createdOn'
+      sortBy: 'createdOn'
     };
     const res: any = await this.interviewService.getTodayInterviewList(payload);
     if (res?.responsecode == '00') {
@@ -101,8 +105,9 @@ export class TodayInterviewTableComponent implements OnInit,OnChanges{
       jobCode: item.jobCode,
       department: item.departmentName || '',
       time: item.startTime,
-      round:'Round ' + item.currentStageType,
-      type: item.stageName ,
+      currentStageType: item?.currentStageType,
+      round: 'Round ' + item.currentStageType,
+      type: item.stageName,
     }));
   }
   private getInitials(name: string): string {

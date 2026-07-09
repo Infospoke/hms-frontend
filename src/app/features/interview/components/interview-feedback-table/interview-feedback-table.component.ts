@@ -77,7 +77,7 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
       jobTitle: item.jobTitle,
       department: item.department,
       round: item.currentStageType,
-      status:item?.feedbackStatus,
+      status:item?.feedbackStatus==='pending'?'Pending':item?.feedbackStatus==='Hold'?'Hold':item?.feedbackStatus,
       currentStageId:item?.currentStageId,
       interviewDate: this.formatDate(item.interviewDate),
       interviewTime: this.formatTime(item.endTime),

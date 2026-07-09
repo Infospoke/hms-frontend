@@ -317,91 +317,116 @@
   &:focus { border-color: #6366f1; }
 }
 
-// ── Decision cards ────────────────────────────────────────────────────────────
+// ── Current decision text ──────────────────────────────────────────────────────
+
+.current-decision {
+  color: #111827;
+
+  strong {
+    color: #111827;
+    font-weight: 600;
+  }
+}
+
+// ── Decision cards ──────────────────────────────────────────────────────────────
+// Mirrors app-interview-feedback-form's own "6. Decision" card style
+// (icon + label + description, 3-column grid) so the update section looks
+// the same as a normal feedback submission's decision step.
 
 .decision-group {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
 .decision-card {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: 12px;
+  padding: 16px;
   border: 1.5px solid #e5e7eb;
   border-radius: 10px;
+  background: #fff;
+  text-align: left;
+  font-family: inherit;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  position: relative;
 
-  &:hover { background: #fafafa; }
+  &:hover:not(:disabled) {
+    border-color: #4f46e5;
+    background: #eef2ff;
+  }
 
-  &.selected {
-    &[data-color='green'] { border-color: #10b981; background: #f0fdf4; }
-    &[data-color='amber'] { border-color: #f59e0b; background: #fffbeb; }
-    &[data-color='red']   { border-color: #ef4444; background: #fef2f2; }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &.selected[data-color='green'] {
+    border-color: #10b981;
+    background: #d1fae5;
+
+    .decision-icon { color: #10b981; }
+    .decision-label { color: #10b981; }
+    .decision-radio { border-color: #10b981; background: #10b981; }
+  }
+
+  &.selected[data-color='amber'] {
+    border-color: #f59e0b;
+    background: #fef3c7;
+
+    .decision-icon { color: #f59e0b; }
+    .decision-label { color: #f59e0b; }
+    .decision-radio { border-color: #f59e0b; background: #f59e0b; }
+  }
+
+  &.selected[data-color='red'] {
+    border-color: #ef4444;
+    background: #fee2e2;
+
+    .decision-icon { color: #ef4444; }
+    .decision-label { color: #ef4444; }
+    .decision-radio { border-color: #ef4444; background: #ef4444; }
   }
 }
 
-.decision-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.decision-icon {
   flex-shrink: 0;
-
-  &[data-color='green'] { background: #d1fae5; color: #059669; }
-  &[data-color='amber'] { background: #fef3c7; color: #d97706; }
-  &[data-color='red']   { background: #fee2e2; color: #dc2626; }
+  color: #9ca3af;
+  margin-top: 2px;
 }
 
 .decision-text {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 3px;
-  flex: 1;
 }
 
 .decision-label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #111827;
 }
 
 .decision-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: #6b7280;
   line-height: 1.5;
 }
 
-.decision-radio-custom {
+.decision-radio {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid #d1d5db;
+  border: 2px solid #d9dbdf;
   flex-shrink: 0;
   margin-top: 2px;
-  position: relative;
-  transition: border-color 0.15s;
+  transition: border-color 0.12s, background 0.12s;
+  box-shadow: inset 0 0 0 3px #fff;
 
   &.selected {
-    border-color: #6366f1;
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #6366f1;
-    }
+    box-shadow: inset 0 0 0 3px #fff;
   }
 }
 

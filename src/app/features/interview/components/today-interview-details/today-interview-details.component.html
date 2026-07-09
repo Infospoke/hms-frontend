@@ -21,10 +21,10 @@
   <div class="section-card" *ngIf="!isLoading && !error">
     <h2 class="section-title"><i class="fas fa-circle-info section-icon"></i> Interview Information</h2>
     <div class="info-grid">
-      <div class="info-item">
+      <!-- <div class="info-item">
         <span class="info-label"><i class="fas fa-hashtag"></i> Interview ID</span>
         <span class="info-value">{{ display(interviewInfo.interviewId) }}</span>
-      </div>
+      </div> -->
       <div class="info-item">
         <span class="info-label"><i class="fas fa-briefcase"></i> Job Title</span>
         <span class="info-value">{{ display(interviewInfo.jobTitle) }}</span>
@@ -53,10 +53,10 @@
         <span class="info-label"><i class="fas fa-hourglass-half"></i> Duration</span>
         <span class="info-value">{{ display(interviewInfo.duration) }}</span>
       </div>
-      <div class="info-item">
+      <!-- <div class="info-item">
         <span class="info-label"><i class="fas fa-id-card"></i> Candidate ID</span>
         <span class="info-value">{{ display(interviewInfo.candidateId) }}</span>
-      </div>
+      </div> -->
       <div class="info-item">
         <span class="info-label"><i class="fas fa-layer-group"></i> Interview Round</span>
         <span class="info-value">{{ display(interviewInfo.interviewRound) }}</span>
@@ -199,7 +199,7 @@
       <i class="fas fa-play btn-icon"></i>
       Start Interview
     </button>
-    <button class="action-btn complete-btn" (click)="onComplete()">
+    <button class="action-btn complete-btn" (click)="onCompleteClick()">
       <i class="fas fa-check btn-icon"></i>
       Complete
     </button>

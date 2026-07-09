@@ -43,7 +43,20 @@ export class AiInterviewZoneComponent implements OnInit {
   allFilters: any[] = structuredClone(aiInterview);
   displayFilters: any[] = [];
   activeStageId = 'qg';
-
+  pageDetails: any = {
+    qg: {
+      heading: 'Generate AI Questions',
+      subHeading: 'Create, manage and monitor AI-generated questions before scheduling the interview.'
+    },
+    is: {
+      heading: 'Schedule AI Interview',
+      subHeading: 'Plan, schedule and manage AI interviews by assigning candidates, interview slots and evaluation settings.'
+    },
+    si: {
+      heading: 'Upcoming AI Interviews',
+      subHeading: 'View, monitor and manage all upcoming AI interviews and track their progress.'
+    }
+  };
   currentPage: any = 1;
   tableData: any[] = [];
   activeFilters: any = { dateFilter: '' };
@@ -67,6 +80,14 @@ export class AiInterviewZoneComponent implements OnInit {
       this.setFiltersForStage();
     });
   }
+
+ get getHeading(): string {
+  return this.pageDetails[this.activeStageId]?.heading || '';
+}
+
+get getSubHeading(): string {
+  return this.pageDetails[this.activeStageId]?.subHeading || '';
+}
   private async loadJobs() {
     const res: any = await this.interviewService.getAIInterviewZoneJobs();
     if (res?.responsecode == '00') {

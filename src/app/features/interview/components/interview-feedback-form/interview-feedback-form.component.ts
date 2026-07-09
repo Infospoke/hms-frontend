@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -40,7 +40,7 @@ export const DEFAULT_COMPETENCIES: CompetencyRow[] = [
   templateUrl: './interview-feedback-form.component.html',
   styleUrl: './interview-feedback-form.component.scss',
 })
-export class InterviewFeedbackFormComponent implements OnInit {
+export class InterviewFeedbackFormComponent implements OnInit, OnChanges {
 
   // Inputs
   @Input() competencies: CompetencyRow[] = DEFAULT_COMPETENCIES.map(c => ({ ...c }));
@@ -101,11 +101,34 @@ export class InterviewFeedbackFormComponent implements OnInit {
 
   // Lifecycle
   ngOnInit(): void {
+    this.syncFromInputs();
+  }
+
+  /**
+   * Runs whenever any @Input() changes — not just once at creation.
+   * Needed because the parent often fetches existing feedback asynchronously;
+   * by the time initialStrengths/initialDecision/etc. arrive, ngOnInit has
+   * already run once with the empty defaults, so ngOnInit alone isn't enough.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    const initialInputKeys = [
+      'initialRating',
+      'initialStrengths',
+      'initialAreasOfImprovement',
+      'initialAdditionalComments',
+      'initialDecision',
+    ];
+    if (initialInputKeys.some(key => key in changes)) {
+      this.syncFromInputs();
+    }
+  }
+
+  private syncFromInputs(): void {
     this.overallRating      = this.initialRating;
     this.strengths          = this.initialStrengths;
     this.areasOfImprovement = this.initialAreasOfImprovement;
     this.additionalComments = this.initialAdditionalComments;
-    this.decision           = this.initialDecision;
+    this.decision            = this.initialDecision;
   }
 
   // Handlers

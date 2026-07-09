@@ -73,6 +73,17 @@
     </span>
   </ng-container>
 
+   <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="status-pill"
+      [ngClass]="{
+        's-pending':   ctx.row.status === 'Pending',
+        's-hold': ctx.row.status === 'Hold'
+      }">
+      {{ ctx.row.status }}
+    </span>
+  </ng-container>
+
+
   <!-- ACTION -->
   <ng-container *ngIf="ctx.col.key === 'action'">
     <div class="cell-action" *appCan="'CANDIDATEMANAGEMENT:INPERSONINTERVIEW:VIEW'">

@@ -6,10 +6,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { InterviewServiceService } from '../../service/interview-service.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { JobService } from '../../../job/services/job.service';
+import { ConfirmModalComponent } from '../../../../shared/components/modal-component/confirm-modal.component';
 
 interface InterviewInfo {
   interviewId: string;
@@ -24,7 +26,7 @@ interface InterviewInfo {
   interviewRound: string;
   meetingPlatform: string;
   meetingUrl: string;
-  jobId:any;
+  jobId: any;
 }
 
 interface Experience {
@@ -62,6 +64,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   private router = inject(Router);
+  private modal = inject(NzModalService);
   interviewInfo: InterviewInfo = {
     interviewId: '',
     jobTitle: '',
@@ -75,19 +78,20 @@ export class TodayInterviewDetailsComponent implements OnInit {
     interviewRound: '',
     meetingPlatform: '',
     meetingUrl: '',
-    jobId:'',
+    jobId: '',
   };
-  applicantionId:any;
+  applicantionId: any;
   experiences: Experience[] = [];
   totalExperience = '';
   currentCompany = '';
   currentRole = '';
-  currentStageType:any;
+  currentStageType: any;
+  currentStageTypeId:any;
   projects: Project[] = [];
-  private interviewService=inject(InterviewServiceService)
-  interviewCompletedOn:any;
+  private interviewService = inject(InterviewServiceService)
+  interviewCompletedOn: any;
   resumeDocument: CandidateDocument | null = null;
-  private notificationService=inject(NotificationService)
+  private notificationService = inject(NotificationService)
   private sanitizer = inject(DomSanitizer);
 
   // PDF preview modal state
@@ -95,15 +99,18 @@ export class TodayInterviewDetailsComponent implements OnInit {
   pdfUrl: SafeResourceUrl | null = null;
   private pdfObjectUrl: string | null = null; // raw blob url, kept so we can revoke it
   isResumeLoading = false;
-  private jobService=inject(JobService);
+  private jobService = inject(JobService);
+  interviewRound: any;
   constructor(
     private route: ActivatedRoute,
-  
-  ) {}
+
+  ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.applicantionId=id;
+    this.applicantionId = id;
+     this.currentStageTypeId =
+    this.route.snapshot.queryParamMap.get('currentStageType');
     if (!id) {
       this.isLoading = false;
       this.error = 'Interview ID was not found in the route.';
@@ -116,9 +123,12 @@ export class TodayInterviewDetailsComponent implements OnInit {
   private async loadInterviewDetails(id: string): Promise<void> {
     this.isLoading = true;
     this.error = null;
-
+    const obj = {
+      "applicantId": id,
+      "currentStageId":this.currentStageTypeId
+    }
     try {
-      const response = await this.interviewService.getTodayInterviewDetails(id);
+      const response = await this.interviewService.getTodayInterviewDetails(obj);
 
       if (response?.responsecode === '00' && response?.data) {
         this.mapInterviewData(response.data);
@@ -133,12 +143,13 @@ export class TodayInterviewDetailsComponent implements OnInit {
     }
   }
 
-  
 
- 
+
+
   private mapInterviewData(data: any): void {
-    this.currentStageType=data.currentStageType;
-    this.interviewCompletedOn=data.interviewCompletedOn;
+    this.currentStageType = data.currentStageType;
+    this.interviewRound = data?.InterviewRound;
+    this.interviewCompletedOn = data.interviewCompletedOn;
     this.interviewInfo = {
       interviewId: data.interviewId ?? '',
       jobId: data.jobId ?? '',
@@ -150,7 +161,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
       interviewMode: data.InterviewMode ?? data.interviewMode ?? '',
       duration: data.duration ?? '',
       candidateId: data.candidateId ?? '',
-      meetingUrl:data?.meetingPlatForm,
+      meetingUrl: data?.meetingPlatForm,
       interviewRound:
         data.InterviewRound !== undefined && data.InterviewRound !== null
           ? String(data.InterviewRound)
@@ -173,12 +184,12 @@ export class TodayInterviewDetailsComponent implements OnInit {
     // viewResume()/downloadResume() using the appId + action, not from a stored url.
     this.resumeDocument = this.applicantionId
       ? {
-          name: resumeSource?.name ?? 'Resume',
-          type: resumeSource?.type ?? 'PDF',
-          size: resumeSource?.size ?? '',
-          color: resumeSource?.color ?? '#e53935',
-          url: resumeSource?.url ?? resumeSource?.downloadUrl ?? '',
-        }
+        name: resumeSource?.name ?? 'Resume',
+        type: resumeSource?.type ?? 'PDF',
+        size: resumeSource?.size ?? '',
+        color: resumeSource?.color ?? '#e53935',
+        url: resumeSource?.url ?? resumeSource?.downloadUrl ?? '',
+      }
       : null;
   }
 
@@ -201,32 +212,49 @@ export class TodayInterviewDetailsComponent implements OnInit {
     return date || time || '';
   }
 
-  
+
   onViewJobDetails() {
     console.log('Navigating to job details for jobId:', this.interviewInfo?.jobId);
     this.router.navigate([`/candidate-management/in-person-interview/response/${this.applicantionId}/${this.interviewInfo?.jobId}`,]);
   }
   onStartInterview(): void {
-  if (!this.interviewInfo.meetingUrl) {
-    this.notificationService.warning('Meeting link is not available.');
-    return;
-  }
-
-  window.open(this.interviewInfo.meetingUrl, '_blank', 'noopener,noreferrer');
-}
-  async onComplete() {
-    const payload={
-    applicantId:this.applicantionId,
-    "currentStageType":2,
-    "interviewCompletedOn":"2026-07-03T14:35:27.123456789",
-    interviewCompleted:true
+    if (!this.interviewInfo.meetingUrl) {
+      this.notificationService.warning('Meeting link is not available.');
+      return;
     }
-    const res:any=await this.interviewService.updateInterviewCandidate(payload);
-    if(res?.responsecode==='00'){
+
+    window.open(this.interviewInfo.meetingUrl, '_blank', 'noopener,noreferrer');
+  }
+  onCompleteClick(): void {
+    const modal = this.modal.create<ConfirmModalComponent>({
+      nzContent: ConfirmModalComponent,
+      nzData: { mode: 'complete-interview' },
+      nzClassName: 'custom-confirm-modal custom-edit-modal',
+      nzFooter: null,
+      nzCentered: true,
+      nzWidth: 360,
+      nzClosable: false,
+    });
+
+    modal.afterClose.subscribe((result: string) => {
+      if (result === 'confirm') {
+        this.onComplete();
+      }
+    });
+  }
+  async onComplete() {
+    const payload = {
+      applicantId: this.applicantionId,
+      "currentStageType": this.interviewRound,
+      interviewCompletedOn: new Date().toISOString(),
+      interviewCompleted: true
+    }
+    const res: any = await this.interviewService.updateInterviewCandidate(payload);
+    if (res?.responsecode === '00') {
       this.notificationService.success(res?.message || res?.responsemessage || 'Interview marked as completed successfully.');
       this.onCancel();
       // this.loadInterviewDetails(this.applicantionId);
-    }else{
+    } else {
       this.notificationService.error(res?.message || 'Failed to mark interview as completed.');
     }
   }
@@ -234,7 +262,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
     this.router.navigate(['candidate-management/in-person-interview']);
   }
 
- 
+
   /** Opens the resume PDF in the in-page preview modal (?type=resume&appId=..&action=view). */
   async onViewResume(): Promise<void> {
     if (!this.applicantionId) {
@@ -272,8 +300,8 @@ export class TodayInterviewDetailsComponent implements OnInit {
 
       const link = document.createElement('a');
       link.href = url;
-      console.log(this.resumeDocument?.name || this.interviewInfo|| 'resume');
-      link.download = (this.resumeDocument?.name || this.interviewInfo?.candidateName|| 'resume') + '.pdf';
+      console.log(this.resumeDocument?.name || this.interviewInfo || 'resume');
+      link.download = (this.resumeDocument?.name || this.interviewInfo?.candidateName || 'resume') + '.pdf';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

@@ -181,8 +181,8 @@ export class InterviewServiceService {
       return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.SUBMIT_FEED_BACK,payload))
     }
 
-    async getTodayInterviewDetails(id:any):Promise<any>{
-      return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.TODAY_INTERVIEW_DETAILS(id)))
+    async getTodayInterviewDetails(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.TODAY_INTERVIEW_DETAILS,payload))
     }
 
     async getTodayInterviewList(payload:any):Promise<any>{
@@ -250,5 +250,14 @@ export class InterviewServiceService {
 
     async getAssignedInterviewCount():Promise<any>{
       return await firstValueFrom(this.api.hrmsget(API.INTERVIEW.INTERVIEW_ASSIGNMENTS_COUNT))
+    }
+
+
+    async getInterviewFeedBackById(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmspost(API.INTERVIEW.INTERVIEW_FEED_BACK_BY_ID,payload))
+    }
+
+    async updateInterviewFeedBack(payload:any):Promise<any>{
+      return await firstValueFrom(this.api.hrmsput(API.INTERVIEW.UPDATE_INTERVIEW_FEED_BACK,payload))
     }
 }

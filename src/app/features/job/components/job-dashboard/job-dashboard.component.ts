@@ -27,17 +27,32 @@ export class JobDashboardComponent implements OnInit {
   async getDashboardCount() {
     try {
       const res: any = await this.jobApi.getJobDashboardCount();
+
       this.list = [
-        { title: 'Open Jobs', count: res?.data?.openJobs, icon: 'fa-solid fa-briefcase' },
-        { title: 'Candidates', count: res?.data?.candidates, icon: 'fa-solid fa-user' },
-        { title: 'Interviews', count: res?.data?.interviews, icon: 'fa-solid fa-calendar-check' },
-        { title: 'Offers Accepted', count: res?.data.offersAccepted, icon: 'fa-solid fa-circle-check' }
-      ]
+        {
+          title: 'Open Jobs',
+          count: res?.data?.openJobs,
+          icon: 'fa-regular fa-clipboard'
+        },
+        {
+          title: 'Candidates',
+          count: res?.data?.candidates,
+          icon: 'fa-regular fa-user'
+        },
+        {
+          title: 'Interviews',
+          count: res?.data?.interviews,
+          icon: 'fa-regular fa-calendar'
+        },
+        {
+          title: 'Offers Accepted',
+          count: res?.data?.offersAccepted,
+          icon: 'fa-regular fa-circle-check'
+        }
+      ];
+    } catch (error: any) {
+      console.error(error);
     }
-    catch (error: any) {
-
-    }
-
   }
 
   async getJobs() {

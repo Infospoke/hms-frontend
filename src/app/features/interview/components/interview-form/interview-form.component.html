@@ -194,7 +194,9 @@
                     <div class="radio-card-group">
 
                         <!-- Online -->
-                        <label class="radio-card" [class.selected]="form.get('interviewType')?.value === 'Online'">
+                        <label class="radio-card"
+                            [class.selected]="form.get('interviewType')?.value === 'Online'"
+                            [class.locked]="form.get('interviewType')?.disabled">
                             <input type="radio" formControlName="interviewType" value="Online" class="radio-input" />
                             <span class="radio-custom"><span class="radio-dot"></span></span>
                             <span class="radio-card-body">
@@ -214,7 +216,9 @@
                         </label>
 
                         <!-- Offline -->
-                        <label class="radio-card" [class.selected]="form.get('interviewType')?.value === 'Offline'">
+                        <label class="radio-card"
+                            [class.selected]="form.get('interviewType')?.value === 'Offline'"
+                            [class.locked]="form.get('interviewType')?.disabled">
                             <input type="radio" formControlName="interviewType" value="Offline" class="radio-input" />
                             <span class="radio-custom"><span class="radio-dot"></span></span>
                             <span class="radio-card-body">
@@ -237,6 +241,9 @@
                         </label>
 
                     </div>
+                    <span class="field-hint" *ngIf="form.get('interviewType')?.disabled">
+                        Interview type is set by the job's interview mode and can't be changed here.
+                    </span>
                 </div>
             </div>
 

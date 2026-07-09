@@ -83,10 +83,13 @@ label {
 .jobs-container-data {
   flex: 1;
   display: flex;
+  align-items: stretch;
   gap: 5px;
   padding: 0.5rem 0 0 0;
   overflow: hidden;
   min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .jobs-list {
@@ -100,15 +103,23 @@ label {
   border: 1px solid #e5e7eb;
   min-width: 0;
   box-sizing: border-box;
+  height: 100%;
 }
 
 .jobs-overview {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 0;
+  padding: 10px;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  min-width: 0;
+  box-sizing: border-box;
   &::-webkit-scrollbar { width: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb { background: #e0e5ec; border-radius: 4px; }
@@ -162,6 +173,9 @@ label {
   border-radius: 16px;
   background: linear-gradient(90deg, #3b82f6, #1d4ed8);
   box-shadow: inset 0 1px 10px rgba(255, 255, 255, 0.2), 0 8px 20px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .applicants-layout {

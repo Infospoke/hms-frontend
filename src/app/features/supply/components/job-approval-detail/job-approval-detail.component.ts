@@ -250,7 +250,7 @@ export class JobApprovalDetailComponent implements OnInit {
               ? 'Assignment accepted successfully'
               : 'Assignment rejected successfully'
           );
-          this.router.navigate(['/supply/in-person-interview'], {
+          this.router.navigate(['/supply/my-interview-requests'], {
             state: { activeType: 'ar' },
           });
         } else {
@@ -286,7 +286,7 @@ export class JobApprovalDetailComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate([
-      this.isAssignmentMode ? '/supply/in-person-interview' : '/supply/my-assignend-jobs'],{
+      this.isAssignmentMode ? '/supply/my-interview-requests' : '/supply/my-assignend-jobs'],{
           state: { activeType: 'ar' },
         }
     );

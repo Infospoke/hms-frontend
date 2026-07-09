@@ -33,7 +33,7 @@
 }
 
 .sub {
-  margin-left: 12px;
+  margin-left: 6px;
   padding: 6px 8px;
   font-size: 12px;
   color: var(--color-text-secondary);
@@ -42,13 +42,6 @@
   gap: 6px;
   border-radius: 6px;
   cursor: pointer;
-  white-space: nowrap;
-
-  span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-  }
 }
 
 .sub:hover {
@@ -149,3 +142,8 @@
   padding-left: 20px;
   font-size: 11.5px;
 }
+
+
+
+
+

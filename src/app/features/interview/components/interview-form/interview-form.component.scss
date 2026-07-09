@@ -332,6 +332,32 @@
     .offline-icon { color: var(--color-primary); background: #e0e7ff; }
     .radio-card-title { color: var(--color-primary); }
   }
+
+  // Interview type is fixed by the job/round data — not selected, and can't
+  // be switched to.
+  &.locked {
+    cursor: not-allowed;
+
+    &:not(.selected) {
+      opacity: .55;
+
+      &:hover {
+        border-color: var(--border);
+        background: #fff;
+      }
+    }
+
+    &.selected {
+      cursor: default;
+    }
+  }
+}
+
+.field-hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 11.5px;
+  color: var(--text-muted);
 }
 
 // Native radio — hidden but accessible

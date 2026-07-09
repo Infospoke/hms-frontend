@@ -62,11 +62,11 @@
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="rc-badge"
       [class.rc-badge--accepted]="ctx.row['status'] === 'Accepted'"
-      [class.rc-badge--declined]="ctx.row['status'] === 'Declined'"
+      [class.rc-badge--declined]="ctx.row['status'] === 'Rejected'"
       [class.rc-badge--pending]="ctx.row['status'] === 'Pending'">
       <i class="fa-regular"
         [class.fa-circle-check]="ctx.row['status'] === 'Accepted'"
-        [class.fa-circle-xmark]="ctx.row['status'] === 'Declined'"
+        [class.fa-circle-xmark]="ctx.row['status'] === 'Rejected'"
         [class.fa-clock]="ctx.row['status'] === 'Pending'">
       </i>
       {{ ctx.row['status'] }}

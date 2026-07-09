@@ -291,6 +291,27 @@ export class AssignInterviewersByListComponent implements OnInit {
     return type === 'ai ' || type.includes('ai interview round');
   }
 
+  /**
+   * An interviewer should only be assigned to one round. Returns true if
+   * `user` is already selected on some *other* round than `round`.
+   */
+  isAssignedElsewhere(user: Interviewer, round: InterviewRound): boolean {
+    const uid = user.userId ?? user.id;
+    if (uid === undefined || uid === null) return false;
+    return this.rounds.some(
+      (r) => r.id !== round.id && !!r.interviewer && (r.interviewer.userId ?? r.interviewer.id) === uid
+    );
+  }
+
+  /** Label (e.g. "R1") of the other round `user` is already assigned to, for display in the dropdown. */
+  assignedRoundLabel(user: Interviewer, round: InterviewRound): string {
+    const uid = user.userId ?? user.id;
+    const match = this.rounds.find(
+      (r) => r.id !== round.id && !!r.interviewer && (r.interviewer.userId ?? r.interviewer.id) === uid
+    );
+    return match?.label ?? '';
+  }
+
   // ── Dropdown ─────────────────────────────────────────────────────────────────
 
   openDropdown(round: InterviewRound, anchorEl: HTMLElement): void {
@@ -322,6 +343,12 @@ export class AssignInterviewersByListComponent implements OnInit {
   }
 
   selectInterviewer(round: InterviewRound, user: Interviewer): void {
+    if (this.isAssignedElsewhere(user, round)) {
+      this.notificationService.error(
+        `${this.getDisplayName(user)} is already assigned to ${this.assignedRoundLabel(user, round)}. An interviewer can only be assigned to one round.`
+      );
+      return;
+    }
     console.log(user);
     round.interviewer = user;
     round.searchText = '';

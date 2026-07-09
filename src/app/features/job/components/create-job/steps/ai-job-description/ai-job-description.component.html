@@ -23,17 +23,19 @@
         <div class="ajd-actions">
 
           <div class="ajd-generate-wrap">
-            <button class="ajd-btn ajd-btn--generate" (click)="generateJD()" [disabled]="isGenerating || isRegenerating">
+            <button class="ajd-btn ajd-btn--generate" (click)="generateJD()"
+              [disabled]="isGenerating || isRegenerating || (hasContent && !renameButton)"
+              [title]="hasContent && !renameButton ? 'Select an AI option above to regenerate the JD' : null">
               <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating || isRegenerating"></i>
-              <i class="fa-solid fa-rotate" *ngIf="!isGenerating && !isRegenerating && renameButton"></i>
-              <i class="fa-solid fa-stars" *ngIf="!isGenerating && !isRegenerating && !renameButton"></i>
-              {{ isGenerating ? 'Generating…' : isRegenerating ? 'Regenerating…' : (renameButton ? 'Regenerate JD' : 'Generate JD') }}
+              <i class="fa-solid fa-rotate" *ngIf="!isGenerating && !isRegenerating && hasContent"></i>
+              <i class="fa-solid fa-stars" *ngIf="!isGenerating && !isRegenerating && !hasContent"></i>
+              {{ isGenerating ? 'Generating…' : isRegenerating ? 'Regenerating…' : (hasContent ? 'Regenerate JD' : 'Generate JD') }}
             </button>
           </div>
 
           <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
             <button class="ajd-btn ajd-btn--outline" [class.ajd-btn--selected]="renameButton"
-              (click)="toggleMoreAIOptions($event)" [disabled]="isGenerating || isRegenerating">
+              (click)="toggleMoreAIOptions($event)" [disabled]="isGenerating || isRegenerating || !hasContent">
               <ng-container *ngIf="renameButton; else defaultOptionLabel">
                 <span class="ajd-btn__selected-text">{{ options }}</span>
                 <i class="fa-solid fa-xmark ajd-btn__clear" title="Clear this option" (click)="cancelOption($event)"></i>

@@ -12,7 +12,7 @@ export interface RecruiterRecord {
   role: string;
   assignedDate: string;
   assignedTime: string;
-  status: 'Accepted' | 'Declined' | 'Pending';
+  status: 'Accepted' | 'Rejected' | 'Pending';
   respondedDate: string;
   respondedTime: string;
   comments: string;
@@ -142,7 +142,7 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
     const map: Record<string, RecruiterRecord['status']> = {
       ACCEPTED: 'Accepted',
       PENDING: 'Pending',
-      DECLINED: 'Declined',
+      REJECTED: 'Rejected',
     };
     return map[raw?.toUpperCase()] ?? 'Pending';
   }

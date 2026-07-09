@@ -309,7 +309,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
         this.form.get('selectedRecruiterDetails')?.setValue([]);
         this.loadRolesAndUsers();
         this.router.navigateByUrl(
-          `/demand/all-jobs/recruiter-and-response/${this.id}/${this.srId}`
+          `/demand/recruiter-assignment-management/recruiter-and-response/${this.id}/${this.srId}`
         );
       } else {
         this.notificationService.error(res?.message || 'Failed to assign recruiters.');

@@ -1,0 +1,76 @@
+<div>
+    <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
+    <div>
+        <app-heading [heading]="heading" [subHeading]="subHeading"/>
+        <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="dropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
+    </div>
+
+    
+    <app-raise-offer-request-table *ngIf="activeStageId==='ror'"
+            [data]="candidates"
+            [totalItems]="totalCandidates"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (actionClick)="onRaiseOfferRequest($event)"
+            (pageChange)="onPageChange($event)"
+            [permissionName]="permissionName"
+    />
+
+  
+    <app-raise-offer-letter-pending-table *ngIf="activeStageId==='rol' && activeTabId==='pending'"
+            [data]="pendingApprovalOfferLetters"
+            [totalItems]="totalPendingApproval"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (actionClick)="onViewApprovalDetails($event)"
+            (pageChange)="onPageChange($event)"
+             [permissionName]="permissionName"
+        class="card-dd"
+    />
+
+    <!-- ── Release offer letter: Ready to release tab ── -->
+    <app-raise-offer-letter-ready-table *ngIf="activeStageId==='rol' && activeTabId==='ready'"
+            [data]="readyToReleaseOfferLetters"
+            [totalItems]="totalReadyToRelease"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (actionClick)="onViewOfferLetterDetails($event)"
+            (pageChange)="onPageChange($event)"
+             [permissionName]="permissionName"
+             class="card-dd"
+    />
+
+    <!-- ── Candidate requested / Pay revision requests: New requests tab ── -->
+    <app-pay-revision-request-table *ngIf="activeStageId==='cr' && activeTabId==='new'"
+            [data]="newPayRevisionRequests"
+            [totalItems]="totalNewPayRevisionRequests"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (actionClick)="onReviewPayRevisionRequest($event)"
+            (pageChange)="onPageChange($event)"
+             [permissionName]="permissionName"
+             class="card-dd"
+    />
+
+   
+    <app-approval-status-table *ngIf="activeStageId==='cr' && activeTabId==='approval'"
+            [data]="payRevisionInApproval"
+            [totalItems]="totalPayRevisionInApproval"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (actionClick)="onViewApprovalDetails($event)"
+            (pageChange)="onPageChange($event)"
+             [permissionName]="permissionName"
+             class="card-dd"
+    />
+
+     <app-accept-offer-table *ngIf="activeStageId==='al'"
+            [data]="acceptedLetters"
+            [totalItems]="totalAcceptedLetters"
+            [currentPage]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="onPageChange($event)"
+             [permissionName]="permissionName"
+    />
+
+</div>

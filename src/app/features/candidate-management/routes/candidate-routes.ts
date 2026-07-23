@@ -49,5 +49,16 @@ export const CANDIDATE_ROUTES: Routes = [
         path:'interview-pipe-line/view-ai-interview-details/:applicationId',
         loadComponent:()=>import("../../interview/components/interview-performance/interview-performance.component").then(m=>m.InterviewPerformanceComponent)
     },
-    
+    {
+        path:"offer-management",
+        loadComponent:()=>import("../components/raise-offer-request/raise-offer-request.component").then(m=>m.RaiseOfferRequestComponent)
+    },
+    {
+        path:"offer-management/details/:id",
+        loadComponent:()=>import("../components/offer-request-details/offer-request-details.component").then(m=>m.OfferRequestDetailsComponent)
+    },
+    {
+        path:"offer-management/release-offer-letter-details/:offerId",
+        loadComponent:()=>import("../../approvals/components/view-offer/view-offer.component").then(m=>m.ViewOfferComponent)
+    }
 ]

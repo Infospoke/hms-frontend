@@ -1,0 +1,210 @@
+// ── Outer card ────────────────────────────────────────────────────────────────
+.aa-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+// ── Card header ───────────────────────────────────────────────────────────────
+.aa-card-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aa-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 4px;
+}
+
+.aa-card-sub {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.aa-assigned-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: #dcfce7;
+  color: #16a34a;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  i { font-size: 11px; }
+}
+
+// ── Filters strip ─────────────────────────────────────────────────────────────
+.aa-filters {
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: #fafafa;
+}
+
+// ── Checkbox base ─────────────────────────────────────────────────────────────
+.aa-checkbox {
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.aa-checkbox__box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 4px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+// ── Checked state ─────────────────────────────────────────────────────────────
+.aa-checkbox input:checked ~ .aa-checkbox__box {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 7px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+}
+
+// ── Indeterminate state ───────────────────────────────────────────────────────
+.aa-checkbox__box--indeterminate {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 2px;
+    background: #fff;
+    border-radius: 1px;
+  }
+}
+
+// ── Agency cell ────────────────────────────────────────────────────────────────
+.aa-agency-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aa-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.aa-agency-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+// ── Assign / Remove button ────────────────────────────────────────────────────
+.aa-assign-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1.5px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+
+  i { font-size: 11px; }
+
+  &:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  &--assigned {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #ef4444;
+
+    &:hover {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
+  }
+}
+
+// ── Override table card styles to flush inside our card ───────────────────────
+::ng-deep app-reusable-table .rt-container {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// ── Agency validation banner ──────────────────────────────────────────────────
+.aa-validation-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 12px 0 4px;
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 500;
+
+  svg { flex-shrink: 0; }
+}
+
+// ── Assign/Remove button — prevent overflow ───────────────────────────────────
+.aa-assign-btn {
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.aa-assign-btn--nowrap {
+  white-space: nowrap;
+  min-width: 100px;
+}

@@ -259,17 +259,58 @@
     </div>
   </div>
 
-  <!-- 5. Interview Plan -->
+  <!-- 5. Agency Assignment -->
+  <div class="rv-section">
+    <div class="rv-section-header" (click)="open.agency = !open.agency">
+      <div class="rv-section-header__left">
+        <span class="rv-section-icon rv-section-icon--teal"><i class="fa-solid fa-building"></i></span>
+        <span class="rv-section-num">5.</span>
+        <span class="rv-section-title">Agency Assignment</span>
+        <span class="rv-badge rv-badge--done">Completed</span>
+      </div>
+      <div class="rv-section-header__right">
+        <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(4)">
+          <i class="fa-regular fa-pen-to-square"></i> Edit
+        </button>
+        <i class="fa-solid rv-chevron" [ngClass]="open.agency ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      </div>
+    </div>
+    <div class="rv-section-body" *ngIf="open.agency">
+      <p class="rv-rec-count">Total Agencies Assigned: <strong>{{ reviewAgencies.length }}</strong></p>
+      <table class="rv-rec-table">
+        <thead>
+          <tr><th>Agency</th><th>Email ID</th><th>Category</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of reviewAgencies">
+            <td>
+              <div class="rv-rec-cell">
+                <span class="rv-rec-avatar" [style.background]="a.avatarColor">{{ a.initials }}</span>
+                <span class="rv-rec-name">{{ a.agencyName }}</span>
+              </div>
+            </td>
+            <td class="rv-rec-email">{{ a.email }}</td>
+            <td>{{ a.categoryName }}</td>
+          </tr>
+          <tr *ngIf="reviewAgencies.length === 0">
+            <td colspan="3" class="rv-rec-empty">No agencies assigned yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 6. Interview Plan -->
 <div class="rv-section">
   <div class="rv-section-header" (click)="open.interviewPlan = !open.interviewPlan">
     <div class="rv-section-header__left">
       <span class="rv-section-icon rv-section-icon--indigo"><i class="fa-solid fa-clipboard-list"></i></span>
-      <span class="rv-section-num">5.</span>
+      <span class="rv-section-num">6.</span>
       <span class="rv-section-title">Interview Plan</span>
       <span class="rv-badge rv-badge--done">Completed</span>
     </div>
     <div class="rv-section-header__right">
-      <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(4)">
+      <button class="rv-edit-btn" (click)="$event.stopPropagation(); goToStep.emit(5)">
         <i class="fa-regular fa-pen-to-square"></i> Edit
       </button>
       <i class="fa-solid rv-chevron" [ngClass]="open.interviewPlan ? 'fa-chevron-up' : 'fa-chevron-down'"></i>

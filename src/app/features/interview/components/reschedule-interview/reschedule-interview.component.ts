@@ -15,6 +15,12 @@ export class RescheduleInterviewComponent implements OnInit {
   summary!: any;
   currentSchedule!: any
   interviewId: any;
+
+  /** True once this interview has already been rescheduled once — blocks a second reschedule. */
+  alreadyRescheduled = false;
+  /** The schedule it was moved to, shown read-only when alreadyRescheduled is true. */
+  rescheduledInfo: any;
+
   private interviewService = inject(InterviewServiceService);
   private notificationService = inject(NotificationService);
   constructor(
@@ -44,6 +50,22 @@ export class RescheduleInterviewComponent implements OnInit {
         venueDetails:data?.venueDetails,
         meetingLink:data?.meetingLink
       };
+
+      // A reschedule* set of fields on the response means this interview has
+      // already been moved once — the API only ever populates these after a
+      // successful reschedule, so their presence is the signal to block a second one.
+      this.alreadyRescheduled = !!(data?.rescheduleDate || data?.rescheduleStartTime || data?.rescheduleEndTime);
+
+      if (this.alreadyRescheduled) {
+        this.rescheduledInfo = {
+          interviewDate: data?.rescheduleDate,
+          startTime: data?.rescheduleStartTime,
+          endTime: data?.rescheduleEndTime,
+          interviewType: data?.ReScheduleInterviewType,
+          venueDetails: data?.rescheduleVenueDetails,
+          meetingLink: data?.rescheduleMeetingLink,
+        };
+      }
 
     }
     else {
@@ -86,7 +108,12 @@ export class RescheduleInterviewComponent implements OnInit {
   }
 
   async onSubmit(newSchedule: any) {
-   
+
+    if (this.alreadyRescheduled) {
+      this.notificationService.error('This interview has already been rescheduled and cannot be rescheduled again.');
+      return;
+    }
+
     const payload={
       scheduleId:this.interviewId,
       rescheduleVenueDetails:newSchedule.venueDetails,

@@ -110,7 +110,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
   readonly requisitionTypes = ['New Headcount', 'Backfill', 'Replacement', 'Contract to Permanent'];
   readonly workModes = ['Remote', 'Hybrid', 'On-site'];
-  readonly empTypes = ['Full-time', 'Part-time', 'Contract', 'Internship'];
+  readonly empTypes = ['Full-time', 'Part-time', 'Contract', 'Internship', 'Consultancy'];
   readonly priorities = ['Critical', 'High', 'Standard'];
   educationOpts: any[] = [];
   travelOpts: any = [];

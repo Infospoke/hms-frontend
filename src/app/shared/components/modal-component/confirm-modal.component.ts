@@ -7,7 +7,9 @@ export type ConfirmMode =
   | 'deactivate'
   | 'replace-jd'
   | 'submit-job'
-  | 'complete-interview';
+  | 'complete-interview'
+  | 'approve-offer'
+  | 'reject-offer';
 
 interface ConfirmConfig {
   icon: string;
@@ -58,6 +60,22 @@ const CONFIGS: Record<ConfirmMode, ConfirmConfig> = {
     desc: 'Are you sure you want to mark this interview as completed? This action cannot be undone.',
     okLabel: 'Yes, Complete',
     okClass: 'btn-primary-blue',
+  },
+  'approve-offer': {
+    icon: 'fas fa-circle-check',
+    iconClass: 'icon-activate',
+    title: 'Approve Offer?',
+    desc: 'Are you sure you want to approve this offer? This action cannot be undone.',
+    okLabel: 'Yes, Approve',
+    okClass: 'btn-activate',
+  },
+  'reject-offer': {
+    icon: 'fas fa-circle-exclamation',
+    iconClass: 'icon-deactivate',
+    title: 'Reject Offer?',
+    desc: 'Are you sure you want to reject this offer? This action cannot be undone.',
+    okLabel: 'Yes, Reject',
+    okClass: 'btn-deactivate',
   },
 };
 

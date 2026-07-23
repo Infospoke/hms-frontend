@@ -177,7 +177,7 @@ export class ApprovalChainConfigComponent implements OnInit {
           count:
             t.key === 'all' ? (listPayload?.counts?.total ?? 0) :
               t.key === 'active' ? (listPayload?.counts?.active ?? 0) :
-                t.key === 'inactive' ? (listPayload?.counts?.deactive ?? 0) :
+                t.key === 'inactive' ? (listPayload?.counts?.inactive ?? 0) :
                   t.count
         }));
         this.cdr.markForCheck();

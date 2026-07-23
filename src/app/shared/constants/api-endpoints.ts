@@ -22,7 +22,8 @@ export const API = {
         UPDATE_JOB: `/hms/jobs/update-job-details`,
         GET_ALL_SKILLS: `/hms/jobs/get-all-skills`,
         GET_ACTIVITY_LOGS: `/hms/job-overview/activity-feed`,
-        ADD_APPLICANT: `/job/application`,
+        // ADD_APPLICANT: `/job/application`,
+        ADD_APPLICANT:`/hms/jobs/application`,
         GET_JOBS_BY_COUNTRY: (country: any) => `/job/get-all-jobs-by-country?jobCountry=${country}`,
         //    GET_JOB_BY_ID:(id:any)=>`/jobs/get-job-details-by-id/${id}`,
         GET_ALL_APPLICANTS: () => `/hms/jobs/get-all-jobs-applicant`,
@@ -43,7 +44,9 @@ export const API = {
         CREATE_NEW_JOB : '/hms/create-job/new-job',
         CREATE_ASSIGNED_USERS:(id:any)=>`/hms/recruiter/assigned-recruiters/${id}`,
         UPDATE_ASSIGN_USERS:`/hms/recruiter/assign-more-recruiters`,
-        UPDATE_JOB_TO_CLOSE:`/hms/create-job/update-job-details-by-jobid`
+        UPDATE_JOB_TO_CLOSE:`/hms/create-job/update-job-details-by-jobid`,
+        AGENCY_LIST:`/hms/create-job/agency-list`,
+        AGENCY_CATEGORIES:`/hms/configurations/categories`
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -178,5 +181,20 @@ export const API = {
         INTERVIEW_ASSIGNMENTS_COUNT:`/hms/interviewer-assignment/interviewers-assignment-counts`,
         INTERVIEW_FEED_BACK_BY_ID:`/hms/interview-plan/applicant-feedback-by-id`,
         UPDATE_INTERVIEW_FEED_BACK:`/hms/interview-plan/update-interview-feedback`
+    },
+    CANDIDATE_MANANGEMENT:{
+        RELEASE_OFFER:`/hms/offer-details/release-offers`,
+        READY_TO_RELEASE_OFFER_LIST:`/hms/offer-details/ready-to-release-list`,
+        RAISE_REQUEST_LIST:`/hms/offer-details/get-all-raise-offer-requests`,
+        CARDS_COUNT:`/hms/offer-details/dashboard-counts`,
+        OFFER_DETAILS_BY_APPLICANT_ID:(id:any)=>`/hms/offer-details/get-offer-details-by-applicant-id/${id}`,
+        COMMENTS_FOR_OFFER_ID:(id:any)=>`/hms/offer-details/get-offer-comments/${id}`,
+        OFFER_APPROVE:`/hms/offer-details/approve-offer`,
+        GET_PENDING_APPROVALS:`/hms/offer-details/get-pending-approvals`,
+        GET_OFFER_TEMPLATED:`/hms/configurations/offer-letter-templates`,
+        SUBMIT_RISE_OFFER_REQUEST:`/hms/offer-details/submit-raise-offer-request`,
+        GENERATE_OFFER_LETTER:`/api/offer/generate-offer-letter`,
+        VIEW_OFFER_LETTER:(id:any)=>`/hms/offer-details/download/offerLetter?appId=${id}&action=view`,
+        OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`
     }
 };

@@ -1,0 +1,33 @@
+<app-reusable-table [columns]="columns" [data]="data" [sortableColumns]="sortableColumns"
+  [showPagination]="showPagination" [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
+  [emptyMessage]="emptyMessage" [cellTemplate]="cellTpl" tableLayout="fixed" (sortChange)="onSortChange($event)"
+  (pageChange)="onPageChange($event)">
+</app-reusable-table>
+
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate: avatar + name + email -->
+  <div class="pr-candidate" *ngIf="ctx.col.key === 'candidate'">
+    <span class="pr-avatar" [ngClass]="'pr-avatar--' + ctx.row.avatarColor">
+      {{ ctx.row.avatarInitials }}
+    </span>
+    <div class="pr-candidate-info">
+      <span class="pr-candidate-name">{{ ctx.row.name }}</span>
+      <span class="pr-candidate-email">{{ ctx.row.email }}</span>
+    </div>
+  </div>
+
+  <!-- Priority badge -->
+  <span class="pr-badge" [ngClass]="'pr-badge--' + ctx.row.priority.toLowerCase()" *ngIf="ctx.col.key === 'priority'">
+    {{ ctx.row.priority }}
+  </span>
+
+  <!-- Action button -->
+  <div *appCan="permissionName">
+    <button type="button" class="pr-action-btn" *ngIf="ctx.col.key === 'actions'" (click)="onAction(ctx.row)">
+      {{ actionLabel }}
+    </button>
+  </div>
+
+
+</ng-template>

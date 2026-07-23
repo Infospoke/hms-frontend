@@ -75,6 +75,17 @@
   font-size: 13px; color: #3730a3; margin-bottom: 20px;
   svg { flex-shrink: 0; margin-top: 1px; }
   &.bottom-banner { margin-top: 20px; margin-bottom: 0; }
+  &.warning { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+}
+
+// ── Already-rescheduled block (blocks a second reschedule) ────────────────
+.already-rescheduled-card { border-left: 3px solid #f59e0b; }
+.warning-banner {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-size: 13px; font-weight: 500; color: #92400e; margin-bottom: 16px;
+  svg { flex-shrink: 0; margin-top: 1px; }
 }
 
 // ── Current Schedule display ──────────────────────────────────────────────
@@ -93,6 +104,7 @@
 
 // ── Form ──────────────────────────────────────────────────────────────────
 .form-row { width: 100%; margin-bottom: 18px; &.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+form.read-only .form-row { opacity: .6; pointer-events: none; }
 .form-field { display: flex; flex-direction: column; width: 100%; &.full-width { grid-column: 1 / -1; width: 50%; } }
 .field-label { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; .req { color: var(--color-error); } }
 .input-icon-wrap {

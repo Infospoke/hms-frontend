@@ -53,7 +53,7 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/demand/assign-interviewers',
         permissionName: 'ASSIGNINTERVIEWERS',
       },
-       {
+      {
         label: 'Interview Plans Config',
         icon: 'fa-solid fa-user-pen',
         path: '/demand/interview-plan-config',
@@ -134,6 +134,12 @@ export const NAV_ITEMS: NavItem[] = [
         icon: 'fa-solid fa-diagram-project',
         path: '/candidate-management/interview-pipe-line',
         permissionName: 'INTERVIEWPIPELINE',
+      },
+      {
+        label: 'Offer Management',
+        icon: 'fa-solid fa-file-signature',
+        path: '/candidate-management/offer-management',
+        permissionName: 'OFFERMANAGEMENT',
       }
     ],
   },

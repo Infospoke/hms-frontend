@@ -109,7 +109,7 @@
             <div class="aid-score-row">
               <div class="aid-prog-track">
                 <div class="aid-prog-fill" [style.width.%]="row.score"
-                     [style.background]="row.score >= 80 ? 'var(--green)' : row.score >= 60 ? 'var(--amber)' : 'var(--red)'"></div>
+                     [ngClass]="row.score >= 80 ? 'score-green' : row.score >= 60 ? 'score-amber' : 'score-red'"></div>
               </div>
               <span class="fw-600" style="font-size:13px">{{ row.score }}%</span>
             </div>

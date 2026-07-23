@@ -1,0 +1,58 @@
+<app-reusable-table
+  [columns]="columns"
+  [data]="data"
+  [sortableColumns]="sortableColumns"
+  [showPagination]="showPagination"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalItems]="totalItems"
+  [emptyMessage]="emptyMessage"
+  [cellTemplate]="cellTpl"
+  (pageChange)="onPageChange($event)">
+</app-reusable-table>
+
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate: avatar + name + email -->
+  <div class="ct-candidate" *ngIf="ctx.col.key === 'candidate'">
+    <span class="ct-avatar" [ngClass]="'ct-avatar--' + ctx.row.avatarColor">
+      {{ ctx.row.avatarInitials }}
+    </span>
+    <div class="ct-candidate-info">
+      <span class="ct-candidate-name">{{ ctx.row.name }}</span>
+      <span class="ct-candidate-email">{{ ctx.row.email }}</span>
+    </div>
+  </div>
+   <div class="ol-candidate" *ngIf="ctx.col.key === 'movedToHireOn'">
+    
+    <div class="cell-date">
+      <span class="cell-date-main">{{ ctx.row.movedToHireOn }}</span>
+      <span class="cell-date-sub">{{ ctx.row.movedToHireOnTime}}</span>
+    </div>
+  </div>
+  <!-- Recruiter link -->
+  <a class="ct-recruiter-link" href="javascript:void(0)" *ngIf="ctx.col.key === 'recruiter'">
+    {{ ctx.row.recruiter }}
+  </a>
+
+  <!-- Priority badge -->
+  <span
+    class="ct-badge"
+    [ngClass]="'ct-badge--' + ctx.row.priority.toLowerCase()"
+    *ngIf="ctx.col.key === 'priority'">
+    {{ ctx.row.priority }}
+  </span>
+
+  <!-- Action button -->
+  <div *appCan="permissionName">
+    <button
+    type="button"
+    class="ct-action-btn"
+    
+    *ngIf="ctx.col.key === 'actions'"
+    (click)="onAction(ctx.row)">
+    {{ actionLabel }}
+  </button>
+  </div>
+
+</ng-template>

@@ -32,5 +32,13 @@ export const APPROVAL_ROUTES: Routes = [
   {
         path:"interview-approval-plans/review-and-approve/:id",
         loadComponent:()=>import("../../interview/components/approve-interview-plan/approve-interview-plan.component").then(m=>m.ApproveInterviewPlanComponent)
-    },
+  },
+  {
+    path:'approve-offer-requests',
+    loadComponent:()=>import("../components/approve-offer-requests/approve-offer-requests.component").then(m=>m.ApproveOfferRequestsComponent)
+  },
+  {
+    path:'approve-offer-requests/offer-management/view/:offerId',
+    loadComponent:()=>import("../components/view-offer/view-offer.component").then(m=>m.ViewOfferComponent)
+  }
 ];

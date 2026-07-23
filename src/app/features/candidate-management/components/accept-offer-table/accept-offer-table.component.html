@@ -1,0 +1,38 @@
+<app-reusable-table
+  [columns]="columns"
+  [data]="data"
+  [sortableColumns]="sortableColumns"
+  [showPagination]="showPagination"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalItems]="totalItems"
+  [emptyMessage]="emptyMessage"
+  [cellTemplate]="cellTpl"
+  (sortChange)="onSortChange($event)"
+  (pageChange)="onPageChange($event)">
+</app-reusable-table>
+
+<ng-template #cellTpl let-ctx>
+
+  <!-- Candidate: avatar + name + email -->
+  <div class="al-candidate" *ngIf="ctx.col.key === 'candidate'">
+    <span class="al-avatar" [ngClass]="'al-avatar--' + ctx.row.avatarColor">
+      {{ ctx.row.avatarInitials }}
+    </span>
+    <div class="al-candidate-info">
+      <span class="al-candidate-name">{{ ctx.row.name }}</span>
+      <span class="al-candidate-email">{{ ctx.row.email }}</span>
+    </div>
+  </div>
+
+  <!-- Recruiter link -->
+  <a class="al-recruiter-link" href="javascript:void(0)" *ngIf="ctx.col.key === 'recruiter'">
+    {{ ctx.row.recruiter }}
+  </a>
+
+  <!-- Status badge -->
+  <span class="al-badge" *ngIf="ctx.col.key === 'status'">
+    {{ ctx.row.status }}
+  </span>
+
+</ng-template>

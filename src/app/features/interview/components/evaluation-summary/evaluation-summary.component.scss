@@ -12,4 +12,16 @@
   background: $green;
   border-radius: 3px;
   transition: width 0.2s ease;
+
+  &.score-green {
+    background: $green;
+  }
+
+  &.score-amber {
+    background: $amber;
+  }
+
+  &.score-red {
+    background: $red;
+  }
 }

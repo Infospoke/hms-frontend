@@ -1,0 +1,67 @@
+<app-heading heading="Offer Requests — Pending Your Approval" subHeading="Review and take action on offer requests that are currently awaiting your approval."/>
+
+<div class="card-dd">
+  <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="dropDownData" />
+</div>
+
+<div class="table-section">
+  <app-reusable-table
+    [columns]="columns"
+    [data]="requests"
+    [tableLayout]="'fixed'"
+    [sortableColumns]="sortableColumns"
+    [showPagination]="true"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    [cellTemplate]="rowTemplate"
+    emptyMessage="You have no offer requests pending approval."
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)">
+  </app-reusable-table>
+</div>
+
+<!-- Custom cell renderer, dispatched by column key -->
+<ng-template #rowTemplate let-ctx>
+  <ng-container [ngSwitch]="ctx.col.key">
+
+    <!-- Candidate: avatar + name + email -->
+    <div *ngSwitchCase="'candidate'" class="cell-candidate">
+      <span class="cell-avatar" [style.background]="ctx.row.avatarColor">{{ ctx.row.initials }}</span>
+      <span class="cell-stacked">
+        <span class="cell-line-strong">{{ ctx.row.candidateName }}</span>
+        <span class="cell-line-muted">{{ ctx.row.candidateEmail }}</span>
+      </span>
+    </div>
+
+    <!-- Priority badge -->
+    <span *ngSwitchCase="'priority'" class="priority-badge" [ngClass]="priorityClass(ctx.row.priority)">
+      {{ ctx.row.priority }}
+    </span>
+
+    <!-- Requested on: date + time -->
+    <span *ngSwitchCase="'requestedOn'" class="cell-stacked">
+      <span class="cell-line-strong">{{ ctx.row.requestedOnDate }}</span>
+      <span class="cell-line-muted">{{ ctx.row.requestedOnTime }}</span>
+    </span>
+
+    <!-- Requested by: icon + name + role -->
+    <span *ngSwitchCase="'requestedBy'" class="cell-requested-by">
+     
+      <span class="cell-stacked">
+        <span class="cell-line-strong">{{ ctx.row.requestedByName }}</span>
+        <span class="cell-line-muted">{{ ctx.row.requestedByRole }}</span>
+      </span>
+    </span>
+
+    <!-- Action -->
+    <button *ngSwitchCase="'action'" type="button" class="review-btn" (click)="onReview(ctx.row)">
+      <!-- <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
+      </svg> -->
+      Review
+    </button>
+
+  </ng-container>
+</ng-template>

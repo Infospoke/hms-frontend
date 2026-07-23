@@ -1,0 +1,98 @@
+<app-reusable-table
+  [columns]="columns"
+  [data]="data"
+  [sortableColumns]="sortableColumns"
+  [showPagination]="showPagination"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  [totalItems]="totalItems"
+  [emptyMessage]="emptyMessage"
+  [cellTemplate]="cellTpl"
+  [headerTemplate]="headerTpl"
+  tableLayout="fixed"
+  (sortChange)="onSortChange($event)"
+  (pageChange)="onPageChange($event)">
+</app-reusable-table>
+
+<!-- Selection summary bar -->
+<div class="ol-selection-bar" *ngIf="selectedIds.size > 0">
+  <span class="ol-selection-count">{{ selectedIds.size }} offer{{ selectedIds.size > 1 ? 's' : '' }} selected</span>
+  <div class="ol-selection-actions">
+    <button type="button" class="ol-btn ol-btn--ghost" (click)="clearSelection()">
+      Clear selection
+    </button>
+    <button type="button" class="ol-btn ol-btn--primary" (click)="releaseSelected()">
+      Release {{ selectedIds.size }} offer letter{{ selectedIds.size > 1 ? 's' : '' }}
+    </button>
+  </div>
+</div>
+
+<!-- Header checkbox for the 'select' column -->
+<ng-template #headerTpl let-col>
+  <input
+    type="checkbox"
+    class="ol-checkbox"
+    [checked]="allSelected"
+    [indeterminate]="someSelected"
+    (change)="toggleSelectAll()"
+    aria-label="Select all rows"
+  />
+</ng-template>
+
+<ng-template #cellTpl let-ctx>
+
+  <!-- Row select checkbox -->
+  <input
+    type="checkbox"
+    class="ol-checkbox"
+    *ngIf="ctx.col.key === 'select'"
+    [checked]="isSelected(ctx.row)"
+    (change)="toggleRow(ctx.row)"
+    [attr.aria-label]="'Select ' + ctx.row.name"
+  />
+
+  <!-- Candidate: avatar + name + email -->
+  <div class="ol-candidate" *ngIf="ctx.col.key === 'candidate'">
+    <span class="ol-avatar" [ngClass]="'ol-avatar--' + ctx.row.avatarColor">
+      {{ ctx.row.avatarInitials }}
+    </span>
+    <div class="ol-candidate-info">
+      <span class="ol-candidate-name">{{ ctx.row.name }}</span>
+      <span class="ol-candidate-email">{{ ctx.row.email }}</span>
+    </div>
+  </div>
+
+  <div class="ol-candidate" *ngIf="ctx.col.key === 'approvedOn'">
+    
+    <div class="cell-date">
+      <span class="cell-date-main">{{ ctx.row.approvedOn }}</span>
+      <span class="cell-date-sub">{{ ctx.row.approvedOnTime}}</span>
+    </div>
+  </div>
+
+  <!-- Recruiter link -->
+  <a class="ol-recruiter-link" href="javascript:void(0)" *ngIf="ctx.col.key === 'recruiter'">
+    {{ ctx.row.recruiter }}
+  </a>
+
+  <!-- Priority badge -->
+  <span
+    class="ol-badge"
+    [ngClass]="'ol-badge--' + ctx.row.priority.toLowerCase()"
+    *ngIf="ctx.col.key === 'priority'">
+    {{ ctx.row.priority }}
+  </span>
+
+  <!-- Action button -->
+   <div *appCan="permissionName">
+     <button
+    type="button"
+    class="ol-action-btn"
+    *ngIf="ctx.col.key === 'actions'"
+    (click)="onAction(ctx.row)">
+    {{ actionLabel }}
+  </button>
+   </div>
+ 
+
+</ng-template>

@@ -1,0 +1,43 @@
+<div class="pipeline-card">
+  <div class="pipeline-left">
+    <p class="pipeline-title">
+      <i [class]="titleIcon" class="pipeline-title-icon"></i>
+      {{ title }}
+    </p>
+    <div class="pipeline-stages">
+      <ng-container *ngFor="let stage of stages; let last = last">
+        <div class="stage-node" [class.stage-node--active]="isActiveStage(stage.status)">
+          <div class="stage-circle" [ngStyle]="getStageCircleStyle(stage.status)">
+            <i [class]="stageStatusCfg[stage.status].icon"
+              [ngStyle]="{ color: stageStatusCfg[stage.status].color, 'font-size': '17px' }">
+            </i>
+          </div>
+          <div class="stage-info">
+            <span class="stage-role">{{ stage.role }}</span>
+            <span class="stage-status-lbl" [ngStyle]="{ color: stageStatusCfg[stage.status].color }">
+              {{ stageStatusCfg[stage.status].label }}
+            </span>
+            <span class="stage-time" *ngIf="stage.timestamp">{{ stage.timestamp }}</span>
+          </div>
+        </div>
+        <div class="stage-arrow" *ngIf="!last"
+          [class.arrow-done]="stage.status === 'APPROVED' || stage.status === 'CREATED'"
+          [class.arrow-rejected]="stage.status === 'REJECTED'">
+          <span class="arrow-line"></span>
+          <i class="fa-solid fa-chevron-right arrow-head"></i>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="pipeline-right">
+    <p class="prog-title">Overall Progress</p>
+    <div class="prog-row">
+      <div class="prog-track">
+        <div class="prog-fill" [style.width.%]="progressPercent"></div>
+      </div>
+      <span class="prog-pct">{{ progressPercent }}%</span>
+    </div>
+    <span class="prog-step">{{ progressStep }}</span>
+  </div>
+</div>

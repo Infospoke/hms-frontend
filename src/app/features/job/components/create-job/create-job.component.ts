@@ -13,11 +13,14 @@ import { JobDetailsStepComponent } from './steps/job-details/job-details.compone
 import { AiJobDescriptionStepComponent } from './steps/ai-job-description/ai-job-description.component';
 import { SourcingStrategyStepComponent } from './steps/sourcing-strategy/sourcing-strategy.component';
 import { RecruiterAssignmentStepComponent } from './steps/recruiter-assignment/recruiter-assignment.component';
+// TODO: update this path to wherever agency-assignment.component.ts actually lives in your project
+
 import { ReviewSubmitStepComponent } from './steps/review-submit/review-submit.component';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { JobService } from '../../services/job.service';
 import { ApprovalService } from '../../../approvals/services/approval-service';
 import { UserService } from '../../../settings/users/servics/user-service';
+import { AgencyAssignmentComponent } from './steps/agency-assignment/agency-assignment.component';
 
 const SR_ID_KEY = 'create_job_sr_id';
 
@@ -34,6 +37,7 @@ const SR_ID_KEY = 'create_job_sr_id';
     AiJobDescriptionStepComponent,
     SourcingStrategyStepComponent,
     RecruiterAssignmentStepComponent,
+    AgencyAssignmentComponent,
     ReviewSubmitStepComponent,
     InterviewPlanStepComponent,
   ],
@@ -61,7 +65,8 @@ export class CreateJobComponent implements OnInit {
     { title: 'AI Job Description' },
     { title: 'Sourcing Strategy' },
     { title: 'Recruiter Assignment' },
-    { title: 'Interview Plan' },       // ← add this
+    // { title: 'Agency Assignment' },    // ← add this
+    { title: 'Interview Plan' },
     { title: 'Review & Submit' },
   ];
 
@@ -83,8 +88,9 @@ export class CreateJobComponent implements OnInit {
   get step2Form(): FormGroup { return this.form.get('step2') as FormGroup; }
   get step3Form(): FormGroup { return this.form.get('step3') as FormGroup; }
   get step4Form(): FormGroup { return this.form.get('step4') as FormGroup; }
-  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; }
-  get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; }
+  get step5Form(): FormGroup { return this.form.get('step5') as FormGroup; } // agency assignment
+  get step6Form(): FormGroup { return this.form.get('step6') as FormGroup; } // interview plan
+  get step7Form(): FormGroup { return this.form.get('step7') as FormGroup; } // review & submit
   get currentStepForm(): FormGroup { return this.form.get('step' + (this.currentStep + 1)) as FormGroup; }
 
   ngOnInit(): void {
@@ -113,8 +119,9 @@ export class CreateJobComponent implements OnInit {
       step2: this.fb.group({}),
       step3: this.fb.group({}),
       step4: this.fb.group({}),
-      step5: this.fb.group({}),   // ← new: interview plan
-      step6: this.fb.group({}),
+      step5: this.fb.group({}),   // ← new: agency assignment
+      step6: this.fb.group({}),   // interview plan
+      step7: this.fb.group({}),   // review & submit
     });
 
     // Persist SR ID to localStorage when coming fresh from signal
@@ -218,8 +225,17 @@ export class CreateJobComponent implements OnInit {
         return;
       }
     }
-    if(this.currentStep === 4) {
-      const selectedPlan = this.step5Form.get('planId')?.value;
+    // Step 5: at least one agency must be assigned
+    if (this.currentStep === 4) {
+      const selectedAgencies = this.step5Form.get('selectedAgencyDetails')?.value ?? [];
+      if (!selectedAgencies.length) {
+        this.notificationService.info('Please assign at least one agency before proceeding.');
+        return;
+      }
+    }
+
+    if(this.currentStep === 5) {
+      const selectedPlan = this.step6Form.get('planId')?.value;
       if (!selectedPlan) {
         this.notificationService.info('Please select an interview plan before proceeding.');
         return;
@@ -269,7 +285,8 @@ export class CreateJobComponent implements OnInit {
     const step2 = this.step2Form.getRawValue();
     const step3 = this.step3Form.getRawValue();
     const step4 = this.step4Form.getRawValue();
-    const step5 = this.step5Form.getRawValue();
+    const step5 = this.step5Form.getRawValue(); // agency assignment
+    const step6 = this.step6Form.getRawValue(); // interview plan
 
     const referralChannel = step3.selectedChannels?.find((c: any) =>
       c.channelName?.toLowerCase().includes('referral')
@@ -283,6 +300,8 @@ export class CreateJobComponent implements OnInit {
 
     const srId = this.jobService.jobDetailsBySrIdSignal()?.srId
       || localStorage.getItem(SR_ID_KEY) || '';
+
+    const agencyIds: number[] = (step5.selectedAgencyDetails || []).map((a: any) => a.agencyId);
 
     // ✅ Map description to expected camelCase format
     const desc = step2.jobDescription;
@@ -341,8 +360,11 @@ export class CreateJobComponent implements OnInit {
         srId: srId,
         recruiterInfoDtos: step4.selectedRecruiterDetails || [],
       },
+      agencyDetailsRequest: {
+        agencyIds,
+      },
       interviewPlanRequest: {
-        planId: step5.planId
+        planId: step6.planId
       }
     };
 

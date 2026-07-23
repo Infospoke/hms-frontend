@@ -1,0 +1,116 @@
+.table-section {
+  margin-top: 16px;
+}
+
+// ── Candidate cell ────────────────────────────────────────────────────────
+.cell-candidate {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0; // allow the row to shrink inside a fixed-width <td>
+}
+
+.cell-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.cell-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.35;
+  min-width: 0; // lets long names/emails wrap instead of stretching the column
+  overflow-wrap: anywhere;
+}
+
+.cell-line-strong {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 13px;
+}
+
+.cell-line-muted {
+  font-size: 12px;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+// ── Priority badge ────────────────────────────────────────────────────────
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--high {
+    background: #fde2e2;
+    color: #d92d2d;
+  }
+
+  &--medium {
+    background: #faecd2;
+    color: #a15c07;
+  }
+
+  &--low {
+    background: #dcf5e4;
+    color: #1a8a4b;
+  }
+}
+
+// ── Requested by cell ─────────────────────────────────────────────────────
+.cell-requested-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cell-person-icon {
+  flex-shrink: 0;
+  color: #6a5fd3;
+}
+
+// ── Review action button ──────────────────────────────────────────────────
+.review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  white-space: nowrap;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #eff4ff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+}

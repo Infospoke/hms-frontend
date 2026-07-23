@@ -90,4 +90,31 @@ export class ApprovalService {
       this.api.hrmspost(API.SR_APPROVALS.LIST, payload)
     );
   }
+
+
+   async getOfferDetails(offerId: string) {
+    // return this.http.get(`${BASE_URL}/${offerId}`);
+  }
+
+   async approveOrRejectOffer(payload: any) {
+    const form = new FormData();
+    form.append('offerId', payload.offerId);
+    form.append('approved', String(payload.approved));
+    form.append('comments', payload.comments);
+    // if (payload.signature) form.append('signature', payload.signature);
+    // return this.http.post(`${BASE_URL}/decision`, form);
+  }
+
+
+    releaseOfferLetter(offerId: string) {
+    // return this.http.post(`${BASE_URL}/${offerId}/release`, {});
+  }
+ 
+  viewOfferLetter(offerId: string): void {
+    // window.open(`${BASE_URL}/${offerId}/letter`, '_blank');
+  }
+
+  async approveOfferList(payload:any){
+    return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.OPPROVE_OFFER_LIST, payload))
+  }
 }

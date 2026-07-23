@@ -40,19 +40,26 @@
   [form]="step4Form">
 </app-recruiter-assignment-step>
 
+<app-agency-assignment
+  *ngIf="currentStep === 3"
+  [form]="step5Form"
+  [showBackButton]="false">
+</app-agency-assignment>
+
 <app-interview-plan-step
-  *ngIf="currentStep === 4"
-  [form]="step5Form">
+  *ngIf="currentStep === 5"
+  [form]="step6Form">
 </app-interview-plan-step>
 
 <app-review-submit-step
-  *ngIf="currentStep === 5"
-  [form]="step6Form"
+  *ngIf="currentStep === 6"
+  [form]="step7Form"
   [step1Form]="step1Form"
   [step2Form]="step2Form"
   [step3Form]="step3Form"
   [step4Form]="step4Form"
   [step5Form]="step5Form"
+  [step6Form]="step6Form"
   (goToStep)="currentStep = $event">
 </app-review-submit-step>
 </div>

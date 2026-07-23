@@ -10,24 +10,11 @@ import { UserService } from '../../../settings/users/servics/user-service';
 import { StaffingServiceService } from '../../../demand/services/staffing-service.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CommentModalAction, CommentModalConfig, CommentModalResult, CommonModalComponent } from '../../../../shared/components/common-modal/common-modal.component';
+import { ApprovalPipelineComponent } from '../approval-pipeline/approval-pipeline.component';
+import { ApprovalTimelineComponent } from '../approval-timeline/approval-timeline.component';
+import { ApprovalStage, STAGE_STATUS_CONFIG, StageStatus } from '../../../../shared/constants/approval.stage.modal';
 
-// ─── Stage status types & config ─────────────────────────────────────────────
-export type StageStatus = 'APPROVED' | 'IN_PROGRESS' | 'PENDING' | 'REJECTED' | 'CREATED';
-export interface StageStatusDef {
-  icon: string;
-  color: string;
-  bg: string;
-  border: string;
-  label: string;
-}
 
-export const STAGE_STATUS_CONFIG: Record<StageStatus, StageStatusDef> = {
-  APPROVED: { icon: 'fa-solid fa-circle-check', color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Approved' },
-  IN_PROGRESS: { icon: 'fa-solid fa-clock', color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', label: 'In Progress' },
-  PENDING: { icon: 'fa-regular fa-circle', color: '#9ca3af', bg: '#f9fafb', border: '#e5e7eb', label: 'Waiting for previous approval' },
-  REJECTED: { icon: 'fa-solid fa-circle-xmark', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5', label: 'Rejected' },
-  CREATED: { icon: 'fa-solid fa-paper-plane', color: '#16a34a', bg: '#f0fdf4', border: '#86efac', label: 'Created' },
-};
 
 // ─── SR overall-status ────────────────────────────────────────────────────────
 export type SrStatus = 'Pending Approval' | 'Approved' | 'Rejected';
@@ -45,18 +32,6 @@ export const PRIORITY_COLOR: Record<string, string> = {
   Medium: '#3b82f6',
   Low: '#22c55e',
 };
-
-export interface ApprovalStage {
-  id: number;
-  role: string;
-  approverName: string;
-  approverInitials: string;
-  status: StageStatus;
-  timestamp?: string;
-  comments?: string;
-  /** True for every PENDING stage that follows a REJECTED stage in the chain. */
-  prevRejected?: boolean;
-}
 
 // ─── API response shape ───────────────────────────────────────────────────────
 interface PositionBasicsResponse {
@@ -125,6 +100,8 @@ interface SrApiResponse {
     HeadingComponent,
     SrReviewComponent,
     CommonModalComponent,
+    ApprovalPipelineComponent,
+    ApprovalTimelineComponent,
   ],
   templateUrl: './view-sr.component.html',
   styleUrl: './view-sr.component.scss',
@@ -178,19 +155,6 @@ export class ViewSrComponent implements OnInit {
   pipelineStages: ApprovalStage[] = [];
   hasRealApproverData = false;
 
-  get progressPercent(): number {
-    if (!this.pipelineStages.length) return 0;
-    console.log(this.pipelineStages);
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status === 'CREATED').length;
-    return Math.round((done / this.pipelineStages.length) * 100);
-  }
-
-  get progressStep(): string {
-    const done = this.pipelineStages.filter(s => s.status === 'APPROVED' || s.status === 'REJECTED' || s.status === 'CREATED').length;
-    return `Step ${done} of ${this.pipelineStages.length}`;
-  }
-
-
   get timelineStages(): ApprovalStage[] {
     return this.pipelineStages.filter(s => s.role !== 'HM Manager');
   }
@@ -234,38 +198,12 @@ export class ViewSrComponent implements OnInit {
   }
 
 
-  getStageCircleStyle(status: StageStatus) {
-    const c = this.stageStatusCfg[status];
-    return { background: c.bg, border: `2px solid ${c.border}` };
-  }
-  getStatusBadgeStyle(status: StageStatus) {
-    const c = this.stageStatusCfg[status];
-    return { color: c.color, background: c.bg, border: `1px solid ${c.border}` };
-  }
-
-  getAvatarStyle(status: StageStatus) {
-    return { background: this.stageStatusCfg[status].color };
-  }
-  isConnectorFilled(status: StageStatus): boolean { return status === 'APPROVED'; }
-  isActiveStage(status: StageStatus): boolean { return status === 'IN_PROGRESS'; }
-
   getInitials(name: string): string {
     if (!name) return '?';
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
 
 
-  sanitizeComment(raw: string): string {
-    if (!raw) return '';
-    return raw
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/!\[.*?\]\(.*?\)/g, '[image removed]')
-      .replace(/<img[^>]*>/gi, '[image removed]')
-      .replace(/data:image\/[^;]+;base64,[^\s"')]+/gi, '[image removed]')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
   url: any;
 
   ngOnInit(): void {
@@ -374,13 +312,13 @@ export class ViewSrComponent implements OnInit {
     };
 
     this.step4 = {
-      internalFirst: sourcing.internalFirstPolicy,
-      sourcingBudget: sourcing.sourcingBudget != null ? String(sourcing.sourcingBudget) : '',
-      referralOn: sourcing.referralEnabled,
-      referralAmt: sourcing.referralAmount != null ? String(sourcing.referralAmount) : '',
-      diversityOn: sourcing.diversityEnabled,
+      internalFirst: sourcing?.internalFirstPolicy ?? '-',
+      sourcingBudget: sourcing?.sourcingBudget != null ? String(sourcing.sourcingBudget) : '',
+      referralOn: sourcing?.referralEnabled,
+      referralAmt: sourcing?.referralAmount != null ? String(sourcing.referralAmount) : '',
+      diversityOn: sourcing?.diversityEnabled,
     };
-
+    console.log(roles);
     this.mustSkills = this.splitCsv(roles.skillsMustHave);
     this.niceSkills = this.splitCsv(roles.niceToHaveSkills);
     this.certs = this.splitCsv(roles.certificationsRequired);

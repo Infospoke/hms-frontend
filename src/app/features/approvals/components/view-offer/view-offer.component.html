@@ -1,0 +1,278 @@
+<div class="vo-wrapper">
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ══════════════════════════════════════════════════════════
+         HEADER ZONE
+         ══════════════════════════════════════════════════════════ -->
+    <div class="vo-header-zone">
+      <app-heading [showBackButton]="true" [buttonText]="'Back to In Progress (Approvals)'" [backButtonUrl]="'/'"
+        (click)="goBack()" />
+
+      <div class="vo-header-row">
+        <div class="vo-applicant">
+          <div class="vo-avatar" [ngStyle]="{ background: applicant.avatarColor }">{{ applicant.initials }}</div>
+          <div class="vo-applicant-text">
+            <h2 class="vo-name">{{ applicant.name }}</h2>
+            <span class="vo-role-line">
+              {{ applicant.role }} <span class="vo-dot">·</span> {{ applicant.department }}
+            </span>
+            <span class="vo-email">
+              <i class="fa-regular fa-envelope"></i>
+              {{ applicant.email }}
+            </span>
+          </div>
+        </div>
+
+        <div class="vo-requested">
+          <span class="vo-requested-label">Requested On</span>
+          <span class="vo-requested-value">{{ applicant.requestedOn }}</span>
+        </div>
+
+        <span class="vo-status-badge" [ngStyle]="{
+                color:          currentOfferStatus.color,
+                background:     currentOfferStatus.bg,
+                'border-color': currentOfferStatus.border
+              }">
+          {{ currentOfferStatus.label }}
+        </span>
+
+        <button class="btn-view-applicant" (click)="viewApplicantDetails()">
+          <i class="fa-regular fa-user"></i>
+          View Applicant Details
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         APPROVAL PIPELINE — shared component
+         ══════════════════════════════════════════════════════════ -->
+    <app-approval-pipeline [stages]="pipelineStages" title="Approval Pipeline"></app-approval-pipeline>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MAIN BODY — two columns
+         ══════════════════════════════════════════════════════════ -->
+    <div class="vo-body">
+
+      <!-- ── LEFT: offer details ────────────────────────────────────────── -->
+      <div class="vo-left">
+
+        <!-- Basic Information -->
+        <div class="vo-card" *ngIf="basicInfo">
+          <p class="vo-card-title">Basic Information</p>
+          <div class="vo-info-grid">
+            <div class="vo-info-col">
+              <div class="vo-info-row"><span class="vo-info-label">Job Title</span><span class="vo-info-value">{{ basicInfo.jobTitle }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Department</span><span class="vo-info-value">{{ basicInfo.department }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Offered CTC</span><span class="vo-info-value">{{ basicInfo.offeredCtc }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Probation Period</span><span class="vo-info-value">{{ basicInfo.probationPeriod }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Notice Period</span><span class="vo-info-value">{{ basicInfo.noticePeriod }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Work Location</span><span class="vo-info-value">{{ basicInfo.workLocation }}</span></div>
+            </div>
+            <div class="vo-info-col">
+              <div class="vo-info-row"><span class="vo-info-label">Employment Type</span><span class="vo-info-value">{{ basicInfo.employmentType }}</span></div>
+              <!-- <div class="vo-info-row"><span class="vo-info-label">Pay Frequency</span><span class="vo-info-value">{{ basicInfo.payFrequency }}</span></div> -->
+              <!-- <div class="vo-info-row"><span class="vo-info-label">Offer Valid Till</span><span class="vo-info-value">{{ basicInfo.offerValidTill }}</span></div> -->
+              <div class="vo-info-row"><span class="vo-info-label">Recruiter</span><span class="vo-info-value">{{ basicInfo.recruiter }}</span></div>
+              <div class="vo-info-row"><span class="vo-info-label">Hiring Manager</span><span class="vo-info-value">{{ basicInfo.hiringManager }}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie chart + Compensation vs market -->
+        <div class="vo-two-col">
+          <div class="vo-card">
+            <p class="vo-card-title">Pie Chart Overview</p>
+            <div class="vo-pie-row">
+              <div class="vo-donut" [ngStyle]="{ background: pieGradient }">
+                <div class="vo-donut-hole">
+                  <span class="vo-donut-total">{{ totalCtcLabel }}</span>
+                  <span class="vo-donut-sub">Total CTC</span>
+                </div>
+              </div>
+              <div class="vo-legend">
+                <div class="vo-legend-row" *ngFor="let item of compBreakdown">
+                  <span class="vo-legend-dot" [ngStyle]="{ background: item.color }"></span>
+                  <span class="vo-legend-label">{{ item.label }}</span>
+                  <span class="vo-legend-pct">{{ item.percent }}%</span>
+                </div>
+              </div>
+            </div>
+            <p class="vo-card-note">
+              <i class="fa-solid fa-circle-info"></i>
+              Market data based on internal benchmarking for similar roles in {{ basicInfo?.department }}.
+            </p>
+          </div>
+
+          <div class="vo-card">
+            <p class="vo-card-title">Compensation vs Market</p>
+            <div class="vo-market-track-wrap">
+              <div class="vo-market-track">
+                <div class="vo-market-dot" [style.left.%]="marketDotPosition"></div>
+              </div>
+            </div>
+            <div class="vo-market-labels">
+              <div class="vo-market-point">
+                <span class="vo-market-value">₹ {{ compVsMarket.marketMin | number }}</span>
+                <span class="vo-market-caption">Market Min</span>
+              </div>
+              <div class="vo-market-point vo-market-point--offered">
+                <span class="vo-market-value">₹ {{ compVsMarket.offeredCtc | number }}</span>
+                <span class="vo-market-caption">Offered CTC</span>
+              </div>
+              <div class="vo-market-point vo-market-point--right">
+                <span class="vo-market-value">₹ {{ compVsMarket.marketMax | number }}</span>
+                <span class="vo-market-caption">Market Max</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /vo-left -->
+
+      <!-- ── RIGHT: Comments Timeline — shared component ─────────────────── -->
+      <div class="vo-right">
+        <app-approval-timeline
+          [stages]="timelineStages"
+          title="Comments Timeline"
+          titleIcon="fa-regular fa-clock"
+          [isActionMode]="isApproveMode"
+          emptyStateTitle="No approval chain configured yet"
+          emptyStateSub="No approvers have been assigned to this offer yet.">
+        </app-approval-timeline>
+      </div>
+
+    </div><!-- /vo-body -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         ACTION BAR — one switch, three modes
+         ══════════════════════════════════════════════════════════ -->
+    <div class="vo-action-bar">
+      <button class="btn-back" type="button" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back
+      </button>
+
+      <div class="action-right" [ngSwitch]="pageMode">
+
+        <ng-container *ngSwitchCase="'approve'">
+          <button class="btn-reject" [disabled]="isSubmitting" (click)="confirmReject()">
+            <i class="fa-solid fa-circle-xmark"></i>
+            Reject Offer
+          </button>
+          <button class="btn-approve" [disabled]="isSubmitting" (click)="confirmApprove()">
+            <i class="fa-solid fa-circle-check"></i>
+            {{ isSubmitting ? 'Processing…' : 'Approve Offer' }}
+          </button>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'release'">
+          <button class="btn-secondary" (click)="viewOfferLetter()">
+            <i class="fa-regular fa-file-lines"></i>
+            View offer letter
+          </button>
+          <button class="btn-release" [disabled]="isSubmitting" (click)="onReleaseOfferLetter()">
+            <i class="fa-solid fa-check"></i>
+            {{ isSubmitting ? 'Releasing…' : 'Release offer letter' }}
+          </button>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'view'">
+          <button class="btn-secondary" (click)="viewOfferLetter()">
+            <i class="fa-regular fa-file-lines"></i>
+            View offer letter
+          </button>
+        </ng-container>
+
+      </div>
+    </div>
+
+  </ng-container><!-- /!isLoading -->
+</div><!-- /vo-wrapper -->
+
+<!-- Approve/Reject comment modal — shown for everyone except Finance Head,
+     who already supplies a comment inline via the upload card above. -->
+<app-common-modal
+  [visible]="commentModalVisible"
+  [action]="commentModalAction"
+  [submitting]="isSubmitting"
+  (cancelled)="onDecisionModalCancelled()"
+  (confirmed)="onDecisionModalConfirmed($event)">
+</app-common-modal>
+
+
+
+<!-- E-signature + comments popup — Finance Head only. Opens from Approve/Reject Offer
+     instead of showing the upload card inline on the page. -->
+<nz-modal [(nzVisible)]="eSignatureModalVisible"
+  [nzTitle]="eSignatureModalAction === 'reject' ? 'Reject Offer' : 'Approve Offer'"
+  [nzFooter]="null" nzWidth="440px" [nzCentered]="true" nzClassName="esign-modal"
+  (nzOnCancel)="closeESignatureModal()">
+
+  <ng-container *nzModalContent>
+    <div class="esign-modal-body">
+      <div class="esign-modal-section">
+        <p class="vo-card-title">Upload E-Signature <span class="vo-required">*</span></p>
+        <p class="vo-card-sub">
+          Please upload your e-signature to {{ eSignatureModalAction === 'reject' ? 'reject' : 'approve' }} the offer.
+        </p>
+
+        <label class="vo-esign-drop" *ngIf="!eSignaturePreviewUrl">
+          <input type="file" accept=".png,.jpg,.jpeg" hidden (change)="onESignatureSelected($event)" />
+          <i class="fa-solid fa-upload"></i>
+          <span class="vo-esign-drop-title">Upload E-Signature (PNG, JPG)</span>
+          <span class="vo-esign-drop-sub">Recommended size: 300x100 px</span>
+        </label>
+
+        <div class="vo-esign-preview" *ngIf="eSignaturePreviewUrl">
+          <img [src]="eSignaturePreviewUrl" alt="E-signature preview" />
+          <button class="vo-esign-remove" (click)="removeESignature()">
+            <i class="fa-solid fa-xmark"></i> Remove
+          </button>
+        </div>
+      </div>
+
+      <div class="esign-modal-section esign-modal-comments">
+        <p class="vo-card-title">Additional Comments <span class="vo-required">*</span></p>
+        <textarea class="vo-comment-textarea" [(ngModel)]="comment" [maxlength]="COMMENT_MAX"
+          placeholder="Enter your comments here…"></textarea>
+        <span class="vo-char-count">{{ comment.length }} / {{ COMMENT_MAX }} characters</span>
+      </div>
+
+      <div class="esign-modal-section esign-confirm-section">
+        <label class="vo-confirm-check">
+          <input type="checkbox" [(ngModel)]="confirmationChecked" />
+          <span class="vo-confirm-text">
+            I confirm that the uploaded e-signature and comments above are accurate and I
+            authorize this decision on the offer.
+          </span>
+        </label>
+      </div>
+
+      <div class="esign-modal-actions">
+        <button class="btn-secondary" type="button" [disabled]="isSubmitting" (click)="closeESignatureModal()">
+          Cancel
+        </button>
+        <button [class]="eSignatureModalAction === 'reject' ? 'btn-reject' : 'btn-approve'" type="button"
+          [disabled]="!canSubmitDecision" (click)="submitESignatureDecision()">
+          <i [class]="eSignatureModalAction === 'reject' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-check'"></i>
+          {{ isSubmitting ? 'Processing…' : (eSignatureModalAction === 'reject' ? 'Reject Offer' : 'Approve Offer') }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isPdfVisible" nzTitle="Preview" [nzFooter]="null" nzWidth="80%" [nzCentered]="true"
+  nzClassName="pdf-preview-modal" (nzOnCancel)="isPdfVisible = false">
+
+  <ng-container *nzModalContent>
+    <div *ngIf="!pdfUrl" style="text-align:center; padding:20px;">
+      Loading PDF...
+    </div>
+
+    <iframe *ngIf="pdfUrl" [attr.src]="pdfUrl" width="100%" style="height: 75vh; border: none; display: block;">
+    </iframe>
+  </ng-container>
+
+</nz-modal>

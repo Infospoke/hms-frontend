@@ -21,6 +21,7 @@ export class AddApplicantComponent implements OnInit {
   countries = ['India', 'USA', 'UK', 'Canada'];
   jobRoles:any[]=[];
   additionalFileName = '';
+  jobCountry:any;
   resumeFileName = '';
   private jobApi=inject(JobService);
   private notificationService=inject(NotificationService);
@@ -41,6 +42,7 @@ export class AddApplicantComponent implements OnInit {
   }
   ngOnInit(): void {
    this.applicationForm.get('country')?.valueChanges.subscribe(country=>{
+    this.jobCountry=country;
     this.getJobByCountry(country);
    });
   }
@@ -92,12 +94,13 @@ export class AddApplicantComponent implements OnInit {
         phNo:this.applicationForm.value.phone,
         coverLetterDescription:this.applicationForm.value.coverLetter,
         jobId:this.applicationForm.value.jobRole,
-        jobRole:this.selectedJob?.jobTitle,
-        jobCode:this.selectedJob?.jobCode,
-        jobTitle:this.selectedJob?.jobTitle,
+        jobCountry:this.jobCountry,
+        // jobRole:this.selectedJob?.jobTitle,
+        // jobCode:this.selectedJob?.jobCode,
+        // jobTitle:this.selectedJob?.jobTitle,
         location: this.selectedJob?.jobLocation,
-        privacyEnabled:true,
-        contactMeEnable:true,
+        // privacyEnabled:true,
+        // contactMeEnable:true,
         referral:true,
       }
        if (this.applicationForm.value.resume) {
@@ -114,7 +117,7 @@ export class AddApplicantComponent implements OnInit {
       );
 
       let res:any= await this.jobApi.addApplicant(formData);
-      if(res && res?.responseCode=='1'){
+      if(res && res?.responsecode=='00'){
         this.applicationForm.reset();
         this.additionalFileName = '';
         this.resumeFileName = '';

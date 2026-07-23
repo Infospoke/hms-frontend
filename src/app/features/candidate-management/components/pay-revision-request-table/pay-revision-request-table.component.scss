@@ -1,0 +1,105 @@
+:host {
+  display: block;
+}
+
+// ── Candidate cell ──────────────────────────────────────────────────────────
+.pr-candidate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pr-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+
+  &--purple { background: #7c5cf0; }
+  &--green  { background: #16a34a; }
+  &--orange { background: #ea7c1f; }
+  &--blue   { background: #2563eb; }
+  &--pink   { background: #db2777; }
+}
+
+.pr-candidate-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pr-candidate-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 13px;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.pr-candidate-email {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+// ── Priority badge ────────────────────────────────────────────────────────
+.pr-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+
+  &--high {
+    background: #fde2e2;
+    color: #d64545;
+  }
+
+  &--medium {
+    background: #fbe8c6;
+    color: #b8791b;
+  }
+
+  &--low {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+}
+
+// ── Action button ─────────────────────────────────────────────────────────
+.pr-action-btn {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+  transition: background 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background: #2563eb;
+    color: #ffffff;
+  }
+}

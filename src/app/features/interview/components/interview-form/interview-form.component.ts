@@ -86,6 +86,12 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   @Input() currentSchedule?: any;
 
+  /** True once this interview has already been rescheduled once — the whole form becomes read-only. */
+  @Input() alreadyRescheduled = false;
+
+  /** The schedule it was moved to, shown read-only when alreadyRescheduled is true. */
+  @Input() rescheduledInfo?: any;
+
   @Output() cancelled = new EventEmitter<void>();
 
 
@@ -101,6 +107,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   activeTimeField: 'start' | 'end' | null = null;
 
   toggleTimeDropdown(field: 'start' | 'end'): void {
+    if (this.alreadyRescheduled) return;
     this.activeTimeField = this.activeTimeField === field ? null : field;
   }
 
@@ -111,7 +118,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   }
 
   selectStartTime(slot: string): void {
-    if (this.isSlotDisabled(slot)) return;
+    if (this.alreadyRescheduled || this.isSlotDisabled(slot)) return;
     const ctrl = this.form.get('startTime');
     ctrl?.setValue(slot);
     ctrl?.markAsTouched();
@@ -119,7 +126,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   }
 
   selectEndTime(slot: string): void {
-    if (this.isEndSlotDisabled(slot)) return;
+    if (this.alreadyRescheduled || this.isEndSlotDisabled(slot)) return;
     const ctrl = this.form.get('endTime');
     ctrl?.setValue(slot);
     ctrl?.markAsTouched();
@@ -187,6 +194,11 @@ export class InterviewFormComponent implements OnInit, OnChanges {
 
   get isReschedule(): boolean {
     return this.mode === 'reschedule';
+  }
+
+  /** Drives the "already rescheduled" banner + read-only form in the template. */
+  get showAlreadyRescheduledBanner(): boolean {
+    return this.isReschedule && this.alreadyRescheduled;
   }
 
   /**
@@ -283,6 +295,9 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     if (changes['summary'] && this.form && !changes['currentSchedule']) {
       this.applyInterviewTypeLock();
     }
+    if (changes['alreadyRescheduled'] && this.form) {
+      this.applyAlreadyRescheduledLock();
+    }
   }
 
   private buildForm(): void {
@@ -298,6 +313,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     });
 
     this.applyInterviewTypeLock();
+    this.applyAlreadyRescheduledLock();
 
     // If the candidate switches between Online / Offline, clear out whichever
     // field no longer applies so a stale value can't block submission later.
@@ -367,6 +383,21 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   }
 
   /**
+   * Once an interview has already been rescheduled once, the whole "New
+   * Schedule Details" form becomes read-only — a second reschedule isn't
+   * allowed, so there's nothing left here for the user to edit or submit.
+   */
+  private applyAlreadyRescheduledLock(): void {
+    if (!this.form) return;
+    if (this.alreadyRescheduled) {
+      this.form.disable({ emitEvent: false });
+    } else if (this.form.disabled) {
+      this.form.enable({ emitEvent: false });
+      this.applyInterviewTypeLock(); // re-apply the interviewType-specific lock after a blanket enable
+    }
+  }
+
+  /**
    * Normalizes an ISO datetime (or date-only) string to "yyyy-MM-dd" so it
    * matches what the native date input requires to display a pre-filled value.
    */
@@ -400,6 +431,9 @@ export class InterviewFormComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
+    if (this.alreadyRescheduled) {
+      return;
+    }
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

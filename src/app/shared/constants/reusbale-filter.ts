@@ -358,3 +358,70 @@ export const interviewPriority: any = [
   },
 
 ];
+
+
+
+export const candidateManagementFilter: any = [
+  {
+    key: 'allJobs',
+    label: 'All jobs',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'departments',
+    label: 'Departments',
+    selected: '',
+    options: [
+
+
+    ],
+
+  },
+  {
+    key: 'priority',
+    label: 'Priotiry',
+    selected: '',
+    options: [
+
+      { value: "", label: 'All' },
+      { value: 'HIGH', label: "High" },
+      { value: 'MEDIUM', label: "Medium" },
+      { value: 'LOW', label: "Low" }
+
+
+
+    ],
+
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date',
+    selected: '',
+    isDateFilter: true,
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];
+
+export const categoryany :any[]= [
+  {
+    key: 'categories', 
+    label: 'Category',
+    selected: '',
+    options: [
+       { value: '', label: 'All' },
+
+    ],
+
+  },
+]

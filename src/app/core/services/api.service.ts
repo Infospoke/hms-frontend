@@ -55,6 +55,13 @@ export class ApiService {
       responseType: 'blob'
     });
   }
+
+   viewOffer(endpoint: string, params?: any): Observable<Blob> {
+    return this.http.get(`${this.hrmsUrl}${endpoint}`, {
+      params,
+      responseType: 'blob'
+    });
+  }
   aiGet<T>(endpoint: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.aiBaseUrl}${endpoint}`, { params });
   }

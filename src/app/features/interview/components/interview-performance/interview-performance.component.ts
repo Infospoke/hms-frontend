@@ -100,6 +100,7 @@ export class InterviewPerformanceComponent implements OnInit {
 
   /** "Calculate Evaluation Summary" only makes sense once every round has been completed. */
   get canCalculateEvaluation(): boolean {
+    console.log(this.noOfRounds,this.completedStages);
     return this.noOfRounds > 0 && this.completedStages === this.noOfRounds;
   }
 
@@ -127,7 +128,7 @@ export class InterviewPerformanceComponent implements OnInit {
         // Drives which round tabs are unlocked, and whether the evaluation summary
         // can be calculated yet (only once every round is completed).
         this.completedStages = d.completedStages ?? 0;
-        this.noOfRounds = d.noOfRounds ?? 0;
+        this.noOfRounds = d.noOfStages ?? 0;
 
         // The stage/round ids used to call the interview-feedback API come from
         // applicant-details itself rather than being hardcoded.
@@ -145,7 +146,7 @@ export class InterviewPerformanceComponent implements OnInit {
 
           phone: d.phNo,
 
-          location: '--',
+          location: d?.location,
 
           jobTitle: d.jobTitle,
 
@@ -457,14 +458,13 @@ export class InterviewPerformanceComponent implements OnInit {
   }
 
   /** Handles the bottom-right Accept / Hold / Reject decision buttons. */
-  async updateApplicantStatus(status: 'accepted' | 'hold' | 'rejected'): Promise<void> {
+  async updateApplicantStatus(status: 'Hired' | 'hold' | 'rejected'): Promise<void> {
     if (this.updatingStatus || !this.applicationId) {
       return;
     }
 
     this.updatingStatus = true;
     this.error = null;
-
     const payload = {
       applicantId: this.applicationId,
       status,
@@ -499,7 +499,7 @@ export class InterviewPerformanceComponent implements OnInit {
       }
 
       this.evaluationData = this.mapEvaluationSummary(res.data);
-
+      this.averageAiScore=res?.data?.average_ai_score || res?.data?.ai_score || 0;
       if (this.candidate) {
         // Candidate card's "AI Score" bar renders this as a 0-100 percentage
         // (see [style.width.%]="candidate.aiScore" in the template), and
@@ -554,10 +554,10 @@ export class InterviewPerformanceComponent implements OnInit {
     }
   }
   private mapEvaluationSummary(data: any): any {
-
+    // this.averageAiScore=data?.data.average_ai_score || data?.ai_score;
     return {
 
-      averageAiScore: data.average_ai_score,
+      averageAiScore: data.average_ai_score || data?.ai_score,
 
       totalRoundsCompleted: data.total_rounds_completed,
 
@@ -635,7 +635,7 @@ export class InterviewPerformanceComponent implements OnInit {
         this.formatRecommendation(data.consolidated_evaluation?.ai_recommendation?.status),
 
       aiRecommendationScore:
-        data.consolidated_evaluation?.ai_recommendation?.score ?? 0
+        data.consolidated_evaluation?.ai_recommendation?.score ?? data?.ai_score ??0
 
     };
 

@@ -1,86 +1,98 @@
 .stage-bar {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
+  align-items: flex-start; // don't stretch cards to match a taller sibling
   padding: 1rem 0;
 }
 
 .stage-card {
   flex: 1;
-  min-width: 160px;
+  min-width: 220px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 14px;
+  padding: 16px 20px;
   background: #ffffff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 
   &:hover { border-color: #cbd5e1; }
 
   &.active {
-    border: 2px solid #286db7;
-    background: #edf7fe;
-
-    .stage-icon { color: #286db7 }
+    border: 2px solid #54aef2; // matches the black active ring in the mock
+    box-shadow: none;
   }
 }
 
-.stage-icon {
-  font-size: 22px;
-  color: #94a3b8;
+.stage-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  color: #ffffff;
+
+  i { font-size: 18px; }
+
+  &.badge-purple { background: #7c3aed; }
+  &.badge-blue   { background: #2563eb; }
+  &.badge-teal   { background: #0d9488; }
+  &.badge-amber  { background: #f59e0b; }
+  &.badge-green  { background: #16a34a; }
+  &.badge-red    { background: #ef4444; }
+  &.badge-pink   { background: #ec4899; }
+  &.badge-indigo { background: #6366f1; }
+  &.badge-cyan   { background: #06b6d4; }
+  &.badge-orange { background: #f97316; }
 }
 
 .stage-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
 .stage-name {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: #1e293b;
+  color: #64748b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.stage-count {
-  font-size: 12px;
-  font-weight: 500;
-
-  &.count-purple { color: #534AB7; }
-  &.count-blue   { color: #185FA5; }
-  &.count-teal   { color: #0F6E56; }
-  &.count-amber  { color: #854F0B; }
+.stage-count-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
+.stage-count {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
 
+.stage-breakdown {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+  white-space: nowrap;
+}
 
-.stage-icon-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.stage-caption {
+  font-size: 12px;
+  color: #94a3b8;
+}
 
-  i { font-size: 20px; }
-
-  &.badge-purple { background: #F1ECFE; color: #7C3AED; }
-  &.badge-blue   { background: #EAF2FF; color: #3399FF; }
-  &.badge-teal   { background: #E6FBF7; color: #14B8A6; }
-  &.badge-amber  { background: #FFF6E5; color: #F59E0B; }
-  &.badge-green  { background: #E8F8EE; color: #22C55E; }
-  &.badge-red    { background: #FDEAEA; color: #EF4444; }
-  &.badge-pink   { background: #FDEAF3; color: #EC4899; }
-  &.badge-indigo { background: #EBEAFE; color: #6366F1; }
-  &.badge-cyan   { background: #E5F9FC; color: #06B6D4; }
-  &.badge-orange { background: #FFF0E5; color: #F97316; }
+@media (max-width: 700px) {
+  .stage-card { min-width: 100%; }
 }

@@ -1,0 +1,41 @@
+.donut-chart-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  color: #1a1f2b;
+}
+
+.legend-pct {
+  color: #9aa1b1;
+  font-weight: 500;
+}
+
+.legend-amount {
+  font-weight: 600;
+  color: #1a1f2b;
+  margin-left: 2px;
+}

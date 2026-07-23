@@ -107,6 +107,60 @@
         </div>
     </section>
 
+    <!-- SECTION 2b: Already rescheduled — blocks a second reschedule -->
+    <section class="card already-rescheduled-card" *ngIf="showAlreadyRescheduledBanner">
+        <div class="warning-banner">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7.5" stroke="#b45309" stroke-width="1.4" />
+                <path d="M9 5.5v4.5M9 12v.5" stroke="#b45309" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            <span>This interview has already been rescheduled once. Rescheduling it again isn't allowed.</span>
+        </div>
+
+        <div class="schedule-display-grid" *ngIf="rescheduledInfo">
+            <div class="schedule-display-item">
+                <span class="sd-label">Rescheduled Date</span>
+                <div class="sd-value-row">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <rect x="1" y="2.5" width="13" height="11" rx="2" stroke="#6b7280" stroke-width="1.2" />
+                        <path d="M1 6h13" stroke="#6b7280" stroke-width="1.2" />
+                        <path d="M4.5 1v3M10.5 1v3" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round" />
+                    </svg>
+                    <span>{{ rescheduledInfo.interviewDate | date:'MMM dd, yyyy' }}</span>
+                </div>
+            </div>
+            <div class="schedule-display-item">
+                <span class="sd-label">Start Time</span>
+                <div class="sd-value-row">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <circle cx="7.5" cy="7.5" r="6" stroke="#6b7280" stroke-width="1.2" />
+                        <path d="M7.5 4.5v3l2 2" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round" />
+                    </svg>
+                    <span>{{ rescheduledInfo.startTime }}</span>
+                </div>
+            </div>
+            <div class="schedule-display-item">
+                <span class="sd-label">End Time</span>
+                <div class="sd-value-row">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <circle cx="7.5" cy="7.5" r="6" stroke="#6b7280" stroke-width="1.2" />
+                        <path d="M7.5 4.5v3l2 2" stroke="#6b7280" stroke-width="1.2" stroke-linecap="round" />
+                    </svg>
+                    <span>{{ rescheduledInfo.endTime }}</span>
+                </div>
+            </div>
+            <div class="schedule-display-item">
+                <span class="sd-label">Interview Type</span>
+                <div class="sd-value-row">
+                    <span class="type-badge" [class.online]="rescheduledInfo.interviewType === 'Online'"
+                        [class.offline]="rescheduledInfo.interviewType === 'Offline'">
+                        {{ rescheduledInfo.interviewType }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- SECTION 3/2: Schedule Details Form -->
     <section class="card">
         <div class="section-header">
@@ -114,7 +168,7 @@
             <h2 class="section-title">{{ isReschedule ? 'New Schedule Details' : 'Schedule Details' }}</h2>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" [class.read-only]="alreadyRescheduled" novalidate>
 
             <!-- Row 1: Date + Times -->
             <div class="form-row three-col">
@@ -136,7 +190,8 @@
                     <div class="time-select-wrap" (click)="$event.stopPropagation()">
                         <button type="button" id="startTime" class="time-select-trigger"
                             [class.error]="isInvalid('startTime')" [class.open]="activeTimeField === 'start'"
-                            [class.placeholder]="!startTimeLabel" (click)="toggleTimeDropdown('start')">
+                            [class.placeholder]="!startTimeLabel" [disabled]="alreadyRescheduled"
+                            (click)="toggleTimeDropdown('start')">
                             <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <circle cx="8" cy="8" r="6.5" stroke="#9ca3af" stroke-width="1.3" />
                                 <path d="M8 5v3l2 2" stroke="#9ca3af" stroke-width="1.3" stroke-linecap="round" />
@@ -163,7 +218,8 @@
                     <div class="time-select-wrap" (click)="$event.stopPropagation()">
                         <button type="button" id="endTime" class="time-select-trigger"
                             [class.error]="isInvalid('endTime')" [class.open]="activeTimeField === 'end'"
-                            [class.placeholder]="!endTimeLabel" (click)="toggleTimeDropdown('end')">
+                            [class.placeholder]="!endTimeLabel" [disabled]="alreadyRescheduled"
+                            (click)="toggleTimeDropdown('end')">
                             <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <circle cx="8" cy="8" r="6.5" stroke="#9ca3af" stroke-width="1.3" />
                                 <path d="M8 5v3l2 2" stroke="#9ca3af" stroke-width="1.3" stroke-linecap="round" />
@@ -196,7 +252,7 @@
                         <!-- Online -->
                         <label class="radio-card"
                             [class.selected]="form.get('interviewType')?.value === 'Online'"
-                            [class.locked]="form.get('interviewType')?.disabled">
+                            [class.locked]="form.get('interviewType')?.disabled || alreadyRescheduled">
                             <input type="radio" formControlName="interviewType" value="Online" class="radio-input" />
                             <span class="radio-custom"><span class="radio-dot"></span></span>
                             <span class="radio-card-body">
@@ -218,7 +274,7 @@
                         <!-- Offline -->
                         <label class="radio-card"
                             [class.selected]="form.get('interviewType')?.value === 'Offline'"
-                            [class.locked]="form.get('interviewType')?.disabled">
+                            [class.locked]="form.get('interviewType')?.disabled || alreadyRescheduled">
                             <input type="radio" formControlName="interviewType" value="Offline" class="radio-input" />
                             <span class="radio-custom"><span class="radio-dot"></span></span>
                             <span class="radio-card-body">
@@ -289,21 +345,25 @@
             </div>
 
             <!-- Info note -->
-            <div class="info-banner bottom-banner">
+            <div class="info-banner bottom-banner" [class.warning]="showAlreadyRescheduledBanner">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="6.5" stroke="#6366f1" stroke-width="1.3" />
-                    <path d="M8 7v4M8 5.5v.5" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round" />
+                    <circle cx="8" cy="8" r="6.5" [attr.stroke]="showAlreadyRescheduledBanner ? '#b45309' : '#6366f1'" stroke-width="1.3" />
+                    <path d="M8 7v4M8 5.5v.5" [attr.stroke]="showAlreadyRescheduledBanner ? '#b45309' : '#6366f1'" stroke-width="1.5" stroke-linecap="round" />
                 </svg>
-                <span *ngIf="!isReschedule">Once scheduled, the candidate will receive an email invitation with the
+                <span *ngIf="showAlreadyRescheduledBanner">Rescheduling for this candidate has already been completed and can't be done again.</span>
+                <span *ngIf="!showAlreadyRescheduledBanner && !isReschedule">Once scheduled, the candidate will receive an email invitation with the
                     interview details.</span>
-                <span *ngIf="isReschedule">An updated email invitation will be sent to the candidate with the new
+                <span *ngIf="!showAlreadyRescheduledBanner && isReschedule">An updated email invitation will be sent to the candidate with the new
                     interview details.</span>
             </div>
 
             <!-- Actions -->
             <div class="form-actions">
                 <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
-                <button type="submit" class="btn-submit">{{ submitLabel }}</button>
+                <button type="submit" class="btn-submit" [disabled]="alreadyRescheduled"
+                    [title]="alreadyRescheduled ? 'This interview has already been rescheduled once' : ''">
+                    {{ alreadyRescheduled ? 'Reschedule Unavailable' : submitLabel }}
+                </button>
             </div>
 
         </form>

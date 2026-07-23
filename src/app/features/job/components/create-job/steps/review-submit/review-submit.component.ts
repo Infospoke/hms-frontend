@@ -20,15 +20,16 @@ export class ReviewSubmitStepComponent implements OnInit {
   @Input() step2Form!: FormGroup;
   @Input() step3Form!: FormGroup;
   @Input() step4Form!: FormGroup;
-  @Input() step5Form!: FormGroup;
+  @Input() step5Form!: FormGroup; // agency assignment
+  @Input() step6Form!: FormGroup; // interview plan
 
   @Output() goToStep = new EventEmitter<number>();
 
-  open = { jobDetails: true, aiJd: true, sourcing: true, recruiter: true, interviewPlan: true };
+  open = { jobDetails: true, aiJd: true, sourcing: true, recruiter: true, agency: true, interviewPlan: true };
 
   get allCollapsed(): boolean {
     return !this.open.jobDetails && !this.open.aiJd && !this.open.sourcing
-      && !this.open.recruiter && !this.open.interviewPlan;
+      && !this.open.recruiter && !this.open.agency && !this.open.interviewPlan;
   }
 
   toggleAll(): void {
@@ -37,16 +38,18 @@ export class ReviewSubmitStepComponent implements OnInit {
     this.open.aiJd = !collapse;
     this.open.sourcing = !collapse;
     this.open.recruiter = !collapse;
+    this.open.agency = !collapse;
     this.open.interviewPlan = !collapse;
   }
 
   reviewChannels: ReviewChannel[] = [];
   reviewRecruiters: any[] = [];
+  reviewAgencies: any[] = [];
 
   ngOnInit(): void {
-    console.log(this.step1Form, this.s1)
     this.buildChannels();
     this.buildRecruiters();
+    this.buildAgencies();
   }
 
   private buildChannels(): void {
@@ -75,6 +78,14 @@ export class ReviewSubmitStepComponent implements OnInit {
     }));
   }
 
+  private buildAgencies(): void {
+    this.reviewAgencies = (this.step5Form?.get('selectedAgencyDetails')?.value || []).map((a: any) => ({
+      ...a,
+      initials: this.getInitials(a.agencyName),
+      avatarColor: this.getAvatarColor(a.agencyName),
+    }));
+  }
+
   get enabledChannels(): ReviewChannel[] { return this.reviewChannels.filter(c => c.enabled); }
   get paidCount(): number { return this.enabledChannels.filter(c => c.cost === 'Paid').length; }
   get freeCount(): number { return this.enabledChannels.filter(c => c.cost === 'Free').length; }
@@ -89,9 +100,7 @@ export class ReviewSubmitStepComponent implements OnInit {
   readonly today = new Date();
   get s1(): any { return this.step1Form?.getRawValue() || {}; }
   get s2(): any {
-    console.log(this.step2Form?.getRawValue()); return this.step2Form?.getRawValue()?.
-      jobDescription
-      || null;
+    return this.step2Form?.getRawValue()?.jobDescription || null;
   }
 
   formatList(arr: string[]): string {
@@ -116,6 +125,6 @@ export class ReviewSubmitStepComponent implements OnInit {
   }
 
   get selectedPlanDetail(): any {
-    return this.step5Form?.get('selectedPlanDetail')?.value || null;
+    return this.step6Form?.get('selectedPlanDetail')?.value || null;
   }
 }

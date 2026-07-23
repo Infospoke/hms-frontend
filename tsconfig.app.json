@@ -9,7 +9,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "src/app/features/interview/routes/interview-routes.js"  ],
+, "src/app/features/interview/routes/interview-routes.js", "src/app/shared/constants/approval.stage.modal.ts"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

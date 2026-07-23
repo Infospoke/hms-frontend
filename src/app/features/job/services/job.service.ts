@@ -90,7 +90,8 @@ export class JobService {
   }
   async addApplicant(formData: FormData) {
     return await firstValueFrom(
-      this.api.websitePost(API.JOBS.ADD_APPLICANT, formData)
+      // this.api.websitePost(API.JOBS.ADD_APPLICANT, formData)
+      this.api.hrmspost(API.JOBS.ADD_APPLICANT,formData)
     );
   }
   async getjobsByCountry(country: any) {
@@ -251,4 +252,11 @@ export class JobService {
     return await firstValueFrom(this.api.hrmsput(API.JOBS.UPDATE_JOB_TO_CLOSE,payload))
   }
 
+  async agencyList(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmspost(API.JOBS.AGENCY_LIST,payload))
+  }
+
+  async getAgencyCategories():Promise<any>{
+    return await firstValueFrom(this.api.hrmsget(API.JOBS.AGENCY_CATEGORIES))
+  }
 }

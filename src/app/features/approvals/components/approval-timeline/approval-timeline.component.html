@@ -1,0 +1,97 @@
+<p class="panel-title">
+  <i [class]="titleIcon" class="panel-title-icon"></i>
+  {{ title }}
+</p>
+
+<!-- ── No approver data yet ─────────────────────────────────────────────── -->
+<ng-container *ngIf="!hasStages">
+  <div class="tl-empty-state">
+    <div class="tl-empty-icon-wrap">
+      <i class="fa-regular fa-comment-dots tl-empty-icon"></i>
+    </div>
+    <p class="tl-empty-title">{{ emptyStateTitle }}</p>
+    <p class="tl-empty-sub">{{ emptyStateSub }}</p>
+  </div>
+</ng-container>
+
+<!-- ── Real timeline data ───────────────────────────────────────────────── -->
+<ng-container *ngIf="hasStages">
+  <div class="timeline">
+    <div class="tl-item" *ngFor="let stage of stages; let last = last">
+
+      <div class="tl-track">
+        <div class="tl-dot" [ngStyle]="{ background: stageStatusCfg[stage.status].color }">
+          <i [class]="stageStatusCfg[stage.status].icon" style="color:#fff; font-size:8px;"></i>
+        </div>
+        <div class="tl-line" *ngIf="!last" [class.tl-line-done]="stage.status === 'APPROVED' || stage.status === 'CREATED'"></div>
+      </div>
+
+      <div class="tl-card" [class.tl-card--active]="stage.status === 'IN_PROGRESS'"
+        [class.tl-card--approved]="stage.status === 'APPROVED'"
+        [class.tl-card--rejected]="stage.status === 'REJECTED'"
+        [class.tl-card--created]="stage.status === 'CREATED'">
+
+        <div class="tl-card-hdr">
+          <span class="tl-role">{{ stage.role }}</span>
+          <span class="tl-badge" [ngStyle]="getStatusBadgeStyle(stage.status)">
+            {{ stageStatusCfg[stage.status].label }}
+          </span>
+        </div>
+
+        <!-- Actioned stages — read-only comment -->
+        <ng-container *ngIf="stage.approverName && isActioned(stage.status)">
+          <div class="tl-approver-row">
+            <div class="tl-avatar" [ngStyle]="getAvatarStyle(stage.status)">
+              {{ stage.approverInitials || getInitials(stage.approverName) }}
+            </div>
+            <div class="tl-approver-info">
+              <span class="tl-name">{{ stage.approverName }}</span>
+              <span class="tl-time" *ngIf="stage.timestamp">· {{ stage.timestamp }}</span>
+            </div>
+          </div>
+
+          <p class="tl-comments-label">
+            <i class="fa-regular fa-comment-dots"></i>
+            Comments
+          </p>
+          <div class="tl-comment-text" *ngIf="stage.comments; else noComment">
+            {{ sanitizeComment(stage.comments) }}
+          </div>
+          <ng-template #noComment>
+            <div class="tl-comment-empty">No comments provided</div>
+          </ng-template>
+        </ng-container>
+
+        <!-- IN_PROGRESS stage — nudge only in action mode -->
+        <ng-container *ngIf="stage.status === 'IN_PROGRESS' && isActionMode">
+          <div class="tl-action-hint">
+            <i class="fa-solid fa-circle-info tl-action-hint-icon"></i>
+            <span>
+              Use the <strong>Approve</strong> or <strong>Reject</strong> buttons below to provide your comments and take the appropriate action.
+            </span>
+          </div>
+        </ng-container>
+
+        <!-- PENDING — locked, or blocked by a prior rejection -->
+        <ng-container *ngIf="stage.status === 'PENDING'">
+          <div class="tl-pending-state" [class.tl-pending-state--prev-rejected]="stage.prevRejected">
+            <i class="fa-solid tl-pending-lock-icon"
+               [class.fa-ban]="stage.prevRejected"
+               [class.fa-lock]="!stage.prevRejected"></i>
+            <div class="tl-pending-text">
+              <span class="tl-pending-title">
+                {{ stage.prevRejected ? 'Previous step was rejected' : 'Waiting for previous approval' }}
+              </span>
+              <span class="tl-pending-sub">
+                {{ stage.prevRejected
+                  ? 'This stage will not proceed as a prior step in the chain was rejected.'
+                  : 'This stage unlocks once the previous approver acts.' }}
+              </span>
+            </div>
+          </div>
+        </ng-container>
+
+      </div><!-- /tl-card -->
+    </div><!-- /tl-item -->
+  </div><!-- /timeline -->
+</ng-container>

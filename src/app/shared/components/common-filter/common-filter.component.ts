@@ -29,7 +29,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
   @Output() filterChange = new EventEmitter<any>();
 
   @Output() tabChange = new EventEmitter<any>();
-  @Input() tabs: { key: string; label: string; count: number }[] = [];
+  @Input() tabs: { key: string; label: string; count: number,show?:boolean }[] = [];
   @Input() activeTab: string = ''
   searchTerm: string = '';
   selectedFilters: { [key: string]: string } = {};

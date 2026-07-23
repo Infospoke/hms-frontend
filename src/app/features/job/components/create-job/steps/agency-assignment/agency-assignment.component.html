@@ -1,0 +1,115 @@
+<div [ngClass]="{'aa-card':!showBackButton}">
+
+  <!-- ── Card header ──────────────────────────────────────────────────────── -->
+  <div [ngClass]="{ 'aa-card-header': !showBackButton }">
+    <div class="heading-info sr-header">
+      <app-heading
+        heading="Agency Assignment"
+        subHeading="Assign one or more agencies to work on this job."
+        [showInfo]="showInfo"
+        [infoTooltip]="infoTooltip"
+        [showBackButton]="showBackButton"
+        [buttonText]="buttonText"
+        [backButtonUrl]="buttonUrl"/>
+      <button class="btn-new" *ngIf="showBackButton"
+        [disabled]="assignedCount === 0 || isAssigning"
+        (click)="onAssignAgencies()">
+        <i class="fa-solid fa-spinner fa-spin" *ngIf="isAssigning"></i>
+        {{ isAssigning ? 'Assigning…' : 'Assign Agencies' }}
+      </button>
+    </div>
+    <span class="aa-assigned-badge" *ngIf="assignedCount > 0">
+      <i class="fa-solid fa-building"></i>
+      {{ assignedCount }} assigned
+    </span>
+  </div>
+
+  <!-- ── Filters ──────────────────────────────────────────────────────────── -->
+  <div class="aa-filters">
+    <app-common-filter
+      searchPlaceholder="Search by agency name or email"
+      [dropdowns]="filterDropdowns"
+      (filterChange)="onFilterChange($event)">
+    </app-common-filter>
+  </div>
+
+  <!-- ── Error banner ─────────────────────────────────────────────────────── -->
+  <div class="aa-validation-banner" *ngIf="loadError">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    {{ loadError }}
+  </div>
+
+  <!-- ── Table ────────────────────────────────────────────────────────────── -->
+  <app-reusable-table
+    [columns]="columns"
+    [data]="filteredAgencies"
+    [emptyMessage]="isLoading ? 'Loading agencies…' : 'No agencies match your search.'"
+    [cellTemplate]="agencyCellTpl"
+    [headerTemplate]="agencyHeaderTpl"
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="totalItems"
+    [showPagination]="true"
+    (pageChange)="onPageChange($event)">
+  </app-reusable-table>
+
+</div>
+
+<!-- ── Custom header template ────────────────────────────────────────────── -->
+<ng-template #agencyHeaderTpl let-col>
+  <ng-container *ngIf="col.key === 'select'">
+    <label class="aa-checkbox" (click)="$event.stopPropagation()">
+      <input
+        type="checkbox"
+        [checked]="allSelected"
+        [indeterminate]="someSelected"
+        (change)="toggleAll($any($event.target).checked)"
+      />
+      <span class="aa-checkbox__box"
+        [class.aa-checkbox__box--indeterminate]="someSelected && !allSelected">
+      </span>
+    </label>
+  </ng-container>
+</ng-template>
+
+<!-- ── Custom cell template ──────────────────────────────────────────────── -->
+<ng-template #agencyCellTpl let-ctx>
+
+  <!-- Checkbox column -->
+  <ng-container *ngIf="ctx.col.key === 'select'">
+    <label class="aa-checkbox" (click)="$event.stopPropagation()">
+      <input
+        type="checkbox"
+        [checked]="ctx.row.assigned"
+        (change)="toggleRow(ctx.row)"
+      />
+      <span class="aa-checkbox__box"></span>
+    </label>
+  </ng-container>
+
+  <!-- Agency name + logo -->
+  <ng-container *ngIf="ctx.col.key === 'name'">
+    <div class="aa-agency-cell">
+      <span class="aa-avatar" [style.background]="ctx.row.avatarColor">
+        {{ ctx.row.initials }}
+      </span>
+      <span class="aa-agency-name">{{ ctx.row.name }}</span>
+    </div>
+  </ng-container>
+
+  <!-- Action button -->
+  <ng-container *ngIf="ctx.col.key === 'action'">
+    <button
+      class="aa-assign-btn aa-assign-btn--nowrap"
+      [class.aa-assign-btn--assigned]="ctx.row.assigned"
+      (click)="toggleAssign(ctx.row); $event.stopPropagation()">
+      <ng-container *ngIf="ctx.row.assigned">
+        <i class="fa-solid fa-building-circle-xmark"></i> Remove
+      </ng-container>
+      <ng-container *ngIf="!ctx.row.assigned">
+        <i class="fa-solid fa-building-circle-check"></i> Assign
+      </ng-container>
+    </button>
+  </ng-container>
+
+</ng-template>

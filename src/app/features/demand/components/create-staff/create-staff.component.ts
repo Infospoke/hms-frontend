@@ -61,6 +61,26 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
   return selected >= today ? null : { pastDate: true };
 }
 
+// Catches empty-string / whitespace-only input (e.g. user types only spaces),
+// which Validators.required alone does NOT flag since a string of spaces
+// has length > 0.
+function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (value === null || value === undefined || value === '') return null;
+  const isOnlyWhitespace = typeof value === 'string' && value.trim().length === 0;
+  return isOnlyWhitespace ? { whitespace: true } : null;
+}
+
+// Allows letters, spaces, and the punctuation that legitimately shows up in
+// place names (hyphen, apostrophe, period, comma) — blocks digits and other
+// symbols, e.g. "Hyderabad2" or "12345" would fail.
+const LETTERS_ONLY_PATTERN = /^[A-Za-z\s.,'-]+$/;
+function lettersOnlyValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (value === null || value === undefined || value === '') return null;
+  return LETTERS_ONLY_PATTERN.test(value) ? null : { lettersOnly: true };
+}
+
 
 @Component({
   selector: 'app-create-staff',
@@ -216,7 +236,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       dept: ['', Validators.required],
       bu: ['', Validators.required],
       manager: [[], [Validators.required, minItemsValidator(1)]],
-      location: ['', Validators.required],
+      location: ['', [Validators.required, noWhitespaceValidator, lettersOnlyValidator]],
       country: ['', Validators.required],
       workMode: ['', Validators.required],
       empType: ['', Validators.required],
@@ -1080,6 +1100,26 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     if (next >= 1 && next <= 999) this.step0Form.patchValue({ openings: next });
   }
 
+  blockNonLetters(form: FormGroup, field: string, event: any): void {
+    const raw: string = event?.target?.value ?? '';
+    const cleaned = raw.replace(/[^A-Za-z\s.,'-]/g, '');
+    if (cleaned !== raw) {
+      form.get(field)?.setValue(cleaned);
+      // keep the caret at the end; simplest safe behavior for this field
+      event.target.value = cleaned;
+    }
+  }
+
+  trimField(form: FormGroup, field: string): void {
+    const ctrl = form.get(field);
+    if (!ctrl || typeof ctrl.value !== 'string') return;
+    const trimmed = ctrl.value.trim();
+    if (trimmed !== ctrl.value) {
+      ctrl.setValue(trimmed);
+    }
+    ctrl.markAsTouched();
+  }
+
   hasError(form: FormGroup, field: string): boolean {
     const ctrl = form.get(field);
     return !!(ctrl && ctrl.invalid && (ctrl.dirty || ctrl.touched));
@@ -1095,6 +1135,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     if (ctrl.errors['max']) return `Maximum value is ${ctrl.errors['max'].max}`;
     if (ctrl.errors['pastDate']) return 'Date must be today or in the future';
     if (ctrl.errors['numericOnly']) return `${name} must contain numbers only`;
+    if (ctrl.errors['whitespace']) return `${name.replace(/([A-Z])/g, ' $1')} cannot be blank spaces`;
+    if (ctrl.errors['lettersOnly']) return `${name.replace(/([A-Z])/g, ' $1')} can only contain letters`;
     return 'Invalid value';
   }
 

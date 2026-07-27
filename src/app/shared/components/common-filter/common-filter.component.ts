@@ -195,7 +195,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
     const dd = this.dateDropdown;
     if (dd) {
 
-      this.selectedFilters[dd.key] = dd.options[2]?.value ?? '';
+      this.selectedFilters[dd.key] = dd.options[0]?.value ?? '';
     }
     this.emitChange();
     this.cdr.markForCheck();

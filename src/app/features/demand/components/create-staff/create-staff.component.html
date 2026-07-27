@@ -35,7 +35,7 @@
                     <input type="text" formControlName="jobTitle" placeholder="e.g. Senior Backend Engineer"
                         [class.err]="hasError(step0Form, 'jobTitle')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'jobTitle')">
-                        {{ getError(step0Form, 'jobTitle','jobTitle') }}
+                        {{ getError(step0Form, 'jobTitle','JobTitle') }}
                     </span>
                 </div>
 
@@ -106,7 +106,9 @@
                 <div class="field">
                     <label class="lbl">Location <span class="astrick">*</span></label>
                     <input type="text" formControlName="location" placeholder="e.g. Hyderabad"
-                        [class.err]="hasError(step0Form, 'location')" />
+                        [class.err]="hasError(step0Form, 'location')"
+                        (input)="blockNonLetters(step0Form, 'location', $event)"
+                        (blur)="trimField(step0Form, 'location')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
                         {{ getError(step0Form, 'location','Location') }}
                     </span>

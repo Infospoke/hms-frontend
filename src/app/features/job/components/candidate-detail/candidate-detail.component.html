@@ -328,22 +328,28 @@
       <div class="interview-data" *ngIf="candidate?.status!=='COMPLETED'">
         <p class="sc-text">Interview has not been completed for this candidate. Detailed analysis will be available
           once the interview is completed.</p>
-        </div>
+      </div>
 
     </ng-container>
+    <!-- *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'" -->
+    <div class="action-grid">
+      <!-- *ngIf="showMoveToInterview(candidate.status, candidate.currentStage)" -->
+      <button class="action-btn reupload-btn" (click)="onAction('interview')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <!-- Upload Arrow -->
+          <path d="M12 16V4" />
+          <path d="M8 8l4-4 4 4" />
 
-    <!-- ── Action buttons — only for APPLIED or SCREENED ── -->
-    <!-- <div class="action-grid"
-      *ngIf="candidate.status === 'APPLIED' || candidate.status === 'SCREENED' || candidate.status==='COMPLETED'">
-      <button class="action-btn primary" (click)="onAction('interview')"
-        *ngIf="showMoveToInterview(candidate.status, candidate.currentStage)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" />
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          <!-- File/Base -->
+          <path d="M5 20h14" />
+          <path d="M4 17v2a1 1 0 0 0 1 1" />
+          <path d="M20 17v2a1 1 0 0 1-1 1" />
         </svg>
-        Move to Interview
+
+        <span>Request to Reupload</span>
       </button>
-      <button class="action-btn success" (click)="openActionModal($event, 'hire')"
+      <!-- <button class="action-btn success" (click)="openActionModal($event, 'hire')"
         *ngIf="showReject(candidate.status, candidate.currentStage)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -366,8 +372,8 @@
           <path d="m15 9-6 6M9 9l6 6" />
         </svg>
         Reject Candidate
-      </button>
-    </div> -->
+      </button> -->
+    </div>
 
   </div>
 </div>

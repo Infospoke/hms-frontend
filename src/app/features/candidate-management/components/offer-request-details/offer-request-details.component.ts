@@ -32,6 +32,8 @@ interface OfferTerms {
   noticePeriod: string;
   probationPeriod: string;
   template: string;
+  /** ISO date string (yyyy-MM-dd) — must be a future date, never today or in the past. */
+  joiningDate: string;
 }
 
 interface MarketMarker {
@@ -115,7 +117,13 @@ export class OfferRequestDetailsComponent implements OnInit {
     noticePeriod: '30 days',
     probationPeriod: '3 months',
     template: '',
+    joiningDate: '',
   };
+
+  // Earliest selectable joining date: tomorrow. Bound to the date input's
+  // [min] attribute so today and every past date are disabled in the picker
+  // (and flagged invalid if typed in manually).
+  minJoiningDate = this.computeMinJoiningDate();
 
   marketComparison: MarketComparison = {
     percentile: 60,
@@ -215,6 +223,8 @@ export class OfferRequestDetailsComponent implements OnInit {
       noticePeriod: this.matchOption(this.noticePeriodOptions, data.noticePeriod) ?? this.offerTerms.noticePeriod,
       probationPeriod: this.matchOption(this.probationPeriodOptions, data.probationPeriod) ?? this.offerTerms.probationPeriod,
       template: this.offerTerms.template,
+      // TODO: no joining-date field in this API yet — keep whatever the user has selected in the form.
+      joiningDate: this.offerTerms.joiningDate,
     };
 
     this.marketComparison = this.computeMarketComparison(
@@ -340,6 +350,16 @@ export class OfferRequestDetailsComponent implements OnInit {
   }
 
 
+  /** Returns tomorrow's date as "yyyy-MM-dd" — the smallest value the joining-date input will accept. */
+  private computeMinJoiningDate(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const day = String(tomorrow.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   private matchOption(options: string[], apiValue: string | undefined | null): string | undefined {
     if (!apiValue) return undefined;
     return options.find((opt) => opt.toLowerCase() === apiValue.trim().toLowerCase());
@@ -421,6 +441,7 @@ export class OfferRequestDetailsComponent implements OnInit {
       noticePeriod: this.offerTerms.noticePeriod,
       probationPeriod: this.offerTerms.probationPeriod,
       offerLetterTemplateId: Number(this.offerTerms.template),
+      joiningDate: this.offerTerms.joiningDate,
       compensation: this.buildCompensationSummary(),
       submitFinancialApproval: true,
     };
@@ -431,7 +452,7 @@ export class OfferRequestDetailsComponent implements OnInit {
         this.notificationService.success(res?.message);
         this.onBack()
       } else {
-        this.notificationService.error(res?.message);
+        this.notificationService.error(res?.erros?.[0] || res?.message);
       }
     } catch (err) {
       console.error('Error submitting offer request', err);

@@ -14,7 +14,7 @@ import { QuillModule } from 'ngx-quill';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { AddSkillComponent } from '../../../../shared/components/add-skill/add-skill.component';
-import { forkJoin, of, switchMap } from 'rxjs';
+import { forkJoin, of, from, switchMap, debounceTime, distinctUntilChanged, catchError } from 'rxjs';
 import { StaffingServiceService } from '../../services/staffing-service.service';
 import { UserService } from '../../../settings/users/servics/user-service';
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -155,6 +155,11 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
   showDropdown = false;
   managersList: any[] = [];
+
+  // Job Title live-search
+  showJobTitleDropdown = false;
+  jobTitleSuggestions: any[] = [];
+  jobTitleLoading = false;
   @ViewChild('managerInput') managerInput!: ElementRef;
   selectedManagers: any[] = [];
   filteredManagers: any[] = [];
@@ -205,6 +210,30 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     this.step0Form.get('bu')?.valueChanges.subscribe((value) => {
       if (!value) return;
       this.getRoles(value);
+    });
+
+    this.step0Form.get('jobTitle')?.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((value: string) => {
+        const q = (value || '').trim();
+        if (q.length < 2) {
+          this.jobTitleSuggestions = [];
+          this.jobTitleLoading = false;
+          return of(null);
+        }
+        this.jobTitleLoading = true;
+        return from(this.demandService.searchJobTitles(q)).pipe(
+          catchError(() => {
+            this.jobTitleLoading = false;
+            return of(null);
+          })
+        );
+      })
+    ).subscribe((res: any) => {
+      this.jobTitleLoading = false;
+      this.jobTitleSuggestions = res?.results ?? [];
+      this.showJobTitleDropdown = this.jobTitleSuggestions.length > 0;
     });
 
     this.captureRouteParams();
@@ -773,8 +802,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       const buss = this.bussiness.find(b => b.name == p.businessUnitName)
       this.pendingDeptPrefill = p.departmentName;
       const senior = this.seniorityIC.find(b => b.name == p.seniorityLevelName)
+      this.step0Form.get('jobTitle')?.setValue(p.jobTitle ?? '', { emitEvent: false });
       this.step0Form.patchValue({
-        jobTitle: p.jobTitle ?? '',
         bu: buss?.id ?? '',
         country:p.country??'',
         location: p.location ?? '',
@@ -1064,6 +1093,24 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     );
   }
   hideDropdown() { setTimeout(() => { this.showDropdown = false; }, 200); }
+
+  onJobTitleFocus(): void {
+    if (this.jobTitleSuggestions.length) this.showJobTitleDropdown = true;
+  }
+
+  onJobTitleBlur(): void {
+    // Delay so a click/mousedown on an option registers before the dropdown closes
+    setTimeout(() => { this.showJobTitleDropdown = false; }, 200);
+  }
+
+  selectJobTitle(item: any): void {
+    if (!item?.job_title) return;
+    // emitEvent: false avoids re-triggering the live-search pipe on selection
+    this.step0Form.get('jobTitle')?.setValue(item.job_title, { emitEvent: false });
+    this.step0Form.get('jobTitle')?.markAsTouched();
+    this.jobTitleSuggestions = [];
+    this.showJobTitleDropdown = false;
+  }
 
   selectReplaceEmployee(m: any) {
     this.replaceEmployee = m;

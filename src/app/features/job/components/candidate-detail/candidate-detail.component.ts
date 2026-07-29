@@ -141,6 +141,7 @@ export class CandidateDetailComponent implements OnChanges {
       this.scheduleVisible = true;
       return;
     }
+   
     if (this.candidate) this.action.emit({ type, candidate: this.candidate, reason: this.actionComment });
   }
 

@@ -50,7 +50,10 @@ export class LoginComponent {
   }
 
   async onSubmit() {
-    if (!this.loginForm.valid) return;
+    if (!this.loginForm.valid){ 
+      this.loginForm.markAllAsTouched();
+      return
+    };
 
     this.loading.set(true);
     const { email, password } = this.loginForm.value;

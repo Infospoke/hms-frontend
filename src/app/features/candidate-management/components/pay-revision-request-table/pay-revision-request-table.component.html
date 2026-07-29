@@ -16,7 +16,13 @@
       <span class="pr-candidate-email">{{ ctx.row.email }}</span>
     </div>
   </div>
-
+  <div class="ol-candidate" *ngIf="ctx.col.key =='offerReleasedOn'">
+    
+    <div class="cell-date">
+      <span class="cell-date-main">{{ ctx.row.offerReleasedOn }}</span>
+      <!-- <span class="cell-date-sub">{{ ctx.row.approvedOnTime}}</span> -->
+    </div>
+  </div>
   <!-- Priority badge -->
   <span class="pr-badge" [ngClass]="'pr-badge--' + ctx.row.priority.toLowerCase()" *ngIf="ctx.col.key === 'priority'">
     {{ ctx.row.priority }}

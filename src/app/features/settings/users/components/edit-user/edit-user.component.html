@@ -15,7 +15,7 @@
     </div>
 
     <hr>
-    <div class="grid">
+    <div class="grid-1">
       <div class="form-group">
         <label>Current Role</label>
         <span class="role">{{ user?.roleName }}</span>
@@ -36,7 +36,7 @@
       <div class="grid">
 
         <!-- Business Unit -->
-        <div class="field form-group">
+        <!-- <div class="field form-group">
           <label>Business Unit <span class="astrick">*</span></label>
           <nz-select formControlName="businessUnit" nzPlaceHolder="Select business unit"
             [nzOptionOverflowSize]="5" [nzDisabled]="!businessUnits.length" class="nz-field-select">
@@ -45,7 +45,7 @@
           <div class="error" *ngIf="c('businessUnit')?.touched">
             <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
           </div>
-        </div>
+        </div> -->
 
         <!-- Department -->
         <div class="field form-group">

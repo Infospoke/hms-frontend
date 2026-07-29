@@ -59,4 +59,11 @@ export class CandidateServiceComponent {
       this.api.viewOffer(API.CANDIDATE_MANANGEMENT.VIEW_OFFER_LETTER(id))
     );
   }
+
+  async getNotiateList(payload:any){
+     return await firstValueFrom(
+      this.api.hrmspost(API.CANDIDATE_MANANGEMENT.GET_NAGOTIATE_LIST,payload)
+    );
+  }
+
 }

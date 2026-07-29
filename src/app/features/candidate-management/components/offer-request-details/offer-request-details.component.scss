@@ -272,6 +272,31 @@ h1 {
       }
     }
   }
+
+  input[type='date'] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(51, 87, 232, 0.12);
+    }
+
+    &.invalid {
+      border-color: #e0453c;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(224, 69, 60, 0.12);
+      }
+    }
+  }
 }
 
 .field-error {

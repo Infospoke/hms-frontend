@@ -2,7 +2,7 @@
     <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
     <div>
         <app-heading [heading]="heading" [subHeading]="subHeading"/>
-        <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="dropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
+        <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="visibleDropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
     </div>
 
     
@@ -43,7 +43,7 @@
     <!-- ── Candidate requested / Pay revision requests: New requests tab ── -->
     <app-pay-revision-request-table *ngIf="activeStageId==='cr' && activeTabId==='new'"
             [data]="newPayRevisionRequests"
-            [totalItems]="totalNewPayRevisionRequests"
+            [totalItems]="newPayRevisionRequestsCount"
             [currentPage]="currentPage"
             [pageSize]="pageSize"
             (actionClick)="onReviewPayRevisionRequest($event)"

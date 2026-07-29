@@ -45,11 +45,11 @@ export class PayRevisionRequestTableComponent {
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', custom: true, width: '22%' },
     { key: 'jobTitle', label: 'Job title', width: '14%' },
-    { key: 'offerReleasedOn', label: 'Offer released on', sortable: true, width: '14%' },
-    { key: 'requestedPackage', label: 'Requested package', width: '16%' },
-    { key: 'currentPackage', label: 'Current package', width: '16%' },
-    { key: 'priority', label: 'Priority', custom: true, width: '9%' },
-    { key: 'actions', label: 'Actions', custom: true, width: '9%' },
+    { key: 'offerReleasedOn', label: 'Negotiation On', width: '19%', custom: true },
+    { key: 'requestedPackage', label: 'Requested package', width: '19%' },
+    { key: 'currentPackage', label: 'Offerd package', width: '16%' },
+    { key: 'priority', label: 'Priority', custom: true, width: '16%' },
+    { key: 'actions', label: 'Actions', custom: true, width: '16%' },
   ];
 
   sortableColumns: string[] = ['offerReleasedOn'];

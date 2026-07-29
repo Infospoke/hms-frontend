@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { alphabetsOnly, numericOnly, mobileValidator, notSameAsMobile } from '../../../../../shared/validations/validators';
 import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { ApprovalService } from '../../../../approvals/services/approval-service';
 
 
 @Component({
@@ -29,7 +30,7 @@ export class InviteUserComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
-
+  private approvalService=inject(ApprovalService);
   isloading = signal<boolean>(false);
   userData: any = null;
   isView: boolean = false;
@@ -58,7 +59,7 @@ export class InviteUserComponent implements OnInit {
       mobile: ['', [Validators.required, mobileValidator(), Validators.minLength(10), Validators.maxLength(15)]],
       altMobile: ['', [mobileValidator(), Validators.minLength(10), Validators.maxLength(15), notSameAsMobile('mobile')]],
       employmentType: ['', Validators.required],
-      businessUnit: ['', Validators.required],
+      // businessUnit: ['', Validators.required],
       department: ['', Validators.required],
       role: ['', Validators.required],
     });
@@ -71,13 +72,13 @@ export class InviteUserComponent implements OnInit {
     }
 
     if (!this.isView) {
-      this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
-        this.departments = [];
-        this.roles = [];
-        this.form.get('department')?.setValue('');
-        this.form.get('role')?.setValue('');
-        if (unit) this.getDeparmentData(unit);
-      });
+      // this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
+      //   this.departments = [];
+      //   this.roles = [];
+      //   this.form.get('department')?.setValue('');
+      //   this.form.get('role')?.setValue('');
+      //   if (unit) this.getDeparmentData(unit);
+      // });
 
       this.form.get('department')?.valueChanges.subscribe(dept => {
         this.roles = [];
@@ -98,19 +99,19 @@ export class InviteUserComponent implements OnInit {
     forkJoin({
       userTypes: this.userService.getUsersTypes(),
       employmentTypes: this.userService.getEmployeeTypes(),
-      bussinessUnit: this.userService.getBussinessUnits()
+      bussinessUnit: this.approvalService.departments()
     }).subscribe({
       next: (res: any) => {
         this.userTypes = res.userTypes?.data ?? [];
         this.employmentTypes = res.employmentTypes?.data ?? [];
-        this.businessUnits = res.bussinessUnit?.data ?? [];
+        this.departments = res.bussinessUnit?.data ?? [];
       },
       error: (error: any) => console.log(error)
     });
   }
 
-  getDeparmentData(id: any): Promise<void> {
-    return this.userService.getDepartments(id)
+  getDeparmentData(): Promise<void> {
+    return this.approvalService.departments()
       .then((res: any) => {
         this.departments = res?.data ?? [];
       })
@@ -154,8 +155,8 @@ export class InviteUserComponent implements OnInit {
       }, { emitEvent: false });
 
 
-      await this.getDeparmentData(user?.businessUnitId);
-
+      // await this.getDeparmentData(user?.businessUnitId);
+    
       this.form.patchValue({
         department: Number(user?.departmentId),
       }, { emitEvent: false });

@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  /* Dashboard pages have very different content heights (e.g. the long
+     "Open roles" grid vs. a short "Offer" page), so the vertical scrollbar
+     was appearing/disappearing as you switched tabs. That changes the
+     viewport's available width, which shifts the whole horizontally
+     centered navbar (`mx-auto max-w-7xl`) sideways by the scrollbar's width
+     on every navigation - the bigger "layout moving" culprit, separate from
+     the tab indicator itself. Reserving the scrollbar gutter permanently
+     keeps the available width constant no matter which page is showing.
+     scrollbar-gutter is the modern fix; overflow-y is the fallback for
+     browsers that don't support it yet. */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+body {
+  @apply bg-surface text-slate-900 antialiased;
+}
+
+/* Visible keyboard focus ring for accessibility */
+:focus-visible {
+  outline: 2px solid #4f3ee0;
+  outline-offset: 2px;
+}
+
+/* Traveling progress dot on the hiring stepper track (left -> right, looping) */
+@keyframes travel-dot {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-travel-dot {
+  animation: travel-dot 3.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

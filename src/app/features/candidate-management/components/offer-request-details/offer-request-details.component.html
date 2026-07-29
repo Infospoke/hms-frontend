@@ -119,6 +119,23 @@
         </select>
         <p class="field-error" *ngIf="probationPeriodCtrl.invalid && probationPeriodCtrl.touched">Probation period is required.</p>
       </div>
+
+      <div class="field">
+        <label for="joiningDate">Joining date <span class="req">*</span></label>
+        <input
+          type="date"
+          id="joiningDate"
+          name="joiningDate"
+          required
+          [min]="minJoiningDate"
+          #joiningDateCtrl="ngModel"
+          [class.invalid]="joiningDateCtrl.invalid && joiningDateCtrl.touched"
+          [(ngModel)]="offerTerms.joiningDate"
+        />
+        <p class="field-error" *ngIf="joiningDateCtrl.invalid && joiningDateCtrl.touched">
+          Please select a future joining date (today and past dates aren't allowed).
+        </p>
+      </div>
     </div>
 
     <div class="terms-grid">

@@ -133,5 +133,9 @@ export class StaffingServiceService {
       this.api.hrmsget(API.RECRUITER_TRACKING.COUNT(id))
     );
   }
-
+  async searchJobTitles(jobTitle:string):Promise<any>{
+    return await firstValueFrom(
+      this.api.aiGet(API.SRS.SEARCH_JOB(jobTitle))
+    );
+  }
 }

@@ -133,17 +133,17 @@
       </div>
 
       <!-- Business Unit -->
-      <div class="field">
+      <!-- <div class="field">
         <label>Business Unit <span class="astrick">*</span></label>
         <nz-select formControlName="businessUnit" [nzDisabled]="isView" nzPlaceHolder="Select business unit"
           [nzOptionOverflowSize]="5" class="nz-field-select">
-          <!-- <nz-option *ngIf="businessUnits.length === 0" nzDisabled nzValue="" nzLabel="No business units available"></nz-option> -->
+         <nz-option *ngIf="businessUnits.length === 0" nzDisabled nzValue="" nzLabel="No business units available"></nz-option>
           <nz-option *ngFor="let b of businessUnits" [nzValue]="b?.id" [nzLabel]="b?.name"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('businessUnit')?.touched">
           <span *ngIf="c('businessUnit')?.hasError('required')">Business unit is required</span>
         </div>
-      </div>
+      </div> -->
 
       <!-- Department -->
       <div class="field">

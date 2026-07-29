@@ -8,6 +8,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { ProfilePipe } from '../../../../../shared/pipes/profile.pipe';
 import { ConfirmModalComponent } from '../../../../../shared/components/modal-component/confirm-modal.component';
+import { ApprovalService } from '../../../../approvals/services/approval-service';
 
 @Component({
   selector: 'app-edit-user',
@@ -26,6 +27,7 @@ export class EditUserComponent implements OnInit {
   departments: any[] = [];
   designations: any[] = [];
   private userService = inject(UserService);
+  private approvalService=inject(ApprovalService);
   form!: FormGroup;
   private fb = inject(FormBuilder);
   private modal = inject(NzModalService);
@@ -35,20 +37,20 @@ export class EditUserComponent implements OnInit {
   constructor() { }
   ngOnInit(): void {
     this.form = this.fb.group({
-      businessUnit: ['', Validators.required],
+      // businessUnit: ['', Validators.required],
       department: ['', Validators.required],
       role: ['', Validators.required],
     })
     this.getIntialData();
     
-    this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
-      if (!unit) return;
-      this.departments = [];
-      this.roles = [];
-      this.form.get('department')?.setValue('');
-      this.form.get('role')?.setValue('');
-      this.getDeparmentData(unit);
-    });
+    // this.form.get('businessUnit')?.valueChanges.subscribe(unit => {
+    //   if (!unit) return;
+    //   this.departments = [];
+    //   this.roles = [];
+    //   this.form.get('department')?.setValue('');
+    //   this.form.get('role')?.setValue('');
+    //   this.getDeparmentData(unit);
+    // });
 
     this.form.get('department')?.valueChanges.subscribe(dept => {
       if (!dept) return;
@@ -57,9 +59,9 @@ export class EditUserComponent implements OnInit {
       this.getRoleData(dept);
     });
   }
-  getDeparmentData(id: any) {
+  getDeparmentData() {
     try {
-      this.userService.getDepartments(id)
+      this.approvalService.departments()
         .then((res: any) => {
           this.departments = res?.data;
         })
@@ -109,18 +111,15 @@ export class EditUserComponent implements OnInit {
   getIntialData() {
     console.log(this.userId);
     forkJoin({
-      bussinessUnit: this.userService.getBussinessUnits(),
+      bussinessUnit: this.approvalService.departments(),
 
     }).subscribe({
       next: async (res: any) => {
-        this.businessUnits = res.bussinessUnit?.data;
+        this.departments = res.bussinessUnit?.data;
 
-        this.form.patchValue({
-          businessUnit: this.user?.businessUnitId
-        });
+       
 
-        await this.getDeparmentData(this.user?.businessUnitId);
-
+        
         this.form.patchValue({
           department: this.user?.departmentId
         });

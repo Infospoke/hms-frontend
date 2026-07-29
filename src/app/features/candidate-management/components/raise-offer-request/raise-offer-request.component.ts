@@ -34,7 +34,7 @@ import { Router } from '@angular/router';
   styleUrl: './raise-offer-request.component.scss',
 })
 export class RaiseOfferRequestComponent implements OnInit {
-  private router=inject(Router);
+  private router = inject(Router);
   stages: PipelineStage[] = [
     {
       id: 'ror',
@@ -94,32 +94,32 @@ export class RaiseOfferRequestComponent implements OnInit {
   acceptedLetters: any[] = [];
   dropDownData = candidateManagementFilter;
   activeStageId: any = 'ror';
-
+  newPayRevisionRequestsCount:any;
   currentPage: number = 1;
   pageSize: number = 10;
   totalCandidates: number = 0;
   activeFilters: any = { dateFilter: '' }
   // ── Sub-tabs, keyed by stage ──────────────────────────────────────────────
   // 'ror' and 'al' have no entry here -> tabs getter returns [] -> no tabs shown.
-  tabsByStage: Record<string, { key: string; label: string; count: number,show:boolean }[]> = {
+  tabsByStage: Record<string, { key: string; label: string; count: number, show: boolean }[]> = {
     rol: [
-      { key: 'pending', label: 'Pending approval', count: 0,show:false },
-      { key: 'ready', label: 'Ready to release', count: 0,show:false },
+      { key: 'pending', label: 'Pending approval', count: 0, show: false },
+      { key: 'ready', label: 'Ready to release', count: 0, show: false },
     ],
     cr: [
-      { key: 'new', label: 'New requests', count: 0,show:false },
-      { key: 'approval', label: 'In approval', count: 0,show:false },
+      { key: 'new', label: 'New requests', count: 0, show: false },
+      { key: 'approval', label: 'In approval', count: 0, show: false },
     ],
   };
 
   activeTabId: string = '';
 
-  get tabs(): { key: string; label: string; count: number,show:boolean }[] {
+  get tabs(): { key: string; label: string; count: number, show: boolean }[] {
     return this.tabsByStage[this.activeStageId] || [];
   }
 
   candidates: any[] = [
-   
+
   ];
 
   // ── Release offer letter: Pending approval ───────────────────────────────
@@ -129,15 +129,14 @@ export class RaiseOfferRequestComponent implements OnInit {
   // ── Release offer letter: Ready to release ───────────────────────────────
   totalReadyToRelease: number = 3;
   readyToReleaseOfferLetters: any[] = [];
-  permissionName:any='CANDIDATEMANAGEMENT:OFFERMANAGEMENT:VIEW';
+  permissionName: any = 'CANDIDATEMANAGEMENT:OFFERMANAGEMENT:VIEW';
   // ── Candidate requested / Pay revision requests: New requests ────────────
   totalNewPayRevisionRequests: number = 4;
-  newPayRevisionRequests: any[] =[];
+  newPayRevisionRequests: any[] = [];
 
-  // ── Candidate requested / Pay revision requests: In approval ─────────────
   totalPayRevisionInApproval: number = 3;
   payRevisionInApproval: any[] = [
-   
+
   ];
 
   get heading(): string {
@@ -149,10 +148,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   private interviewService = inject(InterviewServiceService)
   private approvalService = inject(ApprovalService)
   async ngOnInit() {
-    // If we were navigated back here with state (e.g. from the offer-detail
-    // page's back button passing { activeType }), restore whichever stage
-    // the user was previously on. Otherwise fall back to the default
-    // initial stage ('ror').
+
     const state = history.state ?? {};
     this.activeStageId = state.activeType ?? 'ror';
 
@@ -292,7 +288,7 @@ export class RaiseOfferRequestComponent implements OnInit {
     const res: any = await this.candidateService.getRaiseList(payloadData);
     if (res?.responsecode == '00') {
       this.candidates = this.mapResponseOfRaiseList(res?.data?.content);
-      this.totalCandidates=res?.data?.totalElements;
+      this.totalCandidates = res?.data?.totalElements;
     }
   }
   private mapResponseOfRaiseList(data: any[]): any[] {
@@ -341,7 +337,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       })),
 
       requestedOn: this.formatDate(item?.requestedOn),
-      requestedOnTime:this.formatTime(item?.requestedOn),
+      requestedOnTime: this.formatTime(item?.requestedOn),
       priority: item?.priority
     }));
   }
@@ -373,8 +369,38 @@ export class RaiseOfferRequestComponent implements OnInit {
       priority: item.priority
     }));
   }
-  getNewRevisionRequests(payload: any) {
 
+  get visibleDropDownData(): any[] {
+  if (this.activeStageId === 'cr') {
+    return this.dropDownData.filter((item: any) => item.key !== 'departments');
+  }
+  return this.dropDownData;
+}
+  async getNewRevisionRequests(payload: any) {
+    const payloadData = {
+      ...payload,
+      sortBy: 'id'
+    }
+    const res: any = await this.candidateService.getNotiateList(payloadData);
+    if (res?.responsecode == '00') {
+      this.newPayRevisionRequestsCount= res?.data?.totalElements;
+      this.newPayRevisionRequests = this.mapReadToNagotiateList(res?.data?.content);
+    }
+  }
+  mapReadToNagotiateList(data: any): any {
+    return data?.map((item: any) => ({
+      id:item?.negotiationId,
+      candidateId:item?.candidateId,
+      name: item?.candidateName,
+      email:item?.email,
+      avatarInitials: this.getAvatarInitials(item?.candidateName),
+      avatarColor:  this.getAvatarColor(item.candidateName),
+      jobTitle: item?.jobTitle,
+      offerReleasedOn: this.formatDate(item?.offerNegotiationDate),
+      requestedPackage:item?.requestedAmount,
+      currentPackage:item?.offeredAmount,
+      priority: item?.priority
+    }))
   }
   getRevisionApprovalRequests(payload: any) {
 
@@ -393,23 +419,23 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   }
 
-  
+
 
   onViewApprovalDetails(row: any) {
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`],{
-      state:{
-        mode:'view',
-        url:'/candidate-management/offer-management',
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
+      state: {
+        mode: 'view',
+        url: '/candidate-management/offer-management',
         activeType: this.activeStageId,
       }
     })
   }
 
   onViewOfferLetterDetails(row: any) {
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`],{
-      state:{
-        mode:'release',
-        url:'/candidate-management/offer-management',
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
+      state: {
+        mode: 'release',
+        url: '/candidate-management/offer-management',
         activeType: this.activeStageId,
       }
     })
@@ -522,7 +548,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       hour12: true
     });
   }
-  onReviewPayRevisionRequest(data:any){
+  onReviewPayRevisionRequest(data: any) {
 
   }
 }

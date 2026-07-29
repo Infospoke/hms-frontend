@@ -52,7 +52,7 @@ export class RolePermissionsComponent implements OnInit {
       page: this.currentPage-1,
       size: 10,
       sortBy: "roleId",
-      direction: "ASC"
+      direction: "DESC"
     }
     this.userService.getRolePermissionMatrix(obj).then((res: any) => {
       if (res?.responsecode == '00') {

@@ -46,7 +46,8 @@ export const API = {
         UPDATE_ASSIGN_USERS:`/hms/recruiter/assign-more-recruiters`,
         UPDATE_JOB_TO_CLOSE:`/hms/create-job/update-job-details-by-jobid`,
         AGENCY_LIST:`/hms/create-job/agency-list`,
-        AGENCY_CATEGORIES:`/hms/configurations/categories`
+        AGENCY_CATEGORIES:`/hms/configurations/categories`,
+         REQUEST_FOR_REUPLOAD:(id:any)=>`/hms/candidate/raise-reupload-request/${id}`
     },
     USERS: {
         CREATE: '/hms/user/create',
@@ -62,7 +63,8 @@ export const API = {
         EMP_TYPES: `/hms/configurations/employment-types`,
         USER_TYPES: `/hms/configurations/user-types`,
         JOB_BY_EXPORT: (jobId: any) => `/api/report/generate-applicants-report/${jobId}`,
-        EXPORT_BY_APPLICANT: (id: any) => `/api/report/generate-candidate-report/${id}`
+        EXPORT_BY_APPLICANT: (id: any) => `/api/report/generate-candidate-report/${id}`,
+       
     },
     ROLES: {
         ADD_ROLE: `/hms/role/add-role`,
@@ -90,7 +92,8 @@ export const API = {
         BY_SR_ID: `/hms/staffing-requisition/by-sr-id`,
         MY_SRS_COUNT:`/hms/staffing-requisition/get-all-sr-list-count`,
         REQUESTED_BY:`/hms/configurations/role-users`,
-        APPROVED_SRS:`/hms/staffing-requisition/approved-srs`
+        APPROVED_SRS:`/hms/staffing-requisition/approved-srs`,
+        SEARCH_JOB:(job:string)=>`/api/admin/job-titles/live-search?q=${job}`
     },
     SUPPLY: {
         KANBAN: `/hms/kanban/filter`,
@@ -195,6 +198,7 @@ export const API = {
         SUBMIT_RISE_OFFER_REQUEST:`/hms/offer-details/submit-raise-offer-request`,
         GENERATE_OFFER_LETTER:`/api/offer/generate-offer-letter`,
         VIEW_OFFER_LETTER:(id:any)=>`/hms/offer-details/download/offerLetter?appId=${id}&action=view`,
-        OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`
+        OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`,
+        GET_NAGOTIATE_LIST:`/hms/offer-details/negotiation-list`
     }
 };

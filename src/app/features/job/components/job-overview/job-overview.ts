@@ -168,6 +168,9 @@ export class JobOverview {
           res = await this.jobApi.viewResume('resume', event.candidate.id, 'view');
 
           break;
+        case 'reupload':
+          res=await this.jobApi.requestToReUpload(event.candidate.id);
+          break;
         case 'schedule':
           break;
         default:
@@ -186,7 +189,15 @@ export class JobOverview {
         this.isPdfVisible = true;
         return;
       }
-
+      if(event?.type==='reupload'){
+        if(res?.responsecode=='00'){
+          this.notificationService.success(res?.responsemessage || res?.message)
+        }
+        else{
+          this.notificationService.error(res?.message || res?.message || res?.erros?.[0])
+        }
+        return;
+      }
       if (res?.success) {
         this.notificationService.success(
           'Success',

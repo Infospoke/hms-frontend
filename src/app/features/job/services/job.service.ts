@@ -259,4 +259,8 @@ export class JobService {
   async getAgencyCategories():Promise<any>{
     return await firstValueFrom(this.api.hrmsget(API.JOBS.AGENCY_CATEGORIES))
   }
+
+  async requestToReUpload(applicantId:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmspost(API.JOBS.REQUEST_FOR_REUPLOAD(applicantId),{}))
+  }
 }

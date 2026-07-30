@@ -13,6 +13,7 @@ import { NotificationService } from '../../../../../core/services/notification.s
 import { Router } from '@angular/router';
 import { HeadingComponent } from '../../../../../shared/components/heading/heading.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { ApprovalService } from '../../../../approvals/services/approval-service';
 
 const SUB_DESC: Record<string, string> = {
   'My Jrs':              'Manage job requisitions',
@@ -34,6 +35,7 @@ export class CreateRoleComponent implements OnInit {
 
   private fb          = inject(FormBuilder);
   private userService = inject(UserService);
+  private approvalService=inject(ApprovalService);
   private authService = inject(AuthService);
   private notificationService=inject(NotificationService);
   private router=inject(Router);
@@ -52,20 +54,20 @@ export class CreateRoleComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.loadModules();
-    this.loadBusinessUnits();
+    this.loadDepartments();
 
-    this.form.get('businessUnit')!.valueChanges.subscribe(unitId => {
-      this.departments = [];
-      this.form.patchValue({ department: '' }, { emitEvent: false });
-      if (unitId) this.loadDepartments(unitId);
-    });
+    // this.form.get('businessUnit')!.valueChanges.subscribe(unitId => {
+    //   this.departments = [];
+    //   this.form.patchValue({ department: '' }, { emitEvent: false });
+    //   if (unitId) this.loadDepartments(unitId);
+    // });
   }
 
   // ── Form ────────────────────────────────────────────────────────────────────
 
   private buildForm(): void {
     this.form = this.fb.group({
-      businessUnit: ['', Validators.required],
+      // businessUnit: ['', Validators.required],
       department:   ['', Validators.required],
       roleName:     ['', Validators.required],
       description:  ['', Validators.required],
@@ -117,8 +119,8 @@ export class CreateRoleComponent implements OnInit {
       .catch(console.error);
   }
 
-  private loadDepartments(unitId: string): void {
-    this.userService.getDepartments(unitId)
+  private loadDepartments(): void {
+    this.approvalService.departments()
       .then((res: any) => { this.departments = res?.data ?? []; })
       .catch(console.error);
   }
@@ -141,11 +143,11 @@ export class CreateRoleComponent implements OnInit {
     if (this.form.invalid || !hasPerms || this.isSubmitting) return;
 
     this.isSubmitting = true;
-    const { businessUnit, department, roleName, description } = this.form.value;
+    const { department, roleName, description } = this.form.value;
 
     const payload = {
       roleName:       roleName.trim(),
-      businessUnitId: businessUnit,
+      // businessUnitId: businessUnit,
       departmentId:   department,
       description:    description ?? '',
       permission: {

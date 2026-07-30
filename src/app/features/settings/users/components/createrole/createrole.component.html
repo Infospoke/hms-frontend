@@ -11,7 +11,7 @@
 
       <!-- Row 1: Business Unit + Department -->
       <div class="form-row two-col">
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label class="form-label">Business Unit <span class="astrick">*</span></label>
           <nz-select formControlName="businessUnit" nzPlaceHolder="Select Business Unit"
             [nzOptionOverflowSize]="5" [class.is-invalid]="isFieldInvalid('businessUnit')" class="nz-field-select">
@@ -20,7 +20,7 @@
           <small class="err-msg" *ngIf="isFieldInvalid('businessUnit')">
             Business Unit is required.
           </small>
-        </div>
+        </div> -->
 
         <div class="form-group">
           <label class="form-label">Department <span class="astrick">*</span></label>
@@ -32,9 +32,6 @@
             Department is required.
           </small>
         </div>
-      </div>
-
-      <div class="form-row two-col">
         <div class="form-group">
           <label class="form-label">Role Name <span class="astrick">*</span></label>
           <input type="text" placeholder="Enter role name"
@@ -44,6 +41,10 @@
             Role Name is required.
           </small>
         </div>
+      </div>
+
+      <div class="form-row two-col">
+        
 
         <div class="form-group">
           <label class="form-label">Description <span class="astrick">*</span></label>

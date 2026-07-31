@@ -1,0 +1,17 @@
+<div class="main-dashboard-layout">
+    <app-heading [heading]="heading"  [subHeading]="subHeading"/>   
+    <div class="card-dd">
+         <div  *ngFor="let item of cards">
+            <app-dashboard-count-card [label]="item?.label" [value]="item?.value" [iconClass]="item?.iconClass"
+                [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" [bottomText]="item?.subLabel"/>
+        </div>
+    </div>
+
+    <div class="grid">
+        <ng-container *ngIf="table">
+            
+        </ng-container>
+        <ng-container *ngIf="pipeLine"></ng-container>
+        <ng-container *ngIf="pieChart"></ng-container>
+    </div>
+</div>

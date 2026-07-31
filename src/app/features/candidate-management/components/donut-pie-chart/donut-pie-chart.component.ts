@@ -42,28 +42,7 @@ export type DonutChartOptions = {
   plotOptions: ApexPlotOptions;
 };
 
-/**
- * Reusable donut/pie chart component.
- *
- * Usage:
- *   <app-donut-pie-chart
- *     [segments]="donutSegments"
- *     centerLabel="Total CTC"
- *     [formatValue]="formatINR"
- *   ></app-donut-pie-chart>
- *
- * Drop this component anywhere a labeled donut breakdown is needed —
- * it doesn't know anything about "compensation" specifically, it just
- * renders whatever segments it's given.
- *
- * PERFORMANCE NOTE:
- * This component is OnPush. It only rebuilds the chart when the
- * `segments` array reference actually changes. That means callers
- * MUST pass a stable array reference (build it once / on real data
- * changes) rather than a getter or an inline `.map()` in the
- * template, which creates a new array on every change-detection
- * cycle and forces a full chart rebuild + re-render on every tick.
- */
+
 @Component({
   selector: 'app-donut-pie-chart',
   standalone: true,
@@ -73,19 +52,27 @@ export type DonutChartOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DonutPieChartComponent implements OnChanges {
-  /** Data driving both the chart and the built-in legend. */
+
   @Input() segments: DonutSegment[] = [];
-  /** Small label shown under the total in the center of the donut. */
+
   @Input() centerLabel = 'Total';
-  /** Chart width/height in pixels (it's a square). */
+ 
   @Input() size = 190;
-  /** Set to false if you're rendering your own legend elsewhere. */
+
   @Input() showLegend = true;
-  /** Formatter applied to every displayed number (center, tooltip, legend). */
+
   @Input() formatValue: (n: number) => string = (n) =>
     n.toLocaleString('en-IN');
-  /** Currency symbol/prefix shown before formatted values. */
+
   @Input() currencyPrefix = '₹';
+
+  // Set to true for dashboards like "22 Total Offers" where the center
+  // should show a plain count instead of a currency-formatted amount.
+  @Input() showCount = false;
+
+  // Font sizes for the two lines in the center of the donut.
+  @Input() valueFontSize = '20px';
+  @Input() centerLabelFontSize = '9px';
 
   @ViewChild('chartRef') chartRef?: ChartComponent;
 
@@ -93,18 +80,22 @@ export class DonutPieChartComponent implements OnChanges {
   total = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Only rebuild for inputs that actually affect the chart. Combined
-    // with OnPush this means genuinely-unchanged input references never
-    // reach this method in the first place, but we still guard here in
-    // case a parent passes segments alongside unrelated input churn.
-    if (changes['segments'] || changes['centerLabel'] || changes['size']) {
+  
+    if (
+      changes['segments'] ||
+      changes['centerLabel'] ||
+      changes['size'] ||
+      changes['showCount'] ||
+      changes['valueFontSize'] ||
+      changes['centerLabelFontSize']
+    ) {
       this.buildChart();
     }
   }
 
   private buildChart(): void {
     this.total = this.segments.reduce((sum, s) => sum + s.value, 0);
-    const prefix = this.currencyPrefix;
+    const prefix = this.showCount ? '' : this.currencyPrefix;
 
     this.chartOptions = {
       series: this.segments.map((s) => s.value),
@@ -113,9 +104,7 @@ export class DonutPieChartComponent implements OnChanges {
         width: this.size,
         height: this.size,
         fontFamily: 'inherit',
-        // Keep the entry animation but make redraws (which now only
-        // happen on genuine data changes) feel snappy rather than
-        // laggy.
+        
         animations: {
           enabled: true,
           speed: 250,
@@ -141,7 +130,7 @@ export class DonutPieChartComponent implements OnChanges {
               name: { show: false },
               value: {
                 show: true,
-                fontSize: '20px',
+                fontSize: this.valueFontSize,
                 fontWeight: 700,
                 color: '#1a1f2b',
                 offsetY: -4,
@@ -151,8 +140,8 @@ export class DonutPieChartComponent implements OnChanges {
                 show: true,
                 showAlways: true,
                 label: this.centerLabel,
-                fontSize: '12px',
-                fontWeight: 500,
+                fontSize: this.centerLabelFontSize,
+                fontWeight: 400,
                 color: '#9aa1b1',
                 formatter: () => this.centerLabel,
               },

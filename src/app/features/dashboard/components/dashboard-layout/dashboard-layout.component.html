@@ -1,17 +1,23 @@
 <div class="main-dashboard-layout">
-    <app-heading [heading]="heading"  [subHeading]="subHeading"/>   
+    <app-heading [heading]="heading" [subHeading]="subHeading" />
     <div class="card-dd">
-         <div  *ngFor="let item of cards">
+        <div *ngFor="let item of cards">
             <app-dashboard-count-card [label]="item?.label" [value]="item?.value" [iconClass]="item?.iconClass"
-                [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" [bottomText]="item?.subLabel"/>
+                [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" [bottomText]="item?.subLabel" />
         </div>
     </div>
 
     <div class="grid">
         <ng-container *ngIf="table">
-            
+
         </ng-container>
         <ng-container *ngIf="pipeLine"></ng-container>
-        <ng-container *ngIf="pieChart"></ng-container>
+        <div class="chart-card" *ngFor="let chart of pieCharts">
+            <div class="chart-card-header" *ngIf="chart.title">
+                <h3>{{ chart.title }}</h3>
+            </div>
+            <app-donut-pie-chart [segments]="chart.segments" [centerLabel]="chart.centerLabel" [size]="chart.size"
+                [showCount]="true" />
+        </div>
     </div>
 </div>

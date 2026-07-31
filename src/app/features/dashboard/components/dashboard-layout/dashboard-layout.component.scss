@@ -1,0 +1,34 @@
+.main-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-dd {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.chart-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  &-header {
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+}

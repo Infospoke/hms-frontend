@@ -13,7 +13,8 @@ import { CanDirective } from "../../../../shared/directives/can.directive";
   styleUrl: './raise-offer-letter-pending-table.component.scss',
 })
 export class RaiseOfferLetterPendingTableComponent {
-
+  @Input() heading?:any;
+  @Input() subHeading?:any;
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;
   @Input() currentPage: number = 1;

@@ -119,7 +119,10 @@ export class AllJobsComponent implements OnInit {
   }
 
   private loadDepartments(): void {
-    this.approvalService.departments()
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload)
       .then((res: any) => {
         const d = res?.data ?? [];
         this.dropDownData = this.dropDownData.map((item: any) =>
@@ -242,10 +245,13 @@ export class AllJobsComponent implements OnInit {
     };
   }
 
-  private mapForDepartment(data: any[]): any[] {
+   private mapForDepartment(data: any) {
     return [
       { value: '', label: 'All' },
-      ...data.map((item: any) => ({ value: item.id, label: item.name })),
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.departmentName,
+      }))
     ];
   }
 

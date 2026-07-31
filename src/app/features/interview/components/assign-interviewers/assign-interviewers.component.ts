@@ -71,10 +71,13 @@ export class AssignInterviewersComponent implements OnInit {
       })
   }
   private loadDepartments() {
-    this.approvalService.departments()
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload)
       .then((res: any) => {
         if (res?.responsecode == '00') {
-          const data = this.map(res?.data);
+          const data = this.mapForDepartment(res?.data);
           this.assignRecruters = this.assignRecruters.map((item: any) =>
             item.key === 'department'
               ? { ...item, options: data ?? [] }
@@ -89,6 +92,15 @@ export class AssignInterviewersComponent implements OnInit {
       .catch((error: any) => {
         console.log(error);
       })
+  }
+   private mapForDepartment(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.departmentName,
+      }))
+    ];
   }
   private loadPlans() {
     this.interviewService.getPlansList()

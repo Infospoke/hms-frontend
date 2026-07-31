@@ -1,7 +1,8 @@
 <div>
+    <app-heading [heading]="'Offer management'" [subHeading]="'Manage the complete offer lifecycle — raise, approve, revise and release offers.'"/>
     <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
     <div>
-        <app-heading [heading]="heading" [subHeading]="subHeading"/>
+        
         <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="visibleDropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
     </div>
 
@@ -14,10 +15,12 @@
             (actionClick)="onRaiseOfferRequest($event)"
             (pageChange)="onPageChange($event)"
             [permissionName]="permissionName"
+            [heading]="heading"
+            [subHeading]="subHeading"
     />
 
   
-    <app-raise-offer-letter-pending-table *ngIf="activeStageId==='rol' && activeTabId==='pending'"
+    <app-raise-offer-letter-pending-table *ngIf="activeStageId==='rol' && activeTabId==='offerApprovals' || activeTabId==='negAppovals'"
             [data]="pendingApprovalOfferLetters"
             [totalItems]="totalPendingApproval"
             [currentPage]="currentPage"
@@ -25,11 +28,11 @@
             (actionClick)="onViewApprovalDetails($event)"
             (pageChange)="onPageChange($event)"
              [permissionName]="permissionName"
+             [heading]="heading"
+            [subHeading]="subHeading"
         class="card-dd"
     />
-
-    <!-- ── Release offer letter: Ready to release tab ── -->
-    <app-raise-offer-letter-ready-table *ngIf="activeStageId==='rol' && activeTabId==='ready'"
+    <app-raise-offer-letter-ready-table *ngIf="activeStageId==='rl' && activeTabId==='pending'"
             [data]="readyToReleaseOfferLetters"
             [totalItems]="totalReadyToRelease"
             [currentPage]="currentPage"
@@ -37,11 +40,13 @@
             (actionClick)="onViewOfferLetterDetails($event)"
             (pageChange)="onPageChange($event)"
              [permissionName]="permissionName"
+             [heading]="heading"
+            [subHeading]="subHeading"             
              class="card-dd"
     />
 
-    <!-- ── Candidate requested / Pay revision requests: New requests tab ── -->
-    <app-pay-revision-request-table *ngIf="activeStageId==='cr' && activeTabId==='new'"
+   
+    <app-pay-revision-request-table *ngIf="activeStageId==='cr' && activeTabId==='negotiating'"
             [data]="newPayRevisionRequests"
             [totalItems]="newPayRevisionRequestsCount"
             [currentPage]="currentPage"
@@ -49,11 +54,13 @@
             (actionClick)="onReviewPayRevisionRequest($event)"
             (pageChange)="onPageChange($event)"
              [permissionName]="permissionName"
+             [heading]="heading"
+            [subHeading]="subHeading"
              class="card-dd"
     />
 
    
-    <app-approval-status-table *ngIf="activeStageId==='cr' && activeTabId==='approval'"
+    <app-approval-status-table *ngIf="activeStageId==='cr' && activeTabId==='pending'|| activeTabId==='rejected' || activeTabId==='accepted' || activeTabId==='expired'"
             [data]="payRevisionInApproval"
             [totalItems]="totalPayRevisionInApproval"
             [currentPage]="currentPage"
@@ -61,16 +68,11 @@
             (actionClick)="onViewApprovalDetails($event)"
             (pageChange)="onPageChange($event)"
              [permissionName]="permissionName"
+             [heading]="heading"
+            [subHeading]="subHeading"
              class="card-dd"
     />
 
-     <app-accept-offer-table *ngIf="activeStageId==='al'"
-            [data]="acceptedLetters"
-            [totalItems]="totalAcceptedLetters"
-            [currentPage]="currentPage"
-            [pageSize]="pageSize"
-            (pageChange)="onPageChange($event)"
-             [permissionName]="permissionName"
-    />
+     
 
 </div>

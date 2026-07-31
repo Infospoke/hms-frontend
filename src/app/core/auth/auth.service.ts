@@ -72,7 +72,7 @@ export class AuthService {
         this.refreshTimerSub?.unsubscribe();
         this.tokenService.clearTokens();
         this.permissionService.clear();
-        this.notification.success(res?.message || 'Logged out successfully');
+        // this.notification.success(res?.message || 'Logged out successfully');
         this.router.navigate(['/auth/login']);
       } else {
         this.notification.error(res?.message || 'Logout failed');

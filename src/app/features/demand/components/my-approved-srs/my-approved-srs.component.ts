@@ -61,7 +61,10 @@ export class MyApprovedSrsComponent implements OnInit{
       })
   }
   private loadDepartments(): void {
-    this.approvalService.departments().then
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload).then
       ((res: any) => {
         const d = res?.data ?? {};
         const fun = this.mapForDepartment(d);
@@ -111,12 +114,12 @@ export class MyApprovedSrsComponent implements OnInit{
   }
 
 
-   private mapForDepartment(data: any) {
+    private mapForDepartment(data: any) {
     return [
       { value: '', label: 'All' },
       ...data.map((item: any) => ({
         value: item.id,
-        label: item.name,
+        label: item.departmentName,
       }))
     ];
   }

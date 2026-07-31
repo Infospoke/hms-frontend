@@ -154,10 +154,13 @@ export class OfferManagementComponent implements OnInit {
   }
 }
   private loadDepartments() {
-    this.approvalService.departments()
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload)
       .then((res: any) => {
         if (res?.responsecode == '00') {
-          const data = this.map(res?.data);
+          const data = this.mapForDepartment(res?.data);
           this.dropDownData = this.dropDownData.map((item: any) =>
             item.key === 'departments'
               ? { ...item, options: data ?? [] }
@@ -181,7 +184,15 @@ export class OfferManagementComponent implements OnInit {
       );
     }
   }
-
+   private mapForDepartment(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.departmentName,
+      }))
+    ];
+  }
   private map(data: any) {
     return [
       { value: '', label: 'All' },

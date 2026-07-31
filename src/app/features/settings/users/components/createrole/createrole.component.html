@@ -26,7 +26,7 @@
           <label class="form-label">Department <span class="astrick">*</span></label>
           <nz-select formControlName="department" nzPlaceHolder="Select Department"
             [nzOptionOverflowSize]="5" [class.is-invalid]="isFieldInvalid('department')" class="nz-field-select">
-            <nz-option *ngFor="let d of departments" [nzValue]="d.id ?? d" [nzLabel]="d.name ?? d"></nz-option>
+            <nz-option *ngFor="let d of departments" [nzValue]="d.id ?? d" [nzLabel]="d.departmentName ?? d"></nz-option>
           </nz-select>
           <small class="err-msg" *ngIf="isFieldInvalid('department')">
             Department is required.

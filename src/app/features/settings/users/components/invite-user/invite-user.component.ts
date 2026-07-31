@@ -96,10 +96,13 @@ export class InviteUserComponent implements OnInit {
   }
 
   getIntialData() {
+     const payload={
+      "userDepartments": true,
+    }
     forkJoin({
       userTypes: this.userService.getUsersTypes(),
       employmentTypes: this.userService.getEmployeeTypes(),
-      bussinessUnit: this.approvalService.departments()
+      bussinessUnit: this.approvalService.getDepartmentsByType(payload)
     }).subscribe({
       next: (res: any) => {
         this.userTypes = res.userTypes?.data ?? [];
@@ -111,7 +114,10 @@ export class InviteUserComponent implements OnInit {
   }
 
   getDeparmentData(): Promise<void> {
-    return this.approvalService.departments()
+    const payload={
+      "userDepartments": true,
+    }
+    return this.approvalService.getDepartmentsByType(payload)
       .then((res: any) => {
         this.departments = res?.data ?? [];
       })

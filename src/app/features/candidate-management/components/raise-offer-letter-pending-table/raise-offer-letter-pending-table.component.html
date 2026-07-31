@@ -1,4 +1,5 @@
-<app-reusable-table [columns]="columns" [data]="data" [sortableColumns]="sortableColumns"
+<app-reusable-table [columns]="columns" [data]="data"  [title]="heading"
+  [subTitle]="subHeading" [sortableColumns]="sortableColumns"
   [showPagination]="showPagination" [currentPage]="currentPage" [pageSize]="pageSize" [totalItems]="totalItems"
   [emptyMessage]="emptyMessage" [cellTemplate]="cellTpl" (sortChange)="onSortChange($event)"
   (pageChange)="onPageChange($event)">

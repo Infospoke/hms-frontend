@@ -6,6 +6,7 @@ export const DASHBOARD_ROUTES: Routes = [
     loadComponent: () => import('../dashboard.component').then(c => c.DashboardComponent)
   },
   {
-    
+    path:"hiring-manager-dashboard",
+    loadComponent:()=>import("../components/hiring-manager-dashboard/hiring-manager-dashboard.component").then(m=>m.HiringManagerDashboardComponent)
   }
 ];

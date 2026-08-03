@@ -21,7 +21,4 @@ export const DASHBOARD_ROUTES: Routes = [
     loadComponent:()=>import("../components/recruiter-dashboard-component/recruiter-dashboard-component.component").then(m=>RecruiterDashboardComponentComponent) 
       
     },
-
-  
-
 ];

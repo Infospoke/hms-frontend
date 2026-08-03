@@ -50,6 +50,10 @@ export class DashboardLayoutComponent implements OnInit{
 
   @Input() pipeLine:boolean=false;
   @Input() pipelineConfig?: PipelineConfig;
+  /** When true, renders app-candidate-pipeline-graph (ApexCharts funnel +
+   * conversion-rate circles, currently self-contained dummy data) instead
+   * of the plain app-candidate-pipeline funnel in the pipeline slot. */
+  @Input() pipelineGraph: boolean = false;
 
   @Input() showSemiCircle:boolean=false;
   @Input() semiCircleConfig?: SemiCircleConfig;

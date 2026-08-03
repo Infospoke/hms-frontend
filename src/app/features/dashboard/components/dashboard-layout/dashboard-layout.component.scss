@@ -10,15 +10,12 @@
   gap: 8px;
 }
 
-// Fixed 2-up grid — always exactly 2 cards per row, never full width.
-// align-items: stretch (grid's default) so row partners always match
-// height — e.g. Hiring Health stretches to match Candidate Quality
-// Distribution. The gauge stays its natural size; only the table area
-// (see .hh-table-col's flex chain) grows/scrolls to fill the extra height.
-.grid{
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap:20px;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  align-items: stretch;
 }
 
 @media (max-width: 760px) {
@@ -27,10 +24,6 @@
   }
 }
 
-// My Requisitions (wider, left) + Candidate Pipeline (right), side by side,
-// both stretched to the same height. The pipeline card is a flex column so
-// its content (the app-candidate-pipeline host) can actually grow to fill
-// that stretched height instead of leaving dead space.
 .split-row {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -54,9 +47,21 @@
   flex-direction: column;
 }
 
-.requisitions-card {
+// No card padding — the table fills the card edge-to-edge (its own header
+// row + row borders provide all the visual separation it needs). Only the
+// title gets its own inset so it doesn't sit flush against the card edge.
+// overflow: hidden clips the table's square corners to the card's own
+// rounded corners instead of the table showing its own smaller radius.
+// .chart-card.requisitions-card (not just .requisitions-card): needs to
+// beat .chart-card's own padding:20px, which otherwise wins the tie since
+// it's declared later in this file at equal specificity.
+.chart-card.requisitions-card {
+  padding: 0;
+  overflow: hidden;
+
   .chart-card-header {
     margin-bottom: 6px;
+    padding: 20px 20px 0;
   }
 
   .chart-card-header h3 {
@@ -64,13 +69,19 @@
   }
 
   ::ng-deep {
+    // The table renders its own card-like border/shadow/radius by default
+    // (for standalone use) — flatten that here since .requisitions-card is
+    // already the card.
+    .rt-container {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
     .rt-table {
       table-layout: fixed;
     }
 
-    // !important: this selector ties in specificity with the
-    // reusable-table component's own `tr.rt-normal-row th` rule, so the
-    // winner otherwise depends on stylesheet load order.
     tr.rt-normal-row th {
       font-size: 10.5px !important;
       padding: 10px 8px !important;
@@ -168,24 +179,14 @@
   }
 }
 
-// Matches its pie-chart row partner's height (see .grid's align-items:
-// start + this opting back in with align-self: stretch). The gauge stays
-// its natural size — only the table area grows/scrolls to fill the extra
-// height, so the card doesn't look blown-up.
+
 .hh-card {
   align-self: stretch;
   display: flex;
   flex-direction: column;
 }
 
-// Force gauge + table to stay in one row (never stack) even inside the
-// narrower 2-up grid column — matches the compact inline reference layout.
-// align-items: flex-start (not center) — centering both columns inside the
-// full stretched height was leaving a gap above the table header AND a
-// gap below the last row. Now the table anchors to the top and stretches
-// itself down to fill the height (see .hh-table-col's align-self: stretch
-// + flex chain); the gauge opts into its own vertical centering via
-// .hh-gauge-col's align-self so it still looks balanced on its own.
+
 .hh-panel {
   display: flex;
   align-items: flex-start;
@@ -207,15 +208,7 @@
   display: flex;
   flex-direction: column;
 
-  // 'auto' table-layout (see [tableLayout]="'auto'") lets columns size to
-  // their natural one-line content — text stays fully readable at close to
-  // normal size instead of being shrunk/truncated to force a fit. If the
-  // natural width is wider than the card, .rt-scroll-wrapper's own
-  // overflow-x: auto shows a horizontal scrollbar rather than clipping.
-  // The app-reusable-table host + rt-container are chained as flex:1
-  // (not height:100%, which would need every ancestor to have a resolved
-  // height) so the table body can grow/scroll vertically to fill the
-  // space matched to the pie-chart card next to it.
+  
   ::ng-deep {
     app-reusable-table {
       flex: 1 1 auto;
@@ -244,10 +237,6 @@
       z-index: 1;
     }
 
-    // !important: this selector ties in specificity with the reusable-table
-    // component's own `tr.rt-normal-row th` rule, so the winner otherwise
-    // depends on stylesheet load order (see the same issue fixed earlier
-    // for the My Requisitions table).
     .rt-th-inner,
     tr.rt-normal-row th {
       font-size: 12px !important;

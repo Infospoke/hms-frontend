@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardLayoutComponent, RequisitionsTableConfig } from '../dashboard-layout/dashboard-layout.component';
 import { TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
-
+ 
 @Component({
   selector: 'app-hiring-manager-new-dashboard',
   imports: [DashboardLayoutComponent],
@@ -10,17 +10,16 @@ import { TableColumn } from '../../../../shared/components/reusable-table/reusab
 })
 export class HiringManagerNewDashboard implements OnInit {
   ngOnInit(): void {
-    
+   
   }
-
+ 
    heading = 'Good morning,  👋';
   subHeading = "Here's what's happening with your hiring.";
-
+ 
   cards = [
   {
     label: 'Open SRs',
     value: 6,
-    subLabel: '1 this week',
     iconClass: 'fa-solid fa-briefcase',
     iconBgColor: '#DBEAFE',
     iconColor: '#3B82F6',
@@ -29,7 +28,7 @@ export class HiringManagerNewDashboard implements OnInit {
   {
     label: 'Total Candidates',
     value: 141,
-    subLabel: 'In pipeline',
+
     iconClass: 'fa-solid fa-users',
     iconBgColor: '#D1FAE5',
     iconColor: '#10B981',
@@ -37,7 +36,7 @@ export class HiringManagerNewDashboard implements OnInit {
   {
     label: 'Interviews',
     value: 18,
-    subLabel: '2 this week',
+
     iconClass: 'fa-solid fa-user-check',
     iconBgColor: '#EDE9FE',
     iconColor: '#8B5CF6',
@@ -46,7 +45,7 @@ export class HiringManagerNewDashboard implements OnInit {
   {
     label: 'Offers',
     value: 8,
-    subLabel: '1 this week',
+
     iconClass: 'fa-solid fa-file-signature',
     iconBgColor: '#FFEDD5',
     iconColor: '#F97316',
@@ -55,17 +54,17 @@ export class HiringManagerNewDashboard implements OnInit {
   {
     label: 'Average Hiring Age',
     value: '21 Days',
-    subLabel: '3 days vs last month',
+
     iconClass: 'fa-solid fa-clock',
     iconBgColor: '#E0E7FF',
     iconColor: '#6366F1',
     trend: 'down' as const,
   },
-
-  
+ 
+ 
 ];
   showTable = true;
-
+ 
 requisitionsColumns: TableColumn[] = [
     { key: 'position', label: 'Position', width: '20%' },
     { key: 'openings', label: 'Openings', width: '12%' },
@@ -76,7 +75,7 @@ requisitionsColumns: TableColumn[] = [
     { key: 'dueDate', label: 'Due Date', width: '12%', align: 'center', custom: true },
     {key:'daysRemaining',label:'Days Remaining', width:'12%',align:'center'}
   ];
-
+ 
   requisitionsData = [
     { position: 'Backend Engineer', openings: 5, offersReleased: 3, offersPending: 1, priority: 'High', slaStatus: 'On Track', dueDate: 'Dec 12',daysRemaining:'2 days'},
     { position: 'QA Lead', openings: 2, offersReleased: 1, offersPending: 0, priority: 'Medium', slaStatus: 'At Risk', dueDate: 'Dec 18',daysRemaining:'21 days' },
@@ -90,5 +89,11 @@ tableConfig: RequisitionsTableConfig = {
     columns: this.requisitionsColumns,
     data: this.requisitionsData,
   };
+
+  showPipeline = true;
+  // Renders app-candidate-pipeline-graph (ApexCharts funnel + conversion
+  // circles) instead of the plain funnel — it's currently self-contained
+  // with its own dummy data, no config object needed here yet.
+  pipelineGraph = true;
 
 }

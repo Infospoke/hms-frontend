@@ -1,21 +1,62 @@
+// Legend always stays to the right of the donut — it was previously
+// wrapping below whenever the card was too narrow to fit both side by
+// side; now the legend shrinks/wraps its own text instead of dropping to
+// a new row.
 .donut-chart-wrap {
   display: flex;
   align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.donut-chart-inner {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 62%;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center-value {
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1a1f2b;
+}
+
+.donut-center-label {
+  font-weight: 500;
+  line-height: 1.2;
+  color: #9aa1b1;
+  white-space: normal;
 }
 
 .legend {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-size: 13.5px;
+  font-size: 13px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  row-gap: 2px;
 }
 
 .legend-dot {

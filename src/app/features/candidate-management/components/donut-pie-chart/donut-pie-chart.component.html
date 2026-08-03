@@ -1,17 +1,24 @@
 <div class="donut-chart-wrap">
-  <apx-chart
-    *ngIf="chartOptions as opts"
-    #chartRef
-    [series]="opts.series"
-    [chart]="opts.chart"
-    [labels]="opts.labels"
-    [colors]="opts.colors"
-    [stroke]="opts.stroke"
-    [dataLabels]="opts.dataLabels"
-    [legend]="opts.legend"
-    [tooltip]="opts.tooltip"
-    [plotOptions]="opts.plotOptions"
-  ></apx-chart>
+  <div class="donut-chart-inner" [style.width.px]="size" [style.height.px]="size">
+    <apx-chart
+      *ngIf="chartOptions as opts"
+      #chartRef
+      [series]="opts.series"
+      [chart]="opts.chart"
+      [labels]="opts.labels"
+      [colors]="opts.colors"
+      [stroke]="opts.stroke"
+      [dataLabels]="opts.dataLabels"
+      [legend]="opts.legend"
+      [tooltip]="opts.tooltip"
+      [plotOptions]="opts.plotOptions"
+    ></apx-chart>
+
+    <div class="donut-center" *ngIf="chartOptions">
+      <div class="donut-center-value" [style.font-size]="valueFontSize">{{ centerValueText }}</div>
+      <div class="donut-center-label" [style.font-size]="centerLabelFontSize">{{ centerLabel }}</div>
+    </div>
+  </div>
 
   <div class="legend" *ngIf="showLegend">
     <div class="legend-item" *ngFor="let s of segments; trackBy: trackByLabel">

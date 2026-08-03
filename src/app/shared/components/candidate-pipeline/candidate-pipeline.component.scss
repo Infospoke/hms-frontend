@@ -1,0 +1,182 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.cp-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 24px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.cp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cp-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.cp-period {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cp-period-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px 30px 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+}
+
+.cp-period-icon {
+  position: absolute;
+  right: 10px;
+  font-size: 11px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+// Sized to comfortably fill one row at the card's normal width/height.
+// Only wraps to a 2nd row as a fallback on genuinely narrow viewports —
+// no horizontal scrollbar (that combo was also triggering an unwanted
+// vertical scrollbar, since setting overflow-x alone implicitly computes
+// overflow-y as auto too).
+.cp-funnel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  column-gap: 6px;
+}
+
+.cp-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 auto;
+  min-width: 68px;
+}
+
+.cp-stage-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 1.3rem;
+  }
+}
+
+.cp-stage-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cp-stage-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.cp-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding-top: 12px;
+  min-width: 24px;
+  flex-shrink: 0;
+  color: #9ca3af;
+
+  i {
+    font-size: 13px;
+  }
+}
+
+.cp-arrow-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.cp-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  margin-top: auto;
+  border-top: 1px solid #f1f5f9;
+}
+
+.cp-footer-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.cp-footer-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.cp-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cp-sparkline {
+  width: 90px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.cp-footer-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--up {
+    color: #16A34A;
+  }
+
+  &--down {
+    color: #DC2626;
+  }
+}
+
+// .cp-funnel wraps naturally via flex-wrap on narrow viewports — the
+// stage/arrow sizes above already fit one row at normal card widths.

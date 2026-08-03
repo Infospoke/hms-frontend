@@ -1,0 +1,61 @@
+<div class="pipeline-card">
+
+  <!-- Header -->
+  <div class="pipeline-header">
+    <div>
+      <h3 class="title">Candidate Pipeline (All Requisitions)</h3>
+      <p class="subtitle">Funnel with Conversion Rate</p>
+    </div>
+    <div class="period-select">
+      This Month
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Funnel chart -->
+  <div class="funnel-wrapper">
+    <apx-chart
+      [series]="funnelSeries"
+      [chart]="funnelChart"
+      [plotOptions]="funnelPlotOptions"
+      [dataLabels]="funnelDataLabels"
+      [stroke]="funnelStroke"
+      [fill]="funnelFill"
+      [colors]="funnelColors"
+      [xaxis]="funnelXAxis"
+      [yaxis]="funnelYAxis"
+      [grid]="funnelGrid"
+      [tooltip]="funnelTooltip"
+      [states]="funnelStates"
+    ></apx-chart>
+  </div>
+
+  <!-- Conversion rate circles between stages -->
+  <div class="conversion-row">
+    <ng-container *ngFor="let c of conversions">
+      <div class="conversion-cell">
+        <div class="radial-circle">
+          <apx-chart
+            [series]="radialSeries(c.rate)"
+            [chart]="radialChart()"
+            [plotOptions]="radialPlotOptions(c.color)"
+            [fill]="radialFill(c.color)"
+            [stroke]="radialStroke()"
+          ></apx-chart>
+        </div>
+        <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Footer -->
+  <div class="pipeline-footer">
+    <span class="footer-label">Overall Conversion Rate</span>
+    <span class="footer-value">{{ overallConversionRate }}%</span>
+  </div>
+
+</div>

@@ -6,6 +6,7 @@ import { DonutPieChartComponent, DonutSegment } from "../../../candidate-managem
 import { SemiCircleGaugeComponent } from '../../../../shared/components/semi-circle-gauge/semi-circle-gauge.component';
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CandidatePipelineComponent, PipelineConfig } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
+import { CandidatePipelineGraphComponent } from '../../../../shared/components/candidate-pipeline-graph/candidate-pipeline-graph.component';
 
 export interface PieChartConfig {
   title?: string;
@@ -31,7 +32,7 @@ export interface RequisitionsTableConfig {
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent],
+  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent, CandidatePipelineGraphComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
 })
@@ -47,6 +48,10 @@ export class DashboardLayoutComponent {
 
   @Input() pipeLine:boolean=false;
   @Input() pipelineConfig?: PipelineConfig;
+  /** When true, renders app-candidate-pipeline-graph (ApexCharts funnel +
+   * conversion-rate circles, currently self-contained dummy data) instead
+   * of the plain app-candidate-pipeline funnel in the pipeline slot. */
+  @Input() pipelineGraph: boolean = false;
 
   @Input() showSemiCircle:boolean=false;
   @Input() semiCircleConfig?: SemiCircleConfig;

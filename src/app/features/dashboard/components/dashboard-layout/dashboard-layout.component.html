@@ -9,7 +9,7 @@
     </div>
 
 
-    <div class="split-row" *ngIf="(table && tableConfig) || (pipeLine && pipelineConfig)">
+    <div class="split-row" *ngIf="(table && tableConfig) || (pipeLine && (pipelineGraph || pipelineConfig))">
         <div class="chart-card requisitions-card" *ngIf="table && tableConfig">
             <div class="chart-card-header" *ngIf="tableConfig.title">
                 <h3>{{ tableConfig.title }}</h3>
@@ -18,7 +18,13 @@
                 [showHeader]="true" [tableLayout]="'fixed'" [cellTemplate]="reqCell" />
         </div>
 
-        <div class="chart-card pipeline-card" *ngIf="pipeLine && pipelineConfig">
+        <!-- ApexCharts funnel + conversion-rate circles (self-contained
+             dummy data for now) — fully self-styled as its own dark card,
+             so it isn't wrapped in .chart-card like the plain pipeline
+             below is. -->
+        <app-candidate-pipeline-graph class="pipeline-card" *ngIf="pipeLine && pipelineGraph" />
+
+        <div class="chart-card pipeline-card" *ngIf="pipeLine && !pipelineGraph && pipelineConfig">
             <app-candidate-pipeline
                 [title]="pipelineConfig.title ?? 'Candidate Pipeline'"
                 [periods]="pipelineConfig.periods ?? ['This Month']"

@@ -3,6 +3,7 @@ import { HeadingComponent } from '../../../../shared/components/heading/heading.
 import { DashboardCountCardComponent } from "../../../../shared/components/dashboard-count-card/dashboard-count-card.component";
 import { CommonModule } from '@angular/common';
 import { DonutPieChartComponent, DonutSegment } from "../../../candidate-management/components/donut-pie-chart/donut-pie-chart.component";
+import { ReusableTableComponent } from "../../../../shared/components/reusable-table/reusable-table.component";
 
 export interface PieChartConfig {
   title?: string;
@@ -14,7 +15,7 @@ export interface PieChartConfig {
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent],
+  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent,ReusableTableComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
 })
@@ -25,7 +26,13 @@ export class DashboardLayoutComponent {
 
   @Input() cards:any[]=[];
 
+
+
   @Input() table:boolean=false;
+
+  @Input() requisitionColumns: any[] = [];
+
+  @Input() requisitionData: any[] = [];
 
   @Input() pipeLine:boolean=false;
 

@@ -10,6 +10,12 @@
     <div class="grid">
         <ng-container *ngIf="table">
 
+        <app-reusable-table
+        [title]="'My Requisitions'"
+        [columns]="requisitionColumns"
+        [data]="requisitionData">
+        </app-reusable-table>
+
         </ng-container>
         <ng-container *ngIf="pipeLine"></ng-container>
         <div class="chart-card" *ngFor="let chart of pieCharts">

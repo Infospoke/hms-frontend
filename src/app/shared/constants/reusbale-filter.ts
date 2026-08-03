@@ -413,6 +413,40 @@ export const candidateManagementFilter: any = [
   },
 ];
 
+// Recruiter Performance dashboard — "Recruiters" + "Date" filters (dummy
+// recruiter options for now).
+export const recruitersPerformanceFilter: any = [
+  {
+    key: 'recruiter',
+    label: 'Select Recruiter',
+    selected: '',
+    icon: 'fa-solid fa-user',
+    avatar: true,
+    options: [
+      { value: '', label: 'All Recruiters' },
+      { value: 'rohit-kumar', label: 'Rohit Kumar' },
+      { value: 'priya-sharma', label: 'Priya Sharma' },
+      { value: 'arjun-mehta', label: 'Arjun Mehta' },
+      { value: 'sneha-rao', label: 'Sneha Rao' },
+      { value: 'karthik-iyer', label: 'Karthik Iyer' },
+    ],
+  },
+  {
+    key: 'dateFilter',
+    label: 'Date Range',
+    selected: '',
+    isDateFilter: true,
+    icon: 'fa-regular fa-calendar',
+    options: [
+      { value: '', label: 'All Time' },
+      { value: 'TODAY', label: 'Today' },
+      { value: 'thisWeek', label: 'This Week' },
+      { value: 'thisMonth', label: 'This Month' },
+      { value: 'CUSTOM', label: 'Custom Range' },
+    ],
+  },
+];
+
 export const categoryany :any[]= [
   {
     key: 'categories', 

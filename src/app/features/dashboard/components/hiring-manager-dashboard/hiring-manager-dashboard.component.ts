@@ -260,10 +260,7 @@ export class HiringManagerDashboardComponent implements OnInit, OnChanges {
 
   showTable = true;
 
-  // "Openings" is a single unbreakable word — it needs enough width to
-  // render on its own without bleeding into the next header (that bleed is
-  // what caused the OPENINGS/OFFERS RELEASED collision), so it gets more
-  // room here than the other narrow numeric columns.
+  
   requisitionsColumns: TableColumn[] = [
     { key: 'position', label: 'Position', width: '20%' },
     { key: 'openings', label: 'Openings', width: '12%' },

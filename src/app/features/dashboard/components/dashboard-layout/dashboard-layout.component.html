@@ -1,10 +1,18 @@
 <div class="main-dashboard-layout">
     <app-heading [heading]="heading" [subHeading]="subHeading" />
+
+    <!-- <app-common-filter *ngIf="showFiltersBar"
+        [dropdowns]="filterDropdowns"
+        [searchPlaceholder]="filterSearchPlaceholder"
+        [cardStyle]="true"
+        (filterChange)="filterChange.emit($event)" /> -->
+
     <div class="card-dd">
         <div *ngFor="let item of cards">
             <app-dashboard-count-card [label]="item?.label" [value]="item?.value" [iconClass]="item?.iconClass"
                 [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" [bottomText]="item?.subLabel"
-                [trend]="item?.trend" [trendColor]="item?.trendColor ?? '#16A34A'" />
+                [trend]="item?.trend" [trendColor]="item?.trendColor ?? '#16A34A'"
+                [sparklineData]="item?.sparklineData" [sparklineColor]="item?.sparklineColor ?? '#93C5FD'" />
         </div>
     </div>
 

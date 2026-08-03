@@ -1,0 +1,53 @@
+<div class="rp-page">
+
+  <app-dashboard-layout
+    [heading]="heading"
+    [subHeading]="subHeading"
+    [showFiltersBar]="true"
+    [filterDropdowns]="filterDropdowns"
+    (filterChange)="onFilterChange($event)"
+    [cards]="cards"
+  />
+
+  <div class="rp-row rp-row--full">
+    <app-job-assignments-table
+      title="Job Assignments"
+      subTitle="Advanced Table (Conditional Formatting + Data Bars)"
+      [rows]="jobAssignments"
+    />
+  </div>
+
+  <div class="rp-row rp-row--pair">
+    <app-hiring-flow-progress
+      title="SLA Compliance by Hiring Flow"
+      subTitle="Process Flow Diagram + Stacked Progress"
+      [stages]="flowStages"
+      overallLabel="Overall SLA Compliance"
+      [overallValue]="overallSlaCompliance"
+      overallColor="#1E9E5A"
+    />
+
+    <app-source-performance-grid
+      title="Candidate Source Performance"
+      subTitle="Tree Map (by Applications Added)"
+      [tiles]="sourceTiles"
+      [footNote]="sourceFootNote"
+    />
+  </div>
+
+  <div class="rp-row rp-row--pair">
+    <app-funnel-chart
+      title="Recruitment Funnel"
+      subTitle="Funnel Chart with Conversion %"
+      [stages]="funnelStages"
+    />
+
+    <app-multi-line-chart
+      title="Hiring Trend"
+      subTitle="Multi-line Chart with Markers"
+      [categories]="trendCategories"
+      [series]="trendSeries"
+    />
+  </div>
+
+</div>

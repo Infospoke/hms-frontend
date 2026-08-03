@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { DashboardCountCardComponent } from "../../../../shared/components/dashboard-count-card/dashboard-count-card.component";
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { SemiCircleGaugeComponent } from '../../../../shared/components/semi-cir
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CandidatePipelineComponent, PipelineConfig } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
 import { CandidatePipelineGraphComponent } from '../../../../shared/components/candidate-pipeline-graph/candidate-pipeline-graph.component';
+import { CommonFilterComponent } from '../../../../shared/components/common-filter/common-filter.component';
 
 export interface PieChartConfig {
   title?: string;
@@ -41,6 +42,12 @@ export class DashboardLayoutComponent {
   @Input() heading:any;
   @Input() subHeading:any;
 
+  @Input() showFiltersBar: boolean = false;
+  @Input() filterDropdowns: any[] = [];
+  @Input() filterSearchPlaceholder: string = 'Search...';
+
+  @Output() filterChange = new EventEmitter<any>();
+
   @Input() cards:any[]=[];
 
   @Input() table:boolean=false;
@@ -48,9 +55,7 @@ export class DashboardLayoutComponent {
 
   @Input() pipeLine:boolean=false;
   @Input() pipelineConfig?: PipelineConfig;
-  /** When true, renders app-candidate-pipeline-graph (ApexCharts funnel +
-   * conversion-rate circles, currently self-contained dummy data) instead
-   * of the plain app-candidate-pipeline funnel in the pipeline slot. */
+  
   @Input() pipelineGraph: boolean = false;
 
   @Input() showSemiCircle:boolean=false;

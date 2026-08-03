@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.spg-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.spg-header {
+  margin-bottom: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .spg-subtitle {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+}
+
+.spg-grid {
+  display: flex;
+  gap: 2px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.spg-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 10px;
+  color: #fff;
+  min-width: 0;
+  // Equal width for every tile, regardless of source size — no more
+  // tree-map-style weighting that was squeezing longer names down to a
+  // sliver and forcing an ellipsis.
+  flex: 1 1 0;
+}
+
+.spg-tile-name {
+  font-size: 12px;
+  font-weight: 700;
+  // Wrap onto a second line instead of truncating with "..." when the
+  // name doesn't fit ("Employee Referral", "Career Portal").
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  line-height: 1.25;
+}
+
+.spg-tile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spg-stat {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.spg-stat-value {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.spg-stat-label {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.spg-footnote {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+@media (max-width: 700px) {
+  .spg-grid {
+    flex-wrap: wrap;
+  }
+
+  .spg-tile {
+    flex: 1 1 45% !important;
+  }
+}

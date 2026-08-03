@@ -13,7 +13,7 @@ import { ApprovalPipelineComponent } from '../approval-pipeline/approval-pipelin
 import { ApprovalTimelineComponent } from '../approval-timeline/approval-timeline.component';
 import { ApprovalService } from '../../services/approval-service';
 
-import { ApplicantInfo, CompBreakdownItem, CompensationVsMarket, OFFER_STATUS_CONFIG, OfferBasicInfo, OfferPageMode, OfferStatus, OfferStatusDef } from '../../../../shared/constants/offer.model';
+import { ApplicantInfo, CompBreakdownItem, CompensationVsMarket, OFFER_CREATOR_ROLE, OFFER_STAGE_ORDER, OFFER_STATUS_CONFIG, OfferBasicInfo, OfferPageMode, OfferStatus, OfferStatusDef } from '../../../../shared/constants/offer.model';
 import { ApprovalStage } from '../../../../shared/constants/approval.stage.modal';
 import { CandidateServiceComponent } from '../../../candidate-management/serviecs/candidate-service.component';
 // NOTE: confirm this import path matches where common-modal.component.ts actually lives in your repo.
@@ -69,9 +69,6 @@ interface OfferCommentsApiResponse {
   message: string;
   responsecode: string;
 }
-
-
-const OFFER_STAGE_ORDER = ['Financial Analyst', 'Finance Head', 'HR Head'];
 
 
 @Component({
@@ -167,18 +164,7 @@ export class ViewOfferComponent implements OnInit {
   comment = '';
   readonly COMMENT_MAX = 500;
 
-  // TODO: the approve-offer payload only accepts { applicantId, approve, comments } —
-  // there's no field for the e-signature file. Still gating on it client-side since
-  // the UI asks for it, but it isn't actually sent anywhere yet. If there's a
-  // separate signature-upload endpoint, wire it into submitDecision() alongside
-  // the approveOffer() call; otherwise consider dropping the requirement.
-  //
-  // Only Finance Head (isUpload) is required to attach a signature + comment
-  // before deciding. That's now collected via the e-signature popup (opened
-  // from the Approve/Reject Offer buttons) rather than inline on the page —
-  // this getter gates the popup's own submit button, not the page buttons.
-  /** Gates the e-signature popup's submit button — user must tick this
-   *  before the Approve/Reject decision can go through. */
+  
   confirmationChecked = false;
 
   get canSubmitDecision(): boolean {
@@ -205,9 +191,7 @@ export class ViewOfferComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // ── E-signature + comments popup (Finance Head only) ────────────────────
-  // Opened from the Approve/Reject Offer buttons instead of showing the
-  // upload card inline on the page.
+  
   eSignatureModalVisible = false;
   eSignatureModalAction: 'approve' | 'reject' | null = null;
 
@@ -236,10 +220,7 @@ export class ViewOfferComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  // ── Approve/Reject comment modal (app-common-modal) ─────────────────────
-  // Used for everyone EXCEPT Finance Head — Finance Head already supplies a
-  // comment (+ signature) inline via the upload card, so their Approve/Reject
-  // click submits straight away without asking again.
+ 
   commentModalVisible = false;
   commentModalAction: CommentModalAction | null = null;
 
@@ -351,11 +332,6 @@ export class ViewOfferComponent implements OnInit {
       hiringManager: '—',
     };
 
-    // The API's totalCtc is the authoritative number for the donut's center
-    // label. It isn't guaranteed to equal the sum of the 4 components below
-    // (e.g. here basicSalary alone already equals totalCtc/offeredCtc), so
-    // don't recompute it — but DO use the summed components as the pie's own
-    // denominator, so the 4 slices always add up to 100% of each other.
     this.totalCtcLabel = this.formatCurrency(data.totalCtc ?? data.offeredCtc);
 
     const parts = [
@@ -383,16 +359,25 @@ export class ViewOfferComponent implements OnInit {
 
   // ── Pipeline construction ───────────────────────────────────────────────
   private buildPipelineStages(comments: OfferCommentApiItem[]): ApprovalStage[] {
-    // Only rows with a real role represent an actual actioned stage — rows
-    // the API pads on with role/approvedOn/comments all null (and
-    // approved: false) are placeholders for stages not yet reached, not
-    // rejections, so they're dropped before matching against the fixed order.
+
     const actioned = (comments ?? []).filter(c => !!c.role);
 
     let foundInProgress = false;
     let foundRejected = false;
 
     return OFFER_STAGE_ORDER.map((role, i): ApprovalStage => {
+      // HR is the creator of the request, not an approver — it's always
+      // shown as CREATED rather than matched against approval comments.
+      if (role === OFFER_CREATOR_ROLE) {
+        return {
+          id: i + 1,
+          role,
+          approverName: '',
+          approverInitials: this.getInitials(role),
+          status: 'CREATED',
+        };
+      }
+
       const entry = actioned.find(c => c.role?.trim().toLowerCase() === role.toLowerCase());
 
       let status: ApprovalStage['status'];
@@ -503,8 +488,7 @@ export class ViewOfferComponent implements OnInit {
         const alreadyCompleted = /already completed/i.test(res?.message ?? '');
         this.notificationService.success(res?.message ?? (approved ? 'Offer approved' : 'Offer rejected'));
         if (alreadyCompleted) {
-          // Nothing left for this user to action — refresh in place instead
-          // of navigating away, so the pipeline reflects the real current state.
+         
           await this.loadOfferDetails(false);
         } else {
           this.goBack();
@@ -547,10 +531,7 @@ export class ViewOfferComponent implements OnInit {
       const res: any = await this.candidateService.viewOfferLetter(this.offerId);
       const blob: Blob = res instanceof Blob ? res : new Blob([res], { type: 'application/pdf' });
 
-      // If the backend returned an error (auth failure, 404, 500, or a JSON
-      // error body sent with a 200), `responseType: 'blob'` will still
-      // "succeed" — you just get a blob whose content isn't actually a PDF.
-      // Surface that instead of silently showing a blank/broken iframe.
+    
       if (blob.type && !blob.type.includes('pdf')) {
         const text = await blob.text();
         console.error('Offer letter endpoint did not return a PDF. Response:', text);

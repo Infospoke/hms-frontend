@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.fc-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc-header {
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .fc-subtitle {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+}
+
+.fc-body {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+// ── Funnel (trapezoid rows via clip-path) ──────────────────────────────────
+.fc-funnel-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+// Matches .fc-conversion-title's height so both columns' row-stacks start
+// at the same y — otherwise the conversion % list drifts out of alignment
+// with the funnel band it corresponds to.
+.fc-col-spacer {
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.fc-funnel-rows {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  box-sizing: border-box;
+
+  // Last stage — straight sides (no clip-path), so the bottom corners are
+  // real rectangle corners and border-radius actually applies to them.
+  &--last {
+    border-radius: 0 0 10px 10px;
+  }
+}
+
+.fc-row-text {
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+}
+
+// ── Conversion % sidebar ────────────────────────────────────────────────────
+.fc-conversion-col {
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.fc-conversion-title {
+  height: 18px;
+  flex-shrink: 0;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+  line-height: 18px;
+}
+
+.fc-conversion-rows {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fc-conversion-row {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #16A34A;
+  text-align: center;
+
+  &--empty {
+    visibility: hidden;
+  }
+}

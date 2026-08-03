@@ -12,5 +12,9 @@ export const DASHBOARD_ROUTES: Routes = [
   {
     path:"hiring-manager-new-dashboard",
     loadComponent:()=>import("../components/hiring-manager-new-dashboard/hiring-manager-new-dashboard").then(m=>m.HiringManagerNewDashboard)
+  },
+  {
+    path:"recruiters-performance-dashboard",
+    loadComponent:()=>import("../components/recruiters-performance-dashboard/recruiters-performance-dashboard.component").then(m=>m.RecruitersPerformanceDashboardComponent)
   }
 ];

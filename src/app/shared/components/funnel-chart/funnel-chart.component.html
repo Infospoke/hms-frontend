@@ -1,0 +1,39 @@
+<div class="fc-card">
+
+  <div class="fc-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="fc-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
+  </div>
+
+  <div class="fc-body" [style.height.px]="height">
+
+    <div class="fc-funnel-col">
+      <div class="fc-col-spacer"></div>
+      <div class="fc-funnel-rows">
+        <div
+          class="fc-row"
+          [class.fc-row--last]="row.isLast"
+          *ngFor="let row of rows"
+          [style.background]="row.stage.color"
+          [style.clip-path]="row.clipPath"
+          [style.width.%]="row.isLast ? row.widthPercent : null"
+          [style.margin]="row.isLast ? '0 auto' : null"
+        >
+          <span class="fc-row-text">
+            {{ row.stage.label }}: {{ row.stage.value }}<span *ngIf="showTopPercent"> ({{ row.topPercent }}%)</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-conversion-col" *ngIf="conversions.length">
+      <span class="fc-conversion-title">Conversion %</span>
+      <div class="fc-conversion-rows">
+        <div class="fc-conversion-row fc-conversion-row--empty"></div>
+        <div class="fc-conversion-row" *ngFor="let c of conversions">{{ c }}%</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

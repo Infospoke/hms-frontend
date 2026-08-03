@@ -1,0 +1,56 @@
+<div class="ja-card">
+
+  <div class="ja-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="ja-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
+  </div>
+
+  <app-reusable-table
+    [columns]="columns"
+    [data]="rows"
+    [showHeader]="true"
+    [tableLayout]="'fixed'"
+    [cellTemplate]="cellTpl"
+  />
+
+  <div class="ja-legend" *ngIf="showLegend">
+    <span class="ja-legend-title">Priority:</span>
+    <span class="ja-legend-item">
+      <span class="ja-priority-dot ja-priority-dot--high"></span> High
+    </span>
+    <span class="ja-legend-item">
+      <span class="ja-priority-dot ja-priority-dot--medium"></span> Medium
+    </span>
+    <span class="ja-legend-item">
+      <span class="ja-priority-dot ja-priority-dot--low"></span> Low
+    </span>
+  </div>
+
+</div>
+
+<ng-template #cellTpl let-ctx>
+
+  <span *ngIf="ctx.col.key === 'assignmentStatus'" [class]="statusClass(ctx.row.assignmentStatus)">
+    {{ ctx.row.assignmentStatus }}
+  </span>
+
+  <span *ngIf="ctx.col.key === 'priority'" class="ja-priority-cell">
+    <span [class]="priorityDotClass(ctx.row.priority)"></span>
+    {{ ctx.row.priority }}
+  </span>
+
+  <span *ngIf="ctx.col.key === 'requestedOpenings'" class="ja-openings-bar-track">
+    <span class="ja-openings-bar-fill" [style.width.%]="openingsBarWidth(ctx.row.requestedOpenings)">
+      {{ ctx.row.requestedOpenings }}
+    </span>
+  </span>
+
+  <span *ngIf="ctx.col.key === 'daysDue'" [class]="daysDueClass(ctx.row.daysDue)">
+    {{ daysDueLabel(ctx.row.daysDue) }}
+  </span>
+
+  <span *ngIf="ctx.col.key === 'slaStatus'" [class]="slaClass(ctx.row.slaStatus)">
+    {{ ctx.row.slaStatus }}
+  </span>
+
+</ng-template>

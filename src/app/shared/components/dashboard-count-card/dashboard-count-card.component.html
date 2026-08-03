@@ -24,6 +24,16 @@
           [class.fa-arrow-down]="trend === 'down'" [style.color]="trendColor"></i>
         {{ bottomText }}
       </span>
+
+      <app-sparkline
+        class="card-sparkline"
+        *ngIf="sparklineData?.length"
+        [data]="sparklineData!"
+        [color]="sparklineColor"
+        [width]="120"
+        [height]="24"
+        [filled]="true"
+      />
     </div>
 
   </div>

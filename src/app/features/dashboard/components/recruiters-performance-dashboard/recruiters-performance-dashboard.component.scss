@@ -1,0 +1,25 @@
+.rp-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rp-row {
+  display: grid;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.rp-row--full {
+  grid-template-columns: 1fr;
+}
+
+.rp-row--pair {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 900px) {
+  .rp-row--pair {
+    grid-template-columns: 1fr;
+  }
+}

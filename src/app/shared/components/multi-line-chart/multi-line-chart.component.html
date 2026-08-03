@@ -1,0 +1,22 @@
+<div class="mlc-card">
+
+  <div class="mlc-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="mlc-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
+  </div>
+
+  <apx-chart
+    [series]="chartSeries"
+    [chart]="chart"
+    [colors]="colors"
+    [dataLabels]="dataLabels"
+    [stroke]="stroke"
+    [markers]="markers"
+    [tooltip]="tooltip"
+    [grid]="grid"
+    [xaxis]="xaxis"
+    [yaxis]="yaxis"
+    [legend]="legend"
+  ></apx-chart>
+
+</div>

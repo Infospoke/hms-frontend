@@ -60,5 +60,13 @@ export const CANDIDATE_ROUTES: Routes = [
     {
         path:"offer-management/release-offer-letter-details/:offerId",
         loadComponent:()=>import("../../approvals/components/view-offer/view-offer.component").then(m=>m.ViewOfferComponent)
+    },
+    {
+        path:'offer-management/review-negotiation-request/:id',
+        loadComponent:()=>import("../components/review-notiation-review/review-notiation-review.component").then(m=>m.ReviewNotiationReviewComponent)
+    },
+    {
+        path:'offer-management/negotiation-approvals/:id',
+        loadComponent:()=>import("../components/negotiation-approval-review/negotiation-approval-review.component").then(m=>m.NegotiationApprovalReviewComponent)
     }
 ]

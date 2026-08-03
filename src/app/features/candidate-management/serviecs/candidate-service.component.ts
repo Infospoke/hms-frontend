@@ -42,6 +42,10 @@ export class CandidateServiceComponent {
     return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.GET_PENDING_APPROVALS,payload))
   }
 
+  async getOfferApprovalsList(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.OFFER_APPROVALS_LIST,payload))
+  }
+
   async getOfferTemplates():Promise<any>{
     return await firstValueFrom(this.api.hrmsget(API.CANDIDATE_MANANGEMENT.GET_OFFER_TEMPLATED))
   }
@@ -63,6 +67,18 @@ export class CandidateServiceComponent {
   async getNotiateList(payload:any){
      return await firstValueFrom(
       this.api.hrmspost(API.CANDIDATE_MANANGEMENT.GET_NAGOTIATE_LIST,payload)
+    );
+  }
+
+  async getCandidateResponse(payload:any){
+    return await firstValueFrom(
+      this.api.hrmspost(API.CANDIDATE_MANANGEMENT.GET_CANDIDATE_RESPONSE,payload)
+    );
+  }
+
+  async getNegotiationDetails(id:any):Promise<any>{
+    return await firstValueFrom(
+      this.api.hrmsget(API.CANDIDATE_MANANGEMENT.NEGOTIATION_DETAILS_BY_APPLICANT_ID(id))
     );
   }
 

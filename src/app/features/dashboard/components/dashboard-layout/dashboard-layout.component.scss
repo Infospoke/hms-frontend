@@ -4,6 +4,11 @@
   gap: 20px;
 }
 
+// Recruiter + Date filters now render via app-common-filter (see
+// showFiltersBar in the .ts) — that component ships its own styles, so the
+// old hand-rolled .filter-box/.dropdown/.date-range-panel rules that used
+// to live here are gone.
+
 .card-dd {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -301,4 +306,3 @@
     color: #DC2626;
   }
 }
-

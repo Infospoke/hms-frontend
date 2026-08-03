@@ -1,0 +1,19 @@
+<div class="sankey-wrap">
+  <svg
+    [attr.viewBox]="'0 0 ' + width + ' ' + height"
+    preserveAspectRatio="xMidYMid meet"
+    class="sankey-svg">
+    <path *ngFor="let l of renderLinks" [attr.d]="l.path" [attr.fill]="l.color" fill-opacity="0.32" stroke="none"></path>
+    <rect *ngFor="let n of renderNodes; trackBy: trackByNodeId"
+      [attr.x]="n.x" [attr.y]="n.y" [attr.width]="n.width" [attr.height]="n.height"
+      [attr.fill]="n.color" rx="3"></rect>
+  </svg>
+
+  <div class="sankey-legend">
+    <div class="sankey-legend-item" *ngFor="let n of nodes; trackBy: trackByNodeId">
+      <span class="sankey-legend-dot" [style.background]="n.color"></span>
+      <span class="sankey-legend-label">{{ n.label }}</span>
+      <span class="sankey-legend-value">{{ n.value }}</span>
+    </div>
+  </div>
+</div>

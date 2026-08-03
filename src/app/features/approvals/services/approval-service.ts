@@ -117,4 +117,9 @@ export class ApprovalService {
   async approveOfferList(payload:any){
     return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.OPPROVE_OFFER_LIST, payload))
   }
+
+
+  async getDepartmentsByType(payload:any){
+    return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.DEPARMENT,payload))
+  }
 }

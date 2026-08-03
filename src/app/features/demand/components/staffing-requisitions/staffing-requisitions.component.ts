@@ -131,7 +131,10 @@ export class StaffingRequisitionsComponent implements OnInit {
       })
   }
   private loadDepartments(): void {
-    this.approvalService.departments().then
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload).then
       ((res: any) => {
         const d = res?.data ?? {};
         const fun = this.mapForDepartment(d);
@@ -295,7 +298,7 @@ export class StaffingRequisitionsComponent implements OnInit {
       { value: '', label: 'All' },
       ...data.map((item: any) => ({
         value: item.id,
-        label: item.name,
+        label: item.departmentName,
       }))
     ];
   }

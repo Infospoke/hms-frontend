@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { PipelineStage, PipeLineStagesComponent } from '../../../../shared/components/pipe-line-stages/pipe-line-stages.component';
+import { PipeLineStagesComponent } from '../../../../shared/components/pipe-line-stages/pipe-line-stages.component';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { CommonFilterComponent } from '../../../../shared/components/common-filter/common-filter.component';
 import { candidateManagementFilter } from '../../../../shared/constants/reusbale-filter';
@@ -8,7 +8,7 @@ import { RaiseOfferRequestTableComponent } from '../raise-offer-request-table/ra
 import { RaiseOfferLetterPendingTableComponent } from '../raise-offer-letter-pending-table/raise-offer-letter-pending-table.component';
 import { RaiseOfferLetterReadyTableComponent } from '../raise-offer-letter-ready-table/raise-offer-letter-ready-table.component';
 import { PayRevisionRequestTableComponent } from '../pay-revision-request-table/pay-revision-request-table.component';
-import { AcceptOfferTableComponent } from '../accept-offer-table/accept-offer-table.component';
+
 import { ApprovalStatusTableComponent } from '../approval-status-table/approval-status-table.component';
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
 import { InterviewServiceService } from '../../../interview/service/interview-service.service';
@@ -27,7 +27,7 @@ import { Router } from '@angular/router';
     RaiseOfferLetterPendingTableComponent,
     RaiseOfferLetterReadyTableComponent,
     PayRevisionRequestTableComponent,
-    AcceptOfferTableComponent,
+
     ApprovalStatusTableComponent
   ],
   templateUrl: './raise-offer-request.component.html',
@@ -35,58 +35,90 @@ import { Router } from '@angular/router';
 })
 export class RaiseOfferRequestComponent implements OnInit {
   private router = inject(Router);
-  stages: PipelineStage[] = [
+  stages: any[] = [
     {
       id: 'ror',
-      label: 'Raise offer request',
+      label: 'New offer requests',
       icon: 'fa-solid fa-envelope',
       countColor: 'blue',
       count: 0,
-
     },
     {
       id: 'rol',
-      label: 'Release offer letter',
-      icon: 'fa-solid fa-shield-halved',
+      label: 'Offer approvals',
+      icon: 'fa-solid fa-square-check',
       countColor: 'purple',
+      count: 0,
+      breakdown: `${0} new • ${0} negotiated`,
+    },
+    {
+      id: 'rl',
+      label: 'Release offer letter',
+      icon: 'fa-solid fa-shield-heart',
+      countColor: 'orange',
       count: 0,
       breakdown: `${0} pending • ${0} ready`,
     },
     {
       id: 'cr',
-      label: 'Candidate requested',
-      icon: 'fa-solid fa-pen',
-      countColor: 'orange',
-      // TODO: swap to `data?.candidateRequested ?? 0` once the API returns it.
-      count: 0,
-
-    },
-    {
-      id: 'al',
-      label: 'Accepted letters',
-      icon: 'fa-solid fa-users',
+      label: 'Candidate response',
+      icon: 'fa-solid fa-user-group',
       countColor: 'green',
-      // TODO: swap to `data?.acceptedLetters ?? 0` once the API returns it.
       count: 0,
-
+      breakdown: `Pending, accepted, rejected`,
     },
   ];
+
   headings: any = {
     ror: {
-      heading: 'Raise Offer Request',
-      subHeading: 'Candidates have reached the hire stage and are ready for offer initiation. Raise an offer request to begin the approval process.'
+      heading: 'Candidates moved to hire stage',
+      subHeading: 'These candidates are ready for offer release. Raise an offer request to start the approval process.'
     },
     rol: {
-      heading: 'Release Offer Letter',
-      subHeading: 'Approved offer requests are ready for release. Generate and send the offer letters to the selected candidates.'
+      offerApprovals: {
+        heading: 'New offer approvals',
+        subHeading: "Offer requests moving through department head, finance, and HR sign-off before they can be released.",
+      },
+      negAppovals: {
+        heading: 'Negotiation approvals',
+        subHeading: "Revised packages HR has approved, now moving through the approval chain before an updated letter is re-released.",
+      }
+    },
+    rl: {
+      pending: {
+        heading: 'Pending release',
+        subHeading: 'All approvals are complete for these first-time offers. Select candidates below and release their letters in bulk, or view what each approver noted.'
+      },
+      pendingReady: {
+        heading: 'Re-release',
+        subHeading: 'Approved after negotiation. These candidates already hold an offer letter — releasing here resends it with the revised terms.'
+      }
     },
     cr: {
-      heading: 'Candidate Requested',
-      subHeading: 'Candidates have requested changes to their offers. Review the requests and approve or reject the proposed revisions.'
+      expired: {
+        heading: 'Expired',
+        subHeading: 'Terminal state. Validity window closed with no response &mdash; raise a fresh request to re-offer.'
+      },
+      accepted: {
+        heading: 'Accepted',
+        subHeading: 'Terminal state. Candidates who have accepted their final offer letter — no further action.'
+      },
+      negotiating: {
+        heading: "Negotiating",
+        subHeading: "Candidates who received their offer letter and asked for a package increment. Review the counter — one attempt only, so the outcome here is final.",
+      },
+      rejected: {
+        heading: "Rejected",
+        subHeading: "Terminal state. Candidate declined the offer &mdash; record is closed.",
+      },
+      pending: {
+        heading: "Pending",
+        subHeading: "Letter sent, awaiting the candidate’s decision to accept, reject, or negotiate.",
+      }
     },
     al: {
-      heading: 'Accepted Letters',
-      subHeading: 'Candidates who have accepted their offer letters are listed here and are ready for the onboarding process.'
+      heading: 'Negotiating',
+      subHeading: 'Candidates who received their offer letter and asked for a package increment. Review the counter — one attempt only, so the outcome here is final.'
     }
   };
   private candidateService = inject(CandidateServiceComponent)
@@ -94,21 +126,52 @@ export class RaiseOfferRequestComponent implements OnInit {
   acceptedLetters: any[] = [];
   dropDownData = candidateManagementFilter;
   activeStageId: any = 'ror';
-  newPayRevisionRequestsCount:any;
+  newPayRevisionRequestsCount: any;
   currentPage: number = 1;
   pageSize: number = 10;
   totalCandidates: number = 0;
   activeFilters: any = { dateFilter: '' }
-  // ── Sub-tabs, keyed by stage ──────────────────────────────────────────────
-  // 'ror' and 'al' have no entry here -> tabs getter returns [] -> no tabs shown.
+
   tabsByStage: Record<string, { key: string; label: string; count: number, show: boolean }[]> = {
+    rl: [
+      { key: 'pending', label: 'Pending release', count: 0, show: false },
+      { key: 'pendingReady', label: 'Re-release', count: 0, show: false },
+    ],
     rol: [
-      { key: 'pending', label: 'Pending approval', count: 0, show: false },
-      { key: 'ready', label: 'Ready to release', count: 0, show: false },
+      { key: 'offerApprovals', label: 'New offer approvals ', count: 0, show: false },
+      { key: 'negAppovals', label: 'Negotiation approvals', count: 0, show: false },
     ],
     cr: [
-      { key: 'new', label: 'New requests', count: 0, show: false },
-      { key: 'approval', label: 'In approval', count: 0, show: false },
+      {
+        key: 'negotiating',
+        label: 'Negotiating',
+        count: 0,
+        show: false,
+      },
+      {
+        key: 'pending',
+        label: 'Pending',
+        count: 0,
+        show: false,
+      },
+      {
+        key: 'accepted',
+        label: 'Accepted',
+        count: 0,
+        show: false,
+      },
+      {
+        key: 'rejected',
+        label: 'Rejected',
+        count: 0,
+        show: false,
+      },
+      {
+        key: 'expired',
+        label: 'Expired',
+        count: 0,
+        show: false,
+      },
     ],
   };
 
@@ -140,10 +203,12 @@ export class RaiseOfferRequestComponent implements OnInit {
   ];
 
   get heading(): string {
-    return this.headings[this.activeStageId]?.heading
+    const stageHeadings = this.headings[this.activeStageId];
+    return stageHeadings?.heading ?? stageHeadings?.[this.activeTabId]?.heading ?? '';
   }
   get subHeading(): string {
-    return this.headings[this.activeStageId]?.subHeading
+    const stageHeadings = this.headings[this.activeStageId];
+    return stageHeadings?.subHeading ?? stageHeadings?.[this.activeTabId]?.subHeading ?? '';
   }
   private interviewService = inject(InterviewServiceService)
   private approvalService = inject(ApprovalService)
@@ -169,51 +234,62 @@ export class RaiseOfferRequestComponent implements OnInit {
     this.stages = [
       {
         id: 'ror',
-        label: 'Raise offer request',
+        label: 'New offer requests',
         icon: 'fa-solid fa-envelope',
         countColor: 'blue',
-        count: data?.raiseOfferRequest ?? 0,
-        caption: '',
+        count: data?.newOfferRequests ?? 0,
       },
       {
         id: 'rol',
-        label: 'Release offer letter',
-        icon: 'fa-solid fa-shield-halved',
+        label: 'Offer approvals',
+        icon: 'fa-solid fa-square-check',
         countColor: 'purple',
+        count: data?.offerApprovals ?? 0,
+        breakdown: `${data?.newApprovals ?? 0} new • ${data?.negotiated ?? 0} negotiated`,
+      },
+      {
+        id: 'rl',
+        label: 'Release offer letter',
+        icon: 'fa-solid fa-file-signature',
+        countColor: 'orange',
         count: data?.releaseOfferLetter ?? 0,
-        breakdown: `${data?.pendingApprovals ?? 0} pending • ${data?.readyToRelease ?? 0} ready`,
+        breakdown: `${data?.pending ?? 0} pending • ${data?.ready ?? 0} ready`,
       },
       {
         id: 'cr',
-        label: 'Candidate requested',
-        icon: 'fa-solid fa-pen',
-        countColor: 'orange',
-        // TODO: swap to `data?.candidateRequested ?? 0` once the API returns it.
-        count: 0,
-        caption: '',
-      },
-      {
-        id: 'al',
-        label: 'Accepted letters',
-        icon: 'fa-solid fa-users',
+        label: 'Candidate response',
+        icon: 'fa-solid fa-user-check',
         countColor: 'green',
-        // TODO: swap to `data?.acceptedLetters ?? 0` once the API returns it.
-        count: 0,
-        caption: '',
+        count: data?.candidateResponses ?? 0,
+        breakdown: ``,
       },
     ];
   }
 
   private async loadDepartments() {
-    const res: any = await this.approvalService.departments();
+    const payload={
+      "srDepartments": true,
+    }
+    
+    const res: any = await this.approvalService.getDepartmentsByType(payload);
     if (res?.responsecode == '00') {
-      const data = this.map(res?.data);
+      const data = this.mapForDepartment(res?.data);
       this.dropDownData = this.dropDownData.map((item: any) =>
         item.key === 'departments'
           ? { ...item, options: data ?? [] }
           : item
       );
     }
+  }
+
+   private mapForDepartment(data: any) {
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.departmentName,
+      }))
+    ];
   }
   private async loadJobs() {
     const res: any = await this.interviewService.getAIInterviewZoneJobs();
@@ -267,10 +343,26 @@ export class RaiseOfferRequestComponent implements OnInit {
         break;
 
       case 'cr':
-        if (this.activeTabId === 'new') {
-          this.getNewRevisionRequests(payload);
-        } else if (this.activeTabId === 'approval') {
-          this.getRevisionApprovalRequests(payload);
+        switch (this.activeTabId) {
+          case 'negotiating':
+            this.getNegotiatingCandidates(payload);
+            break;
+
+          case 'pending':
+            this.getPendingCandidates(payload);
+            break;
+
+          case 'accepted':
+            this.getAcceptedCandidates(payload);
+            break;
+
+          case 'rejected':
+            this.getRejectedCandidates(payload);
+            break;
+
+          case 'expired':
+            this.getExpiredCandidates(payload);
+            break;
         }
         break;
 
@@ -279,7 +371,25 @@ export class RaiseOfferRequestComponent implements OnInit {
         break;
     }
   }
+  async getNegotiatingCandidates(payload: any) {
 
+  }
+
+  async getPendingCandidates(payload: any) {
+
+  }
+
+  async getAcceptedCandidates(payload: any) {
+
+  }
+
+  async getRejectedCandidates(payload: any) {
+
+  }
+
+  async getExpiredCandidates(payload: any) {
+
+  }
   private async getRaiseOfferRequests(payload: any) {
     const payloadData = {
       ...payload,
@@ -371,11 +481,11 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
 
   get visibleDropDownData(): any[] {
-  if (this.activeStageId === 'cr') {
-    return this.dropDownData.filter((item: any) => item.key !== 'departments');
+    if (this.activeStageId === 'cr') {
+      return this.dropDownData.filter((item: any) => item.key !== 'departments');
+    }
+    return this.dropDownData;
   }
-  return this.dropDownData;
-}
   async getNewRevisionRequests(payload: any) {
     const payloadData = {
       ...payload,
@@ -383,22 +493,22 @@ export class RaiseOfferRequestComponent implements OnInit {
     }
     const res: any = await this.candidateService.getNotiateList(payloadData);
     if (res?.responsecode == '00') {
-      this.newPayRevisionRequestsCount= res?.data?.totalElements;
+      this.newPayRevisionRequestsCount = res?.data?.totalElements;
       this.newPayRevisionRequests = this.mapReadToNagotiateList(res?.data?.content);
     }
   }
   mapReadToNagotiateList(data: any): any {
     return data?.map((item: any) => ({
-      id:item?.negotiationId,
-      candidateId:item?.candidateId,
+      id: item?.negotiationId,
+      candidateId: item?.candidateId,
       name: item?.candidateName,
-      email:item?.email,
+      email: item?.email,
       avatarInitials: this.getAvatarInitials(item?.candidateName),
-      avatarColor:  this.getAvatarColor(item.candidateName),
+      avatarColor: this.getAvatarColor(item.candidateName),
       jobTitle: item?.jobTitle,
       offerReleasedOn: this.formatDate(item?.offerNegotiationDate),
-      requestedPackage:item?.requestedAmount,
-      currentPackage:item?.offeredAmount,
+      requestedPackage: item?.requestedAmount,
+      currentPackage: item?.offeredAmount,
       priority: item?.priority
     }))
   }

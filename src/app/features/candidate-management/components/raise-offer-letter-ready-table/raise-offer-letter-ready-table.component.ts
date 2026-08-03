@@ -16,7 +16,8 @@ import { CanDirective } from "../../../../shared/directives/can.directive";
 })
 export class RaiseOfferLetterReadyTableComponent {
 
-   
+  @Input() heading?:any;
+  @Input() subHeading?:any;
   // ── Inputs ────────────────────────────────────────────────────────────────
   @Input() data: any[] = [];
   @Input() totalItems: number = 0;

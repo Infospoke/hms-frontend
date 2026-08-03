@@ -19,7 +19,8 @@ export class AcceptOfferTableComponent {
   @Input() pageSize: number = 3;
   @Input() showPagination: boolean = true;
   @Input() emptyMessage: string = 'No accepted letters found.';
- 
+  @Input() heading?:any;
+  @Input() subHeading?:any;
   // ── Outputs ───────────────────────────────────────────────────────────────
   @Output() pageChange = new EventEmitter<number>();
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();

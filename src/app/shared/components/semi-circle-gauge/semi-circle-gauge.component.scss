@@ -1,0 +1,22 @@
+.sg-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.sg-svg {
+  display: block;
+}
+
+.sg-value-text {
+  font-weight: 700;
+  fill: #1A1A1A;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.sg-label {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}

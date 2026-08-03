@@ -52,65 +52,54 @@
   word-break: break-word;
 }
 
-// ── Approval stepper ──────────────────────────────────────────────────────
-.as-stepper {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: nowrap;
-  width: 100%;
-  min-width: 0;
+// ── Recruiter link ───────────────────────────────────────────────────────────
+.as-recruiter-link {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.as-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1 1 0;
-  min-width: 0;
-  text-align: center;
-}
+// ── Status badge (Pending / Accepted / Rejected / Expired) ─────────────────
+.as-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 
-.as-step-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 4px;
-  flex-shrink: 0;
-
-  svg {
-    width: 16px;
-    height: 16px;
+  // Pending — letter sent, awaiting the candidate's decision
+  &--awaiting {
+    background: #fbe8c6;
+    color: #b8791b;
   }
 
-  &--completed { color: #16a34a; }
-  &--active    { color: #2563eb; }
-  &--pending   { color: #cbd5e1; }
-}
+  // Accepted — terminal, positive outcome
+  &--accepted {
+    background: #dcfce7;
+    color: #16a34a;
+  }
 
-.as-step-label {
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.25;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  max-width: 100%;
+  // Rejected — terminal, negative outcome
+  &--rejected {
+    background: #fde2e2;
+    color: #d64545;
+  }
 
-  &--completed { color: #16a34a; }
-  &--active    { color: #2563eb; }
-  &--pending   { color: #94a3b8; }
-}
-
-.as-step-dash {
-  color: #cbd5e1;
-  font-size: 11px;
-  line-height: 26px;
-  padding: 0;
-  flex: 0 0 auto;
-  width: 8px;
-  text-align: center;
+  // Expired — terminal, no response within the validity window
+  &--expired {
+    background: #f1f5f9;
+    color: #64748b;
+  }
 }
 
 // ── Priority badge ────────────────────────────────────────────────────────

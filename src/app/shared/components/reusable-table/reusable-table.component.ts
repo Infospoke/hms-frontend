@@ -32,19 +32,14 @@ export class ReusableTableComponent implements OnChanges {
 
   // ── Inputs ────────────────────────────────────────────────────────────────
   @Input() title?: string;
+  @Input() subTitle?:any;
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
   @Input() showHeader: boolean = true;
   @Input() emptyMessage: string = 'No records found.';
   @Input() sortableColumns: string[] = [];
 
-  /**
-   * 'auto' (default) keeps existing behaviour everywhere the table is already used.
-   * 'fixed' makes any column WITHOUT an explicit width deterministically absorb
-   * all remaining horizontal space (per the CSS spec for fixed table layout),
-   * instead of the browser guessing from content — useful for a single
-   * flexible "main content" column like a long question/description text.
-   */
+  
   @Input() tableLayout: 'auto' | 'fixed' = 'auto';
 
   // ── Pagination ────────────────────────────────────────────────────────────

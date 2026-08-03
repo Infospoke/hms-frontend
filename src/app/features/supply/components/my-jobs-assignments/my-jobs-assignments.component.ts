@@ -129,7 +129,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
       { value: '', label: 'All' },
       ...data.map((item: any) => ({
         value: item.id,
-        label: item.name,
+        label: item.departmentName,
       }))
     ];
   }
@@ -143,7 +143,10 @@ export class MyJobsAssignmentsComponent implements OnInit {
     ];
   }
   private loadDepartments(): void {
-    this.approvalService.departments().then
+    const payload={
+      "srDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload).then
       ((res: any) => {
         const d = res?.data ?? {};
         const fun = this.mapForDepartment(d);

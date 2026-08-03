@@ -152,7 +152,7 @@
           [nzPlaceHolder]="departments.length ? 'Select department' : 'Select business unit first'"
           [nzOptionOverflowSize]="5" class="nz-field-select">
           <!-- <nz-option *ngIf="departments.length === 0 && c('businessUnit')?.value" nzDisabled nzValue="" nzLabel="No departments available"></nz-option> -->
-          <nz-option *ngFor="let d of departments" [nzValue]="d?.id" [nzLabel]="d?.name"></nz-option>
+          <nz-option *ngFor="let d of departments" [nzValue]="d?.id" [nzLabel]="d?.departmentName"></nz-option>
         </nz-select>
         <div class="error" *ngIf="c('department')?.touched">
           <span *ngIf="c('department')?.hasError('required')">Department is required</span>

@@ -1,0 +1,48 @@
+<div class="cp-wrap">
+  <div class="cp-header">
+    <h3 class="cp-title" *ngIf="title">{{ title }}</h3>
+
+    <div class="cp-period" *ngIf="periods.length">
+      <select class="cp-period-select" [value]="selectedPeriod" (change)="onPeriodChange($event)">
+        <option *ngFor="let period of periods" [value]="period">{{ period }}</option>
+      </select>
+      <i class="fa-solid fa-chevron-down cp-period-icon"></i>
+    </div>
+  </div>
+
+  <div class="cp-funnel">
+    <ng-container *ngFor="let stage of stages; let first = first">
+      <div class="cp-arrow" *ngIf="!first">
+        <i class="fa-solid fa-arrow-right"></i>
+        <span class="cp-arrow-pct" *ngIf="stage.conversionPct !== undefined">{{ stage.conversionPct }}%</span>
+      </div>
+
+      <div class="cp-stage">
+        <div class="cp-stage-icon" [style.background-color]="stage.iconBgColor">
+          <i [class]="stage.iconClass" [style.color]="stage.iconColor"></i>
+        </div>
+        <span class="cp-stage-label" [style.color]="stage.iconColor">{{ stage.label }}</span>
+        <span class="cp-stage-value">{{ stage.value }}</span>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="cp-footer">
+    <span class="cp-footer-label">{{ overallConversionLabel }}</span>
+    <div class="cp-footer-row">
+      <span class="cp-footer-value">{{ overallConversionRate }}%</span>
+
+      <svg *ngIf="sparklinePoints" [attr.viewBox]="'0 0 ' + sparklineWidth + ' ' + sparklineHeight"
+        class="cp-sparkline" preserveAspectRatio="none">
+        <polyline [attr.points]="sparklinePoints" fill="none" stroke="#2563eb" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+      <span class="cp-footer-trend" *ngIf="trendDelta !== undefined"
+        [class.cp-footer-trend--up]="trendDirection === 'up'" [class.cp-footer-trend--down]="trendDirection === 'down'">
+        <i class="fa-solid" [class.fa-arrow-up]="trendDirection === 'up'" [class.fa-arrow-down]="trendDirection === 'down'"></i>
+        {{ trendDelta }}% {{ trendLabel }}
+      </span>
+    </div>
+  </div>
+</div>

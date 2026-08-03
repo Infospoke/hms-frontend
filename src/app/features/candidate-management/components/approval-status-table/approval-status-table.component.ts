@@ -6,12 +6,9 @@ import {
 } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CanDirective } from "../../../../shared/directives/can.directive";
 
-export type ApprovalStepState = 'completed' | 'active' | 'pending';
-
-export interface ApprovalStep {
-  label: string;
-  state: ApprovalStepState;
-}
+// 'awaiting' = Pending (letter sent, awaiting candidate's decision)
+// 'accepted' / 'rejected' / 'expired' are terminal states
+export type ApprovalStatusState = 'awaiting' | 'accepted' | 'rejected' | 'expired';
 
 export interface ApprovalStatusRow {
   id: string | number;
@@ -20,10 +17,11 @@ export interface ApprovalStatusRow {
   avatarInitials: string;
   avatarColor: 'purple' | 'green' | 'orange' | 'blue' | 'pink';
   jobTitle: string;
-  department: string;
-  approvalSteps: ApprovalStep[];
-  requestedOn: string;
-  priority: 'High' | 'Medium' | 'Low';
+  package: string;
+  releasedOn: string;
+  recruiter: string;
+  status: ApprovalStatusState;
+  statusLabel?: string;
 }
 
 @Component({
@@ -37,12 +35,17 @@ export class ApprovalStatusTableComponent {
 
   // ── Inputs ────────────────────────────────────────────────────────────────
   @Input() data: ApprovalStatusRow[] = [];
+  @Input() heading?: any;
+  @Input() subHeading?: any;
   @Input() totalItems: number = 0;
   @Input() currentPage: number = 1;
   @Input() pageSize: number = 6;
-  @Input() permissionName:any='';
+  @Input() permissionName: any = '';
   @Input() showPagination: boolean = true;
-  @Input() actionLabel: string = 'View details';
+  // Actions column only applies to terminal/actionable states (e.g. Expired → "Raise new request").
+  // Pending / Accepted / Rejected have no action, so leave this false for those tabs.
+  @Input() showActions: boolean = false;
+  @Input() actionLabel: string = 'Raise new request';
   @Input() emptyMessage: string = 'No requests found.';
 
   // ── Outputs ───────────────────────────────────────────────────────────────
@@ -50,17 +53,35 @@ export class ApprovalStatusTableComponent {
   @Output() pageChange = new EventEmitter<number>();
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
 
-  columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '18%' },
-    { key: 'jobTitle', label: 'Job title', width: '11%' },
-    { key: 'department', label: 'Department', width: '11%' },
-    { key: 'approvalStatus', label: 'Current approval status', custom: true, width: '28%' },
-    { key: 'requestedOn', label: 'Requested on', sortable: true, width: '12%' },
-    { key: 'priority', label: 'Priority', custom: true, width: '8%' },
-    { key: 'actions', label: 'Actions', custom: true, width: '12%' },
-  ];
+  get columns(): TableColumn[] {
+    const cols: TableColumn[] = [
+      { key: 'candidate', label: 'Candidate', custom: true, width: '20%' },
+      { key: 'jobTitle', label: 'Job title', width: '14%' },
+      { key: 'package', label: 'Package', width: '14%' },
+      { key: 'releasedOn', label: 'Released on', sortable: true, width: '14%' },
+      { key: 'recruiter', label: 'Recruiter', custom: true, width: '14%' },
+      { key: 'status', label: 'Status', custom: true, width: '14%' },
+    ];
 
-  sortableColumns: string[] = ['requestedOn'];
+    if (this.showActions) {
+      cols.push({ key: 'actions', label: 'Actions', custom: true, width: '10%' });
+    }
+
+    return cols;
+  }
+
+  sortableColumns: string[] = ['releasedOn'];
+
+  statusLabels: Record<ApprovalStatusState, string> = {
+    awaiting: 'Awaiting response',
+    accepted: 'Accepted',
+    rejected: 'Rejected',
+    expired: 'Expired',
+  };
+
+  getStatusLabel(row: ApprovalStatusRow): string {
+    return row.statusLabel ?? this.statusLabels[row.status] ?? row.status;
+  }
 
   onAction(row: ApprovalStatusRow): void {
     this.actionClick.emit(row);

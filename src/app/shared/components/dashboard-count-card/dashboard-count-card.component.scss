@@ -92,11 +92,18 @@
     }
 
     .bottom-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       font-size: 12px;
       font-weight: 500;
       color: #94a3b8;
       line-height: 1.4;
       margin-top: 2px;
+
+      i {
+        font-size: 10px;
+      }
     }
   }
 

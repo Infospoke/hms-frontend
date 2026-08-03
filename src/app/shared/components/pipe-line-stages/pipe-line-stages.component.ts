@@ -11,11 +11,7 @@ export interface PipelineStage {
   icon: string;
   count: number;
   countColor?: StageColor;
-  /**
-   * Optional inline sub-count shown next to the big number, e.g.
-   * "6 pending · 3 ready" or "4 new · 3 in approval". Rendered in
-   * parentheses. Omit for stages that only need a single number.
-   */
+ 
   breakdown?: string;
   /** Optional caption under the number, e.g. "Candidates at hire stage". */
   caption?: string;

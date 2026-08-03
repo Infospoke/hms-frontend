@@ -36,7 +36,8 @@ export class PayRevisionRequestTableComponent {
   @Input() showPagination: boolean = true;
   @Input() actionLabel: string = 'Review request';
   @Input() emptyMessage: string = 'No pay revision requests found.';
-
+  @Input() heading?:any;
+  @Input() subHeading?:any;
   // ── Outputs ───────────────────────────────────────────────────────────────
   @Output() actionClick = new EventEmitter<PayRevisionRequestRow>();
   @Output() pageChange = new EventEmitter<number>();
@@ -45,9 +46,9 @@ export class PayRevisionRequestTableComponent {
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', custom: true, width: '22%' },
     { key: 'jobTitle', label: 'Job title', width: '14%' },
-    { key: 'offerReleasedOn', label: 'Negotiation On', width: '19%', custom: true },
+    { key: 'offerReleasedOn', label: 'Offer Released On', width: '19%', custom: true },
     { key: 'requestedPackage', label: 'Requested package', width: '19%' },
-    { key: 'currentPackage', label: 'Offerd package', width: '16%' },
+    { key: 'currentPackage', label: 'Current package', width: '16%' },
     { key: 'priority', label: 'Priority', custom: true, width: '16%' },
     { key: 'actions', label: 'Actions', custom: true, width: '16%' },
   ];

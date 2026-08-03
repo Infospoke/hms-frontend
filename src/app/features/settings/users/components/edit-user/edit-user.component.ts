@@ -61,7 +61,10 @@ export class EditUserComponent implements OnInit {
   }
   getDeparmentData() {
     try {
-      this.approvalService.departments()
+      const payload={
+      "userDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload)
         .then((res: any) => {
           this.departments = res?.data;
         })
@@ -109,9 +112,13 @@ export class EditUserComponent implements OnInit {
 
  
   getIntialData() {
-    console.log(this.userId);
+    console.log(this.user);
+    const payload={
+      "srDepartments": true,
+    }
+    
     forkJoin({
-      bussinessUnit: this.approvalService.departments(),
+      bussinessUnit: this.approvalService.getDepartmentsByType(payload),
 
     }).subscribe({
       next: async (res: any) => {

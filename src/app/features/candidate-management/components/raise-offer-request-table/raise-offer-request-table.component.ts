@@ -14,7 +14,8 @@ import { CanDirective } from "../../../../shared/directives/can.directive";
 })
 export class RaiseOfferRequestTableComponent {
 
-  
+  @Input() heading?:any;
+  @Input() subHeading?:any;
   // ── Inputs ────────────────────────────────────────────────────────────────
   @Input() data: any[] = [];
   @Input() permissionName:any='';

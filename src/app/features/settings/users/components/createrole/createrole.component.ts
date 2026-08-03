@@ -120,7 +120,10 @@ export class CreateRoleComponent implements OnInit {
   }
 
   private loadDepartments(): void {
-    this.approvalService.departments()
+    const payload={
+      "userDepartments": true,
+    }
+    this.approvalService.getDepartmentsByType(payload)
       .then((res: any) => { this.departments = res?.data ?? []; })
       .catch(console.error);
   }

@@ -1,0 +1,37 @@
+<div class="sg-wrap">
+  <svg
+    [attr.width]="size"
+    [attr.height]="size / 2 + 12"
+    [attr.viewBox]="'0 0 ' + size + ' ' + (size / 2 + 12)"
+    class="sg-svg">
+
+    <path
+      [attr.d]="trackPath"
+      fill="none"
+      [attr.stroke]="trackColor"
+      [attr.stroke-width]="strokeWidth"
+      stroke-linecap="round">
+    </path>
+
+    <path
+      [attr.d]="valuePath"
+      fill="none"
+      [attr.stroke]="activeColor"
+      [attr.stroke-width]="strokeWidth"
+      stroke-linecap="round">
+    </path>
+
+    <text
+      [attr.x]="size / 2"
+      [attr.y]="size / 2 - 6"
+      text-anchor="middle"
+      [attr.font-size]="size * 0.2"
+      class="sg-value-text">
+      {{ clampedScore }}{{ suffix }}
+    </text>
+  </svg>
+
+  <div class="sg-label" [style.color]="activeColor">
+    {{ activeLabel }}
+  </div>
+</div>

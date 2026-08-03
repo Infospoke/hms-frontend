@@ -22,5 +22,10 @@ export class DashboardCountCardComponent {
 
   @Input() bottomText!: string;
   @Input() bottomTextColor: string = '#94a3b8';
+
+  /** Small up/down arrow rendered before bottomText, e.g. "▲ 1 this week". */
+  @Input() trend?: 'up' | 'down';
+  @Input() trendColor: string = '#16A34A';
+
   @Output() cardClick = new EventEmitter<void>();
 }

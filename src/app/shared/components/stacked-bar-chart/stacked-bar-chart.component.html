@@ -1,0 +1,29 @@
+<div class="sbc-wrap">
+  <div class="sbc-top">
+    <span class="sbc-approval-label">{{ approvalRateLabel }}</span>
+    <span class="sbc-approval-value">{{ computedApprovalRate }}%</span>
+  </div>
+
+  <apx-chart
+    *ngIf="chartOptions as opts"
+    [series]="opts.series"
+    [chart]="opts.chart"
+    [colors]="opts.colors"
+    [plotOptions]="opts.plotOptions"
+    [xaxis]="opts.xaxis"
+    [yaxis]="opts.yaxis"
+    [legend]="opts.legend"
+    [dataLabels]="opts.dataLabels"
+    [tooltip]="opts.tooltip"
+    [grid]="opts.grid"
+  ></apx-chart>
+
+  <div class="sbc-legend">
+    <div class="sbc-legend-item" *ngFor="let s of segments; trackBy: trackByLabel">
+      <span class="sbc-legend-dot" [style.background]="s.color"></span>
+      <span class="sbc-legend-label">{{ s.label }}</span>
+      <span class="sbc-legend-pct">({{ percentageOf(s.value) }}%)</span>
+      <span class="sbc-legend-value">{{ s.value }}</span>
+    </div>
+  </div>
+</div>

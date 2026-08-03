@@ -20,9 +20,9 @@
       <span class="label" [style.color]="labelColor">{{ label }}</span>
       <span class="value" [style.color]="valueColor">{{ value }}</span>
       <span class="bottom-text" *ngIf="bottomText" [style.color]="bottomTextColor">
-
+        <i *ngIf="trend" class="fa-solid" [class.fa-arrow-up]="trend === 'up'"
+          [class.fa-arrow-down]="trend === 'down'" [style.color]="trendColor"></i>
         {{ bottomText }}
-
       </span>
     </div>
 

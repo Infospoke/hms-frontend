@@ -66,18 +66,18 @@ export class DonutPieChartComponent implements OnChanges {
 
   @Input() currencyPrefix = '₹';
 
-  // Set to true for dashboards like "22 Total Offers" where the center
-  // should show a plain count instead of a currency-formatted amount.
   @Input() showCount = false;
 
-  // Font sizes for the two lines in the center of the donut.
-  @Input() valueFontSize = '20px';
-  @Input() centerLabelFontSize = '9px';
+  
+  @Input() valueFontSize = '18px';
+  @Input() centerLabelFontSize = '11px';
 
   @ViewChild('chartRef') chartRef?: ChartComponent;
 
   chartOptions?: DonutChartOptions;
   total = 0;
+  /** Formatted big number shown in the donut's center overlay. */
+  centerValueText = '';
 
   ngOnChanges(changes: SimpleChanges): void {
   
@@ -96,6 +96,7 @@ export class DonutPieChartComponent implements OnChanges {
   private buildChart(): void {
     this.total = this.segments.reduce((sum, s) => sum + s.value, 0);
     const prefix = this.showCount ? '' : this.currencyPrefix;
+    this.centerValueText = `${prefix}${this.formatValue(this.total)}`;
 
     this.chartOptions = {
       series: this.segments.map((s) => s.value),
@@ -125,26 +126,9 @@ export class DonutPieChartComponent implements OnChanges {
         pie: {
           donut: {
             size: '68%',
+            
             labels: {
-              show: true,
-              name: { show: false },
-              value: {
-                show: true,
-                fontSize: this.valueFontSize,
-                fontWeight: 700,
-                color: '#1a1f2b',
-                offsetY: -4,
-                formatter: () => `${prefix}${this.formatValue(this.total)}`,
-              },
-              total: {
-                show: true,
-                showAlways: true,
-                label: this.centerLabel,
-                fontSize: this.centerLabelFontSize,
-                fontWeight: 400,
-                color: '#9aa1b1',
-                formatter: () => this.centerLabel,
-              },
+              show: false,
             },
           },
         },

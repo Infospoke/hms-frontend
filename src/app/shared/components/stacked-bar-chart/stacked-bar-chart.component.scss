@@ -1,0 +1,65 @@
+.sbc-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.sbc-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sbc-approval-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.sbc-approval-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #16A34A;
+}
+
+.sbc-legend {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 12px;
+}
+
+.sbc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+
+.sbc-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sbc-legend-label {
+  color: #1a1f2b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sbc-legend-pct {
+  color: #9aa1b1;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.sbc-legend-value {
+  font-weight: 700;
+  color: #1a1f2b;
+  margin-left: auto;
+  flex-shrink: 0;
+}

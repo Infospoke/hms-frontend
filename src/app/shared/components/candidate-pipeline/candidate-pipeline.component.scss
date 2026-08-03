@@ -148,35 +148,5 @@
   color: #2563eb;
 }
 
-.cp-footer-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.cp-sparkline {
-  width: 90px;
-  height: 26px;
-  flex-shrink: 0;
-}
-
-.cp-footer-trend {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-
-  &--up {
-    color: #16A34A;
-  }
-
-  &--down {
-    color: #DC2626;
-  }
-}
-
 // .cp-funnel wraps naturally via flex-wrap on narrow viewports — the
 // stage/arrow sizes above already fit one row at normal card widths.

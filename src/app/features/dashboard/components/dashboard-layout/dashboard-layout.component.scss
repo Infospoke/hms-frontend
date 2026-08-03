@@ -69,15 +69,9 @@
       table-layout: fixed;
     }
 
-    // My Requisitions now has a grouped header ("SLA Status" spans 3
-    // heatmap sub-columns), so the table renders tr.rt-group-row +
-    // tr.rt-group-sub-row instead of tr.rt-normal-row — every header
-    // selector needs a !important override to reliably beat the
-    // reusable-table component's own same-specificity rules (see the
-    // note further down on the plain single-row header case).
-    .rt-th--no-group,
-    .rt-th--group,
-    tr.rt-group-sub-row th,
+    // !important: this selector ties in specificity with the
+    // reusable-table component's own `tr.rt-normal-row th` rule, so the
+    // winner otherwise depends on stylesheet load order.
     tr.rt-normal-row th {
       font-size: 10.5px !important;
       padding: 10px 8px !important;
@@ -101,17 +95,53 @@
       max-width: none;
     }
 
-    // Heatmap cells (On Track / At Risk / Overdue) fill the cell instead
-    // of floating as a small pill, like a real heatmap swatch.
-    .heat-cell {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px 4px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
+    .priority-pill,
+    .sla-pill,
+    .date-cell {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .priority-pill,
+    .sla-pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .priority-pill--high {
+      background: #FDE8E8;
+      color: #DC2626;
+    }
+
+    .priority-pill--medium {
+      background: #FFF1E0;
+      color: #E08B1D;
+    }
+
+    .priority-pill--low {
+      background: #EAF3FF;
+      color: #2E7BE0;
+    }
+
+    .sla-pill--on-track {
+      background: #E7F6EC;
+      color: #1E9E5A;
+    }
+
+    .sla-pill--at-risk {
+      background: #FFF1E0;
+      color: #E08B1D;
+    }
+
+    .sla-pill--overdue {
+      background: #FDE8E8;
+      color: #DC2626;
+    }
+
+    .date-cell {
+      color: #6B7280;
     }
   }
 }
@@ -242,18 +272,6 @@
       font-size: 12px;
       padding: 3px 10px;
     }
-
-    .hh-trend-icon {
-      font-size: 13px;
-
-      &--up {
-        color: #16A34A;
-      }
-
-      &--down {
-        color: #DC2626;
-      }
-    }
   }
 }
 
@@ -296,6 +314,3 @@
   }
 }
 
-// .priority-pill / .sla-pill / .date-cell removed — My Requisitions'
-// Priority + SLA Status pill/date columns were replaced by the SLA Status
-// heatmap (see .heat-cell above).

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /** A single stage in the candidate pipeline funnel (e.g. "Applied", "Hired"). */
@@ -21,12 +21,6 @@ export interface PipelineConfig {
   stages: PipelineStage[];
   overallConversionLabel?: string;
   overallConversionRate?: number;
-  /** Recent conversion-rate history (oldest first) rendered as a small
-   * sparkline next to the rate, e.g. [1.1, 1.3, 1.2, 1.4, 1.6]. */
-  trendData?: number[];
-  trendLabel?: string;
-  trendDelta?: number;
-  trendDirection?: 'up' | 'down';
 }
 
 @Component({
@@ -36,7 +30,7 @@ export interface PipelineConfig {
   templateUrl: './candidate-pipeline.component.html',
   styleUrl: './candidate-pipeline.component.scss',
 })
-export class CandidatePipelineComponent implements OnChanges {
+export class CandidatePipelineComponent {
 
   @Input() title: string = 'Candidate Pipeline (All Requisitions)';
   @Input() periods: string[] = ['This Month'];
@@ -45,41 +39,7 @@ export class CandidatePipelineComponent implements OnChanges {
   @Input() overallConversionLabel: string = 'Overall Conversion Rate';
   @Input() overallConversionRate: number = 0;
 
-  @Input() trendData?: number[];
-  @Input() trendLabel: string = 'vs last month';
-  @Input() trendDelta?: number;
-  @Input() trendDirection: 'up' | 'down' = 'up';
-
   @Output() periodChange = new EventEmitter<string>();
-
-  readonly sparklineWidth = 100;
-  readonly sparklineHeight = 28;
-  sparklinePoints = '';
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['trendData']) {
-      this.buildSparkline();
-    }
-  }
-
-  private buildSparkline(): void {
-    const data = this.trendData ?? [];
-    if (data.length < 2) {
-      this.sparklinePoints = '';
-      return;
-    }
-    const min = Math.min(...data);
-    const max = Math.max(...data);
-    const range = max - min || 1;
-    const stepX = this.sparklineWidth / (data.length - 1);
-    this.sparklinePoints = data
-      .map((v, i) => {
-        const x = i * stepX;
-        const y = this.sparklineHeight - ((v - min) / range) * this.sparklineHeight;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(' ');
-  }
 
   onPeriodChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;

@@ -1,0 +1,369 @@
+// ── Spacing helper ────────────────────────────────────────────────────────────
+.mb-row { margin-bottom: 8px; }
+
+// ── KPI row ───────────────────────────────────────────────────────────────────
+.dash-kpi-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  app-dashboard-count-card { flex: 1; min-width: 0; }
+}
+
+// ── Split rows ────────────────────────────────────────────────────────────────
+.dash-split-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  &--equal {
+    align-items: stretch;
+    > .dash-card { flex: 1; }
+  }
+
+  &--bottom {
+    align-items: stretch;
+  }
+
+  // Row 2: left col (pipeline + status stacked) | right col (big Sankey)
+  &--mid {
+    align-items: stretch;
+  }
+}
+
+// Left column of --mid row: pipeline card + offer-status card stacked
+.dash-pipe-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  > .dash-card:first-child { flex: 1; }   // pipeline: shares column height equally
+  > .dash-card:last-child  { flex: 1; }   // offer status: same share
+}
+
+// Centers the chevron funnel vertically in remaining card space (below header)
+.chevron-center-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 30px;  // reserves room for the pct badge circle
+}
+
+// Right column of --mid row: big negotiation flow card
+.dash-card--neo-flow {
+  flex: 1;
+  min-width: 0;
+}
+
+// ── Cards ─────────────────────────────────────────────────────────────────────
+.dash-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  min-width: 0;
+
+  // Full-width standalone row card
+  &--full { width: 100%; box-sizing: border-box; }
+
+  // Card that distributes children vertically
+  &--flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Right column in bottom row — fills height of col-stack
+  &--health-right {
+    flex: 1;
+  }
+
+  // ── Card header ─────────────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #111827;
+    flex: 1;
+  }
+
+  &__badge {
+    background: #EEF2FF;
+    color: #4F46E5;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+}
+
+// ── Per-module date range filter — compact, right-aligned ────────────────────
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+
+  &__lbl {
+    font-size: 10px;
+    color: #9CA3AF;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  &__input {
+    font-size: 10px;
+    color: #374151;
+    border: 1px solid #E5E7EB;
+    border-radius: 5px;
+    padding: 2px 4px;
+    height: 22px;
+    width: 104px;
+    background: #FAFAFA;
+    outline: none;
+    cursor: pointer;
+
+    &:focus { border-color: #6366F1; outline: none; }
+
+    // Shrink the native calendar icon
+    &::-webkit-calendar-picker-indicator {
+      width: 10px;
+      height: 10px;
+      padding: 0;
+      margin: 0;
+      opacity: 0.5;
+      cursor: pointer;
+    }
+  }
+}
+
+// ── Heatmap cells ─────────────────────────────────────────────────────────────
+.heat-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 26px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &--green { background: #D1FAE5; color: #065F46; }
+  &--amber { background: #FEF3C7; color: #92400E; }
+  &--red   { background: #FEE2E2; color: #991B1B; }
+}
+
+// ── Chevron Funnel ────────────────────────────────────────────────────────────
+.chevron-funnel {
+  display: flex;
+  align-items: stretch;
+  height: 68px;
+  padding-left: 12px;  // = |margin-left| so first item starts flush
+}
+
+.chevron-item {
+  flex: 1;
+  min-width: 0;         // ← prevents content from forcing items wider
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-left: -12px;   // ← gap = arrow_depth(18) - overlap(12) = 6px between chevrons
+  // all items: inward left notch (18px 50%) + pointed right arrow — identical shape
+  clip-path: polygon(0% 0%, calc(100% - 18px) 0%, 100% 50%, calc(100% - 18px) 100%, 0% 100%, 18px 50%);
+  padding: 0 24px;
+  text-align: center;
+
+  &__label {
+    font-size: 10px;
+    font-weight: 500;
+    opacity: .92;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 16px);
+  }
+
+  &__count {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+}
+
+.chevron-pct {
+  position: absolute;
+  bottom: -32px;
+  left: 0;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #D1D5DB;
+  color: #374151;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+  z-index: 20;
+}
+
+// ── Offer Status bars — fills card height evenly ──────────────────────────────
+.offer-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.offer-bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 36px;
+  align-items: center;
+  gap: 10px;
+}
+
+.offer-bar {
+  &__label {
+    font-size: 12px;
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__track {
+    height: 12px;
+    background: #F3F4F6;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width .3s ease;
+  }
+
+  &__count {
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+  }
+}
+
+// ── ApexSankey wrapper ────────────────────────────────────────────────────────
+.neo-flow-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+// Make the ngx-apexsankey host + its inner SVG fill the full wrapper height
+.neo-flow-sankey {
+  flex: 1;
+  min-height: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+::ng-deep {
+  // Inner canvas/SVG container rendered by ApexSankey
+  .neo-flow-wrap ngx-apexsankey > div,
+  .neo-flow-wrap ngx-apexsankey svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+// ── Bottom row: left (big donut) + right (gauge + table stack) ────────────────
+
+// Left: full-height donut card
+.dash-card--bottom-left {
+  flex: 1;
+}
+
+// Right: column stack — compact gauge on top, table fills rest
+.dash-col-stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  // Compact gauge card — just enough for the semi-circle + header
+  .dash-card--gauge {
+    flex: 0 0 auto;
+    padding: 10px 12px 6px;
+  }
+
+  // Table card fills remaining height
+  > .dash-card:not(.dash-card--gauge) {
+    flex: 1;
+    padding: 10px 12px;
+  }
+}
+
+// Center chart in its card — flex: 1 so it fills remaining card height
+.chart-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Health table fills remaining card height — compact rows via deep pierce
+.health-table-fill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  app-reusable-table { flex: 1; }
+
+  // Compact rows so the table fits without extra scroll
+  ::ng-deep {
+    td {
+      padding: 7px 12px !important;
+      font-size: 12px !important;
+    }
+    th {
+      padding: 8px 12px !important;
+      font-size: 11px !important;
+    }
+  }
+}
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--health-excellent { background: #D1FAE5; color: #065F46; }
+  &--health-good      { background: #DBEAFE; color: #1E3A5F; }
+  &--health-fair      { background: #FEF3C7; color: #92400E; }
+  &--health-attention { background: #FEE2E2; color: #991B1B; }
+}

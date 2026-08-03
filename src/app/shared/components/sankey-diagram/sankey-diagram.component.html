@@ -7,6 +7,18 @@
     <rect *ngFor="let n of renderNodes; trackBy: trackByNodeId"
       [attr.x]="n.x" [attr.y]="n.y" [attr.width]="n.width" [attr.height]="n.height"
       [attr.fill]="n.color" rx="3"></rect>
+
+    <!-- Inline node labels (only when showLabels=true) -->
+    <ng-container *ngIf="showLabels">
+      <text *ngFor="let n of renderNodes; trackBy: trackByNodeId"
+        [attr.x]="isLastColumn(n.id) ? n.x - 5 : n.x + n.width + 5"
+        [attr.text-anchor]="isLastColumn(n.id) ? 'end' : 'start'"
+        [attr.y]="n.y + (n.height / 2) + 4"
+        font-size="9.5"
+        [attr.fill]="n.color"
+        font-weight="600"
+        font-family="Inter, system-ui, sans-serif">{{ n.label }}: {{ n.value }}</text>
+    </ng-container>
   </svg>
 
   <div class="sankey-legend">

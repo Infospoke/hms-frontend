@@ -1,0 +1,146 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.bubble-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.bubble-header {
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  span {
+    font-size: 11px;
+    color: #6b7280;
+  }
+}
+
+.bubble-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(190px, 0.85fr);
+  align-items: center;
+  gap: 12px;
+  height: calc(100% - 38px);
+}
+
+/* ---------------- Bubble Area ---------------- */
+
+.bubble-area {
+  position: relative;
+  width: 270px;
+  height: 190px;
+  margin: auto;
+  max-width: 100%;
+}
+
+/* ---------------- Common Bubble ---------------- */
+
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
+}
+
+.bubble-value {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.bubble-label {
+  font-size: 10px;
+  margin-top: 3px;
+}
+
+/* ---------------- Bubble Positions ---------------- */
+
+.bubble:nth-child(1) {
+  width: 105px;
+  height: 105px;
+  top: 10px;
+  left: 5px;
+}
+
+.bubble:nth-child(2) {
+  width: 92px;
+  height: 92px;
+  top: 0;
+  right: 5px;
+}
+
+.bubble:nth-child(3) {
+  width: 82px;
+  height: 82px;
+  bottom: 5px;
+  left: 40px;
+}
+
+.bubble:nth-child(4) {
+  width: 70px;
+  height: 70px;
+  bottom: 0;
+  right: 55px;
+}
+
+.bubble:nth-child(5) {
+  width: 62px;
+  height: 62px;
+  bottom: 8px;
+  right: 0;
+}
+
+/* ---------------- Table ---------------- */
+
+.source-table {
+  width: 100%;
+  min-width: 0;
+}
+
+.source-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.source-table th {
+  text-align: left;
+  padding: 6px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.source-table td {
+  padding: 7px;
+  font-size: 12px;
+  color: #111827;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.source-table tr:last-child td {
+  border-bottom: none;
+}

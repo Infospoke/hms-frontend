@@ -13,7 +13,7 @@ import { ReusableTableComponent } from '../../shared/components/reusable-table/r
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [HeadingComponent, CommonModule, PipeLineCardsComponent, JobsCardComponent, ReusableTableComponent],
+  imports: [HeadingComponent, CommonModule, PipeLineCardsComponent, JobsCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

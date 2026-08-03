@@ -15,11 +15,10 @@
 // height — e.g. Hiring Health stretches to match Candidate Quality
 // Distribution. The gauge stays its natural size; only the table area
 // (see .hh-table-col's flex chain) grows/scrolls to fill the extra height.
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  align-items: stretch;
+.grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap:20px;
 }
 
 @media (max-width: 760px) {
@@ -312,5 +311,37 @@
     background: #FDE8E8;
     color: #DC2626;
   }
+}
+  /* ===========================
+   Recruiter Dashboard Layout
+   =========================== */
+
+
+.recruiter-dashboard {
+
+  .dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .large-card,
+  .small-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-card {
+    height: 100%;
+  }
+
+  @media (max-width: 992px) {
+    .dashboard-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
 }
 

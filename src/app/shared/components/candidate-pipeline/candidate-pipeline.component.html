@@ -29,20 +29,6 @@
 
   <div class="cp-footer">
     <span class="cp-footer-label">{{ overallConversionLabel }}</span>
-    <div class="cp-footer-row">
-      <span class="cp-footer-value">{{ overallConversionRate }}%</span>
-
-      <svg *ngIf="sparklinePoints" [attr.viewBox]="'0 0 ' + sparklineWidth + ' ' + sparklineHeight"
-        class="cp-sparkline" preserveAspectRatio="none">
-        <polyline [attr.points]="sparklinePoints" fill="none" stroke="#2563eb" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-
-      <span class="cp-footer-trend" *ngIf="trendDelta !== undefined"
-        [class.cp-footer-trend--up]="trendDirection === 'up'" [class.cp-footer-trend--down]="trendDirection === 'down'">
-        <i class="fa-solid" [class.fa-arrow-up]="trendDirection === 'up'" [class.fa-arrow-down]="trendDirection === 'down'"></i>
-        {{ trendDelta }}% {{ trendLabel }}
-      </span>
-    </div>
+    <span class="cp-footer-value">{{ overallConversionRate }}%</span>
   </div>
 </div>

@@ -25,38 +25,23 @@
                 [selectedPeriod]="pipelineConfig.selectedPeriod ?? (pipelineConfig.periods?.[0] ?? 'This Month')"
                 [stages]="pipelineConfig.stages"
                 [overallConversionLabel]="pipelineConfig.overallConversionLabel ?? 'Overall Conversion Rate'"
-                [overallConversionRate]="pipelineConfig.overallConversionRate ?? 0"
-                [trendData]="pipelineConfig.trendData"
-                [trendLabel]="pipelineConfig.trendLabel ?? 'vs last month'"
-                [trendDelta]="pipelineConfig.trendDelta"
-                [trendDirection]="pipelineConfig.trendDirection ?? 'up'" />
+                [overallConversionRate]="pipelineConfig.overallConversionRate ?? 0" />
         </div>
     </div>
 
     <ng-template #reqCell let-ctx>
-        <span *ngIf="ctx.col.key === 'onTrack' || ctx.col.key === 'atRisk' || ctx.col.key === 'overdue'"
-            class="heat-cell" [ngStyle]="heatCellStyle(ctx.row[ctx.col.key], ctx.col.key)">
-            {{ ctx.row[ctx.col.key] }}
+        <span *ngIf="ctx.col.key === 'priority'" [class]="priorityClass(ctx.row.priority)">
+            {{ ctx.row.priority }}
+        </span>
+        <span *ngIf="ctx.col.key === 'slaStatus'" [class]="slaClass(ctx.row.slaStatus)">
+            {{ ctx.row.slaStatus }}
+        </span>
+        <span *ngIf="ctx.col.key === 'dueDate'" class="date-cell">
+            {{ ctx.row.dueDate }}
         </span>
     </ng-template>
 
-    <div class="grid" *ngIf="offerStatusConfig || offerNegotiationConfig || pieCharts.length || (showSemiCircle && semiCircleConfig)">
-        <div class="chart-card" *ngIf="offerStatusConfig">
-            <div class="chart-card-header" *ngIf="offerStatusConfig.title">
-                <h3>{{ offerStatusConfig.title }}</h3>
-            </div>
-            <app-stacked-bar-chart [segments]="offerStatusConfig.segments"
-                [approvalRateLabel]="offerStatusConfig.approvalRateLabel ?? 'Approval Rate'"
-                [approvalRate]="offerStatusConfig.approvalRate" />
-        </div>
-
-        <div class="chart-card" *ngIf="offerNegotiationConfig">
-            <div class="chart-card-header" *ngIf="offerNegotiationConfig.title">
-                <h3>{{ offerNegotiationConfig.title }}</h3>
-            </div>
-            <app-sankey-diagram [nodes]="offerNegotiationConfig.nodes" [links]="offerNegotiationConfig.links" />
-        </div>
-
+    <div class="grid" *ngIf="pieCharts.length || (showSemiCircle && semiCircleConfig)">
         <div class="chart-card" *ngFor="let chart of pieCharts">
             <div class="chart-card-header" *ngIf="chart.title">
                 <h3>{{ chart.title }}</h3>
@@ -74,7 +59,6 @@
                     <app-semi-circle-gauge [score]="semiCircleConfig.score" [size]="100" />
                 </div>
                 <div class="hh-table-col">
-                   
                     <app-reusable-table [columns]="semiCircleConfig.columns" [data]="semiCircleConfig.data"
                         [showHeader]="true" [tableLayout]="'auto'" [cellTemplate]="statusCell" />
                 </div>
@@ -87,8 +71,5 @@
             <span class="dot"></span>
             {{ ctx.row.status }}
         </span>
-        <i *ngIf="ctx.col.key === 'trend'" class="fa-solid hh-trend-icon"
-            [class.fa-arrow-up]="ctx.row.trend === 'up'" [class.fa-arrow-down]="ctx.row.trend === 'down'"
-            [class.hh-trend-icon--up]="ctx.row.trend === 'up'" [class.hh-trend-icon--down]="ctx.row.trend === 'down'"></i>
     </ng-template>
 </div>

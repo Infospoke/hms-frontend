@@ -209,6 +209,10 @@ export const API = {
     },
     DASHBOARD:{
         HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,
+        
+        RECRUITER_DASHBOARD_COUNT:`/hms/dashboard/recruiter`,
+        RECRUITER_DASHBOARD:`/hms/dashboard/analytics`,
+        
         HIRING_MANAGER_DASHBOARD:`/hms/dashboard/hiring-dashboard-analytics`,
 
     }

@@ -11,28 +11,46 @@ export class DashboardService {
 
   private api = inject(ApiService);
 
-  async getHiringManagerDashboardCount():Promise<any>{
+  async getHiringManagerDashboardCount(): Promise<any> {
     return await firstValueFrom(this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_COUNT));
   }
 
   async getHiringManagerDashboardData(
-  srId: any,
-  startDate: any,
-  endDate: any
-): Promise<any> {
+    srId: any,
+    startDate: any,
+    endDate: any
+  ): Promise<any> {
 
-  let params = new HttpParams().set('srId', srId);
+    let params = new HttpParams().set('srId', srId);
 
-  if (startDate) {
-    params = params.set('fromDate', startDate);
+    if (startDate) {
+      params = params.set('fromDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('toDate', endDate);
+    }
+
+    return await firstValueFrom(
+      this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_DASHBOARD, params)
+    );
   }
 
-  if (endDate) {
-    params = params.set('toDate', endDate);
-  }
+  async getRecruiterManagerDashboardCount(): Promise<any> {
+    return await firstValueFrom(this.api.hrmsget(API.DASHBOARD.RECRUITER_DASHBOARD_COUNT));
 
-  return await firstValueFrom(
-    this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_DASHBOARD, params)
-  );
-}
+  }
+  getRecruriterDashboardAnalytics(jobId: any, startDate: string, endDate: string) {
+     let params = new HttpParams().set('jobId', jobId);
+
+    if (startDate) {
+      params = params.set('fromDate', startDate);
+    }
+    if (endDate) {
+      params = params.set('toDate', endDate);
+    }
+
+    return firstValueFrom(
+      this.api.hrmsget(API.DASHBOARD.RECRUITER_DASHBOARD, params)
+    )
+  }
 }

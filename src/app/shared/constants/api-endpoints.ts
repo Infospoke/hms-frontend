@@ -204,5 +204,10 @@ export const API = {
         GET_CANDIDATE_RESPONSE:`/hms/offer-details/candidate-response`,
         OFFER_APPROVALS_LIST:`/hms/offer-details/get-pending-approvals`,
         NEGOTIATION_DETAILS_BY_APPLICANT_ID:(id:any)=>`/hms/offer-details/negotiation-details/${id}`
+    },
+    DASHBOARD:{
+        HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,
+        HIRING_MANAGER_DASHBOARD:(srId:any)=>`/hms/dashboard/hiring-dashboard-analytics?srId=${srId}`,
+        
     }
 };

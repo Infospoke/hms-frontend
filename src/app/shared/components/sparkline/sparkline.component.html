@@ -1,0 +1,26 @@
+<svg
+  class="sparkline"
+  [attr.viewBox]="'0 0 ' + width + ' ' + height"
+  [attr.width]="width"
+  [attr.height]="height"
+  preserveAspectRatio="none"
+  *ngIf="points"
+>
+  <defs *ngIf="filled">
+    <linearGradient [attr.id]="gradientId" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" [attr.stop-color]="color" stop-opacity="0.28" />
+      <stop offset="100%" [attr.stop-color]="color" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <polygon *ngIf="filled" [attr.points]="areaPoints" [attr.fill]="'url(#' + gradientId + ')'" />
+
+  <polyline
+    [attr.points]="points"
+    fill="none"
+    [attr.stroke]="color"
+    [attr.stroke-width]="strokeWidth"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "19c70b67-9d34-4901-aaa8-5f09a970d5dd"
+    "analytics": "46da41a3-1bfb-4be4-bff3-780c1a9a2063"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -44,7 +44,9 @@
               "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/@svgdotjs/svg.js/dist/svg.min.js",
+              "node_modules/apexsankey/apexsankey.min.js"
             ]
           },
           "configurations": {

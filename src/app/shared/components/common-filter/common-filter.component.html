@@ -1,4 +1,4 @@
-<div class="filter-bar">
+<div class="filter-bar" [class.filter-bar--card]="cardStyle">
 
   <!-- ── Search Box ─────────────────────────────────────────────────────── -->
   <div class="search-box" [class.is-wide]="isWideLayout" [class.is-compact]="isCompactLayout">
@@ -29,14 +29,21 @@
   <div class="dropdown-wrapper">
     <div
       class="dropdown-box"
+      [class.dropdown-box--card]="cardStyle"
       *ngFor="let dropdown of dropdowns"
       [class.is-open]="isOpen(dropdown.key)"
       [class.is-wide]="isWideLayout"
       [class.is-compact]="isCompactLayout"
       (click)="toggleDropdown(dropdown.key, $event)"
     >
-      <span class="dropdown-label">{{ dropdown.label }}:</span>
-      <span class="dropdown-value">{{ truncate(getSelectedLabel(dropdown),5) }}</span>
+      <span class="dropdown-label">{{ dropdown.label }}<span class="dropdown-colon" *ngIf="!cardStyle">:</span></span>
+      <span class="dropdown-value-row">
+        <span class="dropdown-avatar-badge" *ngIf="dropdown.icon && dropdown.avatar">
+          <i [class]="dropdown.icon"></i>
+        </span>
+        <i class="dropdown-icon" *ngIf="dropdown.icon && !dropdown.avatar" [class]="dropdown.icon"></i>
+        <span class="dropdown-value">{{ truncate(displayValue(dropdown), valueTruncateLimit) }}</span>
+      </span>
       <svg class="chevron-icon" viewBox="0 0 10 10" fill="none">
         <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4"
               stroke-linecap="round" stroke-linejoin="round"/>
@@ -61,6 +68,9 @@
             </svg>
             <span class="option-placeholder"
                   *ngIf="selectedFilters[dropdown.key] !== option.value"></span>
+            <span class="option-avatar-badge" *ngIf="dropdown.avatar">
+              <i [class]="dropdown.icon || 'fa-solid fa-user'"></i>
+            </span>
             {{ truncate(option.label,20) }}
           </li>
         </ul>

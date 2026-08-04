@@ -11,16 +11,14 @@ import { ApprovalStage, STAGE_STATUS_CONFIG, StageStatus, StageStatusDef } from 
   styleUrl: './approval-pipeline.component.scss',
 })
 export class ApprovalPipelineComponent {
-  /** Ordered list of stages to render left→right. */
   @Input({ required: true }) stages: ApprovalStage[] = [];
 
-  /** Card title, e.g. "Approval Pipeline". */
+
   @Input() title = 'Approval Pipeline';
 
-  /** Font Awesome icon class shown next to the title. */
+
   @Input() titleIcon = 'fa-solid fa-diagram-project';
 
-  /** Override the status→visuals mapping if a consumer ever needs custom colors/labels. */
   @Input() stageStatusCfg: Record<StageStatus, StageStatusDef> = STAGE_STATUS_CONFIG;
 
   get progressPercent(): number {

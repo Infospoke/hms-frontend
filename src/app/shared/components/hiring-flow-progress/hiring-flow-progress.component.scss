@@ -1,0 +1,137 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.hfp-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.hfp-header {
+  margin-bottom: 14px;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .hfp-subtitle {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+}
+
+.hfp-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  flex: 1;
+}
+
+.hfp-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hfp-icon-bubble {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 16px;
+  }
+}
+
+.hfp-stage-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.3;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+.hfp-ring {
+  width: 92px;
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ::ng-deep .apexcharts-canvas {
+    margin: 0 auto;
+  }
+}
+
+.hfp-fraction {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-top: -4px;
+}
+
+.hfp-sublabel {
+  font-size: 10.5px;
+  color: #9ca3af;
+}
+
+.hfp-arrow {
+  flex-shrink: 0;
+  margin-top: 20px;
+}
+
+.hfp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+
+  .hfp-footer-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .hfp-footer-value {
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 900px) {
+  .hfp-row {
+    flex-wrap: wrap;
+  }
+
+  .hfp-arrow {
+    display: none;
+  }
+}

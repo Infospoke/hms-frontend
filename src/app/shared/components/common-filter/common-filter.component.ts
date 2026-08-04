@@ -25,6 +25,12 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
   @Input() searchPlaceholder: string = 'Search...';
   @Input() debounceMs: number = 400;
   @Input() dropdowns: any[] = [];
+  /** Bigger bordered "card" look (label above value, room for an icon/avatar
+   * badge) instead of the default compact "Label: Value" pill — opt-in so
+   * existing pages using app-common-filter keep their current style. Each
+   * dropdown can also set `icon: 'fa-solid fa-user'` (or any FA class) and
+   * `avatar: true` to show it in a small circular badge instead of plain. */
+  @Input() cardStyle: boolean = false;
 
   @Output() filterChange = new EventEmitter<any>();
 
@@ -155,6 +161,30 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
   getSelectedLabel(dropdown: any): string {
     const val = this.selectedFilters[dropdown.key];
     return dropdown.options.find((o: any) => o.value === val)?.label ?? '';
+  }
+
+  /** Same as getSelectedLabel, except once a custom date range is actually
+   * picked it shows the real "01 Jul 2025 - 31 Jul 2025" span instead of
+   * the literal option label ("Custom Range"). */
+  displayValue(dropdown: any): string {
+    if (dropdown.isDateFilter && this.selectedFilters[dropdown.key] === CUSTOM_VALUE && this.fromDate && this.toDate) {
+      return `${this.formatDisplayDate(this.fromDate)} - ${this.formatDisplayDate(this.toDate)}`;
+    }
+    return this.getSelectedLabel(dropdown);
+  }
+
+  /** Card style has room for the full value; the compact pill still
+   * truncates hard to keep its fixed narrow width. */
+  get valueTruncateLimit(): number {
+    return this.cardStyle ? 40 : 5;
+  }
+
+  private formatDisplayDate(date: string): string {
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 
   isOpen(key: string): boolean {

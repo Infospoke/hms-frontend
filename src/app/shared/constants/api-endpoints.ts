@@ -200,6 +200,14 @@ export const API = {
         VIEW_OFFER_LETTER:(id:any)=>`/hms/offer-details/download/offerLetter?appId=${id}&action=view`,
         OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`,
         GET_NAGOTIATE_LIST:`/hms/offer-details/negotiation-list`,
-        DEPARMENT:`/hms/configurations/get-departments`
+        DEPARMENT:`/hms/configurations/get-departments`,
+        GET_CANDIDATE_RESPONSE:`/hms/offer-details/candidate-response`,
+        OFFER_APPROVALS_LIST:`/hms/offer-details/get-pending-approvals`,
+        NEGOTIATION_DETAILS_BY_APPLICANT_ID:(id:any)=>`/hms/offer-details/negotiation-details/${id}`
+    },
+    DASHBOARD:{
+        HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,
+        HIRING_MANAGER_DASHBOARD:(srId:any)=>`/hms/dashboard/hiring-dashboard-analytics?srId=${srId}`,
+        
     }
 };

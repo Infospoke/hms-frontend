@@ -1,0 +1,43 @@
+<div class="hfp-card">
+
+  <div class="hfp-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="hfp-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
+  </div>
+
+  <div class="hfp-row">
+    <ng-container *ngFor="let stage of stages; let last = last; let i = index">
+
+      <div class="hfp-stage">
+        <div class="hfp-icon-bubble" [style.background]="stage.iconBg">
+          <i [class]="stage.icon" [style.color]="stage.color"></i>
+        </div>
+        <span class="hfp-stage-label">{{ stage.label }}</span>
+
+        <div class="hfp-ring">
+          <apx-chart
+            [series]="radialSeries(stage.percent)"
+            [chart]="radialChart()"
+            [plotOptions]="radialPlotOptions()"
+            [fill]="radialFill(stage.color)"
+            [stroke]="radialStroke()"
+          ></apx-chart>
+        </div>
+
+        <span class="hfp-fraction">{{ stage.fraction }}</span>
+        <span class="hfp-sublabel" *ngIf="stage.subLabel">{{ stage.subLabel }}</span>
+      </div>
+
+      <svg *ngIf="!last" class="hfp-arrow" width="26" height="14" viewBox="0 0 26 14" fill="none">
+        <path d="M1 7h20M15 1l6 6-6 6" stroke="#C7CCD6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    </ng-container>
+  </div>
+
+  <div class="hfp-footer" *ngIf="overallValue">
+    <span class="hfp-footer-label">{{ overallLabel }}</span>
+    <span class="hfp-footer-value" [style.color]="overallColor">{{ overallValue }}</span>
+  </div>
+
+</div>

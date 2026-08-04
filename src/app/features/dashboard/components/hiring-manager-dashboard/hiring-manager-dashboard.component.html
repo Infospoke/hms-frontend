@@ -1,14 +1,198 @@
-<app-dashboard-layout
-  [heading]="heading"
-  [subHeading]="subHeading"
-  [cards]="cards"
-  [pieCharts]="pieCharts"
-  [offerStatusConfig]="offerStatusConfig"
-  [offerNegotiationConfig]="offerNegotiationConfig"
-  [showSemiCircle]="showSemiCircle"
-  [semiCircleConfig]="semiCircleConfig"
-  [pipeLine]="showPipeline"
-  [pipelineConfig]="pipelineConfig"
-  [table]="showTable"
-  [tableConfig]="tableConfig"
-/>
+<app-dashboard-layout [heading]="heading" [subHeading]="subHeading" [showingLayout]="true">
+
+  <!-- ── KPI Cards ──────────────────────────────────────────────────────────── -->
+  <div class="dash-kpi-row">
+    <app-dashboard-count-card
+      *ngFor="let card of kpiCards"
+      [label]="card.label"
+      [value]="card.value"
+      [iconClass]="card.iconClass"
+      [iconColor]="card.iconColor"
+      [iconBgColor]="card.iconBgColor"
+    ></app-dashboard-count-card>
+  </div>
+
+  <div class="dash-card dash-card--full mb-row">
+    <div class="dash-card__header">
+      <span class="dash-card__title">My Requisitions</span>
+      <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)"></app-date-range-picker>
+    </div>
+    <app-reusable-table
+      [columns]="reqColumns"
+      [data]="reqData"
+      [showHeader]="true"
+      [cellTemplate]="reqCellTpl"
+    ></app-reusable-table>
+  </div>
+
+  <!-- ── Row 2: Left (Pipeline + Offer Status stacked) | Right (big Sankey) ──── -->
+  <div class="dash-split-row dash-split-row--mid mb-row">
+
+    <!-- Left column: Pipeline on top, Offer Status below -->
+    <div class="dash-pipe-col">
+
+      <!-- Candidate Pipeline -->
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Candidate Pipeline</span>
+          
+        </div>
+        <div class="chevron-center-wrap">
+          <div class="chevron-funnel">
+            <div class="chevron-item"
+                 *ngFor="let stage of pipelineStages; let i = index"
+                 [style.background]="stage.color"
+                 [style.z-index]="i + 1">
+              <span class="chevron-item__label">{{ stage.label }}</span>
+              <span class="chevron-item__count">{{ stage.value }}</span>
+              <div class="chevron-pct" *ngIf="stage.conversionPct !== undefined">
+                {{ stage.conversionPct }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offer Status -->
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Offer Status</span>
+          
+        </div>
+        <div class="offer-bars">
+          <div class="offer-bar-row" *ngFor="let bar of offerStatusBars">
+            <span class="offer-bar__label">{{ bar.label }}</span>
+            <div class="offer-bar__track">
+              <div class="offer-bar__fill"
+                   [style.width.%]="getOfferBarPct(bar.count)"
+                   [style.background]="bar.color"></div>
+            </div>
+            <span class="offer-bar__count" [style.color]="bar.color">{{ bar.count }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column: Offer Negotiation Flow — big and prominent -->
+    <div class="dash-card dash-card--flex-col dash-card--neo-flow">
+      <div class="dash-card__header">
+        <span class="dash-card__title">Offer Negotiation Flow</span>
+        
+      </div>
+      <!-- ApexSankey: node-overlapping style with gradient ribbons -->
+      <div class="neo-flow-wrap">
+        <ngx-apexsankey
+          class="neo-flow-sankey"
+          [data]="apexSankeyData"
+          [options]="apexSankeyOptions"
+        ></ngx-apexsankey>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- ── Row 1: Full-width Requisitions table ────────────────────────────────── -->
+  
+
+  <!-- ── Row 4: Left (big donut, full height) + Right (compact gauge + table) ── -->
+  <div class="dash-split-row dash-split-row--bottom">
+
+    <!-- Left: enlarged donut fills full column height -->
+    <div class="dash-card dash-card--flex-col dash-card--bottom-left">
+      <div class="dash-card__header">
+        <span class="dash-card__title">Candidate Quality Distribution</span>
+      </div>
+      <div class="chart-center">
+        <app-donut-pie-chart
+          [segments]="candidateQualitySegments"
+          [centerLabel]="'Total'"
+          [size]="260"
+        ></app-donut-pie-chart>
+      </div>
+    </div>
+
+    <!-- Right: compact gauge on top, health table fills the rest -->
+    <div class="dash-col-stack">
+
+      <div class="dash-card dash-card--flex-col dash-card--gauge">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Hiring Health Score</span>
+        </div>
+        <div class="chart-center">
+          <app-semi-circle-gauge
+            [score]="hiringHealthScore"
+            [size]="100"
+            [strokeWidth]="10"
+          ></app-semi-circle-gauge>
+        </div>
+      </div>
+
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Hiring Health Breakdown</span>
+        </div>
+        <div class="health-table-fill">
+          <app-reusable-table
+            [columns]="healthColumns"
+            [data]="healthData"
+            [showHeader]="true"
+            [cellTemplate]="healthCellTpl"
+          ></app-reusable-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</app-dashboard-layout>
+
+<ng-template #reqCellTpl let-cell>
+  <!-- Target Start Date -->
+  <ng-container *ngIf="cell.col.key === 'targetStart'">
+    <span class="date-text">{{ cell.row.targetStart }}</span>
+  </ng-container>
+
+  <!-- Days Remaining -->
+  <ng-container *ngIf="cell.col.key === 'daysRemaining'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--days-positive': cell.row.daysRemaining > 7,
+        'badge--days-warning': cell.row.daysRemaining >= 0 && cell.row.daysRemaining <= 7,
+        'badge--days-overdue': cell.row.daysRemaining < 0
+      }"
+    >
+      {{ cell.row.daysRemaining < 0 ? (-cell.row.daysRemaining + ' Days Overdue') : (cell.row.daysRemaining + ' Days') }}
+    </span>
+  </ng-container>
+
+  <!-- Priority -->
+  <ng-container *ngIf="cell.col.key === 'priority'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--critical': cell.row.priority === 'Critical',
+        'badge--high': cell.row.priority === 'High',
+        'badge--medium': cell.row.priority === 'Medium',
+        'badge--low': cell.row.priority === 'Low'
+      }"
+    >
+      {{ cell.row.priority }}
+    </span>
+  </ng-container>
+
+  <!-- SLA Status -->
+  <ng-container *ngIf="cell.col.key === 'slaStatus'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--success': cell.row.slaStatus === 'On Track',
+        'badge--warning': cell.row.slaStatus === 'At Risk',
+        'badge--danger': cell.row.slaStatus === 'Overdue'
+      }"
+    >
+      {{ cell.row.slaStatus }}
+    </span>
+  </ng-container>
+</ng-template>

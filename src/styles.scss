@@ -898,3 +898,17 @@ nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
   white-space: normal;
   word-break: break-word;
 }
+
+
+.flex-of-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+ 
+  .chart-card-header {
+    margin-bottom: 0;
+    padding: 0;
+  }
+}

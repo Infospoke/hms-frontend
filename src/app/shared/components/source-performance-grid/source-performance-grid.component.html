@@ -1,0 +1,27 @@
+<div class="spg-card">
+
+  <div class="spg-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="spg-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
+  </div>
+
+  <div class="spg-grid">
+    <div
+      class="spg-tile"
+      *ngFor="let tile of tiles"
+      [style.background]="tile.color"
+    >
+      <span class="spg-tile-name">{{ tile.name }}</span>
+
+      <div class="spg-tile-stats">
+        <div class="spg-stat" *ngFor="let s of tile.stats">
+          <span class="spg-stat-value">{{ s.value }}</span>
+          <span class="spg-stat-label">{{ s.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="spg-footnote" *ngIf="footNote">{{ footNote }}</p>
+
+</div>

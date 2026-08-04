@@ -9,7 +9,7 @@ import { RaiseOfferLetterPendingTableComponent } from '../raise-offer-letter-pen
 import { RaiseOfferLetterReadyTableComponent } from '../raise-offer-letter-ready-table/raise-offer-letter-ready-table.component';
 import { PayRevisionRequestTableComponent } from '../pay-revision-request-table/pay-revision-request-table.component';
 
-import { ApprovalStatusTableComponent } from '../approval-status-table/approval-status-table.component';
+import { ApprovalStatusTableComponent, ApprovalStatusRow, ApprovalStatusState } from '../approval-status-table/approval-status-table.component';
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
 import { InterviewServiceService } from '../../../interview/service/interview-service.service';
 import { ApprovalService } from '../../../approvals/services/approval-service';
@@ -65,7 +65,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       icon: 'fa-solid fa-user-group',
       countColor: 'green',
       count: 0,
-      breakdown: `Pending, accepted, rejected`,
+      breakdown: ``,
     },
   ];
 
@@ -113,7 +113,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       },
       pending: {
         heading: "Pending",
-        subHeading: "Letter sent, awaiting the candidate’s decision to accept, reject, or negotiate.",
+        subHeading: "Letter sent, awaiting the candidate's decision to accept, reject, or negotiate.",
       }
     },
     al: {
@@ -176,6 +176,28 @@ export class RaiseOfferRequestComponent implements OnInit {
   };
 
   activeTabId: string = '';
+
+  // ── Approval type mapping for tabs ──────────────────────────────────────
+  private approvalTypeMap: Record<string, string> = {
+    offerApprovals: 'New Offer Approvals',
+    negAppovals: 'Negotiation Approvals',
+  };
+
+  private crTabStatusMap: Record<string, string> = {
+    negotiating: 'Requested for Negotiation',
+    pending: 'Awaiting Response',
+    accepted: 'Accepted',
+    rejected: 'Rejected',
+    expired: 'Expired',
+  };
+
+
+  private crTabRowStatusMap: Record<string, ApprovalStatusState> = {
+    pending: 'awaiting',
+    accepted: 'accepted',
+    rejected: 'rejected',
+    expired: 'expired',
+  };
 
   get tabs(): { key: string; label: string; count: number, show: boolean }[] {
     return this.tabsByStage[this.activeStageId] || [];
@@ -325,6 +347,8 @@ export class RaiseOfferRequestComponent implements OnInit {
     this.currentPage = 1;
     this.handleApiCalling();
   }
+
+ 
   handleApiCalling() {
     const payload = this.buildPayload();
 
@@ -335,9 +359,15 @@ export class RaiseOfferRequestComponent implements OnInit {
         break;
 
       case 'rol':
+        // ✅ FIXED: Differentiate between offerApprovals and negAppovals tabs
+        this.getPendingOfferLetters(payload);
+        break;
+
+      case 'rl':
+
         if (this.activeTabId === 'pending') {
-          this.getPendingOfferLetters(payload);
-        } else if (this.activeTabId === 'ready') {
+          this.getReadyOfferLetters(payload);
+        } else if (this.activeTabId === 'pendingReady') {
           this.getReadyOfferLetters(payload);
         }
         break;
@@ -371,25 +401,63 @@ export class RaiseOfferRequestComponent implements OnInit {
         break;
     }
   }
-  async getNegotiatingCandidates(payload: any) {
 
+  async getNegotiatingCandidates(payload: any) {
+    await this.getCandidateResponseList(payload);
   }
 
   async getPendingCandidates(payload: any) {
-
+    await this.getCandidateResponseList(payload);
   }
 
   async getAcceptedCandidates(payload: any) {
-
+    await this.getCandidateResponseList(payload);
   }
 
   async getRejectedCandidates(payload: any) {
-
+    await this.getCandidateResponseList(payload);
   }
 
   async getExpiredCandidates(payload: any) {
-
+    await this.getCandidateResponseList(payload);
   }
+
+  
+  private async getCandidateResponseList(payload: any) {
+    const payloadData = {
+      ...payload,
+      sortBy: 'id',
+    };
+    const res: any = await this.candidateService.getCandidateResponse(payloadData);
+    if (res?.responsecode != '00') {
+      return;
+    }
+
+    if (this.activeTabId === 'negotiating') {
+      this.newPayRevisionRequestsCount = res?.data?.totalElements;
+      this.newPayRevisionRequests = this.mapReadToNagotiateList(res?.data?.content);
+    } else {
+      this.totalPayRevisionInApproval = res?.data?.totalElements;
+      this.payRevisionInApproval = this.mapCandidateResponseList(res?.data?.content);
+    }
+  }
+
+  private mapCandidateResponseList(data: any[]): ApprovalStatusRow[] {
+    return (data ?? []).map((item: any) => ({
+      id: item.negotiationId ?? item.candidateId,
+      name: item.candidateName,
+      applicantId:item?.applicantId,
+      email: item.email,
+      avatarInitials: this.getAvatarInitials(item.candidateName),
+      avatarColor: this.getAvatarColor(item.candidateName) as ApprovalStatusRow['avatarColor'],
+      jobTitle: item.jobTitle?.trim?.() ?? item.jobTitle,
+      package: item.approvedAmount ?? item.offeredAmount ?? item.requestedAmount,
+      releasedOn: this.formatDate(item.offerReleasedDate),
+      recruiter: item.recruiter ?? '-',
+      status: this.crTabRowStatusMap[this.activeTabId] ?? 'awaiting',
+    }));
+  }
+
   private async getRaiseOfferRequests(payload: any) {
     const payloadData = {
       ...payload,
@@ -401,6 +469,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       this.totalCandidates = res?.data?.totalElements;
     }
   }
+
   private mapResponseOfRaiseList(data: any[]): any[] {
     return data.map((item: any) => ({
       id: item.applicantId,
@@ -416,17 +485,31 @@ export class RaiseOfferRequestComponent implements OnInit {
       priority: item.priority
     }));
   }
+
+ 
   async getPendingOfferLetters(payload: any) {
+   
+    const approvalType = this.approvalTypeMap[this.activeTabId];
+    
     const payloadRequest = {
       ...payload,
-      sortBy: 'createdDate'
-    }
-    const res: any = await this.candidateService.getPendingApprovals(payloadRequest);
+      sortBy: 'createdDate',
+      filters: {
+        ...payload?.filters,
+        approvalType: approvalType 
+      }
+    };
+
+
+
+    const res: any = await this.candidateService.getOfferApprovalsList(payloadRequest);
     if (res?.responsecode == '00') {
       this.pendingApprovalOfferLetters = this.mapPendingApprovalsList(res?.data?.pendingApprovals);
       this.totalPendingApproval = res?.data?.totalElements;
     }
   }
+
+  
   private mapPendingApprovalsList(data: any) {
     return data?.map((item: any) => ({
       id: item?.applicationId,
@@ -441,16 +524,19 @@ export class RaiseOfferRequestComponent implements OnInit {
       jobTitle: item?.jobTitle,
       department: item?.department,
 
-      approvalSteps: item?.approvals?.map((approval: any) => ({
-        label: approval?.role || 'Pending',
-        state: approval?.approved ? 'completed' : 'pending'
-      })),
+      approvalSteps: (item?.approvals && item.approvals.length > 0)
+        ? item.approvals.map((approval: any) => ({
+            label: approval?.role || 'Pending',
+            state: approval?.approved ? 'completed' : 'pending'
+          }))
+        : [{ label: 'Approval Pending', state: 'pending' }],
 
       requestedOn: this.formatDate(item?.requestedOn),
       requestedOnTime: this.formatTime(item?.requestedOn),
       priority: item?.priority
     }));
   }
+
   async getReadyOfferLetters(payload: any) {
     const payloadData = {
       ...payload,
@@ -462,6 +548,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       this.readyToReleaseOfferLetters = this.mapReadToReleaseList(res?.data?.offers);
     }
   }
+
   private mapReadToReleaseList(data: any[]): any[] {
     return data.map((item: any) => ({
       id: item.applicationId,
@@ -486,20 +573,11 @@ export class RaiseOfferRequestComponent implements OnInit {
     }
     return this.dropDownData;
   }
-  async getNewRevisionRequests(payload: any) {
-    const payloadData = {
-      ...payload,
-      sortBy: 'id'
-    }
-    const res: any = await this.candidateService.getNotiateList(payloadData);
-    if (res?.responsecode == '00') {
-      this.newPayRevisionRequestsCount = res?.data?.totalElements;
-      this.newPayRevisionRequests = this.mapReadToNagotiateList(res?.data?.content);
-    }
-  }
+
   mapReadToNagotiateList(data: any): any {
     return data?.map((item: any) => ({
       id: item?.negotiationId,
+      applicantId:item?.applicantId,
       candidateId: item?.candidateId,
       name: item?.candidateName,
       email: item?.email,
@@ -512,12 +590,14 @@ export class RaiseOfferRequestComponent implements OnInit {
       priority: item?.priority
     }))
   }
+
   getRevisionApprovalRequests(payload: any) {
 
   }
   getAcceptedOfferLetters(payload: any) {
 
   }
+
   handleFilterChange(data: any) {
     console.log(data);
     this.activeFilters = data;
@@ -532,13 +612,19 @@ export class RaiseOfferRequestComponent implements OnInit {
 
 
   onViewApprovalDetails(row: any) {
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
+    if(this.activeStageId === 'rol' && this.activeTabId === 'negAppovals') {
+      this.router.navigate([`/candidate-management/offer-management/review-negotiation-request/${row?.id}`])   
+    }
+    else{
+      this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
       state: {
         mode: 'view',
         url: '/candidate-management/offer-management',
         activeType: this.activeStageId,
       }
     })
+    }
+    
   }
 
   onViewOfferLetterDetails(row: any) {
@@ -555,6 +641,12 @@ export class RaiseOfferRequestComponent implements OnInit {
     this.currentPage = page;
   }
 
+  /**
+   * Builds the payload for API requests.
+   * 
+   * For the 'rol' stage, ensures that departmentId is included from filters
+   * so the backend can properly filter approvals by department.
+   */
   private buildPayload(): object {
 
     const f = this.activeFilters || {};
@@ -599,14 +691,20 @@ export class RaiseOfferRequestComponent implements OnInit {
       }
     }
 
+    // Candidate response ('cr') stage: send the status for the currently active tab
+    // (pending/accepted/rejected/expired/negotiating) so the backend can filter on it.
+    if (this.activeStageId === 'cr' && this.crTabStatusMap[this.activeTabId]) {
+      filters.status = this.crTabStatusMap[this.activeTabId];
+    }
+
     return {
       page: this.currentPage - 1,
       size: this.pageSize,
-      // sortBy: 'createdAt',
       direction: 'desc',
       filters
     };
   }
+
   getAvatarInitials(name: string): string {
     if (!name) return '';
 
@@ -618,6 +716,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       .map(word => word.charAt(0).toUpperCase())
       .join('');
   }
+
   getAvatarColor(name: string): string {
     const colors = [
       'purple',
@@ -626,8 +725,6 @@ export class RaiseOfferRequestComponent implements OnInit {
       'blue',
       'pink',
       'red',
-
-
     ];
 
     if (!name) return colors[0];
@@ -649,6 +746,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       year: 'numeric'
     });
   }
+
   formatTime(date: string | Date): string {
     if (!date) return '-';
 
@@ -658,7 +756,8 @@ export class RaiseOfferRequestComponent implements OnInit {
       hour12: true
     });
   }
-  onReviewPayRevisionRequest(data: any) {
 
+  onReviewPayRevisionRequest(data: any) {
+    this.router.navigate([`/candidate-management/offer-management/review-negotiation-request/${data?.applicantId}`])   
   }
 }

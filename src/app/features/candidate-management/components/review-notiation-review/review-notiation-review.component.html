@@ -1,0 +1,241 @@
+<div class="rn-loading" *ngIf="isLoading">
+  <i class="fa-solid fa-spinner fa-spin"></i> Loading negotiation request…
+</div>
+
+<div class="rn-wrapper" *ngIf="!isLoading">
+
+  <app-heading
+    [heading]="heading"
+    [subHeading]="subHeading"
+    [showBackButton]="true"
+    buttonText="Back to candidate requested"
+    backButtonUrl="/candidate-management/offer-management"
+    [badge]="statusBadge"
+    badgeStatus="cancelled"
+  />
+
+
+  <app-approval-pipeline [stages]="pipelineStages" title="Approval Pipeline" />
+
+  <!-- ══════════════════════════════════════════════════════════
+       CANDIDATE SUMMARY STRIP
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rn-card rn-summary-strip">
+    <div class="rn-summary-avatar" [ngStyle]="{ background: candidate.avatarColor }">{{ candidate.initials }}</div>
+    <div class="rn-summary-id">
+      <span class="rn-summary-name">{{ candidate.name }}</span>
+      <span class="rn-summary-email">{{ candidate.email }}</span>
+    </div>
+    <div class="rn-summary-field">
+      <span class="rn-summary-label">Job Title</span>
+      <span class="rn-summary-value">{{ candidate.jobTitle }}</span>
+    </div>
+    <div class="rn-summary-field">
+      <span class="rn-summary-label">Offer Released On</span>
+      <span class="rn-summary-value">{{ candidate.offerReleasedOn }}</span>
+    </div>
+    <div class="rn-summary-field">
+      <span class="rn-summary-label">Request ID</span>
+      <span class="rn-summary-value">{{ candidate.requestId }}</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       REQUESTED PACKAGE VS MARKET RANGE
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rn-card rn-market-card" [class.rn-market-card--warn]="aboveMarketMax">
+    <div class="rn-market-header">
+      <h3>Requested package vs market range</h3>
+      <span class="rn-market-warn-pill" *ngIf="aboveMarketMax">
+        <i class="fa-solid fa-triangle-exclamation"></i> Above market maximum
+      </span>
+    </div>
+
+    <div class="rn-market-markers" [class.rn-market-markers--stacked]="markersOverlap">
+      <div class="rn-market-marker rn-market-marker--offer" *ngIf="hasOfferBaseline" [style.left.%]="offerPosition">
+        <span class="rn-marker-label">OFFER</span>
+        <span class="rn-marker-value">{{ formatCurrency(offeredCtc) }}</span>
+      </div>
+      <div class="rn-market-marker rn-market-marker--asked" [class.rn-market-marker--warn]="aboveMarketMax" [class.rn-market-marker--raised]="markersOverlap" *ngIf="askedCtc > 0" [style.left.%]="askedPosition">
+        <span class="rn-marker-label"><i class="fa-solid fa-triangle-exclamation" *ngIf="aboveMarketMax"></i> ASKED</span>
+        <span class="rn-marker-value">{{ formatCurrency(askedCtc) }}</span>
+      </div>
+    </div>
+
+    <div class="rn-market-track">
+      <div class="rn-market-track-fill" [style.width.%]="marketMaxPosition"></div>
+      <div class="rn-market-track-overflow" *ngIf="aboveMarketMax"
+        [style.left.%]="marketMaxPosition" [style.width.%]="askedPosition - marketMaxPosition"></div>
+      <div class="rn-market-dot rn-market-dot--offer" *ngIf="hasOfferBaseline" [style.left.%]="offerPosition"></div>
+      <div class="rn-market-dot rn-market-dot--asked" [class.rn-market-dot--warn]="aboveMarketMax" *ngIf="askedCtc > 0" [style.left.%]="askedPosition"></div>
+    </div>
+
+    <div class="rn-market-scale">
+      <span>{{ formatCurrency(marketMin) }}</span>
+      <span>{{ formatCurrency(marketMax) }}</span>
+    </div>
+
+    <div class="rn-market-warn-banner" *ngIf="aboveMarketMax">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      {{ formatCurrency(deltaAmount) }} ({{ deltaPercent }}%) above market max — needs written justification.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CANDIDATE'S REASONS & RECOMMENDATION
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rn-card">
+    <h3 class="rn-section-title">Candidate's reasons &amp; recommendation</h3>
+    <p class="rn-section-sub">{{ changedItemsCount }} of {{ items.length }} items have a requested change.</p>
+
+    <ng-container *ngFor="let item of items; let i = index">
+      <p class="rn-item-category" *ngIf="i === 0 || item.category !== items[i - 1].category">
+        {{ item.category }}
+      </p>
+
+      <div class="rn-item-card">
+        <div class="rn-item-row">
+          <div class="rn-item-left">
+            <span class="rn-item-icon"><i [class]="item.icon"></i></span>
+            <span class="rn-item-label">{{ item.label }}</span>
+          </div>
+          <div class="rn-item-right">
+            <span class="rn-item-old">{{ item.initialDisplay }}</span>
+            <i class="fa-solid fa-arrow-right rn-item-arrow"></i>
+            <span class="rn-item-new">{{ item.askedDisplay }}</span>
+            <span class="rn-item-badge" *ngIf="!item.isDate && item.hasBaseline">+{{ item.changePercent }}%</span>
+            <span class="rn-item-badge rn-item-badge--changed" *ngIf="!item.hasBaseline">{{ item.isDate ? 'Changed' : 'New' }}</span>
+          </div>
+        </div>
+        <div class="rn-item-justification" *ngIf="item.justification">
+          <span class="rn-just-label">Candidate's Justification</span>
+          <p class="rn-just-text">{{ item.justification }}</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="rn-overall-justification" *ngIf="overallJustification">
+      <span class="rn-item-icon"><i class="fa-regular fa-note-sticky"></i></span>
+      <div class="rn-overall-body">
+        <p class="rn-just-label-lg">Overall justification</p>
+        <p class="rn-just-text">{{ overallJustification }}</p>
+      </div>
+    </div>
+
+    <div class="rn-overall-justification" *ngIf="otherNotes">
+      <span class="rn-item-icon"><i class="fa-regular fa-comment-dots"></i></span>
+      <div class="rn-overall-body">
+        <p class="rn-just-label-lg">Others</p>
+        <p class="rn-just-text">{{ otherNotes }}</p>
+      </div>
+    </div>
+
+    <!-- <div class="rn-hr-rec">
+      <span class="rn-item-icon rn-item-icon--amber"><i class="fa-regular fa-lightbulb"></i></span>
+      <div class="rn-hr-rec-body">
+        <p class="rn-just-label-lg">HR recommendation</p>
+
+        <div class="rn-hr-rec-grid">
+          <div class="rn-hr-rec-field">
+            <label>Revised total package to forward <span class="rn-required">*</span></label>
+            <input
+              type="text"
+              class="rn-package-input"
+              [ngModel]="revisedTotalPackage != null ? formatCurrency(revisedTotalPackage) : ''"
+              (ngModelChange)="onRevisedPackageChange($event)"
+              placeholder="₹0"
+            />
+          </div>
+          <div class="rn-hr-rec-next">
+            <span class="rn-next-label">Next approval stage</span>
+            <span class="rn-next-value">{{ nextApprovalStage }}</span>
+          </div>
+        </div>
+
+        <label class="rn-reason-label">Reason for forwarding <span class="rn-required">*</span></label>
+        <textarea class="rn-reason-textarea" [(ngModel)]="reasonForForwarding"
+          placeholder="Explain why these revisions should be approved, and flag anything approvers should weigh carefully…"></textarea>
+
+        <p class="rn-hr-rec-note">This note, the forwarded items and any supporting documents are visible to every approver in the pipeline.</p>
+      </div>
+    </div> -->
+  </div>
+
+  
+  <div class="rn-card" *ngIf="documents.length">
+    <h3 class="rn-section-title">Supporting documents</h3>
+    <div class="rn-doc-list">
+      <div class="rn-doc-row" *ngFor="let doc of documents">
+        <span class="rn-doc-icon" [ngClass]="'rn-doc-icon--' + doc.kind">
+          {{ doc.kind === 'pdf' ? 'PDF' : (doc.kind === 'img' ? 'IMG' : 'FILE') }}
+        </span>
+        <div class="rn-doc-info">
+          <span class="rn-doc-name">{{ doc.name }}</span>
+          <span class="rn-doc-meta" *ngIf="doc.sizeLabel || doc.uploadedOn">
+            {{ doc.sizeLabel }}<ng-container *ngIf="doc.sizeLabel && doc.uploadedOn"> · </ng-container>{{ doc.uploadedOn }}
+          </span>
+        </div>
+        <a class="rn-doc-view" [href]="doc.url" target="_blank" rel="noopener">
+          View <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       INITIAL OFFER VS CANDIDATE ASK
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rn-card">
+    <h3 class="rn-section-title">Initial offer vs candidate ask</h3>
+    <p class="rn-section-sub">Uncheck anything you don't want to carry forward, and adjust any value to counter-propose instead of accepting the ask as-is.</p>
+
+    <div class="rn-fwd-table-wrap">
+      <table class="rn-fwd-table">
+        <thead>
+          <tr>
+            <th class="rn-fwd-th-check">FWD</th>
+            <th>Item</th>
+            <th>Initially Offered</th>
+            <th>Candidate Asked</th>
+            <th>Value to Forward</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items">
+            <td><input type="checkbox" [(ngModel)]="item.forward" /></td>
+            <td class="rn-fwd-item">{{ item.label }}</td>
+            <td>{{ item.initialDisplay }}</td>
+            <td class="rn-fwd-asked">{{ item.askedDisplay }}</td>
+            <td>
+              <input
+                class="rn-fwd-input"
+                [type]="item.isDate ? 'date' : 'text'"
+                [ngModel]="item.isDate ? item.valueToForward : formatCurrency(item.valueToForward)"
+                (ngModelChange)="onValueToForwardChange(item, $event)"
+                [disabled]="!item.forward"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ACTION BAR
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rn-action-bar">
+    <button class="rn-btn-back" type="button" (click)="onBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+    <div class="rn-action-right">
+      <button class="rn-btn-reject" type="button" [disabled]="isSubmitting" (click)="onReject()">
+        <i class="fa-solid fa-xmark"></i> Reject request
+      </button>
+      <button class="rn-btn-forward" type="button" [disabled]="!canForward" (click)="onForwardForApproval()">
+        {{ isSubmitting ? 'Submitting…' : 'Forward for approval' }} <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,63 @@
+.date-range-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.date-range-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px; /* fixed compact height for the whole control */
+}
+
+.date-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.date-field label {
+  font-size: 12px;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.date-field input[type="date"] {
+  height: 32px;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12.5px;
+  line-height: 1;
+  color: #6b7280;
+  background-color: #fff;
+  min-width: 120px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Shrink the native calendar icon so it matches the smaller height */
+.date-field input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 14px;
+  height: 14px;
+  padding: 0;
+}
+
+.date-field input[type="date"]:hover {
+  border-color: #9ca3af;
+}
+
+.date-field input[type="date"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.error-message {
+  margin: 0;
+  font-size: 13px;
+  color: #dc2626;
+}

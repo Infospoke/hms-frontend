@@ -1,0 +1,240 @@
+
+
+<div class="nar-wrapper" *ngIf="!isLoading">
+
+
+  
+
+  <a class="nar-back-link" (click)="onBack()">
+    <i class="fa-solid fa-arrow-left"></i> Back to negotiation approvals
+  </a>
+
+  <div class="nar-header">
+    <div class="nar-header-left">
+      <div class="nar-name-row">
+        <h1>{{ candidate.name }}</h1>
+        <span class="nar-badge">{{ statusBadge }}</span>
+      </div>
+      <p class="nar-role-line">
+        {{ candidate.role }} · {{ candidate.department }} · {{ candidate.email }}
+      </p>
+    </div>
+
+    <div class="nar-header-stats">
+      <div class="nar-stat">
+        <span class="nar-stat-label">Requested on</span>
+        <span class="nar-stat-value">{{ candidate.requestedOn }}</span>
+      </div>
+      <div class="nar-stat nar-stat--right">
+        <span class="nar-stat-label">Current CTC on table</span>
+        <span class="nar-stat-value">{{ formatCurrency(candidate.currentCtc) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <app-approval-pipeline [stages]="pipelineStages" title="Approval pipeline" />
+
+  <div class="nar-card nar-job-row">
+    <div class="nar-job-fields">
+      <div class="nar-job-field">
+        <span class="nar-summary-label">Job title</span>
+        <span class="nar-summary-value">{{ jobTitle }}</span>
+      </div>
+      <div class="nar-job-field">
+        <span class="nar-summary-label">Department</span>
+        <span class="nar-summary-value">{{ candidate.department }}</span>
+      </div>
+      <div class="nar-job-field">
+        <span class="nar-summary-label">Recruiter</span>
+        <span class="nar-summary-value nar-summary-value--link">{{ recruiterName }}</span>
+      </div>
+    </div>
+
+    <button class="nar-btn-budget" type="button" (click)="openBudgetModal()">
+      💰 View approved budget &amp; compensation
+    </button>
+  </div>
+
+
+  <div class="nar-card nar-market-card" [class.nar-market-card--ok]="withinMarketRange" [class.nar-market-card--warn]="aboveMarketMax">
+    <div class="nar-market-header">
+      <h3>Requested package vs market range</h3>
+      <span class="nar-market-pill nar-market-pill--ok" *ngIf="withinMarketRange">
+        <i class="fa-solid fa-check"></i> Within market range
+      </span>
+      <span class="nar-market-pill nar-market-pill--warn" *ngIf="aboveMarketMax">
+        <i class="fa-solid fa-triangle-exclamation"></i> Above market maximum
+      </span>
+    </div>
+
+    <div class="nar-market-markers" [class.nar-market-markers--stacked]="markersOverlap">
+      <div class="nar-market-marker nar-market-marker--offer" *ngIf="hasOfferBaseline" [style.left.%]="offerPosition">
+        <span class="nar-marker-label">OFFER</span>
+        <span class="nar-marker-value">{{ formatCurrency(offeredCtc) }}</span>
+      </div>
+      <div class="nar-market-marker nar-market-marker--asked" [class.nar-market-marker--warn]="aboveMarketMax" [class.nar-market-marker--raised]="markersOverlap" *ngIf="askedCtc > 0" [style.left.%]="askedPosition">
+        <span class="nar-marker-label"><i class="fa-solid fa-triangle-exclamation" *ngIf="aboveMarketMax"></i> ASKED</span>
+        <span class="nar-marker-value">{{ formatCurrency(askedCtc) }}</span>
+      </div>
+    </div>
+
+    <div class="nar-market-track">
+      <div class="nar-market-track-fill" [style.width.%]="marketMaxPosition"></div>
+      <div class="nar-market-track-overflow" *ngIf="aboveMarketMax"
+        [style.left.%]="marketMaxPosition" [style.width.%]="askedPosition - marketMaxPosition"></div>
+      <div class="nar-market-dot nar-market-dot--offer" *ngIf="hasOfferBaseline" [style.left.%]="offerPosition"></div>
+      <div class="nar-market-dot nar-market-dot--asked" [class.nar-market-dot--warn]="aboveMarketMax" *ngIf="askedCtc > 0" [style.left.%]="askedPosition"></div>
+    </div>
+
+    <div class="nar-market-scale">
+      <span>{{ formatCurrency(marketMin) }}</span>
+      <span>{{ formatCurrency(marketMax) }}</span>
+    </div>
+
+    <div class="nar-market-note nar-market-note--ok" *ngIf="withinMarketRange">
+      <i class="fa-solid fa-check"></i> Within market band, roughly the {{ marketPercentile }}th percentile.
+    </div>
+    <div class="nar-market-note nar-market-note--warn" *ngIf="aboveMarketMax">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      {{ formatCurrency(deltaAmount) }} ({{ deltaPercent }}%) above market max — needs written justification.
+    </div>
+  </div>
+
+  
+  <div class="nar-card">
+    <h3 class="nar-section-title"><i class="fa-regular fa-comment-dots"></i> Candidate's reason for negotiation</h3>
+
+    <div class="nar-reason-item" *ngFor="let item of items">
+      <p class="nar-reason-heading">
+        {{ item.label }}
+        <span class="nar-reason-values">({{ formatCurrency(item.initialOffer) }} → {{ formatCurrency(item.candidateAsked) }})</span>
+      </p>
+      <p class="nar-reason-text">{{ itemReason }}</p>
+    </div>
+  </div>
+
+  
+  <div class="nar-card">
+    <h3 class="nar-section-title"><i class="fa-regular fa-lightbulb"></i> HR recommendation</h3>
+    <p class="nar-hr-rec-line">
+      Revised package recommended: <strong>{{ formatCurrency(hrRecommendedPackage) }} / annum</strong>
+    </p>
+    <p class="nar-hr-rec-note">{{ hrRecommendationNote }}</p>
+  </div>
+
+  
+  <div class="nar-card">
+    <h3 class="nar-section-title">Supporting documents from candidate</h3>
+    <p class="nar-doc-empty" *ngIf="!documents.length">No supporting documents were attached.</p>
+    <div class="nar-doc-list" *ngIf="documents.length">
+      <div class="nar-doc-row" *ngFor="let doc of documents">
+        <span class="nar-doc-icon" [ngClass]="'nar-doc-icon--' + doc.kind">
+          {{ doc.kind === 'pdf' ? 'PDF' : (doc.kind === 'img' ? 'IMG' : 'FILE') }}
+        </span>
+        <span class="nar-doc-name">{{ doc.name }}</span>
+        <a class="nar-doc-view" [href]="doc.url" target="_blank" rel="noopener">
+          View <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="nar-card">
+    <h3 class="nar-section-title">Offer comparison — your decision (HR manager)</h3>
+    <p class="nar-section-sub">Initial offer, what the candidate asked for, what HR recommends, and your decision.</p>
+
+    <div class="nar-cmp-table-wrap">
+      <table class="nar-cmp-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Initial offer</th>
+            <th>Candidate asked</th>
+            <th>HR recommends</th>
+            <th>Your decision</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items">
+            <td class="nar-cmp-item">{{ item.label }}</td>
+            <td class="nar-cmp-old">
+              <span [class.nar-cmp-strike]="item.initialOffer != null">{{ item.initialOffer != null ? formatCurrency(item.initialOffer) : '—' }}</span>
+            </td>
+            <td class="nar-cmp-asked">{{ formatCurrency(item.candidateAsked) }}</td>
+            <td class="nar-cmp-hr">{{ formatCurrency(item.hrRecommends) }}</td>
+            <td>
+              <input
+                class="nar-cmp-input"
+                type="text"
+                [ngModel]="formatCurrency(item.yourDecision)"
+                (ngModelChange)="onDecisionChange(item, $event)"
+              />
+            </td>
+            <td>
+              <span class="nar-cmp-status" [ngClass]="'nar-cmp-status--' + item.decisionStatus.toLowerCase()">
+                {{ item.decisionStatus }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nar-cmp-actions">
+      <button class="nar-btn-sendback" type="button" [disabled]="isSubmitting" (click)="onSendBackToHR()">
+        <i class="fa-solid fa-rotate-left"></i> Send back to HR
+      </button>
+      <button class="nar-btn-approve" type="button" [disabled]="!canApprove" (click)="onApproveAndContinue()">
+        <i class="fa-solid fa-check"></i> {{ isSubmitting ? 'Submitting…' : 'Approve & continue' }}
+      </button>
+    </div>
+  </div>
+
+
+  <div class="nar-action-bar">
+    <button class="nar-btn-back" type="button" (click)="onBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back
+    </button>
+    <button class="nar-btn-offer-letter" type="button" (click)="onViewOfferLetter()">
+      <i class="fa-regular fa-file-lines"></i> View offer letter
+    </button>
+  </div>
+
+</div>
+
+
+<div class="nar-modal-overlay" *ngIf="showBudgetModal" (click)="closeBudgetModal()">
+  <div class="nar-modal" (click)="$event.stopPropagation()">
+    <div class="nar-modal-header">
+      <div>
+        <h3>Approved budget &amp; compensation</h3>
+        <p>{{ jobTitle }} · {{ candidate.department }}</p>
+      </div>
+      <button class="nar-modal-close" type="button" (click)="closeBudgetModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="nar-modal-body">
+      <div class="nar-modal-row">
+        <span>Approved compensation band</span>
+        <strong>{{ formatCurrency(budget.compensationBandMin) }} – {{ formatCurrency(budget.compensationBandMax) }}</strong>
+      </div>
+      <div class="nar-modal-row">
+        <span>Department headcount budget (annual)</span>
+        <strong>{{ formatCurrency(budget.departmentBudgetAnnual) }}</strong>
+      </div>
+      <div class="nar-modal-row">
+        <span>Already allocated this quarter</span>
+        <strong>{{ formatCurrency(budget.allocatedThisQuarter) }}</strong>
+      </div>
+      <div class="nar-modal-row nar-modal-row--total">
+        <span>Remaining budget</span>
+        <strong>{{ formatCurrency(budget.remainingBudget) }}</strong>
+      </div>
+
+      <p class="nar-modal-note">{{ budget.note }}</p>
+    </div>
+  </div>
+</div>

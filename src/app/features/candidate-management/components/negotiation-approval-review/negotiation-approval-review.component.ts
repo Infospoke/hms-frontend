@@ -2,19 +2,75 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { ApprovalPipelineComponent } from '../../../approvals/components/approval-pipeline/approval-pipeline.component';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
 
 import { ApprovalStage } from '../../../../shared/constants/approval.stage.modal';
-import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem } from '../../../../shared/constants/offer.model';
+import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem, NegotiationDocument } from '../../../../shared/constants/offer.model';
 
-interface NegotiationApprovalDocument {
-  name: string;
-  kind: 'pdf' | 'img' | 'file';
-  url: string;
+// GET .../negotiation-details/{applicantId} — same single endpoint used by
+// review-negotiation-request, but by the time an approver views this page
+// HR has already forwarded a recommendation, so the response now also
+// carries hrReason / hrRecommendations / hrRecommendedCtc /
+// revisedJoiningDate on top of the original candidate/negotiation fields.
+interface NegotiationApprovalApiResponse {
+  data: {
+    annualHiringCost: number | null;
+    applicantId: number;
+    candidateId: string | null;
+    candidateName: string | null;
+    email: string | null;
+    hrReason: string | null;
+    hrRecommendations: { amount: number; fieldName: string }[];
+    hrRecommendedCtc: number | null;
+    jobId: number;
+    jobTitle: string | null;
+    joiningDate: string | null;
+    joiningDateReason: string | null;
+    maximumSalary: number | null;
+    minimumSalary: number | null;
+    negotiation: {
+      fieldName: string;
+      initialAmount: number | null;
+      reason: string;
+      requestedAmount: number | null;
+    }[];
+    negotiationId: number;
+    offerReleasedOn: string;
+    others: string | null;
+    overallJustification: string;
+    revisedJoiningDate: string | null;
+    srId: string | null;
+    supportingDocuments: string[];
+    totalRequestedAmount: number | null;
+  };
+  message: string;
+  responsecode: string;
 }
+
+const ITEM_ICONS: Record<string, string> = {
+  'basic pay': 'fa-solid fa-credit-card',
+  'fixed pay': 'fa-solid fa-credit-card',
+  'hra': 'fa-solid fa-house',
+  'special allowance': 'fa-solid fa-star',
+  'signing bonus': 'fa-solid fa-gift',
+  'joining bonus': 'fa-solid fa-gift',
+  'equity/rsu': 'fa-solid fa-chart-line',
+  'relocation budget': 'fa-solid fa-key',
+};
+const DEFAULT_ITEM_ICON = 'fa-solid fa-file-lines';
+const TERMS_KEYWORDS = ['period', 'date', 'notice', 'location'];
+
+
+const GUARANTEED_HR_FIELDS: { label: string; icon: string }[] = [
+  { label: 'Basic Pay', icon: 'fa-solid fa-credit-card' },
+  { label: 'Signing Bonus', icon: 'fa-solid fa-gift' },
+  { label: 'Equity/RSU', icon: 'fa-solid fa-chart-line' },
+  { label: 'Relocation Budget', icon: 'fa-solid fa-key' },
+];
 
 @Component({
   selector: 'app-negotiation-approval-review',
@@ -31,6 +87,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private candidateService = inject(CandidateServiceComponent);
   private notificationService = inject(NotificationService);
+  private sanitizer = inject(DomSanitizer);
 
   isLoading = true;
   isSubmitting = false;
@@ -46,11 +103,20 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   };
 
   jobTitle = '';
+  // TODO: recruiter isn't part of the negotiation-details response —
+  // wire this up once a field/endpoint for it is confirmed.
   recruiterName = '';
 
-  
+  // ── Approval pipeline — Department head -> Finance team -> HR manager ->
+  // Final approval.
+  // TODO: this API doesn't return approver-chain stage statuses yet, so
+  // the pipeline below is still DUMMY data. Swap for real stage data
+  // (matching the response contract) once it's available.
   pipelineStages: ApprovalStage[] = [];
 
+  // ── "View approved budget & compensation" popup ─────────────────────────
+  // TODO: no budget-band data in this API either — stays DUMMY until a
+  // real budget endpoint/field is confirmed.
   showBudgetModal = false;
   budget: ApprovedBudgetInfo = {
     compensationBandMin: 0, compensationBandMax: 0,
@@ -58,7 +124,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     note: '',
   };
 
-
+  // ── Requested package vs market range ───────────────────────────────────
   marketMin = 0;
   marketMax = 0;
   offeredCtc = 0;
@@ -73,14 +139,11 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     if (!this.marketMax) return 0;
     return Math.round((this.deltaAmount / this.marketMax) * 1000) / 10;
   }
-  
   get marketPercentile(): number {
     if (this.marketMax <= this.marketMin) return 0;
     return Math.round(((this.askedCtc - this.marketMin) / (this.marketMax - this.marketMin)) * 100);
   }
 
-  /** 0-100 position on the track for a rupee value, spanning marketMin (0%)
-   * through whichever is larger of marketMax / askedCtc (100%). */
   private trackPosition(value: number): number {
     const upper = Math.max(this.marketMax, this.askedCtc, this.marketMin + 1);
     const range = upper - this.marketMin;
@@ -91,9 +154,6 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   get offerPosition(): number { return this.trackPosition(this.offeredCtc); }
   get askedPosition(): number { return this.trackPosition(this.askedCtc); }
 
-  /** True when OFFER and ASKED land close enough on the track that their
-   * chips would visually collide — the template stacks ASKED above OFFER
-   * in that case so both stay readable. */
   get markersOverlap(): boolean {
     return this.hasOfferBaseline && this.askedCtc > 0
       && Math.abs(this.offerPosition - this.askedPosition) < 10;
@@ -101,24 +161,37 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   // ── Candidate's reason for negotiation + comparison table ───────────────
   items: NegotiationComparisonItem[] = [];
-  /** Candidate's stated reason, shown once under the single comparison
-   * item on this screen (the review-negotiation-request page shows one
-   * per item; here there's a single combined package line). */
-  itemReason = '';
 
-  // ── HR recommendation — read-only display on this approver screen (HR
-  // already made their recommendation on the review-negotiation-request
-  // page; the approver just sees it here). ──
+  /** "Candidate's reason for negotiation" only shows rows the candidate
+   * actually asked to change — the guaranteed-field placeholders (and any
+   * negotiation entry with requestedAmount: null) are left out since
+   * there's no ask to explain. They still appear in the comparison table
+   * below so the approver can set a decision for them regardless. */
+  get reasonItems(): NegotiationComparisonItem[] {
+    return this.items.filter(i => i.candidateAsked != null);
+  }
+
+  // ── HR recommendation — read-only display; HR already made this call on
+  // the review-negotiation-request page, the approver just sees it here. ──
   hrRecommendedPackage = 0;
   hrRecommendationNote = '';
 
-  documents: NegotiationApprovalDocument[] = [];
+  documents: NegotiationDocument[] = [];
 
   reasonForSendingBack = '';
 
   get canApprove(): boolean {
-    return !this.isSubmitting && this.items.length > 0 && this.items.every(i => i.yourDecision > 0);
+    return !this.isSubmitting
+      && this.items.some(i => i.forward && !i.isDate && Number(i.yourDecision) > 0);
   }
+
+  // ── Supporting document preview modal ───────────────────────────────────
+  isDocModalOpen = false;
+  isDocModalLoading = false;
+  docModalError = '';
+  docModalTitle = '';
+  docModalUrl: SafeResourceUrl | null = null;
+  private docModalObjectUrl: string | null = null;
 
   ngOnInit(): void {
     this.applicantId = this.route.snapshot.paramMap.get('id');
@@ -127,12 +200,14 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   private async loadAll(): Promise<void> {
     try {
-      // TODO: this whole screen is built against a DUMMY fixture — no
-      // confirmed backend endpoint yet for the approver-side negotiation
-      // decision view. Swap applyDummyData() for a real single-endpoint
-      // call (matching the getNegotiationDetails pattern used on the
-      // review-negotiation-request page) once the contract is available.
-      this.applyDummyData();
+      const res: NegotiationApprovalApiResponse = await this.candidateService.getNegotiationDetails(this.applicantId);
+
+      if (res?.responsecode === '00') {
+        this.applyNegotiationDetails(res.data);
+      } else {
+        console.error('Failed to fetch negotiation approval details:', res?.message);
+        this.notificationService.error(res?.message || 'Failed to load the negotiation approval');
+      }
     } catch (err) {
       console.error('Failed to load negotiation approval', err);
       this.notificationService.error('Failed to load the negotiation approval. Please try again.');
@@ -142,20 +217,26 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     }
   }
 
-  private applyDummyData(): void {
+  private applyNegotiationDetails(data: NegotiationApprovalApiResponse['data']): void {
+    // ── Header ──
     this.candidate = {
-      name: 'Sanjay Rao',
-      initials: this.getInitials('Sanjay Rao'),
+      name: data.candidateName ?? '',
+      initials: this.getInitials(data.candidateName ?? ''),
       avatarColor: '#7C3AED',
-      role: 'Senior tester',
-      department: 'Quality assurance',
-      email: 'sanjay.rao@infospoke.in',
-      requestedOn: '03 Jul 2026 · 10:20 AM',
-      currentCtc: 1200000,
+      // TODO: role/department aren't part of this API response.
+      role: '',
+      department: '',
+      email: data.email ?? '',
+      requestedOn: this.formatDateTime(data.offerReleasedOn),
+      // "Current CTC on table" = what HR has recommended forward, falling
+      // back to the candidate's total ask if HR hasn't recommended yet.
+      currentCtc: data.hrRecommendedCtc ?? data.totalRequestedAmount ?? 0,
     };
-    this.jobTitle = 'Senior tester';
-    this.recruiterName = 'Arun Kumar';
+    this.jobTitle = (data.jobTitle ?? '').trim();
 
+    // TODO: pipeline stage statuses aren't in this API yet — kept as a
+    // static DUMMY chain (HR manager as the current step) until real
+    // approver-chain data is available.
     this.pipelineStages = NEGOTIATION_APPROVAL_STAGE_ORDER.map((role, i): ApprovalStage => {
       let status: ApprovalStage['status'] = 'PENDING';
       if (i === 0 || i === 1) status = 'APPROVED';
@@ -169,42 +250,110 @@ export class NegotiationApprovalReviewComponent implements OnInit {
       };
     });
 
-    this.budget = {
-      compensationBandMin: 996000,
-      compensationBandMax: 1368000,
-      departmentBudgetAnnual: 5040000,
-      allocatedThisQuarter: 3427200,
-      remainingBudget: 1612800,
-      note: `Figures are indicative for this prototype and pull from the department's approved annual plan.`,
-    };
+    // ── Requested package vs market range ──
+    this.marketMin = data.minimumSalary ?? 0;
+    this.marketMax = data.maximumSalary ?? 0;
+    this.offeredCtc = data.annualHiringCost ?? 0;
+    this.askedCtc = data.totalRequestedAmount ?? 0;
 
-    this.marketMin = 996000;
-    this.marketMax = 1368000;
-    this.offeredCtc = 1200000;
-    this.askedCtc = 1200000;
+    // ── Items — candidate's negotiation + HR's recommendation per field ──
+    const hrRecMap = new Map<string, number>();
+    for (const rec of data.hrRecommendations ?? []) {
+      hrRecMap.set(rec.fieldName.trim().toLowerCase(), rec.amount);
+    }
 
-    this.items = [{
-      key: 'basic-pay',
-      label: 'Basic Pay (Total Compensation)',
-      initialOffer: 1200000,
-      candidateAsked: 1200000,
-      hrRecommends: 1200000,
-      yourDecision: 1200000,
+    this.items = (data.negotiation ?? []).map((raw) => this.buildItem(raw, hrRecMap));
+
+    for (const field of GUARANTEED_HR_FIELDS) {
+      const alreadyExists = this.items.some(i => i.label.toLowerCase() === field.label.toLowerCase());
+      if (!alreadyExists) {
+        const hrRecommends = hrRecMap.get(field.label.toLowerCase()) ?? null;
+        this.items.push({
+          key: field.label.trim().toLowerCase().replace(/\s+/g, '-'),
+          icon: field.icon,
+          label: field.label,
+          category: 'COMPENSATION',
+          isDate: false,
+          forward: false,
+          initialOffer: null,
+          candidateAsked: null,
+          hrRecommends,
+          yourDecision: hrRecommends ?? 0,
+          decisionStatus: 'Accepted',
+          justification: '',
+        });
+      }
+    }
+
+    // Joining Date always gets a row — HR's revisedJoiningDate is the
+    // default decision, falling back to the candidate's original ask.
+    const joiningDecision = data.revisedJoiningDate ?? data.joiningDate ?? '';
+    this.items.push({
+      key: 'joiningDate',
+      icon: 'fa-regular fa-calendar',
+      label: 'Joining Date',
+      category: 'TERMS',
+      isDate: true,
+      forward: !!data.joiningDateReason,
+      initialOffer: null,
+      candidateAsked: data.joiningDate ?? null,
+      hrRecommends: data.revisedJoiningDate ?? null,
+      yourDecision: joiningDecision,
       decisionStatus: 'Accepted',
-    }];
+      justification: data.joiningDateReason ?? '',
+    });
 
-    this.hrRecommendedPackage = 1200000;
-    this.hrRecommendationNote = 'Sanjay’s fintech QA leadership experience justifies the revision, and it keeps us competitive for this role. Recommending approval.';
-    this.itemReason = '6 years testing experience, including 2 years leading QA for a fintech product.';
+    // ── Candidate's overall justification / HR recommendation note ──
+    this.hrRecommendedPackage = data.hrRecommendedCtc ?? 0;
+    this.hrRecommendationNote = data.hrReason ?? data.overallJustification ?? '';
 
-    this.documents = [];
+    // ── Supporting documents — raw filenames only, no size/upload-date
+    // metadata, so those are left blank rather than fabricated.
+    this.documents = (data.supportingDocuments ?? []).map((path) => {
+      const name = path.split('/').pop() || path;
+      return {
+        name,
+        sizeLabel: '',
+        uploadedOn: '',
+        kind: this.inferKind(name),
+        url: path,
+      };
+    });
+  }
+
+  private buildItem(
+    raw: NegotiationApprovalApiResponse['data']['negotiation'][number],
+    hrRecMap: Map<string, number>,
+  ): NegotiationComparisonItem {
+    const hasAsk = raw.requestedAmount != null;
+    const isTerms = TERMS_KEYWORDS.some(kw => raw.fieldName.toLowerCase().includes(kw));
+    const hrRecommends = hrRecMap.get(raw.fieldName.trim().toLowerCase()) ?? (hasAsk ? raw.requestedAmount : null);
+
+    return {
+      key: raw.fieldName.trim().toLowerCase().replace(/\s+/g, '-'),
+      icon: ITEM_ICONS[raw.fieldName.trim().toLowerCase()] ?? DEFAULT_ITEM_ICON,
+      label: raw.fieldName,
+      category: isTerms ? 'TERMS' : 'COMPENSATION',
+      isDate: false,
+      forward: hasAsk,
+      initialOffer: raw.initialAmount,
+      candidateAsked: hasAsk ? raw.requestedAmount : null,
+      hrRecommends,
+      yourDecision: hrRecommends ?? 0,
+      decisionStatus: 'Accepted',
+      justification: raw.reason ?? '',
+    };
   }
 
   // ── Table interactions ──────────────────────────────────────────────────
   onDecisionChange(item: NegotiationComparisonItem, raw: string): void {
-    const n = Number(String(raw).replace(/[^\d.-]/g, ''));
-    item.yourDecision = isNaN(n) ? 0 : n;
-    item.decisionStatus = item.yourDecision === item.hrRecommends ? 'Accepted' : 'Modified';
+    if (item.isDate) {
+      item.yourDecision = raw;
+    } else {
+      const n = Number(String(raw).replace(/[^\d.-]/g, ''));
+      item.yourDecision = isNaN(n) ? 0 : n;
+      item.decisionStatus = item.yourDecision === item.hrRecommends ? 'Accepted' : 'Modified';
+    }
   }
 
   openBudgetModal(): void {
@@ -223,9 +372,31 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     return name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
 
+  private formatDateTime(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      + ' · ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
   formatCurrency(n: number | null): string {
     if (n == null) return '';
     return '₹' + Math.round(n).toLocaleString('en-IN');
+  }
+
+  formatDate(iso: string | null): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  private inferKind(name: string): 'pdf' | 'img' | 'file' {
+    const ext = name.split('.').pop()?.toLowerCase() ?? '';
+    if (ext === 'pdf') return 'pdf';
+    if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) return 'img';
+    return 'file';
   }
 
   // ── Actions ──────────────────────────────────────────────────────────────
@@ -237,6 +408,44 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     // TODO: no confirmed applicantId -> offer-letter link on this screen
     // yet — wire to candidateService.viewOfferLetter(id) once available.
     this.notificationService.info('Offer letter preview coming soon');
+  }
+
+  // ── Supporting document preview ─────────────────────────────────────────
+  async onViewDocument(doc: NegotiationDocument): Promise<void> {
+    this.isDocModalOpen = true;
+    this.isDocModalLoading = true;
+    this.docModalError = '';
+    this.docModalTitle = doc.name;
+    this.docModalUrl = null;
+    this.cdr.markForCheck();
+
+    try {
+      const blob: Blob = await this.candidateService.viewDocument({ filePath: doc.url });
+      this.revokeDocModalObjectUrl();
+      this.docModalObjectUrl = URL.createObjectURL(blob);
+      this.docModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.docModalObjectUrl);
+    } catch (err) {
+      console.error('Failed to load document preview', err);
+      this.docModalError = 'Could not load this document. Please try again.';
+    } finally {
+      this.isDocModalLoading = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  closeDocModal(): void {
+    this.isDocModalOpen = false;
+    this.docModalUrl = null;
+    this.docModalError = '';
+    this.revokeDocModalObjectUrl();
+    this.cdr.markForCheck();
+  }
+
+  private revokeDocModalObjectUrl(): void {
+    if (this.docModalObjectUrl) {
+      URL.revokeObjectURL(this.docModalObjectUrl);
+      this.docModalObjectUrl = null;
+    }
   }
 
   async onSendBackToHR(): Promise<void> {
@@ -279,7 +488,9 @@ export class NegotiationApprovalReviewComponent implements OnInit {
       const res: any = await this.candidateService.approveOffer({
         applicantId: this.applicantId,
         approve: true,
-        decisions: this.items.map(i => ({ key: i.key, value: i.yourDecision })),
+        decisions: this.items
+          .filter(i => i.forward)
+          .map(i => ({ key: i.key, value: i.yourDecision })),
       });
       if (res?.responsecode === '00') {
         this.notificationService.success(res?.message ?? 'Approved and forwarded');

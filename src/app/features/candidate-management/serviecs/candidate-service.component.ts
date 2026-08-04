@@ -82,4 +82,20 @@ export class CandidateServiceComponent {
     );
   }
 
+  async reviewNegotiationRequest(payload:any):Promise<any>{
+    return await firstValueFrom(
+      this.api.hrmspost(API.CANDIDATE_MANANGEMENT.REVIEW_NEGOTIATION_REQUEST,payload)
+    );
+  }
+  async viewDocument(payload:any):Promise<Blob>{
+    // NOTE: must use the blob-responseType POST here — the default
+    // hrmspost tries to parse the response as JSON, which fails on the
+    // raw PDF bytes the backend actually returns (confirmed via network
+    // tab: the request succeeds, but the JSON-typed client couldn't do
+    // anything with the binary body).
+    return await firstValueFrom(
+      this.api.hrmspostBlob(API.CANDIDATE_MANANGEMENT.VIEW_DOCUMENTS,payload)
+    );
+  }
+
 }

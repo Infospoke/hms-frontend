@@ -15,39 +15,39 @@
 
           <!-- Row 1: group labels -->
           <tr class="rt-group-row">
-            <ng-container *ngFor="let grp of columnGroups; let i = index">
+            <ng-container *ngFor="let grp of columnGroups">
 
               <!-- Non-grouped column: rowspan=2 -->
               <th *ngIf="!grp.label"
                 [attr.rowspan]="2"
-                [style.width]="columns[i]?.width || 'auto'"
+                [style.width]="columns[grp.colIndex!]?.width || 'auto'"
                 [class.rt-th--no-group]="true"
-                [class.rt-th--sortable]="isSortable(getColumnKey(i))"
-                [class.rt-th--sorted]="activeSortCol === getColumnKey(i)"
-                [class.hide-mobile]="columns[i]?.hideOnMobile"
-                [class.rt-td--center]="columns[i]?.align === 'center'"
-                [class.rt-td--right]="columns[i]?.align === 'right'"
-                [attr.aria-sort]="activeSortCol === getColumnKey(i) ? activeSortDir : null"
-                (click)="onSort(getColumnKey(i))">
+                [class.rt-th--sortable]="isSortable(getColumnKey(grp.colIndex!))"
+                [class.rt-th--sorted]="activeSortCol === getColumnKey(grp.colIndex!)"
+                [class.hide-mobile]="columns[grp.colIndex!]?.hideOnMobile"
+                [class.rt-td--center]="columns[grp.colIndex!]?.align === 'center'"
+                [class.rt-td--right]="columns[grp.colIndex!]?.align === 'right'"
+                [attr.aria-sort]="activeSortCol === getColumnKey(grp.colIndex!) ? activeSortDir : null"
+                (click)="onSort(getColumnKey(grp.colIndex!))">
                 <span class="rt-th-inner"
-                  [class.rt-th-inner--center]="columns[i]?.align === 'center'"
-                  [class.rt-th-inner--right]="columns[i]?.align === 'right'">
+                  [class.rt-th-inner--center]="columns[grp.colIndex!]?.align === 'center'"
+                  [class.rt-th-inner--right]="columns[grp.colIndex!]?.align === 'right'">
 
                   <!-- Header template override for select col -->
-                  <ng-container *ngIf="headerTemplate && columns[i]?.key === 'select'; else defaultNoGroupHeader">
+                  <ng-container *ngIf="headerTemplate && columns[grp.colIndex!]?.key === 'select'; else defaultNoGroupHeader">
                     <ng-container
                       [ngTemplateOutlet]="headerTemplate"
-                      [ngTemplateOutletContext]="{ $implicit: columns[i] }">
+                      [ngTemplateOutletContext]="{ $implicit: columns[grp.colIndex!] }">
                     </ng-container>
                   </ng-container>
                   <ng-template #defaultNoGroupHeader>
-                    {{ columns[i]?.label }}
-                    <span class="rt-sort-icon" *ngIf="isSortable(getColumnKey(i))" aria-hidden="true">
+                    {{ columns[grp.colIndex!]?.label }}
+                    <span class="rt-sort-icon" *ngIf="isSortable(getColumnKey(grp.colIndex!))" aria-hidden="true">
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <path d="M6 2L9 5H3L6 2Z" fill="currentColor"
-                          [class.rt-sort-active]="activeSortCol === getColumnKey(i) && activeSortDir === 'asc'" />
+                          [class.rt-sort-active]="activeSortCol === getColumnKey(grp.colIndex!) && activeSortDir === 'asc'" />
                         <path d="M6 10L3 7H9L6 10Z" fill="currentColor"
-                          [class.rt-sort-active]="activeSortCol === getColumnKey(i) && activeSortDir === 'desc'" />
+                          [class.rt-sort-active]="activeSortCol === getColumnKey(grp.colIndex!) && activeSortDir === 'desc'" />
                       </svg>
                     </span>
                   </ng-template>

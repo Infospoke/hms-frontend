@@ -38,13 +38,13 @@
   <div class="cp-header">
     <h3 class="cp-title">{{ title }}</h3>
 
-    <div class="cp-period">
+    <!-- <div class="cp-period">
       <select class="cp-period-select">
         <option *ngFor="let period of periods">
           {{ period }}
         </option>
       </select>
-    </div>
+    </div> -->
   </div>
 
  <div class="recruiter-funnel">
@@ -65,7 +65,7 @@
 
       <div class="value">{{ stage.value }}</div>
 
-      <div class="percentage" *ngIf="stage.conversionPct">
+      <div class="percentage" *ngIf="stage.conversionPct !== undefined">
         ({{ stage.conversionPct }}%)
       </div>
 
@@ -79,10 +79,12 @@
       class="conversion"
       *ngFor="let stage of stages">
 
-      {{ stage.conversionPct ? stage.conversionPct + '%' : '' }}
+      {{ stage.conversionPct !== undefined ? stage.conversionPct + '%' : '' }}
 
     </div>
 
   </div>
+
+</div>
 
 </div>

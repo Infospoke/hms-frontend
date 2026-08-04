@@ -88,8 +88,8 @@
     <h3 class="rn-section-title">Candidate's reasons &amp; recommendation</h3>
     <p class="rn-section-sub">{{ changedItemsCount }} of {{ items.length }} items have a requested change.</p>
 
-    <ng-container *ngFor="let item of items; let i = index">
-      <p class="rn-item-category" *ngIf="i === 0 || item.category !== items[i - 1].category">
+    <ng-container *ngFor="let item of reasonItems; let i = index">
+      <p class="rn-item-category" *ngIf="i === 0 || item.category !== reasonItems[i - 1].category">
         {{ item.category }}
       </p>
 
@@ -130,38 +130,14 @@
       </div>
     </div>
 
-    <!-- <div class="rn-hr-rec">
-      <span class="rn-item-icon rn-item-icon--amber"><i class="fa-regular fa-lightbulb"></i></span>
-      <div class="rn-hr-rec-body">
-        <p class="rn-just-label-lg">HR recommendation</p>
-
-        <div class="rn-hr-rec-grid">
-          <div class="rn-hr-rec-field">
-            <label>Revised total package to forward <span class="rn-required">*</span></label>
-            <input
-              type="text"
-              class="rn-package-input"
-              [ngModel]="revisedTotalPackage != null ? formatCurrency(revisedTotalPackage) : ''"
-              (ngModelChange)="onRevisedPackageChange($event)"
-              placeholder="₹0"
-            />
-          </div>
-          <div class="rn-hr-rec-next">
-            <span class="rn-next-label">Next approval stage</span>
-            <span class="rn-next-value">{{ nextApprovalStage }}</span>
-          </div>
-        </div>
-
-        <label class="rn-reason-label">Reason for forwarding <span class="rn-required">*</span></label>
-        <textarea class="rn-reason-textarea" [(ngModel)]="reasonForForwarding"
-          placeholder="Explain why these revisions should be approved, and flag anything approvers should weigh carefully…"></textarea>
-
-        <p class="rn-hr-rec-note">This note, the forwarded items and any supporting documents are visible to every approver in the pipeline.</p>
-      </div>
-    </div> -->
+    <!-- HR recommendation is now entered directly in the "Initial offer vs
+         candidate ask" table below, via its FWD checkbox / Value to
+         Forward column, so a separate form here is no longer needed. -->
   </div>
 
-  
+  <!-- ══════════════════════════════════════════════════════════
+       SUPPORTING DOCUMENTS
+       ══════════════════════════════════════════════════════════ -->
   <div class="rn-card" *ngIf="documents.length">
     <h3 class="rn-section-title">Supporting documents</h3>
     <div class="rn-doc-list">
@@ -175,19 +151,27 @@
             {{ doc.sizeLabel }}<ng-container *ngIf="doc.sizeLabel && doc.uploadedOn"> · </ng-container>{{ doc.uploadedOn }}
           </span>
         </div>
-        <a class="rn-doc-view" [href]="doc.url" target="_blank" rel="noopener">
+        <button class="rn-doc-view" type="button" (click)="onViewDocument(doc)">
           View <i class="fa-solid fa-chevron-right"></i>
-        </a>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
-       INITIAL OFFER VS CANDIDATE ASK
+       INITIAL OFFER VS CANDIDATE ASK — HR enters its recommendation here
        ══════════════════════════════════════════════════════════ -->
   <div class="rn-card">
-    <h3 class="rn-section-title">Initial offer vs candidate ask</h3>
-    <p class="rn-section-sub">Uncheck anything you don't want to carry forward, and adjust any value to counter-propose instead of accepting the ask as-is.</p>
+    <div class="rn-hr-rec-top">
+      <div>
+        <h3 class="rn-section-title">Initial offer vs candidate ask</h3>
+        <p class="rn-section-sub">Uncheck anything you don't want to carry forward, and enter the value HR is recommending for each item.</p>
+      </div>
+      <div class="rn-hr-rec-next">
+        <span class="rn-next-label">Next approval stage</span>
+        <span class="rn-next-value">{{ nextApprovalStage }}</span>
+      </div>
+    </div>
 
     <div class="rn-fwd-table-wrap">
       <table class="rn-fwd-table">
@@ -201,24 +185,36 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of items">
+          <tr *ngFor="let item of forwardTableItems">
             <td><input type="checkbox" [(ngModel)]="item.forward" /></td>
-            <td class="rn-fwd-item">{{ item.label }}</td>
+            <td class="rn-fwd-item"><i [class]="item.icon"></i> {{ item.label }}</td>
             <td>{{ item.initialDisplay }}</td>
             <td class="rn-fwd-asked">{{ item.askedDisplay }}</td>
             <td>
               <input
                 class="rn-fwd-input"
                 [type]="item.isDate ? 'date' : 'text'"
-                [ngModel]="item.isDate ? item.valueToForward : formatCurrency(item.valueToForward)"
+                [ngModel]="item.isDate ? item.valueToForward : (item.valueToForward ? formatCurrency(item.valueToForward) : '')"
                 (ngModelChange)="onValueToForwardChange(item, $event)"
                 [disabled]="!item.forward"
+                placeholder="₹0"
               />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="rn-hr-rec-total">
+      <span>Total HR recommended CTC</span>
+      <strong>{{ formatCurrency(hrRecommendedTotal) }}</strong>
+    </div>
+
+    <label class="rn-reason-label">Reason for forwarding <span class="rn-required">*</span></label>
+    <textarea class="rn-reason-textarea" [(ngModel)]="reasonForForwarding"
+      placeholder="Explain why these revisions should be approved, and flag anything approvers should weigh carefully…"></textarea>
+
+    <p class="rn-hr-rec-note">This note, the forwarded items and any supporting documents are visible to every approver in the pipeline.</p>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -238,4 +234,32 @@
     </div>
   </div>
 
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SUPPORTING DOCUMENT PREVIEW MODAL
+     ══════════════════════════════════════════════════════════ -->
+<div class="rn-doc-modal-overlay" *ngIf="isDocModalOpen" (click)="closeDocModal()">
+  <div class="rn-doc-modal" (click)="$event.stopPropagation()">
+    <div class="rn-doc-modal-header">
+      <span class="rn-doc-modal-title">{{ docModalTitle }}</span>
+      <button class="rn-doc-modal-close" type="button" (click)="closeDocModal()" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="rn-doc-modal-body">
+      <div class="rn-doc-modal-status" *ngIf="isDocModalLoading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading document…
+      </div>
+      <div class="rn-doc-modal-status rn-doc-modal-status--error" *ngIf="!isDocModalLoading && docModalError">
+        <i class="fa-solid fa-triangle-exclamation"></i> {{ docModalError }}
+      </div>
+      <iframe
+        *ngIf="!isDocModalLoading && !docModalError && docModalUrl"
+        class="rn-doc-modal-frame"
+        [src]="docModalUrl"
+        title="Document preview"
+      ></iframe>
+    </div>
+  </div>
 </div>

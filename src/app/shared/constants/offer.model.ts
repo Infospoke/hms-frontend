@@ -50,17 +50,10 @@ export interface CompensationVsMarket {
 }
 
 
-// HR raises/reviews the request — they're the creator, not an approver in
-// the chain. Kept as its own named constant so every place that needs to
-// special-case it (skip it from "next approval stage" logic, render it as
-// CREATED instead of matching it against approval comments, etc.)
-// references the same source of truth instead of a bare 'HR' string.
 export const OFFER_CREATOR_ROLE = 'HR';
 
-// The real 3-level approval chain.
 export const OFFER_APPROVAL_STAGES = ['Financial Analyst', 'Finance Head', 'HR Head'];
 
-// Full pipeline shown in the stepper UI: creator stage + the 3 approvers.
 export const OFFER_STAGE_ORDER = [OFFER_CREATOR_ROLE, ...OFFER_APPROVAL_STAGES];
 
 export interface NegotiationItem {
@@ -91,18 +84,8 @@ export interface NegotiationDocument {
   url: string;
 }
 
-// ─── Negotiation-approval chain (approver-facing) ─────────────────────────
-// Department head -> Finance team -> HR manager -> Final approval. This is
-// the pipeline shown on the "Negotiation approvals" detail screen that an
-// approver (dept head / finance / HR manager) sees — a different chain
-// from OFFER_STAGE_ORDER above (which models HR's own forwarding chain on
-// the /review-negotiation-request page). Kept separate on purpose since
-// they're two different screens with two different stakeholders.
 export const NEGOTIATION_APPROVAL_STAGE_ORDER = ['Department head', 'Finance team', 'HR manager', 'Final approval'];
 
-// "View approved budget & compensation" popup on the negotiation-approvals
-// screen — figures are indicative/prototype-only until a real budget API
-// is wired up.
 export interface ApprovedBudgetInfo {
   compensationBandMin: number;
   compensationBandMax: number;
@@ -112,15 +95,25 @@ export interface ApprovedBudgetInfo {
   note: string;
 }
 
-// "Offer comparison — your decision" table row on the negotiation-approvals
-// screen: initial offer / candidate ask / HR's recommendation / the
-// approver's own (editable) decision.
 export interface NegotiationComparisonItem {
   key: string;
+  icon: string;
   label: string;
-  initialOffer: number | null;
-  candidateAsked: number;
-  hrRecommends: number;
-  yourDecision: number;
+  category: 'COMPENSATION' | 'TERMS';
+  isDate?: boolean;
+  /** FWD checkbox — whether this row is actually carried into the
+   * approver's decision (unchecked by default for guaranteed placeholder
+   * fields the candidate never asked to change). */
+  forward: boolean;
+  /** number for money fields, date string for the joining-date row, null
+   * when there's nothing to show for that column. */
+  initialOffer: any;
+  /** null when the candidate never asked to change this field. */
+  candidateAsked: any;
+  hrRecommends: any;
+  yourDecision: any;
   decisionStatus: 'Accepted' | 'Modified' | 'Rejected';
+  /** Candidate's stated reason for this specific field, shown in
+   * "Candidate's reason for negotiation". */
+  justification: string;
 }

@@ -266,16 +266,16 @@ export class RaiseOfferRequestComponent implements OnInit {
         label: 'Offer approvals',
         icon: 'fa-solid fa-square-check',
         countColor: 'purple',
-        count: data?.offerApprovals ?? 0,
-        breakdown: `${data?.newApprovals ?? 0} new • ${data?.negotiated ?? 0} negotiated`,
+        count: data?.offerApprovals?.total ?? 0,
+        breakdown: `${data?.offerApprovals?.new ?? 0} new • ${data?.offerApprovals?.negotiated ?? 0} negotiated`,
       },
       {
         id: 'rl',
         label: 'Release offer letter',
         icon: 'fa-solid fa-file-signature',
         countColor: 'orange',
-        count: data?.releaseOfferLetter ?? 0,
-        breakdown: `${data?.pending ?? 0} pending • ${data?.ready ?? 0} ready`,
+        count: data?.releaseOfferLetter?.total ?? 0,
+        breakdown: `${data?.releaseOfferLetter?.pending ?? 0} pending • ${data?.releaseOfferLetter?.reRelease ?? 0} ready`,
       },
       {
         id: 'cr',
@@ -613,7 +613,7 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   onViewApprovalDetails(row: any) {
     if(this.activeStageId === 'rol' && this.activeTabId === 'negAppovals') {
-      this.router.navigate([`/candidate-management/offer-management/review-negotiation-request/${row?.id}`])   
+      this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}`])   
     }
     else{
       this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {

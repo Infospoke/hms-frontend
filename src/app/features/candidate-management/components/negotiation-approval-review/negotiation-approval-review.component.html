@@ -1,9 +1,9 @@
 
+<div class="nar-loading" *ngIf="isLoading">
+  <i class="fa-solid fa-spinner fa-spin"></i> Loading negotiation approval…
+</div>
 
 <div class="nar-wrapper" *ngIf="!isLoading">
-
-
-  
 
   <a class="nar-back-link" (click)="onBack()">
     <i class="fa-solid fa-arrow-left"></i> Back to negotiation approvals
@@ -104,12 +104,13 @@
   <div class="nar-card">
     <h3 class="nar-section-title"><i class="fa-regular fa-comment-dots"></i> Candidate's reason for negotiation</h3>
 
-    <div class="nar-reason-item" *ngFor="let item of items">
+    <div class="nar-reason-item" *ngFor="let item of reasonItems">
       <p class="nar-reason-heading">
         {{ item.label }}
-        <span class="nar-reason-values">({{ formatCurrency(item.initialOffer) }} → {{ formatCurrency(item.candidateAsked) }})</span>
+        <span class="nar-reason-values" *ngIf="!item.isDate">({{ formatCurrency(item.initialOffer) }} → {{ formatCurrency(item.candidateAsked) }})</span>
+        <span class="nar-reason-values" *ngIf="item.isDate">(→ {{ formatDate(item.candidateAsked) }})</span>
       </p>
-      <p class="nar-reason-text">{{ itemReason }}</p>
+      <p class="nar-reason-text" *ngIf="item.justification">{{ item.justification }}</p>
     </div>
   </div>
 
@@ -132,9 +133,9 @@
           {{ doc.kind === 'pdf' ? 'PDF' : (doc.kind === 'img' ? 'IMG' : 'FILE') }}
         </span>
         <span class="nar-doc-name">{{ doc.name }}</span>
-        <a class="nar-doc-view" [href]="doc.url" target="_blank" rel="noopener">
+        <button class="nar-doc-view" type="button" (click)="onViewDocument(doc)">
           View <i class="fa-solid fa-chevron-right"></i>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -147,6 +148,7 @@
       <table class="nar-cmp-table">
         <thead>
           <tr>
+            <th class="nar-cmp-th-check">FWD</th>
             <th>Item</th>
             <th>Initial offer</th>
             <th>Candidate asked</th>
@@ -157,22 +159,31 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of items">
-            <td class="nar-cmp-item">{{ item.label }}</td>
+            <td><input type="checkbox" [(ngModel)]="item.forward" /></td>
+            <td class="nar-cmp-item"><i [class]="item.icon"></i> {{ item.label }}</td>
             <td class="nar-cmp-old">
-              <span [class.nar-cmp-strike]="item.initialOffer != null">{{ item.initialOffer != null ? formatCurrency(item.initialOffer) : '—' }}</span>
+              <span [class.nar-cmp-strike]="item.initialOffer != null">
+                {{ item.isDate ? '—' : (item.initialOffer != null ? formatCurrency(item.initialOffer) : '—') }}
+              </span>
             </td>
-            <td class="nar-cmp-asked">{{ formatCurrency(item.candidateAsked) }}</td>
-            <td class="nar-cmp-hr">{{ formatCurrency(item.hrRecommends) }}</td>
+            <td class="nar-cmp-asked">
+              {{ item.isDate ? (item.candidateAsked ? formatDate(item.candidateAsked) : '—') : (item.candidateAsked != null ? formatCurrency(item.candidateAsked) : '—') }}
+            </td>
+            <td class="nar-cmp-hr">
+              {{ item.isDate ? (item.hrRecommends ? formatDate(item.hrRecommends) : '—') : (item.hrRecommends != null ? formatCurrency(item.hrRecommends) : '—') }}
+            </td>
             <td>
               <input
                 class="nar-cmp-input"
-                type="text"
-                [ngModel]="formatCurrency(item.yourDecision)"
+                [type]="item.isDate ? 'date' : 'text'"
+                [ngModel]="item.isDate ? item.yourDecision : (item.yourDecision ? formatCurrency(item.yourDecision) : '')"
                 (ngModelChange)="onDecisionChange(item, $event)"
+                [disabled]="!item.forward"
+                placeholder="₹0"
               />
             </td>
             <td>
-              <span class="nar-cmp-status" [ngClass]="'nar-cmp-status--' + item.decisionStatus.toLowerCase()">
+              <span class="nar-cmp-status" [ngClass]="'nar-cmp-status--' + item.decisionStatus.toLowerCase()" *ngIf="item.forward">
                 {{ item.decisionStatus }}
               </span>
             </td>
@@ -235,6 +246,36 @@
       </div>
 
       <p class="nar-modal-note">{{ budget.note }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SUPPORTING DOCUMENT PREVIEW MODAL
+     ══════════════════════════════════════════════════════════ -->
+<div class="nar-modal-overlay" *ngIf="isDocModalOpen" (click)="closeDocModal()">
+  <div class="nar-modal nar-doc-modal" (click)="$event.stopPropagation()">
+    <div class="nar-modal-header">
+      <div>
+        <h3>{{ docModalTitle }}</h3>
+      </div>
+      <button class="nar-modal-close" type="button" (click)="closeDocModal()" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="nar-doc-modal-body">
+      <div class="nar-doc-modal-status" *ngIf="isDocModalLoading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading document…
+      </div>
+      <div class="nar-doc-modal-status nar-doc-modal-status--error" *ngIf="!isDocModalLoading && docModalError">
+        <i class="fa-solid fa-triangle-exclamation"></i> {{ docModalError }}
+      </div>
+      <iframe
+        *ngIf="!isDocModalLoading && !docModalError && docModalUrl"
+        class="nar-doc-modal-frame"
+        [src]="docModalUrl"
+        title="Document preview"
+      ></iframe>
     </div>
   </div>
 </div>

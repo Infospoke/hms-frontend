@@ -19,6 +19,8 @@ export interface TableColumn {
 interface ColumnGroup {
   label: string;
   colspan: number;
+  /** Real index into `columns[]`. Only set for non-grouped (rowspan=2) entries. */
+  colIndex?: number;
 }
 
 @Component({
@@ -32,14 +34,13 @@ export class ReusableTableComponent implements OnChanges {
 
   // ── Inputs ────────────────────────────────────────────────────────────────
   @Input() title?: string;
-  @Input() subTitle?:any;
+  @Input() subTitle?: any;
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
   @Input() showHeader: boolean = true;
   @Input() emptyMessage: string = 'No records found.';
   @Input() sortableColumns: string[] = [];
 
-  
   @Input() tableLayout: 'auto' | 'fixed' = 'auto';
 
   // ── Pagination ────────────────────────────────────────────────────────────
@@ -89,7 +90,7 @@ export class ReusableTableComponent implements OnChanges {
     while (i < this.columns.length) {
       const col = this.columns[i];
       if (!col.group) {
-        groups.push({ label: '', colspan: 1 });
+        groups.push({ label: '', colspan: 1, colIndex: i });
         i++;
       } else {
         const groupName = col.group;

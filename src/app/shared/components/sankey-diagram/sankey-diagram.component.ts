@@ -52,9 +52,22 @@ export class SankeyDiagramComponent implements OnChanges {
   @Input() height = 210;
   @Input() nodeWidth = 12;
   @Input() nodeGap = 14;
+  @Input() showLabels = false;
 
   renderNodes: RenderNode[] = [];
   renderLinks: RenderLink[] = [];
+
+  get maxColumn(): number {
+    return this.nodes.length ? Math.max(...this.nodes.map(n => n.column)) : 0;
+  }
+
+  isLastColumn(id: string): boolean {
+    return (this.nodes.find(n => n.id === id)?.column ?? 0) >= this.maxColumn;
+  }
+
+  isFirstColumn(id: string): boolean {
+    return (this.nodes.find(n => n.id === id)?.column ?? 1) === 0;
+  }
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.build();

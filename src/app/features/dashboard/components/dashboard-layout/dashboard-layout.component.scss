@@ -1,10 +1,13 @@
-.main-dashboard-layout {
+.dl-root {
+  // padding: 24px;
   display: flex;
   flex-direction: column;
   // gap: 20px;
 }
 .main-dashboard-layout.recruiter-dashboard {
   gap: 20px;
+  min-height: 100%;
+  // background: var(--color-bg, #f8fafc);
 }
 .card-dd {
   display: grid;
@@ -44,19 +47,15 @@
   min-width: 0;
 }
  
-.pipeline-card {
+
+
+.dl-header {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
  
-// No card padding — the table fills the card edge-to-edge (its own header
-// row + row borders provide all the visual separation it needs). Only the
-// title gets its own inset so it doesn't sit flush against the card edge.
-// overflow: hidden clips the table's square corners to the card's own
-// rounded corners instead of the table showing its own smaller radius.
-// .chart-card.requisitions-card (not just .requisitions-card): needs to
-// beat .chart-card's own padding:20px, which otherwise wins the tie since
-// it's declared later in this file at equal specificity.
+
 .chart-card.requisitions-card {
   padding: 0;
   overflow: hidden;
@@ -71,9 +70,7 @@
   }
  
   ::ng-deep {
-    // The table renders its own card-like border/shadow/radius by default
-    // (for standalone use) — flatten that here since .requisitions-card is
-    // already the card.
+   
     .rt-container {
       border: none;
       border-radius: 0;
@@ -303,9 +300,20 @@
     color: #DC2626;
   }
 }
-  /* ===========================
-   Recruiter Dashboard Layout
-   =========================== */
+
+.dl-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text, #111827);
+  margin: 0;
+}
+
+.dl-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary, #6b7280);
+  margin: 0;
+}
+  
  
  
 .recruiter-dashboard {
@@ -336,3 +344,9 @@
  
 }
  
+
+.dl-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

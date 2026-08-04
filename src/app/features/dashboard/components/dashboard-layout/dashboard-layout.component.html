@@ -1,10 +1,19 @@
+<div class="dl-root" *ngIf="showingLayout">
+  <div class="dl-header" *ngIf="heading">
+    <h1 class="dl-title">{{ heading }}</h1>
+    <p class="dl-subtitle" *ngIf="subHeading">{{ subHeading }}</p>
+  </div>
+  <div class="dl-body">
+    <ng-content></ng-content>
+  </div>
+</div>
 <div
   class="main-dashboard-layout"
   [class.recruiter-dashboard]="dashboardType === 'recruiter'">
  
     <app-heading
         [heading]="heading"
-        [subHeading]="subHeading">
+        [subHeading]="subHeading" *ngIf="!showingLayout">
     </app-heading>
  
     <!-- Cards -->
@@ -92,8 +101,11 @@
  
         </div>
  
-        <div class="chart-card small-card" *ngIf="bubbleChart">
+        
  
+
+        <div class="chart-card small-card" *ngIf="bubbleChart">
+
             <app-bubble-chart-component
                 [title]="bubbleChart.title"
                 [bubbles]="bubbleChart.bubbles"
@@ -102,7 +114,7 @@
  
         </div>
  
-    </div>
+    
  
     <!-- Hiring Health -->
     <div class="chart-card hh-card"
@@ -176,3 +188,5 @@
  
 </div>
  
+
+</div>

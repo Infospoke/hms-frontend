@@ -44,7 +44,9 @@
               "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": [
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/@svgdotjs/svg.js/dist/svg.min.js",
+              "node_modules/apexsankey/apexsankey.min.js"
             ]
           },
           "configurations": {

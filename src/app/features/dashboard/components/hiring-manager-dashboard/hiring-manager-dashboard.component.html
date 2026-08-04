@@ -1,12 +1,187 @@
-<app-dashboard-layout
-  [heading]="heading"
-  [subHeading]="subHeading"
-  [cards]="cards"
-  [pieCharts]="pieCharts"
-  [showSemiCircle]="showSemiCircle"
-  [semiCircleConfig]="semiCircleConfig"
-  [pipeLine]="showPipeline"
-  [pipelineConfig]="pipelineConfig"
-  [table]="showTable"
-  [tableConfig]="tableConfig"
-/>
+<app-dashboard-layout [heading]="heading" [subHeading]="subHeading" [showingLayout]="true">
+
+  <!-- ── KPI Cards ──────────────────────────────────────────────────────────── -->
+  <div class="dash-kpi-row">
+    <app-dashboard-count-card
+      *ngFor="let card of kpiCards"
+      [label]="card.label"
+      [value]="card.value"
+      [iconClass]="card.iconClass"
+      [iconColor]="card.iconColor"
+      [iconBgColor]="card.iconBgColor"
+    ></app-dashboard-count-card>
+  </div>
+
+
+
+  <!-- ── Row 2: Left (Pipeline + Offer Status stacked) | Right (big Sankey) ──── -->
+  <div class="dash-split-row dash-split-row--mid mb-row">
+
+    <!-- Left column: Pipeline on top, Offer Status below -->
+    <div class="dash-pipe-col">
+
+      <!-- Candidate Pipeline -->
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Candidate Pipeline</span>
+          <div class="date-range">
+            <span class="date-range__lbl">From</span>
+            <input type="date" class="date-range__input" [(ngModel)]="pipelineFrom">
+            <span class="date-range__lbl">To</span>
+            <input type="date" class="date-range__input" [(ngModel)]="pipelineTo">
+          </div>
+        </div>
+        <div class="chevron-center-wrap">
+          <div class="chevron-funnel">
+            <div class="chevron-item"
+                 *ngFor="let stage of pipelineStages; let i = index"
+                 [style.background]="stage.color"
+                 [style.z-index]="i + 1">
+              <span class="chevron-item__label">{{ stage.label }}</span>
+              <span class="chevron-item__count">{{ stage.value }}</span>
+              <div class="chevron-pct" *ngIf="stage.conversionPct !== undefined">
+                {{ stage.conversionPct }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Offer Status -->
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Offer Status</span>
+          <div class="date-range">
+            <span class="date-range__lbl">From</span>
+            <input type="date" class="date-range__input" [(ngModel)]="offerStatusFrom">
+            <span class="date-range__lbl">To</span>
+            <input type="date" class="date-range__input" [(ngModel)]="offerStatusTo">
+          </div>
+        </div>
+        <div class="offer-bars">
+          <div class="offer-bar-row" *ngFor="let bar of offerStatusBars">
+            <span class="offer-bar__label">{{ bar.label }}</span>
+            <div class="offer-bar__track">
+              <div class="offer-bar__fill"
+                   [style.width.%]="getOfferBarPct(bar.count)"
+                   [style.background]="bar.color"></div>
+            </div>
+            <span class="offer-bar__count" [style.color]="bar.color">{{ bar.count }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right column: Offer Negotiation Flow — big and prominent -->
+    <div class="dash-card dash-card--flex-col dash-card--neo-flow">
+      <div class="dash-card__header">
+        <span class="dash-card__title">Offer Negotiation Flow</span>
+        <div class="date-range">
+          <span class="date-range__lbl">From</span>
+          <input type="date" class="date-range__input" [(ngModel)]="negoFrom">
+          <span class="date-range__lbl">To</span>
+          <input type="date" class="date-range__input" [(ngModel)]="negoTo">
+        </div>
+      </div>
+      <!-- ApexSankey: node-overlapping style with gradient ribbons -->
+      <div class="neo-flow-wrap">
+        <ngx-apexsankey
+          class="neo-flow-sankey"
+          [data]="apexSankeyData"
+          [options]="apexSankeyOptions"
+        ></ngx-apexsankey>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- ── Row 1: Full-width Requisitions table ────────────────────────────────── -->
+  <div class="dash-card dash-card--full mb-row">
+    <div class="dash-card__header">
+      <span class="dash-card__title">My Requisitions</span>
+      <span class="dash-card__badge">{{ reqData.length }}</span>
+    </div>
+    <app-reusable-table
+      [columns]="reqColumns"
+      [data]="reqData"
+      [showHeader]="true"
+      [cellTemplate]="reqCellTpl"
+    ></app-reusable-table>
+  </div>
+
+  <!-- ── Row 4: Left (big donut, full height) + Right (compact gauge + table) ── -->
+  <div class="dash-split-row dash-split-row--bottom">
+
+    <!-- Left: enlarged donut fills full column height -->
+    <div class="dash-card dash-card--flex-col dash-card--bottom-left">
+      <div class="dash-card__header">
+        <span class="dash-card__title">Candidate Quality Distribution</span>
+      </div>
+      <div class="chart-center">
+        <app-donut-pie-chart
+          [segments]="candidateQualitySegments"
+          [centerLabel]="'Total'"
+          [size]="260"
+        ></app-donut-pie-chart>
+      </div>
+    </div>
+
+    <!-- Right: compact gauge on top, health table fills the rest -->
+    <div class="dash-col-stack">
+
+      <div class="dash-card dash-card--flex-col dash-card--gauge">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Hiring Health Score</span>
+        </div>
+        <div class="chart-center">
+          <app-semi-circle-gauge
+            [score]="hiringHealthScore"
+            [size]="100"
+            [strokeWidth]="10"
+          ></app-semi-circle-gauge>
+        </div>
+      </div>
+
+      <div class="dash-card dash-card--flex-col">
+        <div class="dash-card__header">
+          <span class="dash-card__title">Hiring Health Breakdown</span>
+        </div>
+        <div class="health-table-fill">
+          <app-reusable-table
+            [columns]="healthColumns"
+            [data]="healthData"
+            [showHeader]="true"
+            [cellTemplate]="healthCellTpl"
+          ></app-reusable-table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</app-dashboard-layout>
+
+<!-- ── Cell templates ─────────────────────────────────────────────────────────── -->
+<ng-template #reqCellTpl let-cell>
+  <ng-container *ngIf="cell.col.key === 'onTrack'">
+    <div class="heat-cell heat-cell--green">{{ cell.row.onTrack }}</div>
+  </ng-container>
+  <ng-container *ngIf="cell.col.key === 'atRisk'">
+    <div class="heat-cell heat-cell--amber">{{ cell.row.atRisk }}</div>
+  </ng-container>
+  <ng-container *ngIf="cell.col.key === 'overdue'">
+    <div class="heat-cell heat-cell--red">{{ cell.row.overdue }}</div>
+  </ng-container>
+</ng-template>
+
+<ng-template #healthCellTpl let-cell>
+  <ng-container *ngIf="cell.col.key === 'status'">
+    <span class="badge" [ngClass]="{
+      'badge--health-excellent':  cell.row.status === 'Excellent',
+      'badge--health-good':       cell.row.status === 'Good',
+      'badge--health-fair':       cell.row.status === 'Fair',
+      'badge--health-attention':  cell.row.status === 'Needs Attention'
+    }">{{ cell.row.status }}</span>
+  </ng-container>
+</ng-template>

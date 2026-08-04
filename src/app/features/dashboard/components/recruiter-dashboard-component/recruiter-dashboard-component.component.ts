@@ -30,12 +30,10 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   dateRange: DateRange = this.getDefaultDateRange();
 
   private getDefaultDateRange(): DateRange {
-    const now = new Date();
-    const first = new Date(now.getFullYear(), now.getMonth(), 1);
-    const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+   
     return {
-      fromDate: this.formatDate(first),
-      toDate: this.formatDate(last)
+      fromDate: '',
+      toDate: ''
     };
   }
 

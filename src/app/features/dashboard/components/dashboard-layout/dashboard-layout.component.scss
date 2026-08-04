@@ -25,6 +25,38 @@
   color: var(--color-text-secondary, #6b7280);
   margin: 0;
 }
+  /* ===========================
+   Recruiter Dashboard Layout
+   =========================== */
+
+
+.recruiter-dashboard {
+
+  .dashboard-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .large-card,
+  .small-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-card {
+    height: 100%;
+  }
+
+  @media (max-width: 992px) {
+    .dashboard-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+}
 
 .dl-body {
   display: flex;

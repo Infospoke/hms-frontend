@@ -12,7 +12,18 @@
     ></app-dashboard-count-card>
   </div>
 
-
+  <div class="dash-card dash-card--full mb-row">
+    <div class="dash-card__header">
+      <span class="dash-card__title">My Requisitions</span>
+      <span class="dash-card__badge">{{ reqData.length }}</span>
+    </div>
+    <app-reusable-table
+      [columns]="reqColumns"
+      [data]="reqData"
+      [showHeader]="true"
+      [cellTemplate]="reqCellTpl"
+    ></app-reusable-table>
+  </div>
 
   <!-- ── Row 2: Left (Pipeline + Offer Status stacked) | Right (big Sankey) ──── -->
   <div class="dash-split-row dash-split-row--mid mb-row">
@@ -97,18 +108,7 @@
   </div>
 
     <!-- ── Row 1: Full-width Requisitions table ────────────────────────────────── -->
-  <div class="dash-card dash-card--full mb-row">
-    <div class="dash-card__header">
-      <span class="dash-card__title">My Requisitions</span>
-      <span class="dash-card__badge">{{ reqData.length }}</span>
-    </div>
-    <app-reusable-table
-      [columns]="reqColumns"
-      [data]="reqData"
-      [showHeader]="true"
-      [cellTemplate]="reqCellTpl"
-    ></app-reusable-table>
-  </div>
+  
 
   <!-- ── Row 4: Left (big donut, full height) + Right (compact gauge + table) ── -->
   <div class="dash-split-row dash-split-row--bottom">
@@ -162,26 +162,52 @@
 
 </app-dashboard-layout>
 
-<!-- ── Cell templates ─────────────────────────────────────────────────────────── -->
 <ng-template #reqCellTpl let-cell>
-  <ng-container *ngIf="cell.col.key === 'onTrack'">
-    <div class="heat-cell heat-cell--green">{{ cell.row.onTrack }}</div>
+  <!-- Target Start Date -->
+  <ng-container *ngIf="cell.col.key === 'targetStart'">
+    <span class="date-text">{{ cell.row.targetStart }}</span>
   </ng-container>
-  <ng-container *ngIf="cell.col.key === 'atRisk'">
-    <div class="heat-cell heat-cell--amber">{{ cell.row.atRisk }}</div>
-  </ng-container>
-  <ng-container *ngIf="cell.col.key === 'overdue'">
-    <div class="heat-cell heat-cell--red">{{ cell.row.overdue }}</div>
-  </ng-container>
-</ng-template>
 
-<ng-template #healthCellTpl let-cell>
-  <ng-container *ngIf="cell.col.key === 'status'">
-    <span class="badge" [ngClass]="{
-      'badge--health-excellent':  cell.row.status === 'Excellent',
-      'badge--health-good':       cell.row.status === 'Good',
-      'badge--health-fair':       cell.row.status === 'Fair',
-      'badge--health-attention':  cell.row.status === 'Needs Attention'
-    }">{{ cell.row.status }}</span>
+  <!-- Days Remaining -->
+  <ng-container *ngIf="cell.col.key === 'daysRemaining'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--days-positive': cell.row.daysRemaining > 7,
+        'badge--days-warning': cell.row.daysRemaining >= 0 && cell.row.daysRemaining <= 7,
+        'badge--days-overdue': cell.row.daysRemaining < 0
+      }"
+    >
+      {{ cell.row.daysRemaining < 0 ? (-cell.row.daysRemaining + ' Days Overdue') : (cell.row.daysRemaining + ' Days') }}
+    </span>
+  </ng-container>
+
+  <!-- Priority -->
+  <ng-container *ngIf="cell.col.key === 'priority'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--critical': cell.row.priority === 'Critical',
+        'badge--high': cell.row.priority === 'High',
+        'badge--medium': cell.row.priority === 'Medium',
+        'badge--low': cell.row.priority === 'Low'
+      }"
+    >
+      {{ cell.row.priority }}
+    </span>
+  </ng-container>
+
+  <!-- SLA Status -->
+  <ng-container *ngIf="cell.col.key === 'slaStatus'">
+    <span
+      class="badge"
+      [ngClass]="{
+        'badge--success': cell.row.slaStatus === 'On Track',
+        'badge--warning': cell.row.slaStatus === 'At Risk',
+        'badge--danger': cell.row.slaStatus === 'Overdue'
+      }"
+    >
+      {{ cell.row.slaStatus }}
+    </span>
   </ng-container>
 </ng-template>

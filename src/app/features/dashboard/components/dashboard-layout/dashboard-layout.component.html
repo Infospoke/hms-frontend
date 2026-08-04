@@ -132,12 +132,16 @@
                 {{ ctx.row.priority }}
             </span>
 
-            <span *ngIf="ctx.col.key === 'slaStatus'" [class]="slaClass(ctx.row.slaStatus)">
-                {{ ctx.row.slaStatus }}
+            <span *ngIf="ctx.col.key === 'targetStartDate'" class="date-cell">
+                {{ ctx.row.targetStartDate }}
             </span>
 
-            <span *ngIf="ctx.col.key === 'dueDate'" class="date-cell">
-                {{ ctx.row.dueDate }}
+            <span *ngIf="ctx.col.key === 'daysRemaining'" class="days-remaining-cell">
+                {{ ctx.row.daysRemaining }}
+            </span>
+
+            <span *ngIf="ctx.col.key === 'slaStatus'" [class]="slaClass(ctx.row.slaStatus)">
+                {{ ctx.row.slaStatus }}
             </span>
 
         </ng-template>

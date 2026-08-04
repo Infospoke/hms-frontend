@@ -187,6 +187,18 @@ export class HiringManagerDashboardComponent implements OnInit {
     { label: 'Hired', value: 0, color: '#22C55E', conversionPct: 40 },
   ];
 
+  // Stages that have a conversion percentage (drives the ring row under the funnel)
+  get pipelineConversions(): PipelineStage[] {
+    return (this.pipelineStages ?? []).filter(s => s.conversionPct !== undefined);
+  }
+
+
+  getRingBackground(stage: PipelineStage): string {
+    const pct = Math.max(0, Math.min(100, stage.conversionPct ?? 0));
+    const deg = (pct / 100) * 360;
+    return `conic-gradient(${stage.color} ${deg}deg, #E5E7EB ${deg}deg)`;
+  }
+
   // ── Offer Status — Horizontal Bars ────────────────────────────────────────
   offerStatusBars: OfferStatusBar[] = [
     { label: 'Offer Requests', count: 0, color: '#3B82F6' },
@@ -341,13 +353,26 @@ export class HiringManagerDashboardComponent implements OnInit {
 
   private mapCandidatePipeline(cp: HiringManagerAnalyticsResponse['candidatePipeline']): void {
     if (!cp) return;
+    const applied = cp.applied ?? 0;
+    const screening = cp.screening ?? 0;
+    const interview = cp.interview ?? 0;
+    const offer = cp.offer ?? 0;
+    const hired = cp.hired ?? 0;
+
     this.pipelineStages = [
-      { label: 'Applied', value: cp.applied ?? 0, color: '#3B82F6' },
-      { label: 'Screening', value: cp.screening ?? 0, color: '#14B8A6', conversionPct: cp.screeningPercentage ?? 0 },
-      { label: 'Interview', value: cp.interview ?? 0, color: '#8B5CF6', conversionPct: cp.interviewPercentage ?? 0 },
-      { label: 'Offer', value: cp.offer ?? 0, color: '#F97316', conversionPct: cp.offerPercentage ?? 0 },
-      { label: 'Hired', value: cp.hired ?? 0, color: '#22C55E', conversionPct: cp.hiredPercentage ?? 0 },
+      { label: 'Applied', value: applied, color: '#3B82F6' },
+      { label: 'Screening', value: screening, color: '#14B8A6', conversionPct: this.calcConversionPct(screening, applied) },
+      { label: 'Interview', value: interview, color: '#8B5CF6', conversionPct: this.calcConversionPct(interview, screening) },
+      { label: 'Offer', value: offer, color: '#F97316', conversionPct: this.calcConversionPct(offer, interview) },
+      { label: 'Hired', value: hired, color: '#22C55E', conversionPct: this.calcConversionPct(hired, offer) },
     ];
+  }
+
+  // Stage-over-stage conversion %, e.g. Screening→Interview = interview/screening * 100.
+  // Guards against divide-by-zero when the prior stage has no candidates.
+  private calcConversionPct(current: number, previous: number): number {
+    if (!previous) return 0;
+    return Math.round((current / previous) * 100);
   }
 
   private mapCandidateQuality(cq: HiringManagerAnalyticsResponse['candidateQuality']): void {

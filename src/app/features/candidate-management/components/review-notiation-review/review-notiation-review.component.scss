@@ -427,8 +427,7 @@
   color: var(--c-text-primary);
 }
 
-.rn-overall-justification,
-.rn-hr-rec {
+.rn-overall-justification {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -437,57 +436,34 @@
   border-top: 1px solid var(--c-border-soft);
 }
 
-.rn-overall-body,
-.rn-hr-rec-body {
+.rn-overall-body {
   flex: 1;
   min-width: 0;
 }
 
-.rn-hr-rec-grid {
+// ═══════════════════════════════════════════════════════════════════════════
+// INITIAL OFFER VS CANDIDATE ASK — table header / HR recommendation footer
+// ═══════════════════════════════════════════════════════════════════════════
+.rn-hr-rec-top {
   display: flex;
-  align-items: flex-end;
-  gap: 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   flex-wrap: wrap;
-  margin: 10px 0 14px;
-}
-
-.rn-hr-rec-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 200px;
-
-  label {
-    font-size: 12.5px;
-    color: var(--c-text-muted);
-  }
+  margin-bottom: 16px;
 }
 
 .rn-required {
   color: var(--c-red);
 }
 
-.rn-package-input {
-  height: 38px;
-  padding: 0 12px;
-  border: 1px solid var(--c-border);
-  border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--c-text-primary);
-  box-sizing: border-box;
-
-  &:focus {
-    outline: none;
-    border-color: var(--c-blue);
-  }
-}
-
 .rn-hr-rec-next {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  align-items: flex-end;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .rn-next-label {
@@ -499,6 +475,23 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--c-text-primary);
+}
+
+.rn-hr-rec-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin: 16px 0;
+  background: var(--c-border-soft);
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  color: var(--c-text-primary);
+
+  strong {
+    font-size: 15px;
+    color: var(--c-blue);
+  }
 }
 
 .rn-reason-label {
@@ -594,10 +587,97 @@
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 
   i { font-size: 10px; }
 
   &:hover { text-decoration: underline; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SUPPORTING DOCUMENT PREVIEW MODAL
+// ═══════════════════════════════════════════════════════════════════════════
+.rn-doc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.rn-doc-modal {
+  width: 100%;
+  max-width: 820px;
+  height: min(88vh, 900px);
+  background: var(--c-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rn-doc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+
+.rn-doc-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rn-doc-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--c-text-muted);
+  font-size: 16px;
+  padding: 4px 6px;
+  flex-shrink: 0;
+
+  &:hover { color: var(--c-text-primary); }
+}
+
+.rn-doc-modal-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-border-soft);
+}
+
+.rn-doc-modal-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--c-text-muted);
+  font-size: 13.5px;
+
+  &--error { color: var(--c-red); }
+}
+
+.rn-doc-modal-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -642,6 +722,12 @@
 
 .rn-fwd-item {
   font-weight: 600;
+
+  i {
+    width: 16px;
+    color: var(--c-text-light);
+    margin-right: 4px;
+  }
 }
 
 .rn-fwd-asked {

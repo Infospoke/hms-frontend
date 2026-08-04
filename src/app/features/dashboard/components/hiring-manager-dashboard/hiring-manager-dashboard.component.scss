@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-bottom: 30px;  // reserves room for the pct badge circle
+  gap: 14px;
 }
 
 // Right column of --mid row: big negotiation flow card
@@ -229,24 +229,44 @@
   }
 }
 
-.chevron-pct {
-  position: absolute;
-  bottom: -32px;
-  left: 0;
-  transform: translateX(-50%);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1.5px solid #D1D5DB;
-  color: #374151;
-  font-size: 10px;
-  font-weight: 600;
+// ── Stage conversion-rate rings (ring + arrow strip under the funnel) ────────
+.pct-ring-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,.12);
-  z-index: 20;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pct-ring {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+
+  &__inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+  }
+}
+
+.pct-ring__arrow {
+  color: #9CA3AF;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
 // ── Offer Status bars — fills card height evenly ──────────────────────────────

@@ -100,6 +100,16 @@ export class ApiService {
     return this.http.post<T>(`${this.hrmsUrl}${endpoint}`, body, options);
   }
 
+  // POST that expects a binary body back (PDF/image previews, file
+  // downloads, etc.) — hrmspost's default 'json' responseType would try to
+  // JSON.parse the raw bytes and fail, so this needs its own responseType.
+  hrmspostBlob(endpoint: string, body: any, params?: any): Observable<Blob> {
+    return this.http.post(`${this.hrmsUrl}${endpoint}`, body, {
+      params,
+      responseType: 'blob',
+    });
+  }
+
   hrmsput<T>(endpoint: string, body: any): Observable<T> {
     return this.http.put<T>(`${this.hrmsUrl}${endpoint}`, body);
   }

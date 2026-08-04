@@ -52,10 +52,17 @@
                  [style.z-index]="i + 1">
               <span class="chevron-item__label">{{ stage.label }}</span>
               <span class="chevron-item__count">{{ stage.value }}</span>
-              <div class="chevron-pct" *ngIf="stage.conversionPct !== undefined">
-                {{ stage.conversionPct }}%
-              </div>
             </div>
+          </div>
+
+          <!-- Stage-to-stage conversion rate rings -->
+          <div class="pct-ring-row" *ngIf="pipelineConversions.length">
+            <ng-container *ngFor="let stage of pipelineConversions; let last = last">
+              <div class="pct-ring" [style.background]="getRingBackground(stage)">
+                <div class="pct-ring__inner">{{ stage.conversionPct }}%</div>
+              </div>
+              <i class="fa-solid fa-arrow-right pct-ring__arrow" *ngIf="!last"></i>
+            </ng-container>
           </div>
         </div>
       </div>

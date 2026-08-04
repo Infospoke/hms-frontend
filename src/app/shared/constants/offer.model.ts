@@ -97,10 +97,23 @@ export interface ApprovedBudgetInfo {
 
 export interface NegotiationComparisonItem {
   key: string;
+  icon: string;
   label: string;
-  initialOffer: number | null;
-  candidateAsked: number;
-  hrRecommends: number;
-  yourDecision: number;
+  category: 'COMPENSATION' | 'TERMS';
+  isDate?: boolean;
+  /** FWD checkbox — whether this row is actually carried into the
+   * approver's decision (unchecked by default for guaranteed placeholder
+   * fields the candidate never asked to change). */
+  forward: boolean;
+  /** number for money fields, date string for the joining-date row, null
+   * when there's nothing to show for that column. */
+  initialOffer: any;
+  /** null when the candidate never asked to change this field. */
+  candidateAsked: any;
+  hrRecommends: any;
+  yourDecision: any;
   decisionStatus: 'Accepted' | 'Modified' | 'Rejected';
+  /** Candidate's stated reason for this specific field, shown in
+   * "Candidate's reason for negotiation". */
+  justification: string;
 }

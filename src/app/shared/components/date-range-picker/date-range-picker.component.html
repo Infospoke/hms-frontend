@@ -21,6 +21,15 @@
         [min]="startDate || null"
       />
     </div>
+
+    <button
+      type="button"
+      class="clear-btn"
+      (click)="clearDates()"
+      *ngIf="startDate || endDate"
+    >
+      Clear
+    </button>
   </div>
 
   <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>

@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../reusable-table/reusable-table.component';
+import { DateRangePickerComponent } from '../date-range-picker/date-range-picker.component';
 
 export interface JobAssignmentRow {
   jobTitle: string;
@@ -20,7 +21,7 @@ export interface JobAssignmentRow {
 @Component({
   selector: 'app-job-assignments-table',
   standalone: true,
-  imports: [CommonModule, ReusableTableComponent],
+  imports: [CommonModule, ReusableTableComponent,DateRangePickerComponent],
   templateUrl: './job-assignments-table.component.html',
   styleUrl: './job-assignments-table.component.scss',
 })
@@ -29,7 +30,7 @@ export class JobAssignmentsTableComponent implements OnChanges {
   @Input() subTitle: string = '';
   @Input() rows: JobAssignmentRow[] = [];
   @Input() showLegend: boolean = true;
-
+  @Output() dateRangeChange=new EventEmitter<{ startDate: string; endDate: string }>();
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
 
 
@@ -81,5 +82,8 @@ export class JobAssignmentsTableComponent implements OnChanges {
     if (days < 0) return `${Math.abs(days)} Days`;
     if (days === 0) return '0 Days';
     return `${days} Days`;
+  }
+   onDateRangeChange(range:any): void {
+    this.dateRangeChange.emit(range);
   }
 }

@@ -2,12 +2,12 @@
   <div class="cp-header">
     <h3 class="cp-title" *ngIf="title">{{ title }}</h3>
 
-    <div class="cp-period" *ngIf="periods.length">
+    <!-- <div class="cp-period" *ngIf="periods.length">
       <select class="cp-period-select" [value]="selectedPeriod" (change)="onPeriodChange($event)">
         <option *ngFor="let period of periods" [value]="period">{{ period }}</option>
       </select>
       <i class="fa-solid fa-chevron-down cp-period-icon"></i>
-    </div>
+    </div> -->
   </div>
 
   <div class="cp-funnel">

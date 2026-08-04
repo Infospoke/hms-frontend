@@ -20,7 +20,7 @@ interface NegotiationApprovalDocument {
   selector: 'app-negotiation-approval-review',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, RouterLink, ApprovalPipelineComponent],
+  imports: [CommonModule, FormsModule, ApprovalPipelineComponent],
   templateUrl: './negotiation-approval-review.component.html',
   styleUrl: './negotiation-approval-review.component.scss',
 })
@@ -48,17 +48,9 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   jobTitle = '';
   recruiterName = '';
 
-  // ── Approval pipeline — Department head -> Finance team -> HR manager ->
-  // Final approval. This is the approver-facing chain, distinct from the
-  // 3-level chain HR forwards through on the review-negotiation-request
-  // page (see NEGOTIATION_APPROVAL_STAGE_ORDER vs OFFER_STAGE_ORDER).
-  // TODO: pipeline stage statuses are DUMMY data below — no confirmed
-  // backend endpoint yet for the approver-side chain. Wire this to the
-  // real API (single-endpoint pattern, matching getNegotiationDetails)
-  // once the contract is available.
+  
   pipelineStages: ApprovalStage[] = [];
 
-  // ── "View approved budget & compensation" popup ─────────────────────────
   showBudgetModal = false;
   budget: ApprovedBudgetInfo = {
     compensationBandMin: 0, compensationBandMax: 0,
@@ -66,7 +58,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     note: '',
   };
 
-  // ── Requested package vs market range ───────────────────────────────────
+
   marketMin = 0;
   marketMax = 0;
   offeredCtc = 0;
@@ -81,8 +73,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     if (!this.marketMax) return 0;
     return Math.round((this.deltaAmount / this.marketMax) * 1000) / 10;
   }
-  /** Roughly where the ask sits inside the market band, for the "~55th
-   * percentile" note under the range chart. */
+  
   get marketPercentile(): number {
     if (this.marketMax <= this.marketMin) return 0;
     return Math.round(((this.askedCtc - this.marketMin) / (this.marketMax - this.marketMin)) * 100);

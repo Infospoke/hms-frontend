@@ -1,27 +1,14 @@
-<div class="nar-loading" *ngIf="isLoading">
-  <i class="fa-solid fa-spinner fa-spin"></i> Loading negotiation approval…
-</div>
+
 
 <div class="nar-wrapper" *ngIf="!isLoading">
 
-  <!-- ══════════════════════════════════════════════════════════
-       BREADCRUMB + BACK LINK
-       ══════════════════════════════════════════════════════════ -->
-  <div class="nar-crumbs">
-    <a routerLink="/candidate-management/offer-management">Offer management</a>
-    <i class="fa-solid fa-chevron-right"></i>
-    <a routerLink="/candidate-management/offer-management">Offer approvals</a>
-    <i class="fa-solid fa-chevron-right"></i>
-    <span class="nar-crumb-current">Negotiation approvals</span>
-  </div>
+
+  
 
   <a class="nar-back-link" (click)="onBack()">
     <i class="fa-solid fa-arrow-left"></i> Back to negotiation approvals
   </a>
 
-  <!-- ══════════════════════════════════════════════════════════
-       HEADER
-       ══════════════════════════════════════════════════════════ -->
   <div class="nar-header">
     <div class="nar-header-left">
       <div class="nar-name-row">
@@ -45,15 +32,8 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       APPROVAL PIPELINE — shared component, Dept head -> Finance ->
-       HR manager -> Final approval
-       ══════════════════════════════════════════════════════════ -->
   <app-approval-pipeline [stages]="pipelineStages" title="Approval pipeline" />
 
-  <!-- ══════════════════════════════════════════════════════════
-       JOB TITLE / DEPARTMENT / RECRUITER + BUDGET BUTTON
-       ══════════════════════════════════════════════════════════ -->
   <div class="nar-card nar-job-row">
     <div class="nar-job-fields">
       <div class="nar-job-field">
@@ -75,9 +55,7 @@
     </button>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       REQUESTED PACKAGE VS MARKET RANGE
-       ══════════════════════════════════════════════════════════ -->
+
   <div class="nar-card nar-market-card" [class.nar-market-card--ok]="withinMarketRange" [class.nar-market-card--warn]="aboveMarketMax">
     <div class="nar-market-header">
       <h3>Requested package vs market range</h3>
@@ -122,9 +100,7 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       CANDIDATE'S REASON FOR NEGOTIATION
-       ══════════════════════════════════════════════════════════ -->
+  
   <div class="nar-card">
     <h3 class="nar-section-title"><i class="fa-regular fa-comment-dots"></i> Candidate's reason for negotiation</h3>
 
@@ -137,9 +113,7 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       HR RECOMMENDATION — read-only on this approver screen
-       ══════════════════════════════════════════════════════════ -->
+  
   <div class="nar-card">
     <h3 class="nar-section-title"><i class="fa-regular fa-lightbulb"></i> HR recommendation</h3>
     <p class="nar-hr-rec-line">
@@ -148,9 +122,7 @@
     <p class="nar-hr-rec-note">{{ hrRecommendationNote }}</p>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       SUPPORTING DOCUMENTS
-       ══════════════════════════════════════════════════════════ -->
+  
   <div class="nar-card">
     <h3 class="nar-section-title">Supporting documents from candidate</h3>
     <p class="nar-doc-empty" *ngIf="!documents.length">No supporting documents were attached.</p>
@@ -167,9 +139,6 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       OFFER COMPARISON — YOUR DECISION (HR MANAGER)
-       ══════════════════════════════════════════════════════════ -->
   <div class="nar-card">
     <h3 class="nar-section-title">Offer comparison — your decision (HR manager)</h3>
     <p class="nar-section-sub">Initial offer, what the candidate asked for, what HR recommends, and your decision.</p>
@@ -222,9 +191,7 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       BOTTOM BAR
-       ══════════════════════════════════════════════════════════ -->
+
   <div class="nar-action-bar">
     <button class="nar-btn-back" type="button" (click)="onBack()">
       <i class="fa-solid fa-arrow-left"></i> Back
@@ -236,9 +203,7 @@
 
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     APPROVED BUDGET & COMPENSATION MODAL
-     ══════════════════════════════════════════════════════════ -->
+
 <div class="nar-modal-overlay" *ngIf="showBudgetModal" (click)="closeBudgetModal()">
   <div class="nar-modal" (click)="$event.stopPropagation()">
     <div class="nar-modal-header">

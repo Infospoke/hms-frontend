@@ -11,6 +11,7 @@ import { DonutPieChartComponent, DonutSegment } from '../../../candidate-managem
 import { NgxApexsankeyComponent } from 'ngx-apexsankey';
 import type { GraphData, SankeyOptions } from 'ngx-apexsankey';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { DateRangePickerComponent } from '../../../../shared/components/date-range-picker/date-range-picker.component';
 
 export interface KpiCard {
   label: string; value: string | number;
@@ -34,6 +35,7 @@ export interface OfferStatusBar {
     ReusableTableComponent, SemiCircleGaugeComponent,
     DonutPieChartComponent,
     NgxApexsankeyComponent,
+    DateRangePickerComponent
   ],
   templateUrl: './hiring-manager-dashboard.component.html',
   styleUrl: './hiring-manager-dashboard.component.scss',
@@ -266,4 +268,10 @@ export class HiringManagerDashboardComponent implements OnInit {
     { metric: 'Requisitions On Track', score: '82%', status: 'Good' },
     { metric: 'SLA Compliance', score: '75%', status: 'Fair' },
   ];
+
+
+
+   onDateRangeChange(range:any): void {
+    console.log(range);
+  }
 }

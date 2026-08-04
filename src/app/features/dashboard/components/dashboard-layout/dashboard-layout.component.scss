@@ -350,3 +350,15 @@
   flex-direction: column;
   gap: 20px;
 }
+.flex-of-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  
+  .chart-card-header {
+    margin-bottom: 0;
+    padding: 0; // avoid double padding since parent now handles it
+  }
+}

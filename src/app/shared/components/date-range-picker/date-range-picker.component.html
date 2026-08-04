@@ -1,0 +1,27 @@
+<div class="date-range-wrapper">
+  <div class="date-range-picker">
+    <div class="date-field">
+      <label for="fromDate">From</label>
+      <input
+        id="fromDate"
+        type="date"
+        [value]="startDate"
+        (change)="onStartDateChange($any($event.target).value)"
+        [max]="endDate || null"
+      />
+    </div>
+
+    <div class="date-field">
+      <label for="toDate">To</label>
+      <input
+        id="toDate"
+        type="date"
+        [value]="endDate"
+        (change)="onEndDateChange($any($event.target).value)"
+        [min]="startDate || null"
+      />
+    </div>
+  </div>
+
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

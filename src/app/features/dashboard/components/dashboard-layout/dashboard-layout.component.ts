@@ -7,6 +7,7 @@ import { SemiCircleGaugeComponent } from '../../../../shared/components/semi-cir
 import { ReusableTableComponent, TableColumn } from '../../../../shared/components/reusable-table/reusable-table.component';
 import { CandidatePipelineComponent, PipelineConfig } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
 import { BubbleChartComponentComponent } from '../../../../shared/components/bubble-chart-component/bubble-chart-component.component';
+import { DateRangePickerComponent } from '../../../../shared/components/date-range-picker/date-range-picker.component';
 
 export interface PieChartConfig {
   title?: string;
@@ -32,7 +33,7 @@ export interface RequisitionsTableConfig {
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent,BubbleChartComponentComponent],
+  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent,BubbleChartComponentComponent,DateRangePickerComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
 })
@@ -46,7 +47,7 @@ export class DashboardLayoutComponent implements OnInit{
   @Input() filterSearchPlaceholder: string = 'Search...';
 
   @Output() filterChange = new EventEmitter<any>();
-
+  @Output() dateRangeChange = new EventEmitter<{ startDate: string; endDate: string }>();
   @Input() cards:any[]=[];
 
 
@@ -57,10 +58,7 @@ export class DashboardLayoutComponent implements OnInit{
   @Input() pipeLine:boolean=false;
   @Input() pipelineConfig?: PipelineConfig;
   
- 
-  /** When true, renders app-candidate-pipeline-graph (ApexCharts funnel +
-   * conversion-rate circles, currently self-contained dummy data) instead
-   * of the plain app-candidate-pipeline funnel in the pipeline slot. */
+
   @Input() pipelineGraph: boolean = false;
 
   @Input() showSemiCircle:boolean=false;
@@ -86,5 +84,7 @@ export class DashboardLayoutComponent implements OnInit{
   slaClass(status: string): string {
     return 'sla-pill sla-pill--' + (status ?? '').toLowerCase().replace(/\s+/g, '-');
   }
-
+   onDateRangeChange(range:any): void {
+    this.dateRangeChange.emit(range);
+  }
 }

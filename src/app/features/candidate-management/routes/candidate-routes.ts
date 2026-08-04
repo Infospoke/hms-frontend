@@ -68,5 +68,6 @@ export const CANDIDATE_ROUTES: Routes = [
     {
         path:'offer-management/negotiation-approvals/:id',
         loadComponent:()=>import("../components/negotiation-approval-review/negotiation-approval-review.component").then(m=>m.NegotiationApprovalReviewComponent)
-    }
+    },
+   
 ]

@@ -48,6 +48,8 @@ export class DashboardLayoutComponent implements OnInit{
 
   @Output() filterChange = new EventEmitter<any>();
   @Output() dateRangeChange = new EventEmitter<{ startDate: string; endDate: string }>();
+
+  @Output() cardClick = new EventEmitter<any>();
   @Input() cards:any[]=[];
 
 
@@ -86,5 +88,8 @@ export class DashboardLayoutComponent implements OnInit{
   }
    onDateRangeChange(range:any): void {
     this.dateRangeChange.emit(range);
+  }
+  handleData(data:any){
+    this.cardClick.emit(data);
   }
 }

@@ -8,7 +8,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
 
 import { ApprovalStage } from '../../../../shared/constants/approval.stage.modal';
-import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem } from '../../../../shared/constants/offer.model';
+import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem, OFFER_APPROVAL_STAGES } from '../../../../shared/constants/offer.model';
 
 interface NegotiationApprovalDocument {
   name: string;
@@ -38,7 +38,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   statusBadge = 'Awaiting hr manager';
 
-  // ── Header ───────────────────────────────────────────────────────────────
+
   candidate = {
     name: '', initials: '', avatarColor: '#7C3AED',
     role: '', department: '', email: '',
@@ -156,7 +156,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     this.jobTitle = 'Senior tester';
     this.recruiterName = 'Arun Kumar';
 
-    this.pipelineStages = NEGOTIATION_APPROVAL_STAGE_ORDER.map((role, i): ApprovalStage => {
+    this.pipelineStages = OFFER_APPROVAL_STAGES.map((role, i): ApprovalStage => {
       let status: ApprovalStage['status'] = 'PENDING';
       if (i === 0 || i === 1) status = 'APPROVED';
       else if (i === 2) status = 'IN_PROGRESS';

@@ -64,9 +64,7 @@ export class InterviewPlanStepComponent implements OnInit {
     this.loadPlans();
   }
 
-  // ── API: list ──────────────────────────────────────────────────────────────
-  // Response shape: res.data.interviewPlans[], res.data.totalElements
-
+  
   private async loadPlans(): Promise<void> {
     const payload = {
       page:           this.currentPage - 1,
@@ -84,7 +82,7 @@ export class InterviewPlanStepComponent implements OnInit {
 
     try {
       const res = await this.interviewService.plansList(payload);
-
+      console.log(res);
       if (res?.responsecode === '00') {
         const list      = res.data?.interviewPlans ?? res.data?.content ?? res.data ?? [];
         this.plans      = this.mapListPlans(list);

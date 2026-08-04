@@ -15,8 +15,12 @@ export class DashboardService {
     return await firstValueFrom(this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_COUNT));
   }
 
-  async getHiringManagerDashboardDate(srId:any):Promise<any>{
-    return await firstValueFrom(this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_DASHBOARD(srId)));
+  async getHiringManagerDashboardData(srId:any,startDate:any,endDate:any):Promise<any>{
+     const params = new HttpParams()
+    .set('srId', srId)
+    .set('fromDate', startDate)
+    .set('toDate', endDate);
+    return await firstValueFrom(this.api.hrmsget(API.DASHBOARD.HIRING_MANAGER_DASHBOARD,  params ));
   }
 
   async getRecruiterManagerDashboardCount():Promise<any>{

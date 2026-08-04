@@ -1,4 +1,4 @@
-<app-dashboard-layout [heading]="heading" [subHeading]="subHeading" [showingLayout]="true">
+<app-dashboard-layout [heading]="heading" [subHeading]="subHeading" [showingLayout]="true" (dateRangeChange)="onDateRangeChange($event)">
 
   <!-- ── KPI Cards ──────────────────────────────────────────────────────────── -->
   <div class="dash-kpi-row">
@@ -15,13 +15,20 @@
   <div class="dash-card dash-card--full mb-row">
     <div class="dash-card__header">
       <span class="dash-card__title">My Requisitions</span>
-      <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)"></app-date-range-picker>
+      <div class="dash-card__header-actions">
+        <span class="analytics-status" *ngIf="isAnalyticsLoading">Loading…</span>
+        <span class="analytics-status analytics-status--error" *ngIf="analyticsError && !isAnalyticsLoading">
+          {{ analyticsError }}
+        </span>
+        <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)"></app-date-range-picker>
+      </div>
     </div>
     <app-reusable-table
       [columns]="reqColumns"
       [data]="reqData"
       [showHeader]="true"
       [cellTemplate]="reqCellTpl"
+      (rowClick)="handleData($event)"
     ></app-reusable-table>
   </div>
 
@@ -138,6 +145,7 @@
             [data]="healthData"
             [showHeader]="true"
             [cellTemplate]="healthCellTpl"
+            
           ></app-reusable-table>
         </div>
       </div>
@@ -151,20 +159,6 @@
   <!-- Target Start Date -->
   <ng-container *ngIf="cell.col.key === 'targetStart'">
     <span class="date-text">{{ cell.row.targetStart }}</span>
-  </ng-container>
-
-  <!-- Days Remaining -->
-  <ng-container *ngIf="cell.col.key === 'daysRemaining'">
-    <span
-      class="badge"
-      [ngClass]="{
-        'badge--days-positive': cell.row.daysRemaining > 7,
-        'badge--days-warning': cell.row.daysRemaining >= 0 && cell.row.daysRemaining <= 7,
-        'badge--days-overdue': cell.row.daysRemaining < 0
-      }"
-    >
-      {{ cell.row.daysRemaining < 0 ? (-cell.row.daysRemaining + ' Days Overdue') : (cell.row.daysRemaining + ' Days') }}
-    </span>
   </ng-container>
 
   <!-- Priority -->

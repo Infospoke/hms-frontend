@@ -115,6 +115,24 @@
   }
 }
 
+// ── My Requisitions header: status text + date range picker, right-aligned ───
+.dash-card__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.analytics-status {
+  font-size: 11.5px;
+  color: #6B7280;
+  white-space: nowrap;
+
+  &--error {
+    color: #DC2626;
+  }
+}
+
 // ── Per-module date range filter — compact, right-aligned ────────────────────
 .date-range {
   display: flex;

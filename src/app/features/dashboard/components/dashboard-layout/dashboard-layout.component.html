@@ -33,7 +33,7 @@
         </div>
 
         <app-reusable-table [columns]="tableConfig.columns" [data]="tableConfig.data" [showHeader]="true"
-            [tableLayout]="'fixed'" [cellTemplate]="reqCell">
+            [tableLayout]="'fixed'" [cellTemplate]="reqCell" (rowClick)="handleData($event)">
         </app-reusable-table>
 
     </div>

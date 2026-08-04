@@ -251,7 +251,6 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     }
   }
 
-  /** GET /hms/dasboard/analytics/{jobId}?fromDate=...&toDate=... */
   async getDashboardCharts(id: any) {
     this.selectedJobId = id;
 
@@ -379,5 +378,8 @@ export class RecruiterDashboardComponentComponent implements OnInit {
           cost: total > 0 ? `${((r.hires / total) * 100).toFixed(1)}%` : '0.0%'
         }))
     };
+  }
+  cardClick(data:any){
+    this.getDashboardCharts(data?.jobId)
   }
 }

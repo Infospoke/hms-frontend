@@ -7,6 +7,6 @@
   [pieCharts]="pieCharts"
   [bubbleChart]="bubbleChart"
   [dashboardType]="'recruiter'"
-  
+  (cardClick)="cardClick($event)"
   (dateRangeChange)="onDateRangeChange($event)">
 </app-dashboard-layout>

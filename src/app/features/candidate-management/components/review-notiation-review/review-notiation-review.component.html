@@ -125,12 +125,12 @@
     <div class="rn-overall-justification" *ngIf="otherNotes">
       <span class="rn-item-icon"><i class="fa-regular fa-comment-dots"></i></span>
       <div class="rn-overall-body">
-        <p class="rn-just-label-lg">Additional notes</p>
+        <p class="rn-just-label-lg">Others</p>
         <p class="rn-just-text">{{ otherNotes }}</p>
       </div>
     </div>
 
-    <div class="rn-hr-rec">
+    <!-- <div class="rn-hr-rec">
       <span class="rn-item-icon rn-item-icon--amber"><i class="fa-regular fa-lightbulb"></i></span>
       <div class="rn-hr-rec-body">
         <p class="rn-just-label-lg">HR recommendation</p>
@@ -158,12 +158,10 @@
 
         <p class="rn-hr-rec-note">This note, the forwarded items and any supporting documents are visible to every approver in the pipeline.</p>
       </div>
-    </div>
+    </div> -->
   </div>
 
-  <!-- ══════════════════════════════════════════════════════════
-       SUPPORTING DOCUMENTS
-       ══════════════════════════════════════════════════════════ -->
+  
   <div class="rn-card" *ngIf="documents.length">
     <h3 class="rn-section-title">Supporting documents</h3>
     <div class="rn-doc-list">

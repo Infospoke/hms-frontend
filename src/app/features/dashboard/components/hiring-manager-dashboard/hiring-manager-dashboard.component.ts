@@ -71,6 +71,75 @@ export class HiringManagerDashboardComponent implements OnInit, OnChanges {
   },
 ];
 
+  table = true;
+
+requisitionColumns = [
+  { key: 'position', label: 'Position' },
+  { key: 'openings', label: 'Openings' },
+  { key: 'offersReleased', label: 'Offers Released' },
+  { key: 'offersPending', label: 'Offers Pending' },
+  { key: 'targetStartDate', label: 'Target Start Date' },
+  { key: 'priority', label: 'Priority' },
+  { key: 'slaStatus', label: 'SLA Status' },
+  {key: 'daysRemaining', label:'Days Remaining' }
+];
+
+requisitionData = [
+  {
+    position: 'Backend Engineer',
+    openings: 5,
+    offersReleased: 3,
+    offersPending: 1,
+    targetStartDate: '30 Jun 2026',
+    priority: 'High',
+    slaStatus: 'On Track',
+    daysRemaining: '5 Days'
+
+  },
+  {
+    position: 'QA Lead',
+    openings: 2,
+    offersReleased: 1,
+    offersPending: 0,
+    targetStartDate: '15 Jul 2026',
+    priority: 'Medium',
+    slaStatus: 'At Risk',
+    daysRemaining: '3 Days'
+  },
+  {
+    position: 'HR Executive',
+    openings: 3,
+    offersReleased: 2,
+    offersPending: 1,
+    targetStartDate: '01 Jul 2026',
+    priority: 'High',
+    slaStatus: 'Overdue',
+     daysRemaining: '6 Days'
+  },
+  {
+    position: 'Data Analyst',
+    openings: 2,
+    offersReleased: 1,
+    offersPending: 0,
+    targetStartDate: '20 Jul 2026',
+    priority: 'Medium',
+    slaStatus: 'At Risk',
+     daysRemaining: '3 Days'
+  },
+  {
+    position: 'SAP Consultant',
+    openings: 2,
+    offersReleased: 1,
+    offersPending: 0,
+    targetStartDate: '10 Aug 2026',
+    priority: 'Low',
+    slaStatus: 'On Track',
+    daysRemaining: '3 Days'
+  }
+];
+
+
+
   offerStatusSegments: DonutSegment[] = [
     {
       label: 'Offer Requests',

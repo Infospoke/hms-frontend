@@ -36,12 +36,19 @@
   </div>
 
   <div class="rp-row rp-row--pair">
-    <app-funnel-chart
+    <!-- <app-funnel-chart
       title="Recruitment Funnel"
       subTitle="Funnel Chart with Conversion %"
       [stages]="funnelStages"
-    />
-
+    /> -->
+    <app-candidate-pipeline [layout]="pipelineConfig.layout || 'horizontal'"
+                [title]="pipelineConfig.title"
+                [periods]="pipelineConfig.periods"
+                [selectedPeriod]="pipelineConfig.selectedPeriod"
+                [stages]="pipelineConfig.stages"
+                [overallConversionLabel]="pipelineConfig.overallConversionLabel"
+                [overallConversionRate]="pipelineConfig.overallConversionRate"  
+                />
     <app-multi-line-chart
       title="Hiring Trend"
       subTitle="Multi-line Chart with Markers"

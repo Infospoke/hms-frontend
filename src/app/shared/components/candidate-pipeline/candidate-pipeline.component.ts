@@ -21,6 +21,7 @@ export interface PipelineConfig {
   stages: PipelineStage[];
   overallConversionLabel?: string;
   overallConversionRate?: number;
+ layout?: 'horizontal' | 'funnel';
 }
 
 @Component({
@@ -38,6 +39,7 @@ export class CandidatePipelineComponent {
   @Input() stages: PipelineStage[] = [];
   @Input() overallConversionLabel: string = 'Overall Conversion Rate';
   @Input() overallConversionRate: number = 0;
+  @Input() layout: 'horizontal' | 'funnel' = 'horizontal';
 
   @Output() periodChange = new EventEmitter<string>();
 

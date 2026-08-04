@@ -1,4 +1,4 @@
-<div class="cp-wrap">
+<div *ngIf="layout === 'horizontal'" class="cp-wrap">
   <div class="cp-header">
     <h3 class="cp-title" *ngIf="title">{{ title }}</h3>
 
@@ -31,4 +31,58 @@
     <span class="cp-footer-label">{{ overallConversionLabel }}</span>
     <span class="cp-footer-value">{{ overallConversionRate }}%</span>
   </div>
+</div>
+
+<div *ngIf="layout === 'funnel'" class="cp-wrap">
+
+  <div class="cp-header">
+    <h3 class="cp-title">{{ title }}</h3>
+
+    <div class="cp-period">
+      <select class="cp-period-select">
+        <option *ngFor="let period of periods">
+          {{ period }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+ <div class="recruiter-funnel">
+
+  <div class="left-labels">
+    <div class="stage-label" *ngFor="let stage of stages">
+      {{ stage.label }}
+    </div>
+  </div>
+
+  <div class="center-funnel">
+
+    <div
+      *ngFor="let stage of stages; let i = index"
+      class="funnel-level"
+      [style.width.%]="100 - (i * 14)"
+      [style.background]="stage.iconColor">
+
+      <div class="value">{{ stage.value }}</div>
+
+      <div class="percentage" *ngIf="stage.conversionPct">
+        ({{ stage.conversionPct }}%)
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="right-conversion">
+
+    <div
+      class="conversion"
+      *ngFor="let stage of stages">
+
+      {{ stage.conversionPct ? stage.conversionPct + '%' : '' }}
+
+    </div>
+
+  </div>
+
 </div>

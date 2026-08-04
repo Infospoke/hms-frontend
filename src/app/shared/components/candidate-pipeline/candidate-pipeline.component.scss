@@ -9,7 +9,8 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 24px;
+  min-height: 0;
+  gap: 14px;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -150,3 +151,159 @@
 
 // .cp-funnel wraps naturally via flex-wrap on narrow viewports — the
 // stage/arrow sizes above already fit one row at normal card widths.
+
+.recruiter-funnel {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) 45px;
+  gap: 4px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================
+   LEFT LABELS
+   ========================= */
+
+// Row height/gap match .funnel-level exactly (same gap, shared height) so
+// each label lines up with its stage.
+.left-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stage-label {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  font-size: 12px;
+  font-weight: 500;
+  color: #111827;
+
+  white-space: nowrap;
+}
+
+
+/* =========================
+   CENTER FUNNEL
+   ========================= */
+
+.center-funnel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  // A small gap keeps each stage visually distinct (matches the reference,
+  // which is a stack of connected trapezoids, not one solid pointy cone),
+  // while the clip-path widths below still line up edge-to-edge so the
+  // funnel silhouette still reads as one continuous shape.
+  gap: 5px;
+
+  width: 300px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+
+/* =========================
+   FUNNEL LEVELS
+   ========================= */
+
+.funnel-level {
+  height: 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+ 
+  color: #fff;
+  font-weight: 600;
+}
+
+
+
+
+.funnel-level:nth-child(1) {
+  width: 320px;
+  /* bottom width 250px -> inset (300-250)/2 = 25px = 8.33% of 300px */
+  clip-path: polygon(0% 0%, 100% 0%, 91.67% 100%, 8.33% 100%);
+}
+
+.funnel-level:nth-child(2) {
+  width: 270px;
+  /* bottom width 205px -> inset (250-205)/2 = 22.5px = 9% of 250px */
+  clip-path: polygon(0% 0%, 100% 0%, 91% 100%, 9% 100%);
+}
+
+.funnel-level:nth-child(3) {
+  width: 225px;
+  /* bottom width 165px -> inset (205-165)/2 = 20px = 9.76% of 205px */
+  clip-path: polygon(0% 0%, 100% 0%, 90.24% 100%, 9.76% 100%);
+}
+
+.funnel-level:nth-child(4) {
+  width: 185px;
+  /* bottom width 125px -> inset (165-125)/2 = 20px = 12.12% of 165px */
+  clip-path: polygon(0% 0%, 100% 0%, 87.88% 100%, 12.12% 100%);
+}
+
+.funnel-level:nth-child(5) {
+  width: 145px;
+  /* bottom width 90px -> inset (125-90)/2 = 17.5px = 14% of 125px */
+  clip-path: polygon(0% 0%, 100% 0%, 86% 100%, 14% 100%);
+}
+
+.funnel-level:nth-child(6) {
+  width: 120px;
+  /* last stage: end as a moderate trapezoid (~50% of its own width at the
+     base) rather than tapering to a sharp point/spike */
+  clip-path: polygon(0% 0%, 100% 0%, 75% 100%, 25% 100%);
+}
+
+.funnel-level:nth-child(7) {
+  width: 100px;
+  
+  clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
+}
+
+
+
+.value {
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.percentage {
+  font-size: 9px;
+  line-height: 1;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+
+
+.right-conversion {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.conversion {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  color: #111827;
+
+  white-space: nowrap;
+}

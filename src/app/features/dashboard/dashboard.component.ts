@@ -8,6 +8,7 @@ import { JobService } from '../job/services/job.service';
 import { PipeLineCardsComponent } from '../../shared/components/pipe-line-cards/pipe-line-cards.component';
 import { JobsCardComponent } from '../../shared/components/jobs-card/jobs-card.component';
 import { HeadingComponent } from '../../shared/components/heading/heading.component';
+import { ReusableTableComponent } from '../../shared/components/reusable-table/reusable-table.component';
 
 @Component({
   selector: 'app-dashboard',

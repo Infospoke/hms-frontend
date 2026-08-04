@@ -7,6 +7,7 @@ import { HiringFlowProgressComponent, FlowStage } from '../../../../shared/compo
 import { SourcePerformanceGridComponent, SourceTile } from '../../../../shared/components/source-performance-grid/source-performance-grid.component';
 import { FunnelChartComponent, FunnelStageData } from '../../../../shared/components/funnel-chart/funnel-chart.component';
 import { MultiLineChartComponent, LineSeriesInput } from '../../../../shared/components/multi-line-chart/multi-line-chart.component';
+import { CandidatePipelineComponent } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
 
 @Component({
   selector: 'app-recruiters-performance-dashboard',
@@ -16,8 +17,8 @@ import { MultiLineChartComponent, LineSeriesInput } from '../../../../shared/com
     JobAssignmentsTableComponent,
     HiringFlowProgressComponent,
     SourcePerformanceGridComponent,
-    FunnelChartComponent,
     MultiLineChartComponent,
+    CandidatePipelineComponent
   ],
   templateUrl: './recruiters-performance-dashboard.component.html',
   styleUrl: './recruiters-performance-dashboard.component.scss',
@@ -38,7 +39,79 @@ export class RecruitersPerformanceDashboardComponent {
     console.log('recruiter dashboard filters changed', event);
   }
 
-  // ── KPI cards (icon + value only — no sublabel/sparkline on this page) ────
+  pipelineConfig = {
+  layout: 'funnel' as const,
+
+  title: 'Recruitment Funnel',
+
+  periods: ['This Month'],
+
+  selectedPeriod: 'This Month',
+
+  stages: [
+    {
+      label: 'Applications Added',
+      value: 425,
+      conversionPct: 100,
+      iconClass: '',
+      iconColor: '#3B82F6',
+      iconBgColor: '',
+    },
+    {
+      label: 'Screened',
+      value: 250,
+      conversionPct: 58.8,
+      iconClass: '',
+      iconColor: '#8B5CF6',
+      iconBgColor: '',
+    },
+    {
+      label: 'Shortlisted',
+      value: 120,
+      conversionPct: 48,
+      iconClass: '',
+      iconColor: '#F97316',
+      iconBgColor: '',
+    },
+    {
+      label: 'Interviewed',
+      value: 60,
+      conversionPct: 50,
+      iconClass: '',
+      iconColor: '#22C55E',
+      iconBgColor: '',
+    },
+    {
+      label: 'Offers Released',
+      value: 18,
+      conversionPct: 30,
+      iconClass: '',
+      iconColor: '#EF4444',
+      iconBgColor: '',
+    },
+    {
+      label: 'Offers Accepted',
+      value: 12,
+      conversionPct: 66.7,
+      iconClass: '',
+      iconColor: '#14B8A6',
+      iconBgColor: '',
+    },
+    {
+      label: 'Hired',
+      value: 19,
+      conversionPct: 66.7,
+      iconClass: '',
+      iconColor: '#16A34A',
+      iconBgColor: '',
+    }
+  ],
+
+  overallConversionLabel: 'Overall Conversion Rate',
+
+
+  overallConversionRate: 2.1
+};
   cards = [
     {
       label: 'Assignments',

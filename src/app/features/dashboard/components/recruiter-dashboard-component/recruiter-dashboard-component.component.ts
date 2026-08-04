@@ -23,14 +23,11 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   private dashboardService = inject(DashboardService)
 
   // ── Date filter state ────────────────────────────────────────────────────
-  /** Currently selected job for the analytics charts (set after the SR list loads) */
   selectedJobId: any = null;
 
-  /** Default range: current month, formatted YYYY-MM-DD to match the API */
   dateRange: DateRange = this.getDefaultDateRange();
 
   private getDefaultDateRange(): DateRange {
-   
     return {
       fromDate: '',
       toDate: ''
@@ -44,12 +41,11 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     return `${y}-${m}-${day}`;
   }
 
-  /** Called from the template when the user picks a new From/To date */
-  onDateRangeChange(data:any){
+  onDateRangeChange(data: any) {
     this.dateRange = {
       fromDate: data?.startDate,
       toDate: data.endDate || this.dateRange.toDate
-     };
+    };
 
     if (this.selectedJobId) {
       this.getDashboardCharts(this.selectedJobId);
@@ -131,7 +127,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     layout: 'funnel' as const,
     title: 'My Conversion Funnel',
     stages: [
-      { label: 'Applications', value: 0, iconClass: '', iconColor: '#2563EB', iconBgColor: '' },
+      { label: 'Applications', value: 0, conversionPct: 0, iconClass: '', iconColor: '#2563EB', iconBgColor: '' },
       { label: 'Screening', value: 0, conversionPct: 0, iconClass: '', iconColor: '#0EA5E9', iconBgColor: '' },
       { label: 'Shortlisted', value: 0, conversionPct: 0, iconClass: '', iconColor: '#10B981', iconBgColor: '' },
       { label: 'Interview', value: 0, conversionPct: 0, iconClass: '', iconColor: '#F59E0B', iconBgColor: '' },
@@ -147,11 +143,11 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     centerLabel: 'Total',
     size: 300,
     segments: [
-      { label: 'Offer Requests by HR', value: 0, color: '#2563EB' },
-      { label: 'Under Review & Approval', value: 0, color: '#22C1C3' },
-      { label: 'Offer Released', value: 0, color: '#F59E0B' },
-      { label: 'Offer Accepted', value: 0, color: '#7C3AED' },
-      { label: 'Offer Rejected', value: 0, color: '#EF4444' }
+      { label: 'Offer Requests by HR', value: 0, color: '#2563EB', percentage: 0 },
+      { label: 'Under Review & Approval', value: 0, color: '#22C1C3', percentage: 0 },
+      { label: 'Offer Released', value: 0, color: '#F59E0B', percentage: 0 },
+      { label: 'Offer Accepted', value: 0, color: '#7C3AED', percentage: 0 },
+      { label: 'Offer Rejected', value: 0, color: '#EF4444', percentage: 0 }
     ]
   };
 
@@ -160,12 +156,12 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     centerLabel: 'Total',
     size: 250,
     segments: [
-      { label: 'Negotiation Request', value: 0, color: '#2563EB' },
-      { label: 'HR Review', value: 0, color: '#22C1C3' },
-      { label: 'Under Review & Approval', value: 0, color: '#22C1C3' },
-      { label: 'Re-release Offer', value: 0, color: '#6CC24A' },
-      { label: 'Candidate Accepted', value: 0, color: '#7C3AED' },
-      { label: 'Candidate Rejected', value: 0, color: '#F59E0B' }
+      { label: 'Negotiation Request', value: 0, color: '#2563EB', percentage: 0 },
+      { label: 'HR Review', value: 0, color: '#22C1C3', percentage: 0 },
+      { label: 'Under Review & Approval', value: 0, color: '#22C1C3', percentage: 0 },
+      { label: 'Re-release Offer', value: 0, color: '#6CC24A', percentage: 0 },
+      { label: 'Candidate Accepted', value: 0, color: '#7C3AED', percentage: 0 },
+      { label: 'Candidate Rejected', value: 0, color: '#F59E0B', percentage: 0 }
     ]
   };
 
@@ -176,9 +172,15 @@ export class RecruiterDashboardComponentComponent implements OnInit {
 
   bubbleChart = {
     title: 'Source Performance (This Month)',
-    bubbles: [] as { label: string; value: number; color: string; size: number }[],
+    bubbles: [] as { label: string; value: number; color: string; size: number; percentage: number }[],
     tableData: [] as { source: string; hires: number; cost: string }[]
   };
+
+  /** Shared percentage helper — used everywhere below */
+  private calcPercentage(value: number, total: number): number {
+    if (!total || total <= 0) return 0;
+    return Math.round((value / total) * 100);
+  }
 
   async getDashboardCount() {
 
@@ -257,7 +259,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
       this.dateRange.fromDate,
       this.dateRange.toDate
     );
-    const data = res?.data ?? res; // handles both wrapped and unwrapped responses
+    const data = res?.data ?? res;
     if (!data) return;
 
     this.mapConversionFunnel(data.conversionFunnel);
@@ -265,7 +267,6 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     this.mapNegotiationFlow(data.negotiationFlow);
     this.mapSourcePerformance(data.sourcePerformance);
 
-    // pieCharts array holds references, so rebuild it after mutating the two objects
     this.pieCharts = [this.offerStatusChart, this.negotiationChart];
   }
 
@@ -273,7 +274,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     return data?.map((item: any) => ({
       srName: item.position,
       priority: item.priority,
-      targetStartDate:item.targetStartDate,
+      targetStartDate: item.targetStartDate,
       openings: item.totalOpenings,
       my: item.my,
       team: item.team,
@@ -285,6 +286,13 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     }));
   }
 
+  /**
+   * Every stage's percentage is calculated against total Applications
+   * (the top of the funnel) — NOT the previous stage. This avoids
+   * a 0% result when an intermediate stage is 0 but a later stage isn't
+   * (e.g. Screening = 0, Shortlisted = 1 should still show a real %,
+   * not divide-by-zero against Screening).
+   */
   private mapConversionFunnel(funnel: any) {
     if (!funnel) return;
 
@@ -295,33 +303,41 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     const offers = funnel.offers ?? 0;
     const hired = funnel.hired ?? 0;
 
-    const pct = (num: number, den: number) => den > 0 ? Math.round((num / den) * 100) : 0;
-
     this.pipelineConfig = {
       ...this.pipelineConfig,
       stages: [
-        { label: 'Applications', value: applications, iconClass: '', iconColor: '#2563EB', iconBgColor: '' },
-        { label: 'Screening', value: screening, conversionPct: pct(screening, applications), iconClass: '', iconColor: '#0EA5E9', iconBgColor: '' },
-        { label: 'Shortlisted', value: shortlisted, conversionPct: pct(shortlisted, screening), iconClass: '', iconColor: '#10B981', iconBgColor: '' },
-        { label: 'Interview', value: interview, conversionPct: pct(interview, shortlisted), iconClass: '', iconColor: '#F59E0B', iconBgColor: '' },
-        { label: 'Offer', value: offers, conversionPct: pct(offers, interview), iconClass: '', iconColor: '#8B5CF6', iconBgColor: '' },
-        { label: 'Hired', value: hired, conversionPct: pct(hired, offers), iconClass: '', iconColor: '#3B82F6', iconBgColor: '' }
+        { label: 'Applications', value: applications, conversionPct: this.calcPercentage(applications, applications), iconClass: '', iconColor: '#2563EB', iconBgColor: '' },
+        { label: 'Screening', value: screening, conversionPct: this.calcPercentage(screening, applications), iconClass: '', iconColor: '#0EA5E9', iconBgColor: '' },
+        { label: 'Shortlisted', value: shortlisted, conversionPct: this.calcPercentage(shortlisted, applications), iconClass: '', iconColor: '#10B981', iconBgColor: '' },
+        { label: 'Interview', value: interview, conversionPct: this.calcPercentage(interview, applications), iconClass: '', iconColor: '#F59E0B', iconBgColor: '' },
+        { label: 'Offer', value: offers, conversionPct: this.calcPercentage(offers, applications), iconClass: '', iconColor: '#8B5CF6', iconBgColor: '' },
+        { label: 'Hired', value: hired, conversionPct: this.calcPercentage(hired, applications), iconClass: '', iconColor: '#3B82F6', iconBgColor: '' }
       ],
-      overallConversionRate: pct(hired, applications)
+      overallConversionRate: this.calcPercentage(hired, applications)
     };
   }
 
   private offerStatusFlow(flow: any) {
     if (!flow) return;
 
+    const values = {
+      offerRequestByHR: flow.offerRequestByHR ?? 0,
+      underReviewApproval: flow.underReviewApproval ?? 0,
+      offerReleased: flow.offerReleased ?? 0,
+      offerAccepted: flow.offerAccepted ?? 0,
+      offerRejected: flow.offerRejected ?? 0,
+    };
+
+    const total = Object.values(values).reduce((sum, v) => sum + v, 0);
+
     this.offerStatusChart = {
       ...this.offerStatusChart,
       segments: [
-        { label: 'Offer Requests by HR', value: flow.offerRequestByHR ?? 0, color: '#2563EB' },
-        { label: 'Under Review & Approval', value: flow.underReviewApproval ?? 0, color: '#22C1C3' },
-        { label: 'Offer Released', value: flow.offerReleased ?? 0, color: '#F59E0B' },
-        { label: 'Offer Accepted', value: flow.offerAccepted ?? 0, color: '#7C3AED' },
-        { label: 'Offer Rejected', value: flow.offerRejected ?? 0, color: '#EF4444' }
+        { label: 'Offer Requests by HR', value: values.offerRequestByHR, color: '#2563EB', percentage: this.calcPercentage(values.offerRequestByHR, total) },
+        { label: 'Under Review & Approval', value: values.underReviewApproval, color: '#22C1C3', percentage: this.calcPercentage(values.underReviewApproval, total) },
+        { label: 'Offer Released', value: values.offerReleased, color: '#F59E0B', percentage: this.calcPercentage(values.offerReleased, total) },
+        { label: 'Offer Accepted', value: values.offerAccepted, color: '#7C3AED', percentage: this.calcPercentage(values.offerAccepted, total) },
+        { label: 'Offer Rejected', value: values.offerRejected, color: '#EF4444', percentage: this.calcPercentage(values.offerRejected, total) }
       ]
     };
   }
@@ -329,15 +345,26 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   private mapNegotiationFlow(flow: any) {
     if (!flow) return;
 
+    const values = {
+      negotiationRequest: flow.negotiationRequest ?? 0,
+      hrReview: flow.hrReview ?? 0,
+      underReview: flow.underReview ?? 0,
+      reReleaseOffer: flow.reReleaseOffer ?? 0,
+      candidateAccepted: flow.candidateAccepted ?? 0,
+      candidateRejected: flow.candidateRejected ?? 0,
+    };
+
+    const total = Object.values(values).reduce((sum, v) => sum + v, 0);
+
     this.negotiationChart = {
       ...this.negotiationChart,
       segments: [
-        { label: 'Negotiation Request', value: flow.negotiationRequest ?? 0, color: '#2563EB' },
-        { label: 'HR Review', value: flow.hrReview ?? 0, color: '#22C1C3' },
-        { label: 'Under Review & Approval', value: flow.underReview ?? 0, color: '#22C1C3' },
-        { label: 'Re-release Offer', value: flow.reReleaseOffer ?? 0, color: '#6CC24A' },
-        { label: 'Candidate Accepted', value: flow.candidateAccepted ?? 0, color: '#7C3AED' },
-        { label: 'Candidate Rejected', value: flow.candidateRejected ?? 0, color: '#F59E0B' }
+        { label: 'Negotiation Request', value: values.negotiationRequest, color: '#2563EB', percentage: this.calcPercentage(values.negotiationRequest, total) },
+        { label: 'HR Review', value: values.hrReview, color: '#22C1C3', percentage: this.calcPercentage(values.hrReview, total) },
+        { label: 'Under Review & Approval', value: values.underReview, color: '#22C1C3', percentage: this.calcPercentage(values.underReview, total) },
+        { label: 'Re-release Offer', value: values.reReleaseOffer, color: '#6CC24A', percentage: this.calcPercentage(values.reReleaseOffer, total) },
+        { label: 'Candidate Accepted', value: values.candidateAccepted, color: '#7C3AED', percentage: this.calcPercentage(values.candidateAccepted, total) },
+        { label: 'Candidate Rejected', value: values.candidateRejected, color: '#F59E0B', percentage: this.calcPercentage(values.candidateRejected, total) }
       ]
     };
   }
@@ -366,18 +393,20 @@ export class RecruiterDashboardComponentComponent implements OnInit {
           label: r.label,
           value: r.hires,
           color: r.color,
-          size: minSize + Math.round((r.hires / maxHires) * (maxSize - minSize))
+          size: minSize + Math.round((r.hires / maxHires) * (maxSize - minSize)),
+          percentage: this.calcPercentage(r.hires, total)
         })),
       tableData: raw
         .filter(r => r.hires > 0)
         .map(r => ({
           source: r.label,
           hires: r.hires,
-          cost: total > 0 ? `${((r.hires / total) * 100).toFixed(1)}%` : '0.0%'
+          cost: `${this.calcPercentage(r.hires, total)}%`
         }))
     };
   }
-  cardClick(data:any){
+
+  cardClick(data: any) {
     this.getDashboardCharts(data?.jobId)
   }
 }

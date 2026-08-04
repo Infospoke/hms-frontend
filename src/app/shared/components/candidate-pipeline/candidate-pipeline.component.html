@@ -65,7 +65,7 @@
 
       <div class="value">{{ stage.value }}</div>
 
-      <div class="percentage" *ngIf="stage.conversionPct">
+      <div class="percentage" *ngIf="stage.conversionPct !== undefined">
         ({{ stage.conversionPct }}%)
       </div>
 
@@ -79,10 +79,12 @@
       class="conversion"
       *ngFor="let stage of stages">
 
-      {{ stage.conversionPct ? stage.conversionPct + '%' : '' }}
+      {{ stage.conversionPct !== undefined ? stage.conversionPct + '%' : '' }}
 
     </div>
 
   </div>
+
+</div>
 
 </div>

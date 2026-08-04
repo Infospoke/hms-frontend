@@ -78,27 +78,12 @@ export class HiringManagerDashboardComponent implements OnInit {
   negoFrom = ''; negoTo = '';
 
   // ── Analytics date range (from the date-range-picker) ────────────────────
-  analyticsFromDate: string = this.getDefaultFromDate();
-  analyticsToDate: string = this.getDefaultToDate();
+  analyticsFromDate: string = '';
+  analyticsToDate: string = '';
   isAnalyticsLoading = false;
   analyticsError: string | null = null;
 
-  private getDefaultFromDate(): string {
-    const d = new Date();
-    d.setDate(1); // first day of current month
-    return this.formatDate(d);
-  }
-
-  private getDefaultToDate(): string {
-    return this.formatDate(new Date());
-  }
-
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+  
   kpiCards: KpiCard[] = [
     { label: 'Open SRs', value: 0, iconClass: 'fa-solid fa-briefcase', iconColor: '#3B82F6', iconBgColor: '#DBEAFE' },
     { label: 'Total Candidates', value: 0, iconClass: 'fa-solid fa-users', iconColor: '#10B981', iconBgColor: '#D1FAE5' },
@@ -310,8 +295,7 @@ export class HiringManagerDashboardComponent implements OnInit {
 
 
 
-  // ── Analytics API integration ─────────────────────────────────────────────
-
+  
   onDateRangeChange(range: DateRange): void {
     this.analyticsFromDate = range.startDate;
     this.analyticsToDate = range.endDate;
@@ -320,7 +304,7 @@ export class HiringManagerDashboardComponent implements OnInit {
   }
 
   async loadDashboardAnalytics(): Promise<void> {
-    if (!this.selectedSrId || !this.analyticsFromDate || !this.analyticsToDate) {
+    if (!this.selectedSrId) {
       return;
     }
 

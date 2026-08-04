@@ -11,7 +11,8 @@ import { DonutPieChartComponent, DonutSegment } from '../../../candidate-managem
 import { NgxApexsankeyComponent } from 'ngx-apexsankey';
 import type { GraphData, SankeyOptions } from 'ngx-apexsankey';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { DateRangePickerComponent } from '../../../../shared/components/date-range-picker/date-range-picker.component';
+import { DateRangePickerComponent, DateRange } from '../../../../shared/components/date-range-picker/date-range-picker.component';
+import { DashboardService } from '../../services/dashboard.service';
 
 export interface KpiCard {
   label: string; value: string | number;
@@ -24,6 +25,29 @@ export interface PipelineStage {
 
 export interface OfferStatusBar {
   label: string; count: number; color: string;
+}
+
+export interface HiringManagerAnalyticsResponse {
+  candidatePipeline: {
+    applied: number; screening: number; interview: number; offer: number; hired: number;
+    screeningPercentage: number; interviewPercentage: number; offerPercentage: number;
+    hiredPercentage: number; overallConversionRate: number;
+  };
+  candidateQuality: {
+    excellent: number; good: number; average: number; needsReview: number; totalCandidates: number;
+  };
+  hiringHealth: {
+    pipelineCoverage: number; offerProgress: number; candidateQuality: number;
+    requisitionsOnTrack: number; agingRequisitions: number;
+  };
+  negotiationFlow: {
+    negotiationRequest: number | null; hrReview: number | null; underReview: number | null;
+    reReleaseOffer: number | null; candidateAccepted: number | null; candidateRejected: number | null;
+  };
+  offerStatusFlow: {
+    offerRequestByHR: number; underReviewApproval: number; offerReleased: number;
+    offerAccepted: number; offerRejected: number;
+  };
 }
 
 @Component({
@@ -44,16 +68,61 @@ export class HiringManagerDashboardComponent implements OnInit {
 
   @ViewChild('reqCellTpl') reqCellTpl!: TemplateRef<any>;
   @ViewChild('healthCellTpl') healthCellTpl!: TemplateRef<any>;
-
+  selectedSrId: any = '';
   heading = `Good morning, Divya! 👋`;
   subHeading = "Here's what's happening with your hiring.";
   private authService = inject(AuthService);
+  private dashboardService = inject(DashboardService);
   pipelineFrom = ''; pipelineTo = '';
   offerStatusFrom = ''; offerStatusTo = '';
   negoFrom = ''; negoTo = '';
 
-  ngOnInit(): void {
+  // ── Analytics date range (from the date-range-picker) ────────────────────
+  analyticsFromDate: string = this.getDefaultFromDate();
+  analyticsToDate: string = this.getDefaultToDate();
+  isAnalyticsLoading = false;
+  analyticsError: string | null = null;
+
+  private getDefaultFromDate(): string {
+    const d = new Date();
+    d.setDate(1); // first day of current month
+    return this.formatDate(d);
+  }
+
+  private getDefaultToDate(): string {
+    return this.formatDate(new Date());
+  }
+
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  kpiCards: KpiCard[] = [
+    { label: 'Open SRs', value: 0, iconClass: 'fa-solid fa-briefcase', iconColor: '#3B82F6', iconBgColor: '#DBEAFE' },
+    { label: 'Total Candidates', value: 0, iconClass: 'fa-solid fa-users', iconColor: '#10B981', iconBgColor: '#D1FAE5' },
+    { label: 'Interviews', value: 0, iconClass: 'fa-solid fa-user-check', iconColor: '#8B5CF6', iconBgColor: '#EDE9FE' },
+    { label: 'Offers Released', value: 0, iconClass: 'fa-solid fa-file-signature', iconColor: '#F97316', iconBgColor: '#FFEDD5' },
+    { label: 'Hired', value: 0, iconClass: 'fa-solid fa-clock', iconColor: '#6366F1', iconBgColor: '#E0E7FF' },
+  ];
+  reqData: any[] = [];
+  reqColumns: TableColumn[] = [
+    { key: 'position', label: 'Position', width: '18%' },
+    { key: 'openings', label: 'Openings', width: '10%', align: 'center' },
+    { key: 'hired', label: 'Hired', width: '10%', align: 'center' },
+    { key: 'inProgress', label: 'In-Progress', width: '12%', align: 'center' },
+    { key: 'targetStart', label: 'Target Start Date', width: '16%', align: 'center', custom: true },
+    { key: 'priority', label: 'Priority', width: '12%', align: 'center', custom: true },
+    { key: 'slaStatus', label: 'SLA Status', width: '12%', align: 'center', custom: true },
+  ];
+  async ngOnInit(): Promise<void> {
     this.handleHeading();
+    await this.getHiringManagerDashboardCount();
+
+    if (this.selectedSrId) {
+      await this.loadDashboardAnalytics();
+    }
   }
 
   handleHeading() {
@@ -70,107 +139,77 @@ export class HiringManagerDashboardComponent implements OnInit {
     }
 
   }
-  kpiCards: KpiCard[] = [
-    { label: 'Open SRs', value: 6, iconClass: 'fa-solid fa-briefcase', iconColor: '#3B82F6', iconBgColor: '#DBEAFE' },
-    { label: 'Total Candidates', value: 141, iconClass: 'fa-solid fa-users', iconColor: '#10B981', iconBgColor: '#D1FAE5' },
-    { label: 'Interviews', value: 18, iconClass: 'fa-solid fa-user-check', iconColor: '#8B5CF6', iconBgColor: '#EDE9FE' },
-    { label: 'Offers Released', value: 8, iconClass: 'fa-solid fa-file-signature', iconColor: '#F97316', iconBgColor: '#FFEDD5' },
-    { label: 'Hired', value: '21 Days', iconClass: 'fa-solid fa-clock', iconColor: '#6366F1', iconBgColor: '#E0E7FF' },
-  ];
+  async getHiringManagerDashboardCount() {
+    const res: any = await this.dashboardService.getHiringManagerDashboardCount();
+    if (res?.responsecode == '00') {
+      const data = res.data;
+      const cards = data?.cards;
+      this.kpiCards[0].value = cards?.openSrs ?? 0;
+      this.kpiCards[1].value = cards?.totalCandidates ?? 0;
+      this.kpiCards[2].value = cards?.interviews ?? 0;
+      this.kpiCards[3].value = cards?.offers ?? 0;
+      this.kpiCards[4].value = cards?.averageHiringAge ?? 0;
+      this.reqData = this.mapRequisitions(data?.myRequisitions);
+      this.selectedSrId = data?.myRequisitions?.[0]?.srId ?? '';
+    }
+  }
+  
+
+  private mapRequisitions(list: any[]): any[] {
+    return (list ?? []).map((item: any) => {
+      const totalOpenings = item?.totalOpenings ?? 0;
+      const yetToFill = item?.yetToFill ?? 0;
+      const inProgress = item?.inProgress ?? 0;
+      
+      const hired = Math.max(totalOpenings - yetToFill - inProgress, 0);
+
+      return {
+        position: item?.position ?? '—',
+        openings: totalOpenings,
+        hired,
+        inProgress,
+        srId: item?.srId ?? '',
+        jobId:item?.jobId??'',
+        targetStart: this.formatDisplayDate(item?.targetStartDate),
+        daysRemaining: item?.daysRemaining ?? 0,
+        priority: item?.priority ?? '—',
+        slaStatus: this.normalizeSlaStatus(item?.slaStatus),
+      };
+    });
+  }
+
+  // "2026-06-30" → "30 Jun 2026"
+  private formatDisplayDate(isoDate: string | null | undefined): string {
+    if (!isoDate) return '—';
+    const d = new Date(isoDate);
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  // API returns "Over Due" (with a space); badge classes expect "Overdue".
+  private normalizeSlaStatus(status: string | null | undefined): string {
+    if (!status) return '—';
+    return status === 'Over Due' ? 'Overdue' : status;
+  }
 
 
-  reqColumns: TableColumn[] = [
-    { key: 'position', label: 'Position', width: '15%' },
-    { key: 'openings', label: 'Openings', width: '8%', align: 'center' },
-    { key: 'offersReleased', label: 'Offers Released', width: '9%', align: 'center' },
-    { key: 'offersPending', label: 'Offers Pending', width: '9%', align: 'center' },
-    { key: 'targetStart', label: 'Target Start Date', width: '13%', align: 'center', custom: true },
-    { key: 'daysRemaining', label: 'Days Remaining', width: '8%', align: 'center', custom: true },
-    { key: 'priority', label: 'Priority', width: '12%', align: 'center', custom: true },
-    { key: 'slaStatus', label: 'SLA Status', width: '12%', align: 'center', custom: true },
 
-  ];
-
-  reqData = [
-    {
-      position: 'Backend Engineer',
-      openings: 5,
-      offersReleased: 3,
-      offersPending: 1,
-      targetStart: '15 Aug 2026',
-      daysRemaining: 11,
-      priority: 'High',
-      slaStatus: 'On Track',
-    },
-    {
-      position: 'QA Lead',
-      openings: 2,
-      offersReleased: 1,
-      offersPending: 0,
-      targetStart: '08 Aug 2026',
-      daysRemaining: 4,
-      priority: 'Critical',
-      slaStatus: 'At Risk',
-    },
-    {
-      position: 'HR Executive',
-      openings: 3,
-      offersReleased: 2,
-      offersPending: 1,
-      targetStart: '20 Aug 2026',
-      daysRemaining: 16,
-      priority: 'Medium',
-      slaStatus: 'On Track',
-    },
-    {
-      position: 'Data Analyst',
-      openings: 2,
-      offersReleased: 1,
-      offersPending: 0,
-      targetStart: '05 Aug 2026',
-      daysRemaining: 1,
-      priority: 'High',
-      slaStatus: 'At Risk',
-    },
-    {
-      position: 'SAP Consultant',
-      openings: 2,
-      offersReleased: 1,
-      offersPending: 0,
-      targetStart: '01 Aug 2026',
-      daysRemaining: -3,
-      priority: 'Critical',
-      slaStatus: 'Overdue',
-    },
-    {
-      position: 'Frontend Developer',
-      openings: 3,
-      offersReleased: 0,
-      offersPending: 2,
-      targetStart: '25 Aug 2026',
-      daysRemaining: 21,
-      priority: 'Low',
-      slaStatus: 'On Track',
-    },
-  ];
-
-  // ── Candidate Pipeline — Chevron Funnel ───────────────────────────────────
   pipelineStages: PipelineStage[] = [
-    { label: 'Applied', value: 128, color: '#3B82F6' },
-    { label: 'Screening', value: 64, color: '#14B8A6', conversionPct: 50 },
-    { label: 'Interview', value: 21, color: '#8B5CF6', conversionPct: 33 },
-    { label: 'Offer', value: 5, color: '#F97316', conversionPct: 24 },
-    { label: 'Hired', value: 2, color: '#22C55E', conversionPct: 40 },
+    { label: 'Applied', value: 0, color: '#3B82F6' },
+    { label: 'Screening', value: 0, color: '#14B8A6', conversionPct: 50 },
+    { label: 'Interview', value: 0, color: '#8B5CF6', conversionPct: 33 },
+    { label: 'Offer', value: 0, color: '#F97316', conversionPct: 24 },
+    { label: 'Hired', value: 0, color: '#22C55E', conversionPct: 40 },
   ];
 
   // ── Offer Status — Horizontal Bars ────────────────────────────────────────
   offerStatusBars: OfferStatusBar[] = [
-    { label: 'Offer Requests', count: 22, color: '#3B82F6' },
-    { label: 'Pending Approval', count: 14, color: '#F59E0B' },
-    { label: 'Approved', count: 10, color: '#22C55E' },
-    { label: 'Offer Released', count: 8, color: '#8B5CF6' },
-    { label: 'Offer Accepted', count: 6, color: '#10B981' },
-    { label: 'Declined', count: 2, color: '#EF4444' },
+    { label: 'Offer Requests', count: 0, color: '#3B82F6' },
+    { label: 'Pending Approval', count: 0, color: '#F59E0B' },
+    { label: 'Approved', count: 0, color: '#22C55E' },
+    { label: 'Offer Released', count: 0, color: '#8B5CF6' },
+    { label: 'Offer Accepted', count: 0, color: '#10B981' },
+    { label: 'Declined', count: 0, color: '#EF4444' },
   ];
 
   get offerStatusMax(): number {
@@ -246,14 +285,14 @@ export class HiringManagerDashboardComponent implements OnInit {
 
   // ── Candidate Quality — Donut ─────────────────────────────────────────────
   candidateQualitySegments: DonutSegment[] = [
-    { label: 'Excellent (90–100)', value: 12, color: '#10B981' },
-    { label: 'Good (80–89)', value: 18, color: '#3B82F6' },
-    { label: 'Average (70–79)', value: 9, color: '#F59E0B' },
-    { label: 'Needs Review (<70)', value: 3, color: '#EF4444' },
+    { label: 'Excellent (90–100)', value: 0, color: '#10B981' },
+    { label: 'Good (80–89)', value: 0, color: '#3B82F6' },
+    { label: 'Average (70–79)', value: 0, color: '#F59E0B' },
+    { label: 'Needs Review (<70)', value: 0, color: '#EF4444' },
   ];
 
   // ── Hiring Health — Gauge + Table ─────────────────────────────────────────
-  hiringHealthScore = 87;
+  hiringHealthScore = 0;
 
   healthColumns: TableColumn[] = [
     { key: 'metric', label: 'Metric', width: '52%' },
@@ -262,16 +301,155 @@ export class HiringManagerDashboardComponent implements OnInit {
   ];
 
   healthData = [
-    { metric: 'Pipeline Coverage', score: '95%', status: 'Excellent' },
-    { metric: 'Offer Progress', score: '88%', status: 'Good' },
-    { metric: 'Candidate Quality', score: '91%', status: 'Excellent' },
-    { metric: 'Requisitions On Track', score: '82%', status: 'Good' },
-    { metric: 'SLA Compliance', score: '75%', status: 'Fair' },
+    { metric: 'Pipeline Coverage', score: '0%', status: 'Excellent' },
+    { metric: 'Offer Progress', score: '0%', status: 'Good' },
+    { metric: 'Candidate Quality', score: '0%', status: 'Excellent' },
+    { metric: 'Requisitions On Track', score: '0%', status: 'Good' },
+    { metric: 'SLA Compliance', score: '0%', status: 'Fair' },
   ];
 
 
 
-   onDateRangeChange(range:any): void {
-    console.log(range);
+  // ── Analytics API integration ─────────────────────────────────────────────
+
+  onDateRangeChange(range: DateRange): void {
+    this.analyticsFromDate = range.startDate;
+    this.analyticsToDate = range.endDate;
+    
+    this.loadDashboardAnalytics();
+  }
+
+  async loadDashboardAnalytics(): Promise<void> {
+    if (!this.selectedSrId || !this.analyticsFromDate || !this.analyticsToDate) {
+      return;
+    }
+
+    this.isAnalyticsLoading = true;
+    this.analyticsError = null;
+
+    try {
+      const res: any = await this.dashboardService.getHiringManagerDashboardData(
+        this.selectedSrId,
+        this.analyticsFromDate,
+        this.analyticsToDate
+      );
+
+      if (res?.responsecode === '00' && res?.data) {
+        this.mapAnalyticsResponse(res.data);
+      } else {
+        this.analyticsError = res?.message || 'Failed to load analytics.';
+      }
+    } catch (err) {
+      this.analyticsError = 'Something went wrong while loading analytics.';
+      console.error('getHiringManagerDashboardAnalytics failed', err);
+    } finally {
+      this.isAnalyticsLoading = false;
+    }
+  }
+
+  private mapAnalyticsResponse(data: HiringManagerAnalyticsResponse): void {
+    this.mapCandidatePipeline(data.candidatePipeline);
+    this.mapCandidateQuality(data.candidateQuality);
+    this.mapHiringHealth(data.hiringHealth);
+    this.mapOfferStatusFlow(data.offerStatusFlow);
+    this.mapNegotiationFlow(data.negotiationFlow);
+  }
+
+  private mapCandidatePipeline(cp: HiringManagerAnalyticsResponse['candidatePipeline']): void {
+    if (!cp) return;
+    this.pipelineStages = [
+      { label: 'Applied', value: cp.applied ?? 0, color: '#3B82F6' },
+      { label: 'Screening', value: cp.screening ?? 0, color: '#14B8A6', conversionPct: cp.screeningPercentage ?? 0 },
+      { label: 'Interview', value: cp.interview ?? 0, color: '#8B5CF6', conversionPct: cp.interviewPercentage ?? 0 },
+      { label: 'Offer', value: cp.offer ?? 0, color: '#F97316', conversionPct: cp.offerPercentage ?? 0 },
+      { label: 'Hired', value: cp.hired ?? 0, color: '#22C55E', conversionPct: cp.hiredPercentage ?? 0 },
+    ];
+  }
+
+  private mapCandidateQuality(cq: HiringManagerAnalyticsResponse['candidateQuality']): void {
+    if (!cq) return;
+    this.candidateQualitySegments = [
+      { label: 'Excellent (90–100)', value: cq.excellent ?? 0, color: '#10B981' },
+      { label: 'Good (80–89)', value: cq.good ?? 0, color: '#3B82F6' },
+      { label: 'Average (70–79)', value: cq.average ?? 0, color: '#F59E0B' },
+      { label: 'Needs Review (<70)', value: cq.needsReview ?? 0, color: '#EF4444' },
+    ];
+  }
+
+  private mapHiringHealth(hh: HiringManagerAnalyticsResponse['hiringHealth']): void {
+    if (!hh) return;
+
+    const metrics: { metric: string; score: number }[] = [
+      { metric: 'Pipeline Coverage', score: hh.pipelineCoverage ?? 0 },
+      { metric: 'Offer Progress', score: hh.offerProgress ?? 0 },
+      { metric: 'Candidate Quality', score: hh.candidateQuality ?? 0 },
+      { metric: 'Requisitions On Track', score: hh.requisitionsOnTrack ?? 0 },
+      { metric: 'Aging Requisitions', score: hh.agingRequisitions ?? 0 },
+    ];
+
+    this.healthData = metrics.map(m => ({
+      metric: m.metric,
+      score: `${m.score}%`,
+      status: this.getHealthStatus(m.score),
+    }));
+
+    // Overall gauge score = average of the individual health metrics.
+    const avg = metrics.reduce((sum, m) => sum + m.score, 0) / metrics.length;
+    this.hiringHealthScore = Math.round(avg);
+  }
+
+  private getHealthStatus(score: number): string {
+    if (score >= 90) return 'Excellent';
+    if (score >= 75) return 'Good';
+    if (score >= 60) return 'Fair';
+    return 'Critical';
+  }
+
+  private mapOfferStatusFlow(osf: HiringManagerAnalyticsResponse['offerStatusFlow']): void {
+    if (!osf) return;
+    this.offerStatusBars = [
+      { label: 'Offer Requests', count: osf.offerRequestByHR ?? 0, color: '#3B82F6' },
+      { label: 'Pending Approval', count: osf.underReviewApproval ?? 0, color: '#F59E0B' },
+      { label: 'Offer Released', count: osf.offerReleased ?? 0, color: '#8B5CF6' },
+      { label: 'Offer Accepted', count: osf.offerAccepted ?? 0, color: '#10B981' },
+      { label: 'Declined', count: osf.offerRejected ?? 0, color: '#EF4444' },
+    ];
+  }
+
+  
+  private mapNegotiationFlow(nf: HiringManagerAnalyticsResponse['negotiationFlow']): void {
+    if (!nf) return;
+
+    const edges: GraphData['edges'] = [];
+
+    if (nf.negotiationRequest) {
+      edges.push({ source: 'released', target: 'neg_started', value: nf.negotiationRequest, type: 'flow' });
+    }
+    if (nf.hrReview) {
+      edges.push({ source: 'neg_started', target: 'mgr_review', value: nf.hrReview, type: 'flow' });
+    }
+    if (nf.underReview) {
+      edges.push({ source: 'mgr_review', target: 'fop', value: nf.underReview, type: 'flow' });
+    }
+    if (nf.reReleaseOffer) {
+      edges.push({ source: 'fop', target: 'counter', value: nf.reReleaseOffer, type: 'flow' });
+    }
+    if (nf.candidateAccepted) {
+      edges.push({ source: 'fop', target: 'closed_accepted', value: nf.candidateAccepted, type: 'flow' });
+    }
+    if (nf.candidateRejected) {
+      edges.push({ source: 'fop', target: 'closed_declined', value: nf.candidateRejected, type: 'flow' });
+    }
+
+    // Keep the existing node list/colors; only swap edges if we actually got data,
+    // so the chart doesn't render blank when the period has no negotiation activity.
+    if (edges.length > 0) {
+      this.apexSankeyData = { ...this.apexSankeyData, edges };
+    }
+  }
+  handleData(data:any){
+    console.log('data',data);
+    this.selectedSrId = data?.srId ?? '';
+    this.loadDashboardAnalytics();
   }
 }

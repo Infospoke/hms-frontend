@@ -122,4 +122,9 @@ export class ApprovalService {
   async getDepartmentsByType(payload:any){
     return await firstValueFrom(this.api.hrmspost(API.CANDIDATE_MANANGEMENT.DEPARMENT,payload))
   }
+
+
+  async approvePythonApi(payload:any){
+    return await firstValueFrom(this.api.aiPost(API.CANDIDATE_MANANGEMENT.APPROVEAL,payload))
+  }
 }

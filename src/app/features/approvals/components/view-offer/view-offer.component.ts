@@ -109,12 +109,7 @@ export class ViewOfferComponent implements OnInit {
   get isReleaseMode(): boolean { return this.pageMode === 'release'; }
   get isViewMode(): boolean { return this.pageMode === 'view'; }
 
-  /**
-   * Passed in via router state from the list page (only true when the
-   * navigating user's role is 'Finance Head'). Only Finance Head gets the
-   * e-signature + comments card — everyone else in approve mode goes
-   * straight to Approve/Reject with no upload requirement.
-   */
+  
   isUpload = false;
 
   // ── Header ───────────────────────────────────────────────────────────────
@@ -293,13 +288,7 @@ export class ViewOfferComponent implements OnInit {
     }
   }
 
-  /**
-   * Only used when no explicit mode was passed in (deep link / refresh).
-   * NOTE: this API doesn't return a "released" flag, so there's currently no
-   * way to distinguish an already-released offer from an approved-but-not-yet
-   * -released one purely from this response — defaulting to 'release' once
-   * every stage is approved. Swap in the real flag once it's available.
-   */
+  
   private deriveModeFromOffer(): OfferPageMode {
     return this.overallStatus === 'Approved' ? 'release' : 'approve';
   }

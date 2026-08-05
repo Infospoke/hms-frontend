@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DashboardLayoutComponent } from '../dashboard-layout/dashboard-layout.component';
 import { recruitersPerformanceFilter } from '../../../../shared/constants/reusbale-filter';
 import { JobAssignmentsTableComponent, JobAssignmentRow } from '../../../../shared/components/job-assignments-table/job-assignments-table.component';
-import { HiringFlowProgressComponent, FlowStage } from '../../../../shared/components/hiring-flow-progress/hiring-flow-progress.component';
 import { SourcePerformanceGridComponent, SourceTile } from '../../../../shared/components/source-performance-grid/source-performance-grid.component';
 import { FunnelChartComponent, FunnelStageData } from '../../../../shared/components/funnel-chart/funnel-chart.component';
 import { MultiLineChartComponent, LineSeriesInput } from '../../../../shared/components/multi-line-chart/multi-line-chart.component';
 import { CandidatePipelineComponent } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
+import { FlowStage } from '../../../../shared/components/hiring-flow-progress/hiring-flow-progress.component';
+import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-recruiters-performance-dashboard',
@@ -15,7 +16,6 @@ import { CandidatePipelineComponent } from '../../../../shared/components/candid
     CommonModule,
     DashboardLayoutComponent,
     JobAssignmentsTableComponent,
-    HiringFlowProgressComponent,
     SourcePerformanceGridComponent,
     MultiLineChartComponent,
     CandidatePipelineComponent
@@ -23,16 +23,21 @@ import { CandidatePipelineComponent } from '../../../../shared/components/candid
   templateUrl: './recruiters-performance-dashboard.component.html',
   styleUrl: './recruiters-performance-dashboard.component.scss',
 })
-export class RecruitersPerformanceDashboardComponent {
+export class RecruitersPerformanceDashboardComponent implements OnInit {
 
   heading = 'Recruiter Performance Drill-down';
   subHeading = "Track recruiter execution from job assignment to hiring outcome";
+
+  private dashboardService=inject(DashboardService);
 
   // Recruiters + Date filters — same app-common-filter dropdowns used in
   // recruiter-assignment/approval-layout/etc. Dummy recruiter options for
   // now.
   filterDropdowns = recruitersPerformanceFilter;
 
+ngOnInit(): void {
+  this.getDashboardCount();
+}
   onFilterChange(event: any): void {
     // Dummy data for now — nothing to re-query yet, but this is where the
     // selected recruiter/date-range would drive a real API call.
@@ -115,35 +120,35 @@ export class RecruitersPerformanceDashboardComponent {
   cards = [
     {
       label: 'Assignments',
-      value: 18,
+      value: 0,
       iconClass: 'fa-solid fa-briefcase',
       iconBgColor: '#DBEAFE',
       iconColor: '#3B82F6',
     },
     {
       label: 'Applications Added',
-      value: 425,
+      value: 0,
       iconClass: 'fa-solid fa-users',
       iconBgColor: '#F3E8FF',
       iconColor: '#9333EA',
     },
     {
       label: 'Offers Released',
-      value: 18,
+      value: 0,
       iconClass: 'fa-solid fa-gift',
       iconBgColor: '#FFEDD5',
       iconColor: '#F97316',
     },
     {
       label: 'Hired',
-      value: 12,
+      value: 0,
       iconClass: 'fa-solid fa-user',
       iconBgColor: '#DCFCE7',
       iconColor: '#22C55E',
     },
     {
       label: 'SLA Compliance',
-      value: '94%',
+      value: '0',
       iconClass: 'fa-solid fa-shield-halved',
       iconBgColor: '#DBEAFE',
       iconColor: '#2563EB',
@@ -151,15 +156,9 @@ export class RecruitersPerformanceDashboardComponent {
   ];
 
   // ── Job Assignments table ─────────────────────────────────────────────────
-  jobAssignments: JobAssignmentRow[] = [
-    { jobTitle: 'Backend Engineer', assignmentStatus: 'Accepted', acceptedOn: '02 Jul 2025', priority: 'High', requestedOpenings: 5, filled: 5, remaining: 3, targetDate: '30 Jul 2025', daysDue: 5, slaStatus: 'On Track' },
-    { jobTitle: 'QA Lead', assignmentStatus: 'Accepted', acceptedOn: '03 Jul 2025', priority: 'Medium', requestedOpenings: 2, filled: 2, remaining: 0, targetDate: '25 Jul 2025', daysDue: 0, slaStatus: 'Completed' },
-    { jobTitle: 'Data Analyst', assignmentStatus: 'Accepted', acceptedOn: '04 Jul 2025', priority: 'Medium', requestedOpenings: 4, filled: 4, remaining: 1, targetDate: '10 Aug 2025', daysDue: 10, slaStatus: 'At Risk' },
-    { jobTitle: 'Frontend Developer', assignmentStatus: 'Rejected', acceptedOn: '05 Jul 2025', priority: 'High', requestedOpenings: 3, filled: 3, remaining: 0, targetDate: '15 Jul 2025', daysDue: -2, slaStatus: 'Overdue' },
-    { jobTitle: 'DevOps Engineer', assignmentStatus: 'Accepted', acceptedOn: '05 Jul 2025', priority: 'Medium', requestedOpenings: 2, filled: 2, remaining: 0, targetDate: '15 Jul 2025', daysDue: -2, slaStatus: 'Overdue' },
-  ];
+  jobAssignments: JobAssignmentRow[] =[];
 
-  // ── SLA Compliance by Hiring Flow ─────────────────────────────────────────
+  // ── SLA Compliance by Hiring Flow ────────────────────────────────────────
   flowStages: FlowStage[] = [
     { icon: 'fa-solid fa-briefcase', iconBg: '#EAF3FF', color: '#2E9E9E', label: '1. Assignment Acceptance', percent: 94, fraction: '18 / 19', subLabel: 'Within SLA' },
     { icon: 'fa-solid fa-user-group', iconBg: '#F3E8FF', color: '#8B5CF6', label: '2. Screening to Interview', percent: 91, fraction: '388 / 425', subLabel: 'Within SLA' },
@@ -206,4 +205,77 @@ export class RecruitersPerformanceDashboardComponent {
     { name: 'Offers Released', data: [50, 55, 65, 60, 75, 85], color: '#F97316' },
     { name: 'Applications Added', data: [120, 135, 155, 145, 160, 190], color: '#8B5CF6' },
   ];
+
+  async getDashboardCount(){
+
+    const obj={
+      "sortBy": "assignedAt",
+  "direction": "DESC",
+  "filters": {
+   "recruiterId": "6",
+   "fromDate": "2026-07-01",
+   "toDate": "2026-07-31"
+  }
+    }
+    
+    const res: any = await this.dashboardService.getRecruiterPerformanceDashboardCount(obj);
+    if (res.responsecode == '00') {
+      const cardCount = res?.data?.dashboardCounts;
+      const jobsList = res?.data?.assignments;
+
+
+      this.cards = [
+    {
+      label: 'Assignments',
+       value:cardCount?.totalAssignments,
+      iconClass: 'fa-solid fa-briefcase',
+      iconBgColor: '#DBEAFE',
+      iconColor: '#3B82F6',
+    },
+    {
+      label: 'Applications Added',
+      value: cardCount?.applicationsAdded,
+      iconClass: 'fa-solid fa-users',
+      iconBgColor: '#F3E8FF',
+      iconColor: '#9333EA',
+    },
+    {
+      label: 'Offers Released',
+      value: cardCount?.offersReleased,
+      iconClass: 'fa-solid fa-gift',
+      iconBgColor: '#FFEDD5',
+      iconColor: '#F97316',
+    },
+    {
+      label: 'Hired',
+      value: cardCount?.hired ?? 0,
+      iconClass: 'fa-solid fa-user',
+      iconBgColor: '#DCFCE7',
+      iconColor: '#22C55E',
+    },
+    {
+      label: 'SLA Compliance',
+      value: '94%',
+      iconClass: 'fa-solid fa-shield-halved',
+      iconBgColor: '#DBEAFE',
+      iconColor: '#2563EB',
+    },
+  ];
+  
+this.jobAssignments=this.jobAssignmentsList(jobsList);
+console.log(this.jobAssignments)
+
+
+    }
+
+
+  }
+  jobAssignmentsList(data:any){
+    return data.map((item:any)=>({
+        jobTitle: item.jobTitle, assignmentStatus: item.assignmentStatus, acceptedOn:item.acceptedOn, priority:item.priority, requestedOpenings:item.requestedOpenings, filled:item.filled, remaining:item.remaining, targetDate:item.targetDate, daysDue:item.daysLeft, slaStatus:item.sla,jobId:item.jobId,srId:item.srId
+    }))
+      
+    
+  }
+
 }

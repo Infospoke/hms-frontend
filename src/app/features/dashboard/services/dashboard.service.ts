@@ -53,4 +53,8 @@ export class DashboardService {
       this.api.hrmsget(API.DASHBOARD.RECRUITER_DASHBOARD, params)
     )
   }
+  async getRecruiterPerformanceDashboardCount(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmspost(API.DASHBOARD.RECRUITER_PERFORMANCE_DASHBOARD_COUNT,payload));
+  }
+
 }

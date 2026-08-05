@@ -1,4 +1,5 @@
 import { sr_RS } from "ng-zorro-antd/i18n";
+import { RecruitersPerformanceDashboardComponent } from "../../features/dashboard/components/recruiters-performance-dashboard/recruiters-performance-dashboard.component";
 
 export const API = {
     AUTH: {
@@ -217,6 +218,8 @@ export const API = {
         RECRUITER_DASHBOARD:`/hms/dashboard/analytics`,
         
         HIRING_MANAGER_DASHBOARD:`/hms/dashboard/hiring-dashboard-analytics`,
+
+        RECRUITER_PERFORMANCE_DASHBOARD_COUNT:`/hms/dashboard/recruiter-performance-dashboard`
 
     }
 };

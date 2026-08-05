@@ -164,9 +164,13 @@ export class CreateNewChainComponent implements OnInit {
 
   // ── Dropdowns ─────────────────────────────────────────────────────────────
   private async loadInitialDropdowns(): Promise<void> {
+    const payload={
+      "userDepartments":true
+    }
     try {
+
       const [deptRes, funcRes] = await Promise.all([
-        this.approvalService.departments() as Promise<any>,
+        this.approvalService.getDepartmentsByType(payload) as Promise<any>,
         this.isCreate ? this.approvalService.getFunctionalities() as Promise<any> : Promise.resolve([]),
       ]);
 

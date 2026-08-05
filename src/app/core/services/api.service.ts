@@ -56,7 +56,7 @@ export class ApiService {
     });
   }
 
-   viewOffer(endpoint: string, params?: any): Observable<Blob> {
+  viewOffer(endpoint: string, params?: any): Observable<Blob> {
     return this.http.get(`${this.hrmsUrl}${endpoint}`, {
       params,
       responseType: 'blob'
@@ -139,5 +139,8 @@ export class ApiService {
       responseType: 'blob',
       observe: 'response'
     });
+  }
+  aiPostBlob(endpoint: string, payload: any): Observable<Blob> {
+    return this.http.post(`${this.aiBaseUrl}${endpoint}`, payload, { responseType: 'blob' });
   }
 }

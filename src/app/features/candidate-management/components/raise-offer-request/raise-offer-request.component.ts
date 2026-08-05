@@ -478,6 +478,8 @@ export class RaiseOfferRequestComponent implements OnInit {
     return data.map((item: any) => ({
       id: item.applicantId,
       name: item.candidateName,
+      jobId:item?.jobId,
+      offerId:item?.offerId,
       email: item.candidateEmail,
       avatarInitials: this.getAvatarInitials(item.candidateName),
       avatarColor: this.getAvatarColor(item.candidateName),
@@ -610,7 +612,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
 
   onRaiseOfferRequest(candidate: any) {
-    this.router.navigate([`/candidate-management/offer-management/details/${candidate?.id}`])
+    this.router.navigate([`/candidate-management/offer-management/details/${candidate?.id}/${candidate?.jobId}/${candidate?.offerId}`], );
 
   }
 
@@ -618,7 +620,7 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   onViewApprovalDetails(row: any) {
     if(this.activeStageId === 'rol' && this.activeTabId === 'negAppovals') {
-      this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}`])   
+      this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}/${row?.offerId}`])   
     }
     else{
       this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {

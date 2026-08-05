@@ -196,7 +196,7 @@ export const API = {
         GET_PENDING_APPROVALS:`/hms/offer-details/get-pending-approvals`,
         GET_OFFER_TEMPLATED:`/hms/configurations/offer-letter-templates`,
         SUBMIT_RISE_OFFER_REQUEST:`/hms/offer-details/submit-raise-offer-request`,
-        GENERATE_OFFER_LETTER:`/api/offer/generate-offer-letter`,
+        GENERATE_OFFER_LETTER:`/api/admin/generate-offer-letter`,
         VIEW_OFFER_LETTER:(id:any)=>`/hms/offer-details/download/offerLetter?appId=${id}&action=view`,
         OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`,
         GET_NAGOTIATE_LIST:`/hms/offer-details/negotiation-list`,

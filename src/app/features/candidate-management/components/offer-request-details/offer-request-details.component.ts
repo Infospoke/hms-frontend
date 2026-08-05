@@ -87,8 +87,7 @@ interface OfferDetailsApiResponse {
   imports: [CommonModule, FormsModule, DonutPieChartComponent],
   templateUrl: './offer-request-details.component.html',
   styleUrls: ['./offer-request-details.component.scss'],
-  // OnPush + stable field references (built once per API response, not via
-  // getters) is what keeps the donut chart from rebuilding on every CD cycle.
+  
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OfferRequestDetailsComponent implements OnInit {
@@ -120,9 +119,7 @@ export class OfferRequestDetailsComponent implements OnInit {
     joiningDate: '',
   };
 
-  // Earliest selectable joining date: tomorrow. Bound to the date input's
-  // [min] attribute so today and every past date are disabled in the picker
-  // (and flagged invalid if typed in manually).
+  
   minJoiningDate = this.computeMinJoiningDate();
 
   marketComparison: MarketComparison = {
@@ -147,14 +144,19 @@ export class OfferRequestDetailsComponent implements OnInit {
   @ViewChild('offerForm') offerForm?: NgForm;
 
   private applicantId: any;
-  private jobId?: number;
+  private jobId?: any;
+  
+  private candidateId?: number;
+  private offerId?:any;
   private candidateService = inject(CandidateServiceComponent);
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-
+ 
   ngOnInit(): void {
     this.applicantId = this.activeRoute.snapshot.paramMap.get('id');
+    this.jobId=this.activeRoute.snapshot.paramMap.get('jobId');
+    this.offerId=this.activeRoute.snapshot.paramMap.get('offerId');
     Promise.all([this.getOfferTemplates(), this.loadOfferDetailsById()])
 
   }
@@ -170,7 +172,7 @@ export class OfferRequestDetailsComponent implements OnInit {
   private async loadOfferDetailsById(): Promise<void> {
     try {
 
-      const res: OfferDetailsApiResponse = await this.candidateService.getOfferDetails(this.applicantId);
+      const res: any = await this.candidateService.getOfferDetails(this.applicantId);
       if (res?.responsecode == '00') {
         this.applyOfferDetails(res.data);
       } else {
@@ -184,7 +186,7 @@ export class OfferRequestDetailsComponent implements OnInit {
     }
   }
 
-  private applyOfferDetails(data: OfferDetailsApiResponse['data']): void {
+  private applyOfferDetails(data: any): void {
     this.candidate = {
       name: data.candidateName,
       email: data.email,
@@ -192,25 +194,25 @@ export class OfferRequestDetailsComponent implements OnInit {
       jobTitle: data.jobTitle,
       department: data.department,
       recruiter: data.recruiter,
-      // TODO: no formatted request-id field in this API yet — falling back
-      // to the applicant id. Swap in the real request id once it's returned.
+      
       requestId: `OFR-${data.applicantId}`,
       requestedOn: this.formatDate(data.requestedOn),
       status: this.candidate.status,
     };
 
-    this.jobId = data.jobId;
+    // this.jobId = data.jobId;
+    
+    this.candidateId = data.candidateId;
+    // this.offerId = data.offerId;
 
     this.compensation = [
       { label: 'Basic salary', type: 'Fixed', value: data.basicSalary, color: '#3357e8' },
       { label: 'Signing bonus', type: 'One-time', value: data.signingBonus, color: '#8b5cf6' },
-      { label: 'Annual RSU / ESOP value', type: 'Equity', value: data.annualRsuEsopValue, color: '#10b981' },
+      { label: 'Annual RSU / ESOP value', type: 'Equity', value: data.equity, color: '#10b981' },
       { label: 'Other benefits', type: 'Fixed', value: data.otherBenefits, color: '#f59e0b' },
     ];
 
-    // Use the API's own totalCtc rather than summing the rows ourselves —
-    // the two aren't guaranteed to match (e.g. basicSalary already reflects
-    // an annualized/base figure distinct from the individual line items).
+    
     this.totalCTC = data.offeredCtc ?? data.offeredCtc ?? 0;
 
     this.donutSegments = this.compensation.map((row) => ({
@@ -377,8 +379,7 @@ export class OfferRequestDetailsComponent implements OnInit {
     return marker.label;
   }
 
-  // --- Actions -------------------------------------------------------------
-
+ 
   async generateOfferLetter(): Promise<void> {
     const templateCtrl = this.offerForm?.controls['offerTemplate'];
     if (templateCtrl && templateCtrl.invalid) {
@@ -387,36 +388,28 @@ export class OfferRequestDetailsComponent implements OnInit {
       return;
     }
 
-    // const payload = {
-    //   application_id: Number(this.applicantId),
-    //   job_id: this.jobId,
-    //   basic_salary: this.getCompensationValue('Basic salary'),
-    //   signing_bonus: this.getCompensationValue('Signing bonus'),
-    //   equity_rsu: this.getCompensationValue('Annual RSU / ESOP value'),
-    //   other_benefits: this.getCompensationValue('Other benefits'),
-    //   notice_period: this.extractNoticePeriodDays(this.offerTerms.noticePeriod),
-    // };
     const payload = {
-
-      "application_id": 7,
-      "job_id": 49,
-      "basic_salary": 1235000,
-      "signing_bonus": 247000,
-      "equity_rsu": 150000,
-      "other_benefits": 190000,
-      "notice_period": "15"
-    }
+      application_id: Number(this.applicantId),
+      job_id: this.jobId,
+      offer_id:this.offerId,
+      candidate_id: this.candidateId, // TODO: confirm this field once offer-details response is updated
+           // TODO: confirm this field once offer-details response is updated
+      basic_salary: this.getCompensationValue('Basic salary'),
+      signing_bonus: this.getCompensationValue('Signing bonus'),
+      equity_rsu: this.getCompensationValue('Annual RSU / ESOP value'),
+      other_benefits: this.getCompensationValue('Other benefits'),
+      notice_period: this.extractNoticePeriodDays(this.offerTerms.noticePeriod),
+    };
 
     try {
-      const res: any = await this.candidateService.generateOfferLetter(payload);
-      if (res?.responsecode === '00') {
-        this.notificationService.success(res?.message || res?.data);
-        console.log('Offer letter generated:', res?.data);
-      } else {
-        console.error('Failed to generate offer letter:', res?.message);
-      }
+      const response:any=await this.candidateService.generateOfferLetter(payload);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+      this.notificationService.success('Offer letter generated');
     } catch (err) {
       console.error('Error generating offer letter', err);
+      this.notificationService.error('Failed to generate the offer letter. Please try again.');
     }
   }
 

@@ -261,7 +261,7 @@ export class ViewOfferComponent implements OnInit {
   private async loadOfferDetails(deriveMode: boolean): Promise<void> {
     try {
       const [detailsRes, commentsRes] = await Promise.all([
-        this.offerSvc.getOfferDetails(this.offerId) as Promise<OfferDetailsApiResponse>,
+        this.offerSvc.getOfferDetails(this.offerId) as Promise<any>,
         this.offerSvc.getCommentsForOfferId(this.offerId) as Promise<OfferCommentsApiResponse>,
       ]);
 
@@ -293,7 +293,7 @@ export class ViewOfferComponent implements OnInit {
     return this.overallStatus === 'Approved' ? 'release' : 'approve';
   }
 
-  private mapApiResponse(data: OfferDetailsApiResponse['data'], comments: OfferCommentApiItem[]): void {
+  private mapApiResponse(data: any, comments: OfferCommentApiItem[]): void {
   this.applicantId=data?.applicantId;
     this.applicant = {
       name: data.candidateName,
@@ -313,7 +313,7 @@ export class ViewOfferComponent implements OnInit {
       noticePeriod: data.noticePeriod,
       workLocation: data.workLocation,
       employmentType: data.employmentType,
-      // TODO: not returned by this API yet.
+      
       payFrequency: '',
       offerValidTill: '',
       recruiter: data.recruiter,
@@ -326,7 +326,7 @@ export class ViewOfferComponent implements OnInit {
     const parts = [
       { label: 'Basic Salary',    value: data.basicSalary,          color: '#2563eb' },
       { label: 'Signing Bonus',   value: data.signingBonus,         color: '#16a34a' },
-      { label: 'RSU (Per Annum)', value: data.annualRsuEsopValue,   color: '#7c3aed' },
+      { label: 'RSU (Per Annum)', value: data.equity,   color: '#7c3aed' },
       { label: 'Other Benefits', value: data.otherBenefits,         color: '#f97316' },
     ];
     const partsTotal = parts.reduce((sum, p) => sum + (p.value || 0), 0);

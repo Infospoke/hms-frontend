@@ -67,6 +67,11 @@ export class ReleaseOfferLetterComponent implements OnInit {
   letterModalUrl: SafeResourceUrl | null = null;
   private letterModalObjectUrl: string | null = null;
 
+  // Path to the generated offer letter file, as returned by the offer-details
+  // APIs (field is "offerLeterPath" — typo is in the backend response, kept
+  // as-is here). Preview/download only work once this is set.
+  offerLetterPath: string | null = null;
+
   // Icon lookup for dynamic finance recommendation rows coming back from the API.
   private readonly financeFieldIconMap: Record<string, string> = {
     'basic pay': 'fa-solid fa-credit-card',
@@ -88,9 +93,11 @@ export class ReleaseOfferLetterComponent implements OnInit {
 
   private async loadAll(): Promise<void> {
     try {
-
+      if (this.isReRelease) {
         await this.loadReReleaseOfferDetails();
-     
+      } else {
+        await this.loadPendingOfferDetails();
+      }
     } catch (err) {
       console.error('Failed to load offer release details', err);
       this.notificationService.error('Failed to load the offer. Please try again.');
@@ -99,6 +106,62 @@ export class ReleaseOfferLetterComponent implements OnInit {
       this.cdr.markForCheck();
     }
   }
+
+  // ── First-time release (type: 'pending') ──────────────────────────────
+  private async loadPendingOfferDetails(): Promise<void> {
+    const res: any = await this.candidateService.getOfferDetails(this.applicantId);
+
+    if (res?.responsecode !== '00' || !res?.data) {
+      this.notificationService.error(res?.message ?? 'Failed to load the offer. Please try again.');
+      return;
+    }
+
+    const data = res.data;
+    this.requestId = data.applicantId != null ? `OFFER-${data.applicantId}` : '';
+
+    this.candidate = {
+      name: data.candidateName ?? '',
+      initials: this.getInitials(data.candidateName ?? ''),
+      avatarColor: '#7C3AED',
+      role: data.jobTitle ?? '',
+      email: data.email ?? '',
+      // This endpoint already returns a formatted candidate id (e.g. "CID-2026-0002"),
+      // unlike the re-release endpoint below which returns a bare number.
+      candidateId: data.candidateId ?? '',
+      department: data.department ?? '',
+      employmentType: data.employmentType ?? '',
+      location: data.workLocation ?? '',
+    };
+
+    this.offerLetterPath = data.offerLeterPath ?? null;
+
+    this.summaryRows = [
+      { key: 'basicSalary', icon: 'fa-solid fa-credit-card', label: 'Basic Salary (Annual)', value: this.formatCurrency(data.basicSalary) },
+      { key: 'signingBonus', icon: 'fa-solid fa-gift', label: 'Signing Bonus (Annual)', value: this.formatCurrency(data.signingBonus) },
+      { key: 'equity', icon: 'fa-solid fa-chart-pie', label: 'Equity / RSU (Annual)', value: this.formatCurrency(data.equity) },
+      { key: 'otherBenefits', icon: 'fa-solid fa-circle-plus', label: 'Other Benefits (Annual)', value: this.formatCurrency(data.otherBenefits) },
+      { key: 'totalCtc', icon: 'fa-solid fa-chart-line', label: 'Total CTC (Annual)', value: this.formatCurrency(data.totalCtc ?? data.offeredCtc), highlight: true },
+      { key: 'joiningDate', icon: 'fa-regular fa-calendar', label: 'Joining Date', value: data.joiningDate ? this.formatDate(data.joiningDate) : '—' },
+      { key: 'noticePeriod', icon: 'fa-regular fa-clock', label: 'Notice Period', value: data.noticePeriod ?? '' },
+      { key: 'probationPeriod', icon: 'fa-solid fa-shield-halved', label: 'Probation Period', value: data.probationPeriod ?? '' },
+    ];
+
+    this.letterPreview = {
+      companyName: 'NEXUS',
+      logoInitial: 'N',
+      dateLabel: this.formatDate(new Date().toISOString()),
+      bodyParagraphs: [
+        `We are pleased to offer you the position of ${data.jobTitle ?? ''} at Nexus Solutions.`,
+        `Please find the offer details and terms of employment in the attached offer letter.`,
+        `We look forward to welcoming you to our team!`,
+      ],
+      signOffName: 'Human Resources',
+      signOffTitle: '',
+      signOffCompany: 'Nexus Solutions',
+    };
+  }
+
+  // ── Re-release after negotiation (type: 're-release') ──────────────────
 
   private async loadReReleaseOfferDetails(): Promise<void> {
     const res: any = await this.candidateService.getReReleaseOfferDetailsById(this.applicantId);
@@ -122,6 +185,11 @@ export class ReleaseOfferLetterComponent implements OnInit {
       employmentType: data.employmentType ?? '',
       location: data.location ?? '',
     };
+
+    // TODO: confirm this field is actually present on the re-release
+    // response too (only seen it documented on the pending/first-release
+    // endpoint so far) — same "offerLeterPath" spelling either way.
+    this.offerLetterPath = data.offerLeterPath ?? null;
 
     const financeRows: OfferSummaryRow[] = (data.financeRecommendations ?? []).map((rec: { fieldName: string; amount: number }) => ({
       key: rec.fieldName,
@@ -176,12 +244,32 @@ export class ReleaseOfferLetterComponent implements OnInit {
     this.router.navigateByUrl('/candidate-management/offer-management');
   }
 
-  onDownloadOfferDetails(): void {
-   
-    this.notificationService.info('Offer details download coming soon');
+  async onDownloadOfferDetails(): Promise<void> {
+    if (!this.offerLetterPath) {
+      this.notificationService.info('The offer letter has not been generated yet.');
+      return;
+    }
+    try {
+      const blob: Blob = await this.candidateService.viewDocument({ filePath: this.offerLetterPath });
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = `offer-letter-${this.candidate.candidateId || this.applicantId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch (err) {
+      console.error('Failed to download offer details', err);
+      this.notificationService.error('Could not download the offer letter. Please try again.');
+    }
   }
 
   async onPreviewFullOfferLetter(): Promise<void> {
+    if (!this.offerLetterPath) {
+      this.notificationService.info('The offer letter has not been generated yet.');
+      return;
+    }
     this.isLetterModalOpen = true;
     this.isLetterModalLoading = true;
     this.letterModalError = '';
@@ -189,7 +277,7 @@ export class ReleaseOfferLetterComponent implements OnInit {
     this.cdr.markForCheck();
 
     try {
-      const blob: Blob = await this.candidateService.viewOfferLetter(this.applicantId);
+      const blob: Blob = await this.candidateService.viewDocument({ filePath: this.offerLetterPath });
       this.revokeLetterModalObjectUrl();
       this.letterModalObjectUrl = URL.createObjectURL(blob);
       this.letterModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.letterModalObjectUrl);

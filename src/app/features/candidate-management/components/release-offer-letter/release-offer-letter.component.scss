@@ -246,7 +246,17 @@
   font-weight: 700;
   cursor: pointer;
 
-  &:hover { background: var(--c-border-soft); }
+  &:hover:not(:disabled) { background: var(--c-border-soft); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+}
+
+.rol-letter-pending-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--c-text-light);
 }
 
 // ── Letter Preview ──
@@ -345,7 +355,8 @@
   font-weight: 700;
   cursor: pointer;
 
-  &:hover { text-decoration: underline; }
+  &:hover:not(:disabled) { text-decoration: underline; }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 
 .rol-preview-ext {

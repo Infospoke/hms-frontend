@@ -53,4 +53,6 @@ export class DashboardService {
       this.api.hrmsget(API.DASHBOARD.RECRUITER_DASHBOARD, params)
     )
   }
+
+  
 }

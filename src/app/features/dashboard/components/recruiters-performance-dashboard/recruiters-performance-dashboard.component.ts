@@ -15,7 +15,7 @@ import { CandidatePipelineComponent } from '../../../../shared/components/candid
     CommonModule,
     DashboardLayoutComponent,
     JobAssignmentsTableComponent,
-    HiringFlowProgressComponent,
+    
     SourcePerformanceGridComponent,
     MultiLineChartComponent,
     CandidatePipelineComponent

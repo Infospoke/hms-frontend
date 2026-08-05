@@ -5,8 +5,9 @@
     heading="Interview Pipeline"
     subHeading="View candidates who have cleared all interview rounds. Track their progress and take the next hiring action."
     [cards]="cards"
-    [dropDownData]="dropDownData" 
-    [searchPlaceholder]="'Search by candidate name,email'"/>
+    [dropDownData]="dropDownData"
+    [searchPlaceholder]="'Search name or email'"
+    (filterChange)="onFilterChange($event)"/>
 
   <div class="">
     <app-reusable-table

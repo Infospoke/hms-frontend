@@ -32,9 +32,10 @@
             [subHeading]="subHeading"
         class="card-dd"
     />
-    <app-raise-offer-letter-ready-table *ngIf="activeStageId==='rl' && activeTabId==='pending'"
+    <app-raise-offer-letter-ready-table *ngIf="activeStageId==='rl' && activeTabId==='pending' || activeTabId==='pendingReady'"
             [data]="readyToReleaseOfferLetters"
             [totalItems]="totalReadyToRelease"
+            [tableType]="activeTabId"
             [currentPage]="currentPage"
             [pageSize]="pageSize"
             (actionClick)="onViewOfferLetterDetails($event)"

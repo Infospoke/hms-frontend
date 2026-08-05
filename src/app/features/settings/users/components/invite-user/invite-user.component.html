@@ -102,7 +102,7 @@
 
           <span *ngIf="!hasError('mobile','required') &&
                   (hasError('mobile','invalidMobile') || hasError('mobile','minlength'))">
-            Enter a valid mobile number
+            Enter a valid contact number.
           </span>
 
         </div>
@@ -113,9 +113,12 @@
         <label>Alternate Contact</label>
         <input formControlName="altMobile" placeholder="Enter alternate contact (optional)">
         <div class="error" *ngIf="c('altMobile')?.touched">
-          <span *ngIf="c('altMobile')?.hasError('invalidMobile')">Enter a valid contact number</span>
-          <span *ngIf="c('altMobile')?.hasError('minlength')">Enter a valid contact number</span>
-          <span *ngIf="c('altMobile')?.hasError('sameAsMobile')">Alternate contact must differ from mobile number</span>
+          <span *ngIf="c('altMobile')?.hasError('invalidMobile') || c('altMobile')?.hasError('minlength')">
+            Enter a valid alternate contact number.
+          </span>
+          <span *ngIf="!c('altMobile')?.hasError('invalidMobile') && !c('altMobile')?.hasError('minlength') && c('altMobile')?.hasError('sameAsMobile')">
+            Alternate contact must differ from mobile number.
+          </span>
         </div>
       </div>
 

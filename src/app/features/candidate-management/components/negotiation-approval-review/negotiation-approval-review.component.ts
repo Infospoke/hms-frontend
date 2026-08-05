@@ -9,13 +9,8 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
 
 import { ApprovalStage } from '../../../../shared/constants/approval.stage.modal';
-import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem, NegotiationDocument } from '../../../../shared/constants/offer.model';
+import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem, NegotiationDocument, OFFER_STAGE_ORDER } from '../../../../shared/constants/offer.model';
 
-// GET .../negotiation-details/{applicantId} — same single endpoint used by
-// review-negotiation-request, but by the time an approver views this page
-// HR has already forwarded a recommendation, so the response now also
-// carries hrReason / hrRecommendations / hrRecommendedCtc /
-// revisedJoiningDate on top of the original candidate/negotiation fields.
 interface NegotiationApprovalApiResponse {
   data: {
     annualHiringCost: number | null;
@@ -107,11 +102,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   // wire this up once a field/endpoint for it is confirmed.
   recruiterName = '';
 
-  // ── Approval pipeline — Department head -> Finance team -> HR manager ->
-  // Final approval.
-  // TODO: this API doesn't return approver-chain stage statuses yet, so
-  // the pipeline below is still DUMMY data. Swap for real stage data
-  // (matching the response contract) once it's available.
+  
   pipelineStages: ApprovalStage[] = [];
 
   // ── "View approved budget & compensation" popup ─────────────────────────
@@ -162,11 +153,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   // ── Candidate's reason for negotiation + comparison table ───────────────
   items: NegotiationComparisonItem[] = [];
 
-  /** "Candidate's reason for negotiation" only shows rows the candidate
-   * actually asked to change — the guaranteed-field placeholders (and any
-   * negotiation entry with requestedAmount: null) are left out since
-   * there's no ask to explain. They still appear in the comparison table
-   * below so the approver can set a decision for them regardless. */
+  
   get reasonItems(): NegotiationComparisonItem[] {
     return this.items.filter(i => i.candidateAsked != null);
   }
@@ -234,12 +221,10 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     };
     this.jobTitle = (data.jobTitle ?? '').trim();
 
-    // TODO: pipeline stage statuses aren't in this API yet — kept as a
-    // static DUMMY chain (HR manager as the current step) until real
-    // approver-chain data is available.
-    this.pipelineStages = NEGOTIATION_APPROVAL_STAGE_ORDER.map((role, i): ApprovalStage => {
+    
+    this.pipelineStages = OFFER_STAGE_ORDER.map((role, i): ApprovalStage => {
       let status: ApprovalStage['status'] = 'PENDING';
-      if (i === 0 || i === 1) status = 'APPROVED';
+      if (i === 0) status = 'CREATED';
       else if (i === 2) status = 'IN_PROGRESS';
       return {
         id: i + 1,

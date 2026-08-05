@@ -523,13 +523,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-
+  border:none;
   &:hover { text-decoration: underline; }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// OFFER COMPARISON TABLE
-// ═══════════════════════════════════════════════════════════════════════════
+
 .nar-cmp-table-wrap {
   overflow-x: auto;
 }

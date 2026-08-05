@@ -205,7 +205,8 @@ export const API = {
         OFFER_APPROVALS_LIST:`/hms/offer-details/get-pending-approvals`,
         NEGOTIATION_DETAILS_BY_APPLICANT_ID:(id:any)=>`/hms/offer-details/negotiation-details/${id}`,
         REVIEW_NEGOTIATION_REQUEST:`/hms/offer-details/review-negotiation-request`,
-        VIEW_DOCUMENTS:`/hms/offer-details/view-document`
+        VIEW_DOCUMENTS:`/hms/offer-details/view-document`,
+        RERELEASE_OFFER_DETAILS:(id:any)=>`/hms/offer-details/re-release-offer-details-by-id/${id}`,
     },
     DASHBOARD:{
         HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,

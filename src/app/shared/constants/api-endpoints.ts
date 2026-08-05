@@ -112,6 +112,7 @@ export const API = {
         DEPATMENTS: `/hms/configurations/departments`,
         SR_DETAILS: (srId: string) => `/hms/staffing-requisition/approval-view/${srId}`,
         APPROVE_OR_REJECT: `/hms/staffing-requisition/sr-approval`,
+        APPROVED_OFFER:`/api/admin/approved-offer`
     },
     NOTIFICATIONS: {
         ALL_NOTIFICATIONS: `/hms/notifications/list`,
@@ -207,6 +208,7 @@ export const API = {
         REVIEW_NEGOTIATION_REQUEST:`/hms/offer-details/review-negotiation-request`,
         VIEW_DOCUMENTS:`/hms/offer-details/view-document`,
         RERELEASE_OFFER_DETAILS:(id:any)=>`/hms/offer-details/re-release-offer-details-by-id/${id}`,
+        APPROVEAL:`/api/admin/approved-offer`
     },
     DASHBOARD:{
         HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,

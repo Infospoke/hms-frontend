@@ -255,7 +255,7 @@ ngOnInit(): void {
     },
     {
       label: 'SLA Compliance',
-      value: '94%',
+      value: cardCount.slaCompliance,
       iconClass: 'fa-solid fa-shield-halved',
       iconBgColor: '#DBEAFE',
       iconColor: '#2563EB',

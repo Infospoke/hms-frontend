@@ -1,8 +1,3 @@
-
-<div class="nar-loading" *ngIf="isLoading">
-  <i class="fa-solid fa-spinner fa-spin"></i> Loading negotiation approval…
-</div>
-
 <div class="nar-wrapper" *ngIf="!isLoading">
 
   <a class="nar-back-link" (click)="onBack()">
@@ -178,25 +173,48 @@
                 [type]="item.isDate ? 'date' : 'text'"
                 [ngModel]="item.isDate ? item.yourDecision : (item.yourDecision ? formatCurrency(item.yourDecision) : '')"
                 (ngModelChange)="onDecisionChange(item, $event)"
-                [disabled]="!item.forward"
+                [disabled]="!item.forward || !canEditDecisions"
                 placeholder="₹0"
               />
             </td>
             <td>
-              <span class="nar-cmp-status" [ngClass]="'nar-cmp-status--' + item.decisionStatus.toLowerCase()" *ngIf="item.forward">
+              <!-- <span class="nar-cmp-status" [ngClass]="'nar-cmp-status--' + item.decisionStatus.toLowerCase()" *ngIf="item.forward">
                 {{ item.decisionStatus }}
-              </span>
+              </span> -->
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
+    <div class="nar-regenerate-row" *ngIf="isHrHead">
+      <button
+        class="nar-btn-regenerate"
+        type="button"
+        [disabled]="isRegeneratingOfferLetter"
+        (click)="onRegenerateOfferLetter()">
+        <i class="fa-solid fa-file-arrow-down" *ngIf="!isRegeneratingOfferLetter"></i>
+        <i class="fa-solid fa-spinner fa-spin" *ngIf="isRegeneratingOfferLetter"></i>
+        {{ isRegeneratingOfferLetter ? 'Regenerating…' : (isOfferLetterRegenerated ? 'Offer letter regenerated' : 'Regenerate offer letter') }}
+      </button>
+      <span class="nar-regenerate-hint" *ngIf="!isOfferLetterRegenerated">
+        <i class="fa-solid fa-circle-info"></i> You must regenerate the offer letter before approving.
+      </span>
+      <span class="nar-regenerate-hint nar-regenerate-hint--ok" *ngIf="isOfferLetterRegenerated">
+        <i class="fa-solid fa-circle-check"></i> Offer letter is up to date.
+      </span>
+    </div>
+
     <div class="nar-cmp-actions">
       <button class="nar-btn-sendback" type="button" [disabled]="isSubmitting" (click)="onSendBackToHR()">
         <i class="fa-solid fa-rotate-left"></i> Send back to HR
       </button>
-      <button class="nar-btn-approve" type="button" [disabled]="!canApprove" (click)="onApproveAndContinue()">
+      <button
+        class="nar-btn-approve"
+        type="button"
+        [disabled]="!canApprove"
+        [title]="isHrHead && !isOfferLetterRegenerated ? 'Regenerate the offer letter first' : ''"
+        (click)="onApproveAndContinue()">
         <i class="fa-solid fa-check"></i> {{ isSubmitting ? 'Submitting…' : 'Approve & continue' }}
       </button>
     </div>
@@ -250,9 +268,7 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     SUPPORTING DOCUMENT PREVIEW MODAL
-     ══════════════════════════════════════════════════════════ -->
+
 <div class="nar-modal-overlay" *ngIf="isDocModalOpen" (click)="closeDocModal()">
   <div class="nar-modal nar-doc-modal" (click)="$event.stopPropagation()">
     <div class="nar-modal-header">
@@ -279,3 +295,11 @@
     </div>
   </div>
 </div>
+
+<app-common-modal
+  [visible]="commentModalVisible"
+  [action]="commentModalAction"
+  [submitting]="isSubmitting"
+  (cancelled)="onDecisionModalCancelled()"
+  (confirmed)="onDecisionModalConfirmed($event)">
+</app-common-modal>

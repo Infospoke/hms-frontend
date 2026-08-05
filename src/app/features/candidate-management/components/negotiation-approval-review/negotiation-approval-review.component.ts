@@ -7,19 +7,39 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ApprovalPipelineComponent } from '../../../approvals/components/approval-pipeline/approval-pipeline.component';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { CandidateServiceComponent } from '../../serviecs/candidate-service.component';
+// TODO: adjust this relative path to wherever app-common-modal actually
+// lives in the repo — using the same folder-naming pattern as the other
+// shared imports above as a best guess.
+import {
+  CommonModalComponent,
+  CommentModalAction,
+  CommentModalResult,
+} from '../../../../shared/components/common-modal/common-modal.component';
 
 import { ApprovalStage } from '../../../../shared/constants/approval.stage.modal';
-import { ApprovedBudgetInfo, NEGOTIATION_APPROVAL_STAGE_ORDER, NegotiationComparisonItem, NegotiationDocument } from '../../../../shared/constants/offer.model';
+import {
+  ApprovedBudgetInfo,
+  NegotiationComparisonItem,
+  NegotiationDocument,
+  OFFER_STAGE_ORDER,
+  OFFER_CREATOR_ROLE,
+  OFFER_APPROVAL_STAGES,
+} from '../../../../shared/constants/offer.model';
+import { AuthService } from '../../../../core/auth/auth.service';
 
-// GET .../negotiation-details/{applicantId} — same single endpoint used by
-// review-negotiation-request, but by the time an approver views this page
-// HR has already forwarded a recommendation, so the response now also
-// carries hrReason / hrRecommendations / hrRecommendedCtc /
-// revisedJoiningDate on top of the original candidate/negotiation fields.
+interface NegotiationApprovalStageApi {
+  approvedBy: string | null;
+  approvedOn: string | null;
+  role: string;
+  stage: string;
+  status: 'APPROVED' | 'PENDING' | 'REJECTED' | string;
+}
+
 interface NegotiationApprovalApiResponse {
   data: {
     annualHiringCost: number | null;
     applicantId: number;
+    approvalStages: NegotiationApprovalStageApi[];
     candidateId: string | null;
     candidateName: string | null;
     email: string | null;
@@ -65,6 +85,22 @@ const DEFAULT_ITEM_ICON = 'fa-solid fa-file-lines';
 const TERMS_KEYWORDS = ['period', 'date', 'notice', 'location'];
 
 
+// Which stage of approvalStages (from the negotiation-details API) is
+// currently PENDING drives this — see mapRoleToApproverRole/applyNegotiationDetails.
+// Falls back to authService.getRole() / route data / query param only until
+// the API response has loaded.
+export type ApproverRole = 'FINANCE_ANALYST' | 'FINANCE_HEAD' | 'HR_HEAD';
+
+// Static role-name → ApproverRole lookup, built once from OFFER_STAGE_ORDER
+// so there's a single source of truth for role-name matching across:
+// the default (pre-API) pipeline, authService.getRole(), and the API's
+// approvalStages[].role.
+const ROLE_TO_APPROVER_ROLE: Record<string, ApproverRole> = {
+  'finance analyst': 'FINANCE_ANALYST',
+  'finance head': 'FINANCE_HEAD',
+  'hr head': 'HR_HEAD',
+};
+
 const GUARANTEED_HR_FIELDS: { label: string; icon: string }[] = [
   { label: 'Basic Pay', icon: 'fa-solid fa-credit-card' },
   { label: 'Signing Bonus', icon: 'fa-solid fa-gift' },
@@ -76,7 +112,7 @@ const GUARANTEED_HR_FIELDS: { label: string; icon: string }[] = [
   selector: 'app-negotiation-approval-review',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, ApprovalPipelineComponent],
+  imports: [CommonModule, FormsModule, ApprovalPipelineComponent, CommonModalComponent],
   templateUrl: './negotiation-approval-review.component.html',
   styleUrl: './negotiation-approval-review.component.scss',
 })
@@ -88,10 +124,28 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   private candidateService = inject(CandidateServiceComponent);
   private notificationService = inject(NotificationService);
   private sanitizer = inject(DomSanitizer);
-
+  private authService=inject(AuthService);
   isLoading = true;
   isSubmitting = false;
   private applicantId: any;
+  // offerId comes from the route (offer-management/negotiation-approvals/:id/:offerId) —
+  // needed for the HR-head "regenerate offer letter" call below.
+  private offerId: any;
+
+  // Placeholder until applyNegotiationDetails() below overwrites it with the
+  // real value derived from the API's approvalStages (first PENDING stage).
+  currentApproverRole: ApproverRole = 'HR_HEAD';
+
+  // The logged-in user's own role, resolved from authService.getRole()
+  // against the static OFFER_STAGE_ORDER. Independent of which stage the
+  // negotiation is currently sitting at — used purely for canEditDecisions
+  // (only a Finance Analyst may edit the comparison table, regardless of
+  // which stage is currently pending).
+  private myRole: ApproverRole | null = null;
+
+  // Raw approvalStages from the API, kept around so priorStagesApproved
+  // (used to gate the HR head's "3rd stage") can check the earlier stages.
+  private approvalStagesRaw: NegotiationApprovalStageApi[] = [];
 
   statusBadge = 'Awaiting hr manager';
 
@@ -100,6 +154,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     name: '', initials: '', avatarColor: '#7C3AED',
     role: '', department: '', email: '',
     requestedOn: '', currentCtc: 0,
+    candidateId: '' as string | null,
   };
 
   jobTitle = '';
@@ -162,11 +217,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   // ── Candidate's reason for negotiation + comparison table ───────────────
   items: NegotiationComparisonItem[] = [];
 
-  /** "Candidate's reason for negotiation" only shows rows the candidate
-   * actually asked to change — the guaranteed-field placeholders (and any
-   * negotiation entry with requestedAmount: null) are left out since
-   * there's no ask to explain. They still appear in the comparison table
-   * below so the approver can set a decision for them regardless. */
+  
   get reasonItems(): NegotiationComparisonItem[] {
     return this.items.filter(i => i.candidateAsked != null);
   }
@@ -180,10 +231,46 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   reasonForSendingBack = '';
 
+  // ── HR head — offer letter must be regenerated before they can approve ──
+  isRegeneratingOfferLetter = false;
+  isOfferLetterRegenerated = false;
+
+  get isHrHead(): boolean {
+    return this.currentApproverRole === 'HR_HEAD';
+  }
+
+  // Stage 3 (HR head) can't be actioned until stages 1 & 2 (Finance
+  // Analyst, Finance Head) are both APPROVED. In practice currentApproverRole
+  // is only ever HR_HEAD once the API says those stages are done — this is
+  // a defensive re-check on the raw stage list.
+  get priorStagesApproved(): boolean {
+    const hrStageIndex = this.approvalStagesRaw.findIndex(
+      s => this.mapRoleToApproverRole(s.role) === 'HR_HEAD',
+    );
+    if (hrStageIndex <= 0) return true;
+    return this.approvalStagesRaw
+      .slice(0, hrStageIndex)
+      .every(s => s.status === 'APPROVED');
+  }
+
   get canApprove(): boolean {
     return !this.isSubmitting
-      && this.items.some(i => i.forward && !i.isDate && Number(i.yourDecision) > 0);
+      && this.items.some(i => i.forward && !i.isDate && Number(i.yourDecision) > 0)
+      && (!this.isHrHead || (this.priorStagesApproved && this.isOfferLetterRegenerated));
   }
+
+  // Only a Finance Analyst may edit the "Your decision" column of the
+  // comparison table — Finance Head and HR Head see it read-only.
+  get canEditDecisions(): boolean {
+    return this.currentApproverRole === 'FINANCE_ANALYST';
+  }
+
+  // ── Comment modal (app-common-modal) — every decision (approve / send
+  // back) now routes through this for a required comment before the
+  // underlying API call fires. ──
+  commentModalVisible = false;
+  commentModalAction: CommentModalAction | null = null;
+  private pendingDecision: 'approve' | 'sendback' | null = null;
 
   // ── Supporting document preview modal ───────────────────────────────────
   isDocModalOpen = false;
@@ -195,7 +282,48 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.applicantId = this.route.snapshot.paramMap.get('id');
+    this.offerId = this.route.snapshot.paramMap.get('offerId');
+
+    // Resolve the logged-in user's role against the static OFFER_STAGE_ORDER
+    // (['HR', 'Finance Analyst', 'Finance Head', 'HR Head']). Only roles
+    // that are actual *approval* stages (i.e. everything except the
+    // creator, HR) map to an ApproverRole — HR never approves on this screen.
+    const rawRole = this.authService.getRole();
+    const matchedStageRole = OFFER_STAGE_ORDER.find(
+      (r) => r.toLowerCase() === (rawRole ?? '').trim().toLowerCase(),
+    );
+    this.myRole =
+      matchedStageRole && matchedStageRole !== OFFER_CREATOR_ROLE
+        ? this.mapRoleToApproverRole(matchedStageRole)
+        : null;
+
+    // Placeholder until the negotiation-details response loads and
+    // applyNegotiationDetails() derives the real current-approver role from
+    // approvalStages — this just avoids a flash of the wrong branch/gate
+    // while the request is in flight.
+    this.currentApproverRole =
+      (this.route.snapshot.data['approverRole'] as ApproverRole)
+      ?? (this.route.snapshot.queryParamMap.get('role') as ApproverRole)
+      ?? this.myRole
+      ?? 'HR_HEAD';
+
+    // Static default pipeline (all stages PENDING) so the UI never flashes
+    // empty while loadAll() below is in flight — buildPipelineStages()
+    // overwrites this with real statuses once the API responds.
+    this.pipelineStages = this.buildDefaultPipelineStages();
+
     this.loadAll();
+  }
+
+  /** Static, pre-API pipeline: every stage in OFFER_APPROVAL_STAGES shown as PENDING. */
+  private buildDefaultPipelineStages(): ApprovalStage[] {
+    return OFFER_APPROVAL_STAGES.map((role, i): ApprovalStage => ({
+      id: i + 1,
+      role,
+      approverName: '',
+      approverInitials: '',
+      status: 'PENDING',
+    }));
   }
 
   private async loadAll(): Promise<void> {
@@ -231,24 +359,24 @@ export class NegotiationApprovalReviewComponent implements OnInit {
       // "Current CTC on table" = what HR has recommended forward, falling
       // back to the candidate's total ask if HR hasn't recommended yet.
       currentCtc: data.hrRecommendedCtc ?? data.totalRequestedAmount ?? 0,
+      candidateId: data.candidateId ?? null,
     };
     this.jobTitle = (data.jobTitle ?? '').trim();
 
-    // TODO: pipeline stage statuses aren't in this API yet — kept as a
-    // static DUMMY chain (HR manager as the current step) until real
-    // approver-chain data is available.
-    this.pipelineStages = NEGOTIATION_APPROVAL_STAGE_ORDER.map((role, i): ApprovalStage => {
-      let status: ApprovalStage['status'] = 'PENDING';
-      if (i === 0 || i === 1) status = 'APPROVED';
-      else if (i === 2) status = 'IN_PROGRESS';
-      return {
-        id: i + 1,
-        role,
-        approverName: '',
-        approverInitials: this.getInitials(role),
-        status,
-      };
-    });
+    
+    this.approvalStagesRaw = data.approvalStages ?? [];
+    this.pipelineStages = this.buildPipelineStages(this.approvalStagesRaw);
+
+    // Whoever's stage is first PENDING is the "current approver" this
+    // screen behaves as — drives the finance-vs-HR-head branching in
+    // submitApproval() and the offer-letter-regeneration gate below.
+    const currentStage = this.approvalStagesRaw.find(s => s.status === 'PENDING');
+    if (currentStage) {
+      this.currentApproverRole = this.mapRoleToApproverRole(currentStage.role);
+      this.statusBadge = `Awaiting ${currentStage.role}`;
+    } else if (this.approvalStagesRaw.length) {
+      this.statusBadge = 'All stages approved';
+    }
 
     // ── Requested package vs market range ──
     this.marketMin = data.minimumSalary ?? 0;
@@ -319,6 +447,51 @@ export class NegotiationApprovalReviewComponent implements OnInit {
         url: path,
       };
     });
+  }
+
+  // Always renders the full static OFFER_APPROVAL_STAGES chain (Finance
+  // Analyst -> Finance Head -> HR Head), overlaying whatever status/approver
+  // data the API returned for each role by name. This way the pipeline
+  // never looks incomplete even if the API's approvalStages array is short
+  // or out of order.
+  private buildPipelineStages(stages: NegotiationApprovalStageApi[]): ApprovalStage[] {
+    const byRole = new Map<string, NegotiationApprovalStageApi>();
+    for (const s of stages) {
+      byRole.set(s.role.trim().toLowerCase(), s);
+    }
+
+    let currentMarked = false;
+    return OFFER_APPROVAL_STAGES.map((roleName, i): ApprovalStage => {
+      const apiStage = byRole.get(roleName.toLowerCase());
+
+      let status: ApprovalStage['status'];
+      if (apiStage?.status === 'APPROVED') {
+        status = 'APPROVED';
+      } else if (apiStage?.status === 'REJECTED') {
+        // TODO: confirm 'REJECTED' is an actual member of ApprovalStage['status']
+        // — double-cast as a stopgap so this compiles either way.
+        status = 'REJECTED' as unknown as ApprovalStage['status'];
+      } else if (!currentMarked) {
+        // First non-approved stage in order is the one in progress.
+        status = 'IN_PROGRESS';
+        currentMarked = true;
+      } else {
+        status = 'PENDING';
+      }
+
+      return {
+        id: i + 1,
+        role: roleName,
+        approverName: apiStage?.approvedBy ?? '',
+        approverInitials: this.getInitials(apiStage?.approvedBy ?? roleName),
+        status,
+      };
+    });
+  }
+
+  private mapRoleToApproverRole(role: string | null | undefined): ApproverRole {
+    const normalized = (role ?? '').trim().toLowerCase();
+    return ROLE_TO_APPROVER_ROLE[normalized] ?? 'HR_HEAD';
   }
 
   private buildItem(
@@ -448,7 +621,94 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     }
   }
 
-  async onSendBackToHR(): Promise<void> {
+  // ── Regenerate offer letter (HR head only) ──────────────────────────────
+  // Must succeed before an HR head is allowed to approve — see canApprove.
+  async onRegenerateOfferLetter(): Promise<void> {
+    if (this.isRegeneratingOfferLetter) return;
+    this.isRegeneratingOfferLetter = true;
+    this.cdr.markForCheck();
+    try {
+      // TODO: no confirmed offerId source when it's not present in the
+      // route — falling back to null and letting the backend reject it
+      // rather than guessing. Also TODO: move this fetch() into
+      // candidateService once this endpoint is wired into the shared API
+      // service layer, and confirm total_ctc should be hrRecommendedPackage
+      // (vs. the sum of "your decision" values in the table).
+      const response = await fetch('http://127.0.0.1:5002/api/admin/regenerate-offer-letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          application_id: this.applicantId,
+          candidate_id: this.candidate.candidateId,
+          offer_id: this.offerId,
+          total_ctc: this.hrRecommendedPackage,
+          approve: true,
+          comments: 'Regenerating offer letter ahead of negotiation approval',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Regenerate offer letter failed with status ${response.status}`);
+      }
+
+      // Response is a PDF — open it for the HR head to review, and unlock
+      // the approve button.
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      window.open(objectUrl, '_blank');
+
+      this.isOfferLetterRegenerated = true;
+      this.notificationService.success('Offer letter regenerated. You can now approve.');
+    } catch (err) {
+      console.error('Failed to regenerate offer letter', err);
+      this.isOfferLetterRegenerated = false;
+      this.notificationService.error('Failed to regenerate the offer letter. Please try again.');
+    } finally {
+      this.isRegeneratingOfferLetter = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  // ── Comment modal entry points ──────────────────────────────────────────
+  // Both decisions now open app-common-modal to collect a required comment
+  // before the underlying API call fires.
+  onSendBackToHR(): void {
+    if (this.isSubmitting) return;
+    this.pendingDecision = 'sendback';
+    this.commentModalAction = 'reject';
+    this.commentModalVisible = true;
+    this.cdr.markForCheck();
+  }
+
+  onApproveAndContinue(): void {
+    if (!this.canApprove) return;
+    this.pendingDecision = 'approve';
+    this.commentModalAction = 'approve';
+    this.commentModalVisible = true;
+    this.cdr.markForCheck();
+  }
+
+  onDecisionModalCancelled(): void {
+    this.commentModalVisible = false;
+    this.pendingDecision = null;
+    this.cdr.markForCheck();
+  }
+
+  async onDecisionModalConfirmed(result: CommentModalResult): Promise<void> {
+    const comment = result.comment;
+    const decision = this.pendingDecision;
+    this.commentModalVisible = false;
+    this.pendingDecision = null;
+    this.cdr.markForCheck();
+
+    if (decision === 'approve') {
+      await this.submitApproval(comment);
+    } else if (decision === 'sendback') {
+      await this.submitSendBack(comment);
+    }
+  }
+
+  private async submitSendBack(comment: string): Promise<void> {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
     this.cdr.markForCheck();
@@ -460,7 +720,7 @@ export class NegotiationApprovalReviewComponent implements OnInit {
       const res: any = await this.candidateService.approveOffer({
         applicantId: this.applicantId,
         approve: false,
-        comments: this.reasonForSendingBack?.trim() || 'Sent back to HR for revision',
+        comments: comment,
       });
       if (res?.responsecode === '00') {
         this.notificationService.success(res?.message ?? 'Sent back to HR');
@@ -477,26 +737,59 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     }
   }
 
-  async onApproveAndContinue(): Promise<void> {
+  private async submitApproval(comment: string): Promise<void> {
     if (!this.canApprove) return;
     this.isSubmitting = true;
     this.cdr.markForCheck();
+
     try {
-      // TODO: no confirmed "approver decision" endpoint yet — reusing
-      // approveOffer(approve:true) as a placeholder until backend confirms
-      // the real contract for this action.
-      const res: any = await this.candidateService.approveOffer({
-        applicantId: this.applicantId,
-        approve: true,
-        decisions: this.items
-          .filter(i => i.forward)
-          .map(i => ({ key: i.key, value: i.yourDecision })),
-      });
-      if (res?.responsecode === '00') {
-        this.notificationService.success(res?.message ?? 'Approved and forwarded');
+      let payload: any;
+
+      if (this.currentApproverRole === 'FINANCE_ANALYST') {
+        // ── Stage 1 — Finance Analyst: full recommendation breakdown ──
+        payload = {
+          applicantId: this.applicantId,
+          approve: true,
+          comments: comment,
+          approvalType: 'NEGOTIATION',
+          financeRecommendations: this.items
+            .filter(i => i.forward && !i.isDate)
+            .map(i => ({ fieldName: i.label, amount: Number(i.yourDecision) || 0 })),
+          financeReason: comment,
+        };
+      } else if (this.currentApproverRole === 'FINANCE_HEAD') {
+        // ── Stage 2 — Finance Head: lean sign-off, no recommendation breakdown ──
+        payload = {
+          applicantId: this.applicantId,
+          approve: true,
+          comments: comment,
+          approvalType: 'NEGOTIATION',
+        };
+      } else {
+        // ── Stage 3 — HR Head: gated on priorStagesApproved + isOfferLetterRegenerated
+        // (already enforced by the canApprove getter above) ──
+        payload = {
+          applicantId: this.applicantId,
+          approve: true,
+          comments: comment,
+          approvalType: 'NEGOTIATION',
+          decisions: this.items
+            .filter(i => i.forward)
+            .map(i => ({ key: i.key, value: i.yourDecision })),
+        };
+      }
+
+      // All three stages hit the same endpoint via candidateService.
+      const res: any = await this.candidateService.approveOffer(payload);
+      const responsecode = res?.responsecode;
+      const message = res?.message;
+      const errors = res?.errors;
+
+      if (responsecode === '00') {
+        this.notificationService.success(message ?? 'Approved and forwarded');
         this.onBack();
       } else {
-        this.notificationService.error(res?.errors?.[0] ?? res?.message ?? 'Something went wrong');
+        this.notificationService.error(errors?.[0] ?? message ?? 'Something went wrong');
       }
     } catch (err) {
       console.error('Approve negotiation failed', err);

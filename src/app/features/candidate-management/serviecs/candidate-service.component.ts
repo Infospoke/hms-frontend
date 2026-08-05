@@ -55,7 +55,7 @@ export class CandidateServiceComponent {
   }
 
   async generateOfferLetter(payload:any):Promise<any>{
-    return await firstValueFrom(this.api.aiPost(API.CANDIDATE_MANANGEMENT.GENERATE_OFFER_LETTER,payload))
+    return await firstValueFrom(this.api.aiPostBlob(API.CANDIDATE_MANANGEMENT.GENERATE_OFFER_LETTER,payload))
   }
 
   async viewOfferLetter(id:any){
@@ -88,14 +88,17 @@ export class CandidateServiceComponent {
     );
   }
   async viewDocument(payload:any):Promise<Blob>{
-    // NOTE: must use the blob-responseType POST here — the default
-    // hrmspost tries to parse the response as JSON, which fails on the
-    // raw PDF bytes the backend actually returns (confirmed via network
-    // tab: the request succeeds, but the JSON-typed client couldn't do
-    // anything with the binary body).
+    
     return await firstValueFrom(
       this.api.hrmspostBlob(API.CANDIDATE_MANANGEMENT.VIEW_DOCUMENTS,payload)
     );
   }
+
+  async getReReleaseOfferDetailsById(id:any):Promise<any>{
+    return await firstValueFrom(
+      this.api.hrmsget(API.CANDIDATE_MANANGEMENT.RERELEASE_OFFER_DETAILS(id))
+    );
+  }
+  
 
 }

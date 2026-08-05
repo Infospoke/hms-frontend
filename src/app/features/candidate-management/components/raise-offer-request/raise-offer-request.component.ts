@@ -183,6 +183,10 @@ export class RaiseOfferRequestComponent implements OnInit {
     negAppovals: 'Negotiation Approvals',
   };
 
+  private rlTabStatusMap: Record<string, string> = {
+    pending:'PENDING',
+    pendingReady:'RE-RELEASE',
+  }
   private crTabStatusMap: Record<string, string> = {
     negotiating: 'Requested for Negotiation',
     pending: 'Awaiting Response',
@@ -474,6 +478,8 @@ export class RaiseOfferRequestComponent implements OnInit {
     return data.map((item: any) => ({
       id: item.applicantId,
       name: item.candidateName,
+      jobId:item?.jobId,
+      offerId:item?.offerId,
       email: item.candidateEmail,
       avatarInitials: this.getAvatarInitials(item.candidateName),
       avatarColor: this.getAvatarColor(item.candidateName),
@@ -540,7 +546,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   async getReadyOfferLetters(payload: any) {
     const payloadData = {
       ...payload,
-      sortBy: 'dateOfApproval3'
+      sortBy: 'finalApprovalTime'
     }
     const res: any = await this.candidateService.readyToReleaseOffer(payloadData);
     if (res?.responsecode == '00') {
@@ -553,6 +559,7 @@ export class RaiseOfferRequestComponent implements OnInit {
     return data.map((item: any) => ({
       id: item.applicationId,
       offerId: item.offerId,
+      reReleaseOfferId:item?.reReleaseOfferId,
       name: item.candidateName,
       email: item.email,
       avatarInitials: this.getAvatarInitials(item.candidateName),
@@ -605,7 +612,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
 
   onRaiseOfferRequest(candidate: any) {
-    this.router.navigate([`/candidate-management/offer-management/details/${candidate?.id}`])
+    this.router.navigate([`/candidate-management/offer-management/details/${candidate?.id}/${candidate?.jobId}/${candidate?.offerId}`], );
 
   }
 
@@ -613,7 +620,7 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   onViewApprovalDetails(row: any) {
     if(this.activeStageId === 'rol' && this.activeTabId === 'negAppovals') {
-      this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}`])   
+      this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}/${row?.offerId}`])   
     }
     else{
       this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
@@ -628,25 +635,23 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
 
   onViewOfferLetterDetails(row: any) {
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
-      state: {
-        mode: 'release',
-        url: '/candidate-management/offer-management',
-        activeType: this.activeStageId,
-      }
-    })
+    // this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
+    //   state: {
+    //     mode: 'release',
+    //     url: '/candidate-management/offer-management',
+    //     activeType: this.activeStageId,
+    //   }
+    // })
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${row?.reReleaseOfferId}`],{
+      state:{type: this.activeTabId}
+    });
   }
 
   onPageChange(page: any) {
     this.currentPage = page;
   }
 
-  /**
-   * Builds the payload for API requests.
-   * 
-   * For the 'rol' stage, ensures that departmentId is included from filters
-   * so the backend can properly filter approvals by department.
-   */
+ 
   private buildPayload(): object {
 
     const f = this.activeFilters || {};
@@ -695,6 +700,10 @@ export class RaiseOfferRequestComponent implements OnInit {
     // (pending/accepted/rejected/expired/negotiating) so the backend can filter on it.
     if (this.activeStageId === 'cr' && this.crTabStatusMap[this.activeTabId]) {
       filters.status = this.crTabStatusMap[this.activeTabId];
+    }
+
+    if(this.activeStageId==='rl' && this.rlTabStatusMap[this.activeTabId]){
+      filters.releaseType = this.rlTabStatusMap[this.activeTabId];
     }
 
     return {

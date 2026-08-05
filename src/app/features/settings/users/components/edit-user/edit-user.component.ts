@@ -114,7 +114,7 @@ export class EditUserComponent implements OnInit {
   getIntialData() {
     console.log(this.user);
     const payload={
-      "srDepartments": true,
+      "userDepartments": true,
     }
     
     forkJoin({

@@ -523,13 +523,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-
+  border:none;
   &:hover { text-decoration: underline; }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// OFFER COMPARISON TABLE
-// ═══════════════════════════════════════════════════════════════════════════
+
 .nar-cmp-table-wrap {
   overflow-x: auto;
 }
@@ -639,6 +637,45 @@
     background: #fef2f2;
     color: var(--c-red);
   }
+}
+
+.nar-regenerate-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-border-soft);
+}
+
+.nar-btn-regenerate {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-border);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-primary);
+  cursor: pointer;
+
+  &:hover:not(:disabled) { background: var(--c-border-soft); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.nar-regenerate-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-amber);
+
+  &--ok { color: var(--c-green); }
 }
 
 .nar-cmp-actions {

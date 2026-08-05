@@ -117,3 +117,39 @@ export interface NegotiationComparisonItem {
    * "Candidate's reason for negotiation". */
   justification: string;
 }
+
+// ─── Release Offer Letter screen ───────────────────────────────────────────
+export interface ReleaseOfferCandidateInfo {
+  name: string;
+  initials: string;
+  avatarColor: string;
+  role: string;
+  email: string;
+  candidateId: string;
+  department: string;
+  employmentType: string;
+  location: string;
+}
+
+/** One row of the flat "Offer Summary" list (Basic Pay, Reallocation
+ * Budget, Equity, Retention Bonus, Total CTC, Joining Date, Offer
+ * Validity, Probation Period) — pre-formatted display values so the
+ * template stays value-type agnostic (currency vs. date vs. duration). */
+export interface OfferSummaryRow {
+  key: string;
+  icon: string;
+  label: string;
+  value: string;
+  /** Total CTC row — rendered in the accent/highlight style. */
+  highlight?: boolean;
+}
+
+export interface OfferLetterPreview {
+  companyName: string;
+  logoInitial: string;
+  dateLabel: string;
+  bodyParagraphs: string[];
+  signOffName: string;
+  signOffTitle: string;
+  signOffCompany: string;
+}

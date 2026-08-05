@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
@@ -70,6 +71,17 @@ interface OfferCommentsApiResponse {
   responsecode: string;
 }
 
+// POST {PYTHON_APPROVE_OFFER_API_URL} — multipart/form-data
+// Fields sent: application_id, approve, comments, signature (file),
+// signature_type, candidate_id, offer_id.
+// Returns the generated offer-letter PDF path (and the PDF itself, base64)
+// so the caller can forward the path on to the Java approve-offer API.
+interface PythonApproveOfferResponse {
+  status: string;
+  path: string;
+  pdf?: string;
+}
+
 
 @Component({
   selector: 'app-view-offer',
@@ -89,12 +101,15 @@ interface OfferCommentsApiResponse {
 })
 export class ViewOfferComponent implements OnInit {
 
+  
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
   private offerSvc = inject(CandidateServiceComponent);
   private notificationService = inject(NotificationService);
   private candidateService=inject(CandidateServiceComponent);
+  private approvalService=inject(ApprovalService);
   isLoading = true;
   isSubmitting = false;
   applicantId:any;
@@ -109,12 +124,7 @@ export class ViewOfferComponent implements OnInit {
   get isReleaseMode(): boolean { return this.pageMode === 'release'; }
   get isViewMode(): boolean { return this.pageMode === 'view'; }
 
-  /**
-   * Passed in via router state from the list page (only true when the
-   * navigating user's role is 'Finance Head'). Only Finance Head gets the
-   * e-signature + comments card — everyone else in approve mode goes
-   * straight to Approve/Reject with no upload requirement.
-   */
+  
   isUpload = false;
 
   // ── Header ───────────────────────────────────────────────────────────────
@@ -163,6 +173,11 @@ export class ViewOfferComponent implements OnInit {
   eSignaturePreviewUrl: string | null = null;
   comment = '';
   readonly COMMENT_MAX = 500;
+  // TODO: confirm where this should actually come from — the Python API sample
+  // sends a fixed value here (e.g. "sahitya"). Likely the signed-in approver's
+  // username/role rather than something the user types, so wire it up to
+  // whatever auth/session service holds that once it's available.
+  signatureType = '';
 
   
   confirmationChecked = false;
@@ -213,11 +228,66 @@ export class ViewOfferComponent implements OnInit {
   async submitESignatureDecision(): Promise<void> {
     if (!this.canSubmitDecision || !this.eSignatureModalAction) return;
     const approved = this.eSignatureModalAction === 'approve';
-    await this.submitDecision(approved);
-    this.eSignatureModalVisible = false;
-    this.eSignatureModalAction = null;
-    this.confirmationChecked = false;
+
+    this.isSubmitting = true;
     this.cdr.markForCheck();
+
+    try {
+      // Step 1: e-signature + comments go to the Python offer-approval
+      // service first — it generates the signed offer letter and returns
+      // where it was saved.
+      const pyRes = await this.runPythonESignatureApproval(approved);
+
+      // Step 2: forward that result on to the existing Java approve-offer
+      // API so the rest of the approval flow (pipeline, notifications, etc.)
+      // works exactly as it did before.
+      await this.submitDecision(approved, {
+        eSignature: pyRes.status,
+        offerLetterPath: pyRes.path,
+      });
+    } catch (err) {
+      console.error('E-signature approval failed', err);
+      this.notificationService.error('Failed to process e-signature approval. Please try again.');
+    } finally {
+      this.eSignatureModalVisible = false;
+      this.eSignatureModalAction = null;
+      this.confirmationChecked = false;
+      this.isSubmitting = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Uploads the e-signature + comments to the Python offer-approval service.
+   * Expected multipart/form-data fields: application_id, approve, comments,
+   * signature (file), signature_type, candidate_id, offer_id.
+   */
+  private async runPythonESignatureApproval(approved: boolean): Promise<PythonApproveOfferResponse> {
+    if (!this.eSignatureFile) {
+      throw new Error('No e-signature file selected');
+    }
+
+    const formData = new FormData();
+    // TODO: confirm which id belongs in application_id vs offer_id — the
+    // sample payload has these as distinct values but this component only
+    // tracks one id (this.offerId, which currently doubles as applicantId)
+    // plus this.applicantId from the offer-details response. Using the best
+    // guess below; adjust once the Python API's exact id semantics are confirmed.
+    formData.append('application_id', String(this.offerId));
+    formData.append('approve', String(approved));
+    formData.append('comments', this.comment.trim());
+    formData.append('signature', this.eSignatureFile, this.eSignatureFile.name);
+    formData.append('signature_type', this.signatureType);
+    formData.append('candidate_id', String(this.applicantId));
+    formData.append('offer_id', String(this.offerId));
+
+   
+    const res:any=await this.approvalService.approvePythonApi(formData);
+
+    if (!res?.path) {
+      throw new Error(res?.status ?? 'Python approval service did not return an offer letter path');
+    }
+    return res;
   }
 
  
@@ -266,7 +336,7 @@ export class ViewOfferComponent implements OnInit {
   private async loadOfferDetails(deriveMode: boolean): Promise<void> {
     try {
       const [detailsRes, commentsRes] = await Promise.all([
-        this.offerSvc.getOfferDetails(this.offerId) as Promise<OfferDetailsApiResponse>,
+        this.offerSvc.getOfferDetails(this.offerId) as Promise<any>,
         this.offerSvc.getCommentsForOfferId(this.offerId) as Promise<OfferCommentsApiResponse>,
       ]);
 
@@ -293,18 +363,12 @@ export class ViewOfferComponent implements OnInit {
     }
   }
 
-  /**
-   * Only used when no explicit mode was passed in (deep link / refresh).
-   * NOTE: this API doesn't return a "released" flag, so there's currently no
-   * way to distinguish an already-released offer from an approved-but-not-yet
-   * -released one purely from this response — defaulting to 'release' once
-   * every stage is approved. Swap in the real flag once it's available.
-   */
+  
   private deriveModeFromOffer(): OfferPageMode {
     return this.overallStatus === 'Approved' ? 'release' : 'approve';
   }
 
-  private mapApiResponse(data: OfferDetailsApiResponse['data'], comments: OfferCommentApiItem[]): void {
+  private mapApiResponse(data: any, comments: OfferCommentApiItem[]): void {
   this.applicantId=data?.applicantId;
     this.applicant = {
       name: data.candidateName,
@@ -324,7 +388,7 @@ export class ViewOfferComponent implements OnInit {
       noticePeriod: data.noticePeriod,
       workLocation: data.workLocation,
       employmentType: data.employmentType,
-      // TODO: not returned by this API yet.
+      
       payFrequency: '',
       offerValidTill: '',
       recruiter: data.recruiter,
@@ -337,7 +401,7 @@ export class ViewOfferComponent implements OnInit {
     const parts = [
       { label: 'Basic Salary',    value: data.basicSalary,          color: '#2563eb' },
       { label: 'Signing Bonus',   value: data.signingBonus,         color: '#16a34a' },
-      { label: 'RSU (Per Annum)', value: data.annualRsuEsopValue,   color: '#7c3aed' },
+      { label: 'RSU (Per Annum)', value: data.equity,   color: '#7c3aed' },
       { label: 'Other Benefits', value: data.otherBenefits,         color: '#f97316' },
     ];
     const partsTotal = parts.reduce((sum, p) => sum + (p.value || 0), 0);
@@ -474,7 +538,10 @@ export class ViewOfferComponent implements OnInit {
     await this.submitDecision(false);
   }
 
-  private async submitDecision(approved: boolean): Promise<void> {
+  private async submitDecision(
+    approved: boolean,
+    extra?: { eSignature?: string; offerLetterPath?: string }
+  ): Promise<void> {
     this.isSubmitting = true;
     this.cdr.markForCheck();
     try {
@@ -482,6 +549,10 @@ export class ViewOfferComponent implements OnInit {
         applicantId: this.offerId,
         approve: approved,
         comments: this.comment.trim(),
+        // Only present for the Finance Head / e-signature flow — populated
+        // from the Python approval service's response (status + saved path).
+        ...(extra?.eSignature !== undefined ? { eSignature: extra.eSignature } : {}),
+        ...(extra?.offerLetterPath !== undefined ? { offerLetterPath: extra.offerLetterPath } : {}),
       });
 
       if (res?.responsecode === '00') {

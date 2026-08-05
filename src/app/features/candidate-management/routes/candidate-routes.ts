@@ -54,7 +54,7 @@ export const CANDIDATE_ROUTES: Routes = [
         loadComponent:()=>import("../components/raise-offer-request/raise-offer-request.component").then(m=>m.RaiseOfferRequestComponent)
     },
     {
-        path:"offer-management/details/:id",
+        path:"offer-management/details/:id/:jobId/:offerId",
         loadComponent:()=>import("../components/offer-request-details/offer-request-details.component").then(m=>m.OfferRequestDetailsComponent)
     },
     {
@@ -66,8 +66,12 @@ export const CANDIDATE_ROUTES: Routes = [
         loadComponent:()=>import("../components/review-notiation-review/review-notiation-review.component").then(m=>m.ReviewNotiationReviewComponent)
     },
     {
-        path:'offer-management/negotiation-approvals/:id',
+        path:'offer-management/negotiation-approvals/:id/:offerId',
         loadComponent:()=>import("../components/negotiation-approval-review/negotiation-approval-review.component").then(m=>m.NegotiationApprovalReviewComponent)
     },
-   
+    {
+        path:'offer-management/release-offer-letter/:id',
+        loadComponent:()=>import("../components/release-offer-letter/release-offer-letter.component").then(m=>m.ReleaseOfferLetterComponent)
+    },
+
 ]

@@ -112,6 +112,7 @@ export const API = {
         DEPATMENTS: `/hms/configurations/departments`,
         SR_DETAILS: (srId: string) => `/hms/staffing-requisition/approval-view/${srId}`,
         APPROVE_OR_REJECT: `/hms/staffing-requisition/sr-approval`,
+        APPROVED_OFFER:`/api/admin/approved-offer`
     },
     NOTIFICATIONS: {
         ALL_NOTIFICATIONS: `/hms/notifications/list`,
@@ -196,7 +197,7 @@ export const API = {
         GET_PENDING_APPROVALS:`/hms/offer-details/get-pending-approvals`,
         GET_OFFER_TEMPLATED:`/hms/configurations/offer-letter-templates`,
         SUBMIT_RISE_OFFER_REQUEST:`/hms/offer-details/submit-raise-offer-request`,
-        GENERATE_OFFER_LETTER:`/api/offer/generate-offer-letter`,
+        GENERATE_OFFER_LETTER:`/api/admin/generate-offer-letter`,
         VIEW_OFFER_LETTER:(id:any)=>`/hms/offer-details/download/offerLetter?appId=${id}&action=view`,
         OPPROVE_OFFER_LIST:`/hms/offer-details/get-all-pending-approvals`,
         GET_NAGOTIATE_LIST:`/hms/offer-details/negotiation-list`,
@@ -205,7 +206,9 @@ export const API = {
         OFFER_APPROVALS_LIST:`/hms/offer-details/get-pending-approvals`,
         NEGOTIATION_DETAILS_BY_APPLICANT_ID:(id:any)=>`/hms/offer-details/negotiation-details/${id}`,
         REVIEW_NEGOTIATION_REQUEST:`/hms/offer-details/review-negotiation-request`,
-        VIEW_DOCUMENTS:`/hms/offer-details/view-document`
+        VIEW_DOCUMENTS:`/hms/offer-details/view-document`,
+        RERELEASE_OFFER_DETAILS:(id:any)=>`/hms/offer-details/re-release-offer-details-by-id/${id}`,
+        APPROVEAL:`/api/admin/approved-offer`
     },
     DASHBOARD:{
         HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,

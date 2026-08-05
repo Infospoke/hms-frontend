@@ -167,6 +167,12 @@ export const NAV_ITEMS: NavItem[] = [
         path: '/approval/interview-plan-approval',
         permissionName: 'INTERVIEWPLANAPPROVALS',
       },
+      {
+        label: 'Offer Approval',
+        icon: 'fa-solid fa-file-signature',
+        path: '/approval/approve-offer-requests',
+        permissionName: 'OFFERAPPROVALS',
+      },
     ],
   },
   {

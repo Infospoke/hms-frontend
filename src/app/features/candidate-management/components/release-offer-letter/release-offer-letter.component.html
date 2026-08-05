@@ -1,0 +1,145 @@
+<div class="rol-wrapper" *ngIf="!isLoading">
+
+
+  <app-heading [heading]="pageTitle" [subHeading]="pageSubheading" [showBackButton]="true" [backButtonUrl]="'/'" (backButtonClicked)="onBackButtonClicked()" [buttonText]="'Back to Release Offer Letter'"/>
+  
+
+ 
+  <div class="rol-card rol-header">
+    <div class="rol-header-id">
+      <div class="rol-avatar" [ngStyle]="{ background: candidate.avatarColor }">{{ candidate.initials }}</div>
+      <div class="rol-header-name">
+        <span class="rol-name">{{ candidate.name }}</span>
+        <span class="rol-role">{{ candidate.role }}</span>
+        <span class="rol-email">{{ candidate.email }}</span>
+      </div>
+    </div>
+
+    <div class="rol-header-stat">
+      <i class="fa-regular fa-id-card"></i>
+      <div>
+        <span class="rol-stat-label">Candidate ID</span>
+        <span class="rol-stat-value">{{ candidate.candidateId }}</span>
+      </div>
+    </div>
+
+    <div class="rol-header-stat">
+      <i class="fa-solid fa-sitemap"></i>
+      <div>
+        <span class="rol-stat-label">Department</span>
+        <span class="rol-stat-value">{{ candidate.department }}</span>
+      </div>
+    </div>
+
+    <div class="rol-header-stat">
+      <i class="fa-solid fa-briefcase"></i>
+      <div>
+        <span class="rol-stat-label">Employment Type</span>
+        <span class="rol-stat-value">{{ candidate.employmentType }}</span>
+      </div>
+    </div>
+
+    <div class="rol-header-stat">
+      <i class="fa-solid fa-location-dot"></i>
+      <div>
+        <span class="rol-stat-label">Location</span>
+        <span class="rol-stat-value">{{ candidate.location }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       OFFER SUMMARY + LETTER PREVIEW
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rol-body-grid">
+
+    <div class="rol-card rol-summary-card">
+      <h3 class="rol-section-title">Offer Summary</h3>
+
+      <div class="rol-summary-row" *ngFor="let row of summaryRows" [class.rol-summary-row--highlight]="row.highlight">
+        <div class="rol-summary-left">
+          <span class="rol-summary-icon"><i [class]="row.icon"></i></span>
+          <span class="rol-summary-label" [class.rol-summary-label--bold]="row.highlight">{{ row.label }}</span>
+        </div>
+        <span class="rol-summary-value" [class.rol-summary-value--highlight]="row.highlight">{{ row.value }}</span>
+      </div>
+
+      <button class="rol-btn-download" type="button" [disabled]="!offerLetterPath" (click)="onDownloadOfferDetails()">
+        <i class="fa-solid fa-download"></i> Download Offer Details (PDF)
+      </button>
+      <p class="rol-letter-pending-hint" *ngIf="!offerLetterPath">
+        <i class="fa-solid fa-circle-info"></i> Offer letter hasn't been generated yet.
+      </p>
+    </div>
+
+    <div class="rol-card rol-preview-card">
+      <h3 class="rol-section-title">Offer Letter Preview</h3>
+
+      <div class="rol-letter">
+        <div class="rol-letter-head">
+          <div class="rol-letter-logo">
+            <span class="rol-letter-logo-mark">{{ letterPreview.logoInitial }}</span>
+            <span class="rol-letter-logo-name">{{ letterPreview.companyName }}</span>
+          </div>
+          <span class="rol-letter-date">Date: {{ letterPreview.dateLabel }}</span>
+        </div>
+
+        <p class="rol-letter-heading">OFFER LETTER</p>
+
+        <p class="rol-letter-greeting">Dear {{ candidate.name }},</p>
+
+        <p class="rol-letter-para" *ngFor="let para of letterPreview.bodyParagraphs">{{ para }}</p>
+
+        <div class="rol-letter-signoff">
+          <p>Warm regards,</p>
+          <p>{{ letterPreview.signOffName }}</p>
+          <p>{{ letterPreview.signOffCompany }}</p>
+        </div>
+      </div>
+
+      <button class="rol-btn-preview" type="button" [disabled]="!offerLetterPath" (click)="onPreviewFullOfferLetter()">
+        <i class="fa-regular fa-eye"></i> Preview Full Offer Letter
+        <i class="fa-solid fa-up-right-from-square rol-preview-ext"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ACTION BAR
+       ══════════════════════════════════════════════════════════ -->
+  <div class="rol-action-bar">
+    <button class="rol-btn-cancel" type="button" (click)="onCancel()">Cancel</button>
+    <button class="rol-btn-release" type="button" [disabled]="isReleasing" (click)="onReleaseOfferLetter()">
+      <i class="fa-regular fa-paper-plane"></i> {{ isReleasing ? 'Releasing…' : (isReRelease ? 'Re-release Offer Letter' : 'Release Offer Letter') }}
+    </button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FULL OFFER LETTER PREVIEW MODAL
+     ══════════════════════════════════════════════════════════ -->
+<div class="rol-modal-overlay" *ngIf="isLetterModalOpen" (click)="closeLetterModal()">
+  <div class="rol-modal" (click)="$event.stopPropagation()">
+    <div class="rol-modal-header">
+      <span class="rol-modal-title">Offer Letter — {{ candidate.name }}</span>
+      <button class="rol-modal-close" type="button" (click)="closeLetterModal()" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="rol-modal-body">
+      <div class="rol-modal-status" *ngIf="isLetterModalLoading">
+        <i class="fa-solid fa-spinner fa-spin"></i> Loading offer letter…
+      </div>
+      <div class="rol-modal-status rol-modal-status--error" *ngIf="!isLetterModalLoading && letterModalError">
+        <i class="fa-solid fa-triangle-exclamation"></i> {{ letterModalError }}
+      </div>
+      <iframe
+        *ngIf="!isLetterModalLoading && !letterModalError && letterModalUrl"
+        class="rol-modal-frame"
+        [src]="letterModalUrl"
+        title="Offer letter preview"
+      ></iframe>
+    </div>
+  </div>
+</div>

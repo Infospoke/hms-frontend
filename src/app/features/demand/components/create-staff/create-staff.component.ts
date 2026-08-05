@@ -1092,7 +1092,20 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       m.username?.toLowerCase().includes(value) || m.name?.toLowerCase().includes(value)
     );
   }
-  hideDropdown() { setTimeout(() => { this.showDropdown = false; }, 200); }
+  hideDropdown() {
+    // Runs after mousedown on a real dropdown option (mousedown fires
+    // before blur), so a valid pick has already cleared its search box by
+    // now. Anything still sitting in either search box at this point is
+    // unmatched free text the user typed and never selected — clear it so
+    // it can never look like an accepted value. This is what enforces
+    // "must be an existing person": only a real dropdown selection can
+    // leave text behind (as a tag/chip), typed-but-unselected text cannot.
+    setTimeout(() => {
+      this.showDropdown = false;
+      this.step0Form.get('managerSearch')?.setValue('');
+      this.step1Form.get('replaceSearch')?.setValue('');
+    }, 200);
+  }
 
   onJobTitleFocus(): void {
     if (this.jobTitleSuggestions.length) this.showJobTitleDropdown = true;
@@ -1113,10 +1126,21 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   }
 
   selectReplaceEmployee(m: any) {
+    if (!m) return;
     this.replaceEmployee = m;
-    this.step1Form.get('replacesEmp')?.setValue(m?.id)
+    this.step1Form.get('replacesEmp')?.setValue(m?.id);
+    this.step1Form.get('replacesEmp')?.markAsTouched();
+    this.step1Form.get('replaceSearch')?.setValue('');
+    this.showDropdown = false;
   }
-  removeReplaceEmp() { this.replaceEmployee = null; }
+  removeReplaceEmp() {
+    this.replaceEmployee = null;
+    // NOTE: previously only cleared the local replaceEmployee object, not
+    // the form control — the removed employee's id stayed on replacesEmp
+    // and the SR could still be submitted as if someone were selected.
+    this.step1Form.get('replacesEmp')?.setValue('');
+    this.step1Form.get('replacesEmp')?.markAsTouched();
+  }
 
 
   getRoles(value: any) {

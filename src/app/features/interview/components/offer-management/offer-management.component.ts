@@ -128,6 +128,19 @@ export class OfferManagementComponent implements OnInit {
 
   isLoading = false;
 
+  // ── Active filters — populated from app-approval-layout's (filterChange)
+  // output; loadListData() sends this straight through as the API's
+  // `filters` payload. Field names are best-guess, matching the dropdown
+  // keys in candidateManagement (reusbale-filter.ts) — confirm against
+  // the real /hms/interview-plan/progress-list contract if results don't
+  // actually narrow down.
+  private currentFilters: {
+    search?: string;
+    allJobs?: string;
+    departments?: string;
+    currentStage?: string;
+  } = {};
+
   private router = inject(Router);
   private interviewService = inject(InterviewServiceService);
   private approvalService=inject(ApprovalService)
@@ -212,7 +225,7 @@ export class OfferManagementComponent implements OnInit {
     ];
   }
   
-  // ── Count API  (GET /hms/interview-plan/progress-count) ───────────────────
+
   private async loadCountData(){
     try {
       const res: any = await this.interviewService.candidateMangementCount();
@@ -238,7 +251,12 @@ export class OfferManagementComponent implements OnInit {
         size: this.pageSize,
         sortBy: 'applicationId',
         direction: 'ASC',
-        filters: {},
+        filters: {
+          search: this.currentFilters.search || undefined,
+          jobId: this.currentFilters.allJobs || undefined,
+          departmentId: this.currentFilters.departments || undefined,
+          currentStage: this.currentFilters.currentStage || undefined,
+        },
       };
 
       const res: any = await this.interviewService.candidateMangementList(payload);
@@ -291,6 +309,21 @@ export class OfferManagementComponent implements OnInit {
   // ── Pagination ────────────────────────────────────────────────────────────
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadListData();
+  }
+
+  // ── Filters — app-approval-layout re-emits app-common-filter's payload
+  // shape { chainName, allJobs, departments, currentStage, ... }. Was
+  // previously not bound at all in the template, so changing a filter
+  // never re-fetched the list.
+  onFilterChange(payload: any): void {
+    this.currentFilters = {
+      search: payload?.chainName || undefined,
+      allJobs: payload?.allJobs || undefined,
+      departments: payload?.departments || undefined,
+      currentStage: payload?.currentStage || undefined,
+    };
+    this.currentPage = 1;
     this.loadListData();
   }
 

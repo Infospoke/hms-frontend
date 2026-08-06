@@ -56,13 +56,8 @@ export default function OfferRow({ offer }) {
           {STATUS_LABEL[offer.status] ?? offer.status}
         </Badge>
         <Link
-          to={`/dashboard-careers/offer/${offer.applicantId}`}
-          // The offer-details-by-applicantId API doesn't echo back offerId/
-          // jobId/status, but the candidate-offers list response does —
-          // carry them through via route state so the detail/negotiation
-          // pages can use the list's status (to decide whether action
-          // buttons should even show) and send offerId/jobId on to
-          // negotiate-offer without re-deriving them.
+          to={`/dashboard-careers/offer/${offer.applicantId}/${offer.offerId}`}
+          
           state={{ offerId: offer.offerId, jobId: offer.jobId, status: offer.status }}
           className={
             isActionNeeded

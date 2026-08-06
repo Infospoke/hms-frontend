@@ -117,49 +117,68 @@ export default function OfferNegotiationPage() {
     !submitting;
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+  if (!canSubmit) return;
 
-    // Joining Date isn't a monetary field, so it goes on the request's
-    // top-level `joiningDate` rather than in the `negotiation` array.
-    const negotiation = Array.from(selectedIds)
-      .filter((id) => id !== 'other' && id !== 'joining-date')
-      .map((id) => {
-        const item = items.find((i) => i.id === id);
-        const value = values[id] ?? EMPTY_VALUE;
-        return {
-          fieldName: item.label,
-          requestedAmount: parseAmount(value.requested),
-          reason: value.reason,
-        };
-      });
-    console.log(selectedIds,values);
-    const others = selectedIds.has('other') ? values.other?.reason || '' : '';
-    const joiningDate = selectedIds.has('joining-date') ? values['joining-date']?.requested || null : null;
-    const reasonForJoiningDate=selectedIds?.has('joining-date')? values['joining-date']?.reason || null : null;
-    setSubmitting(true);
-    setSubmitError('');
-    try {
-      await negotiateOfferRequest(
-        token,
-        {
-          offerId: offerId ?? offer.offerId ?? null,
-          applicantId: Number(applicantId),
-          jobId: jobId ?? offer.jobId ?? null,
-          overallJustification: justification,
-          others,
-          joiningDate,
-          reasonForJoiningDate,
-          negotiation,
-        },
-        files,
-      );
-      setSubmitted(true);
-    } catch (err) {
-      setSubmitError(err.message || 'Could not send your negotiation request. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  // Joining Date isn't a monetary field, so it goes on the request's
+  // top-level `joiningDate` rather than in the `negotiation` array.
+  const negotiation = Array.from(selectedIds)
+    .filter((id) => id !== 'other' && id !== 'joining-date')
+    .map((id) => {
+      const item = items.find((i) => i.id === id);
+      const value = values[id] ?? EMPTY_VALUE;
+
+      // Fall back to the item's existing value/reason if the user left the field blank.
+      const requestedAmount = value.requested.trim()
+        ? parseAmount(value.requested)
+        : parseAmount(item?.currentValue ?? 0);
+
+      const reason = value.reason.trim()
+        ? value.reason
+        : (item?.currentReason ?? '');
+
+      return {
+        fieldName: item.label,
+        requestedAmount,
+        reason,
+      };
+    });
+
+  const others = selectedIds.has('other') ? values.other?.reason || '' : '';
+
+  const joiningDateValue = values['joining-date']?.requested?.trim();
+  const joiningDate = selectedIds.has('joining-date')
+    ? (joiningDateValue || offer.joiningDate || null)
+    : null;
+
+  const reasonForJoiningDateValue = values['joining-date']?.reason?.trim();
+  const reasonForJoiningDate = selectedIds.has('joining-date')
+    ? (reasonForJoiningDateValue || null)
+    : null;
+
+  setSubmitting(true);
+  setSubmitError('');
+  try {
+    await negotiateOfferRequest(
+      token,
+      {
+        offerId: offerId ?? offer.offerId ?? null,
+        applicantId: Number(applicantId),
+        jobId: jobId ?? offer.jobId ?? null,
+        overallJustification: justification,
+        others,
+        joiningDate,
+        reasonForJoiningDate,
+        negotiation,
+      },
+      files,
+    );
+    setSubmitted(true);
+  } catch (err) {
+    setSubmitError(err.message || 'Could not send your negotiation request. Please try again.');
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   if (loading) {
     return (

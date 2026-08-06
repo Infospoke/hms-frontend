@@ -4,7 +4,7 @@ import { ChevronLeft, FileText, Download, Check, BarChart3 } from 'lucide-react'
 import ESignModal from '../components/careers/ESignModal.jsx';
 import OfferLetterViewer from '../components/careers/OfferLetterViewer.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import { getOfferDetailsByApplicantIdRequest, fetchOfferLetterBlob } from '../lib/api.js';
+import { getOfferDetailsByApplicantIdRequest, fetchOfferLetterBlob, acceptOfferRequest } from '../lib/api.js';
 import { normalizeOfferDetail, formatCurrency } from '../data/offers.js';
 
 /** "Priya Sharma" -> "Priya_Sharma_Offer_Letter.pdf" (falls back to the applicantId if there's no name yet). */
@@ -32,22 +32,17 @@ function openBlob(blob, { download, filename } = {}) {
 }
 
 export default function OfferDetailPage() {
-  const { applicantId } = useParams();
+  const { applicantId,offerId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { token } = useAuth();
 
-
+  console.log('OfferDetailPage params:', { applicantId, offerId },);
   const [offer, setOffer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // The offers list already knows the status (candidate-offers response),
-  // and passes it through via route state — use that as the source of
-  // truth so a candidate who has already accepted/declined/requested a
-  // negotiation can't take the same action again from this page. Falls
-  // back to inferring from the detail response's `requestedOn` only when
-  // there's no route state (e.g. a direct link or a page refresh).
+  
   const [status, setStatus] = useState(location.state?.status ?? 'action-needed');
   const [showSignModal, setShowSignModal] = useState(false);
 
@@ -67,7 +62,7 @@ export default function OfferDetailPage() {
       .then((result) => {
         const detail = normalizeOfferDetail(result.data || {});
         setOffer(detail);
-
+        console.log('Offer detail:', detail);
         if (!location.state?.status) {
           setStatus(detail.requestedOn ? 'negotiating' : 'action-needed');
         }
@@ -114,7 +109,23 @@ export default function OfferDetailPage() {
   const handleDecline = () => {
     setStatus('declined');
   };
-
+  const handleAcceptOffer = async ({ signatureFile, signatureType, comments }) => {
+  try {
+    await acceptOfferRequest(token, {
+      comments,
+      signatureFile,
+      signatureType,
+      candidateId: offer.candidateId,
+      offerId:offerId,
+      applicantId: applicantId,
+    });
+    setShowESignModal(false);
+   
+  } catch (err) {
+    // ApiError from api.js — show err.message to the user
+    console.error(err);
+  }
+};
   const handleDownload = async () => {
     setDownloadBusy(true);
     setDownloadError('');
@@ -158,7 +169,7 @@ export default function OfferDetailPage() {
   }
 
   const totalComp = offer.offeredCtc;
-  const offerId = location.state?.offerId ?? offer.offerId ?? null;
+  // const offerId = location.state?.offerId ?? offer.offerId ?? null;
   const jobId = location.state?.jobId ?? offer.jobId ?? null;
 
   const negotiatePath = `/dashboard-careers/offer/${applicantId}/negotiate`;
@@ -356,7 +367,7 @@ export default function OfferDetailPage() {
           offer={offer}
           totalCompLabel={formatCurrency(totalComp)}
           onClose={() => setShowSignModal(false)}
-          onConfirm={handleSigned}
+           onConfirm={handleAcceptOffer}
         />
       )}
     </>

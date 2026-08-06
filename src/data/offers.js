@@ -60,12 +60,12 @@ export function normalizeOfferDetail(raw) {
   const offeredCtc = typeof raw.offeredCtc === 'number' ? raw.offeredCtc : raw.totalCtc || 0;
 
   return {
-    // Needed (alongside applicantId) to submit a negotiation — the API
-    // requires offerId/jobId on the negotiate-offer request body.
+    
     offerId: raw.offerId,
     jobId: raw.jobId,
     applicantId: raw.applicantId,
     candidateName: raw.candidateName,
+    candidateId: raw.candidateId,
     email: raw.email,
     jobTitle: (raw.jobTitle || '').trim(),
     department: raw.department,

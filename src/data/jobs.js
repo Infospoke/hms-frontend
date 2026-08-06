@@ -21,7 +21,7 @@ export const MODE_TYPE_TABS = [
 ];
 
 
-export const LEVEL_FILTER_OPTIONS = ['All levels', 'Junior', 'Mid', 'Senior', 'Staff / Lead'];
+export const LEVEL_FILTER_OPTIONS = ['All levels', 'Junior', 'Mid', 'Senior', 'Manager'];
 
 export function deriveLevel(minExperience, maxExperience) {
   const min = Number(minExperience) || 0;

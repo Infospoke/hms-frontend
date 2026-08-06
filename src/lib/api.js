@@ -4,6 +4,8 @@ const API_BASE_URL =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) ||
   'http://172.16.1.101:5006';
 
+const API_BASE_URL_AI = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL_AI) || 'http://172.16.1.101:5002';
+
 export class ApiError extends Error {
   constructor(message, { responsecode, status } = {}) {
     super(message || 'Something went wrong. Please try again.');
@@ -13,13 +15,7 @@ export class ApiError extends Error {
   }
 }
 
-/**
- * Fired whenever any API call comes back 401 (e.g.
- * { "status": "FAILURE", "message": "Token expired" }). AuthContext listens
- * for this to clear its in-memory session and let ProtectedRoute's redirect
- * to /login take over — this module can't call useNavigate() directly since
- * it isn't a component/hook.
- */
+
 export const SESSION_EXPIRED_EVENT = 'nexus:session-expired';
 
 function handleUnauthorized() {
@@ -29,10 +25,10 @@ function handleUnauthorized() {
   }
 }
 
-async function request(path, { method = 'POST', body, token, isFormData = false, signal } = {}) {
+async function request(path, { method = 'POST', body, token, isFormData = false, signal, baseUrl = API_BASE_URL } = {}) {
   let response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${baseUrl}${path}`, {
       method,
       headers: {
          'X-Channel': 'web',
@@ -98,16 +94,7 @@ export function getOfferDetailsByApplicantIdRequest(token, applicantId, signal) 
   });
 }
 
-/**
- * POST /hms/candidate/negotiate-offer — multipart/form-data with a JSON
- * "request" part:
- *   { offerId, applicantId, jobId, overallJustification, others,
- *     joiningDate, negotiation: [{ fieldName, requestedAmount, reason }] }
- * plus zero or more "files" parts (supporting documents). Same Blob-typed
- * JSON part pattern used by createCandidateRequest/resumeReuploadRequest —
- * a plain string part has no Content-Type and Spring rejects it as
- * octet-stream.
- */
+
 export function negotiateOfferRequest(token, payload, files = []) {
   const form = new FormData();
   const requestBlob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
@@ -168,14 +155,7 @@ export function getCandidateDetailsRequest(token, candidateId, signal) {
   return request(`/hms/candidate/details/${candidateId}`, { method: 'GET', token, signal });
 }
 
-/**
- * POST /hms/candidate/apply-job — multipart/form-data, "data" part:
- *   { candidateId, jobId }
- * plus an optional "resume" file part. When the candidate applies with
- * their resume already on file, no "resume" part is sent at all (the
- * backend already has it, keyed by candidateId); it's only attached when
- * they explicitly upload a new one for this application.
- */
+
 export function applyJobRequest(token, { candidateId, jobId, resumeFile }) {
   const form = new FormData();
   const dataBlob = new Blob([JSON.stringify({ candidateId, jobId })], { type: 'application/json' });
@@ -224,4 +204,20 @@ export function createCandidateRequest({
   if (additionalFile) form.append('additionalFile', additionalFile);
 
   return request('/hms/candidate/create', { body: form, isFormData: true });
+}
+export function acceptOfferRequest(token, { comments, signatureFile, signatureType, candidateId, offerId,applicantId }) {
+  const form = new FormData();
+  form.append('comments', comments ?? '');
+  if (signatureFile) form.append('signature', signatureFile);
+  if (signatureType === 'type') form.append('signature_type', signatureType);
+  form.append('candidate_id', candidateId);
+  form.append('offer_id', offerId);
+  form.append('approve',true);
+  form.append('application_id',applicantId);
+  return request('/api/admin/accept-offer', {
+    token,
+    body: form,
+    isFormData: true,
+    baseUrl: API_BASE_URL_AI,
+  });
 }

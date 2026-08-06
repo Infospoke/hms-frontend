@@ -2,23 +2,59 @@ import { useRef, useState } from 'react';
 import { X, Upload, FileCheck2 } from 'lucide-react';
 import Checkbox from '../ui/Checkbox.jsx';
 
+// Renders the typed name onto a canvas and returns it as a PNG File,
+// so both signing methods ("type" and "upload") end up producing a real
+// file for the multipart "signature" field the backend expects.
+function typedNameToFile(name) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 160;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#1e293b';
+    ctx.font = '48px "Brush Script MT", cursive';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(name, 24, canvas.height / 2);
+    canvas.toBlob((blob) => {
+      resolve(new File([blob], 'signature.png', { type: 'image/png' }));
+    }, 'image/png');
+  });
+}
+
 export default function ESignModal({ offer, totalCompLabel, onClose, onConfirm }) {
   const [tab, setTab] = useState('type'); // 'type' | 'upload'
   const [typedName, setTypedName] = useState('');
   const [signatureFile, setSignatureFile] = useState(null);
+  const [comments, setComments] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef(null);
 
-  const canConfirm = agreed && (tab === 'type' ? typedName.trim().length > 1 : Boolean(signatureFile));
+  const canConfirm =
+    agreed && !submitting && (tab === 'type' ? typedName.trim().length > 1 : Boolean(signatureFile));
 
   const handleFiles = (files) => {
     if (files && files[0]) setSignatureFile(files[0]);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!canConfirm) return;
-    onConfirm?.({ method: tab, typedName, signatureFile });
+    setSubmitting(true);
+    try {
+      const fileToSend = tab === 'type' ? await typedNameToFile(typedName.trim()) : signatureFile;
+      await onConfirm?.({
+        method: tab,
+        signatureType: tab,
+        typedName,
+        signatureFile: fileToSend,
+        comments: comments.trim(),
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -136,6 +172,20 @@ export default function ESignModal({ offer, totalCompLabel, onClose, onConfirm }
             </div>
           )}
 
+          <div className="mt-5">
+            <label htmlFor="esign-comments" className="text-xs font-semibold text-slate-600">
+              Comments <span className="font-normal text-slate-400">(optional)</span>
+            </label>
+            <textarea
+              id="esign-comments"
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              placeholder="Add any comments about this offer..."
+              rows={3}
+              className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none"
+            />
+          </div>
+
           <div className="mt-5 rounded-xl border border-slate-200 px-4 py-4">
             <Checkbox
               id="esign-agree"
@@ -159,7 +209,7 @@ export default function ESignModal({ offer, totalCompLabel, onClose, onConfirm }
               disabled={!canConfirm}
               className="rounded-full bg-gradient-to-r from-brand-600 to-brand-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
             >
-              Confirm &amp; sign
+              {submitting ? 'Signing…' : 'Confirm & sign'}
             </button>
           </div>
         </div>

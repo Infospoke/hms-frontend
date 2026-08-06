@@ -49,7 +49,7 @@ export default function App() {
           <Route path="interviews" element={<InterviewsPage />} />
           <Route path="offer" element={<OffersPage />} />
           <Route path="offer/:applicantId/negotiate" element={<OfferNegotiationPage />} />
-          <Route path="offer/:applicantId" element={<OfferDetailPage />} />
+          <Route path="offer/:applicantId/:offerId" element={<OfferDetailPage />} />
           <Route path=":jobId/apply" element={<ApplicationFormPage />} />
           <Route path=":jobId" element={<JobDetailPage />} />
         </Route>

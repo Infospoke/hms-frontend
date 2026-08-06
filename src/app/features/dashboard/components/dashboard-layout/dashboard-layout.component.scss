@@ -367,3 +367,60 @@
     padding: 0; // avoid double padding since parent now handles it
   }
 }
+
+// ── Header filters row ───────────────────────────────────────────────────
+// app-date-range-picker sits to the left of app-common-filter's dropdown
+// pills (e.g. recruiter), instead of the date range living inside
+// common-filter itself.
+.filters-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  ::ng-deep app-date-range-picker {
+    .date-range-wrapper {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    
+    .date-range-picker {
+      height: auto;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid #E5EAF0;
+      border-radius: 10px;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .date-field {
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .date-field label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #8a90a2;
+      white-space: nowrap;
+    }
+
+    .date-field input[type="date"] {
+      border: none;
+      padding: 0;
+      height: auto;
+      font-size: 13px;
+      color: #1F2937;
+    }
+
+    
+    .clear-btn {
+      display: none;
+    }
+  }
+}

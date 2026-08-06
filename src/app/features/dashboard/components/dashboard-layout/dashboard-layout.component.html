@@ -12,6 +12,17 @@
     <app-heading [heading]="heading" [subHeading]="subHeading" *ngIf="!showingLayout">
     </app-heading>
 
+    
+    <div class="filters-row" *ngIf="showFiltersBar && filterDropdowns.length">
+         <app-common-filter [dropdowns]="filterDropdowns" [cardStyle]="true" [showSearch]="false"
+(filterChange)="onFilterChange($event)">
+        </app-common-filter>
+        <app-date-range-picker
+            [startDate]="dateRangeDefaultFrom"
+            [endDate]="dateRangeDefaultTo"
+            (dateRangeChange)="onDateRangeChange($event)" />
+    </div>
+
     <!-- Cards -->
     <div class="card-dd">
         <div *ngFor="let item of cards">
@@ -28,8 +39,11 @@
             <div class="chart-card-header" *ngIf="tableConfig.title">
                 <h3>{{ tableConfig.title }}</h3>
             </div>
-            <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)" />
-
+            <!-- Date filtering for this table is driven by the single
+                 date-range-picker in the filters row above — a second,
+                 independently-wired picker here was firing the same
+                 dateRangeChange output and triggering an extra analytics
+                 API call on every change. -->
         </div>
 
         <app-reusable-table [columns]="tableConfig.columns" [data]="tableConfig.data" [showHeader]="true"

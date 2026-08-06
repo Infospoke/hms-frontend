@@ -136,7 +136,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   travelOpts: any = [];
   readonly countries = [
     { label: 'India', value: 'India' },
-    { label: 'USA',   value: 'USA'   }
+    { label: 'USA', value: 'USA' }
   ];
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
 
@@ -359,7 +359,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       department: this.department,
       seniority: this.seniority,
       location: this.location,
-      country:this.country,
+      country: this.country,
       employment_type: this.empType,
       business_justification: this.bizCase,
     }
@@ -686,7 +686,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       businessUnitId: f.bu,
       reportingManagerInfo: f.manager,
       location: f.location,
-      country:f.country,
+      country: f.country,
       seniorityLevel: f.seniority,
       openings: f.openings,
       targetStartDate: f.startDate,
@@ -805,7 +805,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.step0Form.get('jobTitle')?.setValue(p.jobTitle ?? '', { emitEvent: false });
       this.step0Form.patchValue({
         bu: buss?.id ?? '',
-        country:p.country??'',
+        country: p.country ?? '',
         location: p.location ?? '',
         workMode: p.workMode ?? '',
         empType: p.employmentType ?? '',
@@ -1171,24 +1171,28 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
     if (next >= 1 && next <= 999) this.step0Form.patchValue({ openings: next });
   }
 
-  blockNonLetters(form: FormGroup, field: string, event: any): void {
-    const raw: string = event?.target?.value ?? '';
-    const cleaned = raw.replace(/[^A-Za-z\s.,'-]/g, '');
-    if (cleaned !== raw) {
-      form.get(field)?.setValue(cleaned);
-      // keep the caret at the end; simplest safe behavior for this field
-      event.target.value = cleaned;
+  blockNonLetters(form: FormGroup, field: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    let value = input.value;
+
+    // Prevent leading spaces
+    value = value.replace(/^\s+/, '');
+
+    // Allow letters, numbers, spaces, ., -, &, /, ()
+    value = value.replace(/[^a-zA-Z0-9\s.&()/-]/g, '');
+
+    if (value !== input.value) {
+      input.value = value;
+      form.get(field)?.setValue(value, { emitEvent: false });
     }
   }
 
   trimField(form: FormGroup, field: string): void {
-    const ctrl = form.get(field);
-    if (!ctrl || typeof ctrl.value !== 'string') return;
-    const trimmed = ctrl.value.trim();
-    if (trimmed !== ctrl.value) {
-      ctrl.setValue(trimmed);
-    }
-    ctrl.markAsTouched();
+    const control = form.get(field);
+    if (!control) return;
+
+    control.setValue((control.value || '').trim(), { emitEvent: false });
   }
 
   hasError(form: FormGroup, field: string): boolean {

@@ -186,7 +186,7 @@ export class ProvideFeedBackComponent implements OnInit {
         this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
       } else {
         this.notificationService.error(
-          res?.message ?? res?.data ?? 'Failed to submit feedback. Please try again.',
+          res?.errors?.[0] ?? res?.message ?? res?.data ?? 'Failed to submit feedback. Please try again.',
         );
       }
     } catch (err: any) {
@@ -231,7 +231,7 @@ export class ProvideFeedBackComponent implements OnInit {
         this.router.navigate(['/candidate-management/in-person-interview'], { state: { activeType: 'fp' } });
       } else {
         this.notificationService.error(
-          res?.message ?? res?.data ?? 'Failed to update decision. Please try again.',
+          res?.errors?.[0] ?? res?.message ?? res?.data ?? 'Failed to update decision. Please try again.',
         );
       }
     } catch (err: any) {

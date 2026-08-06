@@ -4,7 +4,8 @@
     subHeading="Review and manage interview requests assigned to you."
     [searchPlaceholder]="'Search by Job Title, Department'"
     [dropDownData]="interviewPriority"
-    [cards]="cards"/>
+    [cards]="cards"
+    (filterChange)="onFilterChange($event)"/>
 
     <app-assigned-interview-requests-table
     [payload]="tablePayload"

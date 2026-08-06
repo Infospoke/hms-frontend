@@ -47,6 +47,7 @@ export class ApprovalLayoutComponent {
       approval: event.filters['approval'] || undefined,
       dateFilter: event.filters['dateFilter'] || undefined,
       department:event?.filters['department'] || undefined,
+      priority:event?.filters['priority'] || undefined,
       // NOTE: some dropDownData configs (e.g. candidateManagement in
       // reusbale-filter.ts) key their department/stage filters as
       // 'departments'/'currentStage' rather than 'department' above —

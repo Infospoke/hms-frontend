@@ -8,6 +8,7 @@ import { ReusableTableComponent, TableColumn } from '../../../../shared/componen
 import { CandidatePipelineComponent, PipelineConfig } from '../../../../shared/components/candidate-pipeline/candidate-pipeline.component';
 import { BubbleChartComponentComponent } from '../../../../shared/components/bubble-chart-component/bubble-chart-component.component';
 import { DateRangePickerComponent } from '../../../../shared/components/date-range-picker/date-range-picker.component';
+import { CommonFilterComponent } from '../../../../shared/components/common-filter/common-filter.component';
 
 export interface PieChartConfig {
   title?: string;
@@ -33,7 +34,7 @@ export interface RequisitionsTableConfig {
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent,BubbleChartComponentComponent,DateRangePickerComponent],
+  imports: [HeadingComponent, DashboardCountCardComponent, CommonModule, DonutPieChartComponent, SemiCircleGaugeComponent, ReusableTableComponent, CandidatePipelineComponent,BubbleChartComponentComponent,DateRangePickerComponent,CommonFilterComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
 })
@@ -45,6 +46,15 @@ export class DashboardLayoutComponent implements OnInit{
   @Input() showFiltersBar: boolean = false;
   @Input() filterDropdowns: any[] = [];
   @Input() filterSearchPlaceholder: string = 'Search...';
+  /** Passed straight through to app-common-filter — seeds its date-filter
+   * From/To inputs when that dropdown defaults to "Custom Range". */
+  @Input() filterDefaultFromDate: string = '';
+  @Input() filterDefaultToDate: string = '';
+
+  /** Preselects the standalone date-range-picker in the filters row above
+   * (separate from common-filter's own "Custom Range" from/to fields). */
+  @Input() dateRangeDefaultFrom: string = '';
+  @Input() dateRangeDefaultTo: string = '';
 
   @Output() filterChange = new EventEmitter<any>();
   @Output() dateRangeChange = new EventEmitter<{ startDate: string; endDate: string }>();
@@ -91,5 +101,8 @@ export class DashboardLayoutComponent implements OnInit{
   }
   handleData(data:any){
     this.cardClick.emit(data);
+  }
+  onFilterChange(data:any){
+    this.filterChange.emit(data);
   }
 }

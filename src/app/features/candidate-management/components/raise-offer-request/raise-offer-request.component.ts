@@ -219,7 +219,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   totalReadyToRelease: number = 3;
   readyToReleaseOfferLetters: any[] = [];
   permissionName: any = 'CANDIDATEMANAGEMENT:OFFERMANAGEMENT:VIEW';
-  // ── Candidate requested / Pay revision requests: New requests ────────────
+  
   totalNewPayRevisionRequests: number = 4;
   newPayRevisionRequests: any[] = [];
 
@@ -642,7 +642,7 @@ export class RaiseOfferRequestComponent implements OnInit {
     //     activeType: this.activeStageId,
     //   }
     // })
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${row?.reReleaseOfferId}`],{
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${this.activeTabId==='pending'?row?.id:row?.reReleaseOfferId??row?.offerId}`],{
       state:{type: this.activeTabId}
     });
   }

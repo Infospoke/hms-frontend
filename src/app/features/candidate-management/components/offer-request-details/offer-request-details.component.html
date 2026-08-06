@@ -179,19 +179,18 @@
       <p class="percentile-message">{{ marketComparison.message }}</p>
     </div>
 
-    <div class="market-bar-wrap" [class.dragging]="isDraggingMarket">
-      <div
-        class="market-bar-track"
-        #marketTrack
-        (pointerdown)="onMarketPointerDown($event)"
-      >
-        <div class="market-bar-fill" [class.dragging]="isDraggingMarket" [style.width.%]="marketComparison.percentile"></div>
-        <div
-          class="market-bar-dot"
-          [class.dragging]="isDraggingMarket"
-          [style.left.%]="marketComparison.percentile"
-          (pointerdown)="onMarketPointerDown($event)"
-        ></div>
+    <div class="market-bar-wrap">
+      <div class="market-bar-track">
+        <div class="market-bar-fill" [style.width.%]="marketComparison.percentile"></div>
+        <div class="market-bar-dot" [style.left.%]="marketComparison.percentile">
+          <span
+            class="market-bar-dot-tooltip"
+            [class.align-start]="marketComparison.percentile < 8"
+            [class.align-end]="marketComparison.percentile > 92"
+          >
+            Your offer: ₹{{ formatINR(totalCTC) }}
+          </span>
+        </div>
       </div>
 
       <div class="market-bar-labels">

@@ -255,7 +255,7 @@ export class TodayInterviewDetailsComponent implements OnInit {
       this.onCancel();
       // this.loadInterviewDetails(this.applicantionId);
     } else {
-      this.notificationService.error(res?.message || 'Failed to mark interview as completed.');
+      this.notificationService.error(res?.errors?.[0] || res?.message || 'Failed to mark interview as completed.');
     }
   }
   onCancel() {

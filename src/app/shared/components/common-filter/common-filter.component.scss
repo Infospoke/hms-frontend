@@ -334,19 +334,31 @@ $ctrl-h: 38px;
     .dropdown-panel {
       min-width: 220px;
     }
+
+    // Opt-in via dropdown.hideLabel — drops the label line entirely and
+    // collapses the box down to a single row (value + chevron only), so
+    // the card is noticeably shorter.
+    &.dropdown-box--no-label {
+      grid-template-areas: "value chevron";
+      row-gap: 0;
+      padding: 10px 16px;
+    }
   }
 }
 
 .dropdown-avatar-badge {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: #EAF3FF;
-  color: #2E7BE0;
+  background: #DBEAFE;
+  color: #1D4ED8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
   flex-shrink: 0;
 }
 
@@ -357,30 +369,33 @@ $ctrl-h: 38px;
 }
 
 .option-avatar-badge {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #EAF3FF;
-  color: #2E7BE0;
+  background: #DBEAFE;
+  color: #1D4ED8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
   flex-shrink: 0;
 }
 
-// ── Date Range Bar ─────────────────────────────────────────────────────────────
+// ── Date Range Bar ───────────────────────────────────────────────────────────
+// Lives inside the date filter's own dropdown-panel now (see
+// .dropdown-panel--date above) instead of as a second box next to the pill,
+// so it blends into the panel rather than repeating its border/background.
 .date-range-bar {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  width: 300px;             // fixed static width — never shifts
-  flex-shrink: 0;
-  height: $ctrl-h;
+  width: 100%;
   box-sizing: border-box;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 0 12px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 4px;
+  padding: 10px 8px 6px;
   gap: 0;
   animation: drSlideIn 0.16s ease;
 
@@ -393,6 +408,97 @@ $ctrl-h: 38px;
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  // ── Plain dateOnly filter — a standalone card sitting directly in the
+  // filter bar (no dropdown click needed to see it). Pinned to the right
+  // edge of the bar and stacked (From above To) rather than the old
+  // single-line pill, so it's visible at a glance instead of hidden behind
+  // a click.
+  &--inline {
+    flex-direction: column;
+    align-items: stretch;
+    width: 190px;
+    flex-shrink: 0;
+    border-top: none;
+    margin-top: 0;
+    // Sit to the left of the other filters (e.g. the recruiter pill) in
+    // this row — `order: -1` puts it before any sibling at the default
+    // order (0), regardless of where it falls in the `dropdowns` array.
+    order: -1;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    padding: 10px 12px 8px;
+    height: auto;
+    gap: 4px;
+    animation: none;
+
+    .dropdown-label {
+      margin-right: 0;
+      margin-bottom: 4px;
+    }
+
+    .date-field {
+      width: 100%;
+    }
+
+    .date-input-wrap {
+      width: 100%;
+      gap: 4px;
+    }
+
+    .date-input {
+      width: 100%;
+      font-size: 0.78rem;
+    }
+
+    // The arrow only reads correctly pointing right, between two side-by-side
+    // fields — rotate it to point down between the stacked From/To fields.
+    .date-range-sep {
+      align-self: center;
+      margin: 2px 0;
+      transform: rotate(90deg);
+    }
+
+    .date-clear-btn {
+      align-self: flex-end;
+      margin-top: -4px;
+    }
+  }
+
+  // ── Custom-range companion box — appears directly beside its dropdown
+  // pill once "Custom" is selected (see dropdown.isDateFilter && isCustomDate
+  // in the template). Unlike --inline above, this one has a neighbour pill
+  // right next to it, so it stays a compact single-line row rather than a
+  // stacked card.
+  &--adjacent {
+    width: auto;
+    flex-shrink: 0;
+    border-top: none;
+    margin-top: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 0 10px;
+    height: $ctrl-h;
+
+    .date-input {
+      width: 76px;
+    }
+
+    .date-input-wrap {
+      gap: 4px;
+    }
+
+    .date-range-sep {
+      margin: 0 6px;
+
+      svg {
+        width: 14px;
+      }
     }
   }
 }

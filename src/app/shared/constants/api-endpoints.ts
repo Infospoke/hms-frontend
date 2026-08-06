@@ -1,4 +1,5 @@
 import { sr_RS } from "ng-zorro-antd/i18n";
+import { RecruitersPerformanceDashboardComponent } from "../../features/dashboard/components/recruiters-performance-dashboard/recruiters-performance-dashboard.component";
 
 export const API = {
     AUTH: {
@@ -208,7 +209,8 @@ export const API = {
         REVIEW_NEGOTIATION_REQUEST:`/hms/offer-details/review-negotiation-request`,
         VIEW_DOCUMENTS:`/hms/offer-details/view-document`,
         RERELEASE_OFFER_DETAILS:(id:any)=>`/hms/offer-details/re-release-offer-details-by-id/${id}`,
-        APPROVEAL:`/api/admin/approved-offer`
+        APPROVEAL:`/api/admin/approved-offer`,
+        RE_GENERATE_OFFER_LETTER:`/api/admin/regenerate-offer-letter`
     },
     DASHBOARD:{
         HIRING_MANAGER_COUNT:`/hms/dashboard/hiring`,
@@ -217,6 +219,10 @@ export const API = {
         RECRUITER_DASHBOARD:`/hms/dashboard/analytics`,
         
         HIRING_MANAGER_DASHBOARD:`/hms/dashboard/hiring-dashboard-analytics`,
+
+        RECRUITER_PERFORMANCE_DASHBOARD_COUNT:`/hms/dashboard/recruiter-performance-dashboard`,
+
+        RECRUITER_PERFORMANCE_DETAIL:`/hms/dashboard/recruiter-performance`
 
     }
 };

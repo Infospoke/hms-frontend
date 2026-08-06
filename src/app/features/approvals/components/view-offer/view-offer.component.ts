@@ -233,14 +233,10 @@ export class ViewOfferComponent implements OnInit {
     this.cdr.markForCheck();
 
     try {
-      // Step 1: e-signature + comments go to the Python offer-approval
-      // service first — it generates the signed offer letter and returns
-      // where it was saved.
+      
       const pyRes = await this.runPythonESignatureApproval(approved);
 
-      // Step 2: forward that result on to the existing Java approve-offer
-      // API so the rest of the approval flow (pipeline, notifications, etc.)
-      // works exactly as it did before.
+   
       await this.submitDecision(approved, {
         eSignature: pyRes.status,
         offerLetterPath: pyRes.path,

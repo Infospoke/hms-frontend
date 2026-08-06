@@ -56,6 +56,23 @@ export class ReusableTableComponent implements OnChanges {
   /** Optional header template — rendered for any column whose key === 'select' */
   @Input() headerTemplate?: TemplateRef<any>;
 
+  // ── Active row highlight ───────────────────────────────────────────────────
+  /** Row key of whichever row is currently "active" (e.g. the one that was
+   * clicked to drive a drill-down API call) — that row gets a highlighted
+   * background so it's clear which one the rest of the page is showing
+   * detail for. Compared against each row via `rowKeyField`. */
+  @Input() activeRowKey: any = null;
+  /** Field on each row object to compare against `activeRowKey` — defaults
+   * to 'id', override per table (e.g. 'jobId'). */
+  @Input() rowKeyField: string = 'id';
+
+  // ── Scrollable body ─────────────────────────────────────────────────────────
+  /** Set to cap the table body's height (e.g. '420px') and make it scroll
+   * vertically once there are more rows than fit — header stays put via
+   * sticky positioning. Leave unset for tables that should just grow with
+   * their content (existing default behaviour). */
+  @Input() maxBodyHeight: string = '';
+
   // ── Outputs ───────────────────────────────────────────────────────────────
   @Output() rowClick = new EventEmitter<any>();
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
@@ -113,6 +130,11 @@ export class ReusableTableComponent implements OnChanges {
 
   getCellValue(row: any, key: string): any {
     return key.split('.').reduce((obj, k) => obj?.[k], row) ?? '—';
+  }
+
+  isActiveRow(row: any): boolean {
+    if (this.activeRowKey == null) return false;
+    return row?.[this.rowKeyField] === this.activeRowKey;
   }
 
   isSortable(key: string): boolean {

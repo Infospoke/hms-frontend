@@ -370,9 +370,7 @@ export class ReviewNotiationReviewComponent implements OnInit {
   }
 
   // ── Actions ──────────────────────────────────────────────────────────────
-  onBack(): void {
-    this.router.navigateByUrl('/candidate-management/offer-management');
-  }
+  
 
   async onReject(): Promise<void> {
     if (this.isSubmitting) return;
@@ -473,5 +471,8 @@ export class ReviewNotiationReviewComponent implements OnInit {
       URL.revokeObjectURL(this.docModalObjectUrl);
       this.docModalObjectUrl = null;
     }
+  }
+  onBack(){
+    this.router.navigate([`/candidate-management/offer-management`],{state:{activeType:'cr'}});
   }
 }

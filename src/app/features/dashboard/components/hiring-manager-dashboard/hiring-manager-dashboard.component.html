@@ -27,6 +27,8 @@
       [columns]="reqColumns"
       [data]="reqData"
       [showHeader]="true"
+      [activeRowKey]="selectedSrId"
+      [rowKeyField]="'srId'"
       [cellTemplate]="reqCellTpl"
       (rowClick)="handleData($event)"
     ></app-reusable-table>

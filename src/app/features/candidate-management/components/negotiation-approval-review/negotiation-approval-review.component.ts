@@ -574,7 +574,8 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   // ── Actions ──────────────────────────────────────────────────────────────
   onBack(): void {
-    this.router.navigateByUrl('/candidate-management/offer-management');
+    this.router.navigate([`/candidate-management/offer-management`],{state:{activeType:'rol'}});
+    // this.router.navigateByUrl('/candidate-management/offer-management');
   }
 
   onViewOfferLetter(): void {

@@ -31,6 +31,12 @@ export class JobAssignmentsTableComponent implements OnChanges {
   @Input() subTitle: string = '';
   @Input() rows: JobAssignmentRow[] = [];
   @Input() showLegend: boolean = true;
+  /** jobId of the row currently driving the drill-down detail below the
+   * table — that row gets highlighted so it's clear which one is active. */
+  @Input() activeJobId: any = null;
+  /** Caps the table body height and makes it scroll vertically past that
+   * point (e.g. '420px') — unset means it just grows with the row count. */
+  @Input() maxBodyHeight: string = '';
   /** Re-emits the reusable table's row click so callers can drill into a
    * specific job assignment (e.g. to fetch its recruiter-performance detail). */
   @Output() rowClick = new EventEmitter<JobAssignmentRow>();

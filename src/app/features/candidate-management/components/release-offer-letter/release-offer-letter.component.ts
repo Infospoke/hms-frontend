@@ -329,6 +329,6 @@ export class ReleaseOfferLetterComponent implements OnInit {
     }
   }
   onBackButtonClicked(){
-
+    this.router.navigate([`/candidate-management/offer-management`],{state:{activeType:'rl'}});
   }
 }

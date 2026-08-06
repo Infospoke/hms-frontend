@@ -418,6 +418,10 @@ export const candidateManagementFilter: any = [
 // only) — RecruitersPerformanceDashboardComponent.loadRecruiters() replaces
 // it at runtime with the live list of users holding the Recruiter role
 // (Recruiting Operations department → Recruiter role → user list).
+// Just the recruiter dropdown — the date range lives in the separate
+// app-date-range-picker that RecruitersPerformanceDashboardComponent renders
+// next to app-common-filter (see dashboard-layout's .filters-row), so this
+// array no longer needs its own dateFilter entry (that used to duplicate it).
 export const recruitersPerformanceFilter: any = [
   {
     key: 'recruiter',
@@ -429,18 +433,6 @@ export const recruitersPerformanceFilter: any = [
     options: [
       { value: '', label: 'All Recruiters' },
     ],
-  },
-  {
-    // Plain From/To date filter — no dropdown, no presets, just the two
-    // date inputs sitting inline in the filter bar (pre-filled with a
-    // rolling one-month window by RecruitersPerformanceDashboardComponent).
-    key: 'dateFilter',
-    label: 'Date Range',
-    hideLabel: true,
-    isDateFilter: true,
-    dateOnly: true,
-    icon: 'fa-regular fa-calendar',
-    options: [],
   },
 ];
 

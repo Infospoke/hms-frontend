@@ -39,15 +39,12 @@
             <div class="chart-card-header" *ngIf="tableConfig.title">
                 <h3>{{ tableConfig.title }}</h3>
             </div>
-            <!-- Date filtering for this table is driven by the single
-                 date-range-picker in the filters row above — a second,
-                 independently-wired picker here was firing the same
-                 dateRangeChange output and triggering an extra analytics
-                 API call on every change. -->
+            
         </div>
 
         <app-reusable-table [columns]="tableConfig.columns" [data]="tableConfig.data" [showHeader]="true"
-            [tableLayout]="'fixed'" [cellTemplate]="reqCell" (rowClick)="handleData($event)">
+            [tableLayout]="'fixed'" [activeRowKey]="activeRowKey" [rowKeyField]="rowKeyField"
+            [cellTemplate]="reqCell" (rowClick)="handleData($event)">
         </app-reusable-table>
 
     </div>

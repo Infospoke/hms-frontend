@@ -66,6 +66,10 @@ export class DashboardLayoutComponent implements OnInit{
 
   @Input() table:boolean=false;
   @Input() tableConfig?: RequisitionsTableConfig;
+  /** Highlights whichever row in the requisitions table drove the currently
+   * shown drill-down (see cardClick) — pass the row's id and its key field. */
+  @Input() activeRowKey: any = null;
+  @Input() rowKeyField: string = 'id';
 
   @Input() pipeLine:boolean=false;
   @Input() pipelineConfig?: PipelineConfig;

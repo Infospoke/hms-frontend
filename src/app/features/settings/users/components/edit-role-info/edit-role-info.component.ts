@@ -291,7 +291,7 @@ export class EditRoleInfoComponent implements OnInit {
           else{
             this.saving = false;
             this.loadData();
-            this.notificationService.error(res?.message|| res?.responsemessage);
+            this.notificationService.error(res?.errors?.[0] || res?.message || res?.responsemessage);
           }
          },
         error: () => { this.saving = false; },

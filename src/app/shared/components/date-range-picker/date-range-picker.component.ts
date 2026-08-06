@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface DateRange {
@@ -14,8 +14,8 @@ export interface DateRange {
   styleUrls: ['./date-range-picker.component.scss']
 })
 export class DateRangePickerComponent {
-  startDate: string = ''; // bound to <input type="date">, native value is yyyy-MM-dd
-  endDate: string = '';
+  @Input() startDate: string = ''; // bound to <input type="date">, native value is yyyy-MM-dd
+  @Input() endDate: string = '';
 
   errorMessage: string = '';
 

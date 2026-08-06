@@ -202,13 +202,13 @@ export class ReviewNotiationReviewComponent implements OnInit {
 
   private async loadAll(): Promise<void> {
     try {
-      const res: NegotiationDetailsApiResponse = await this.candidateService.getNegotiationDetails(this.applicantId);
+      const res:any= await this.candidateService.getNegotiationDetails(this.applicantId);
 
       if (res?.responsecode === '00') {
         this.applyNegotiationDetails(res.data);
       } else {
         console.error('Failed to fetch negotiation details:', res?.message);
-        this.notificationService.error(res?.message || 'Failed to load the candidate’s negotiation request');
+        this.notificationService.error(res?.errors?.[0] ?? res?.message ?? 'Failed to load the candidate’s negotiation request');
       }
     } catch (err) {
       console.error('Failed to load negotiation request', err);

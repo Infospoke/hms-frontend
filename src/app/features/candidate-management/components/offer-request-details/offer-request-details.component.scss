@@ -405,11 +405,6 @@ h1 {
 
 .market-bar-wrap {
   padding: 0 0 8px;
-
-  &.dragging {
-    user-select: none;
-    -webkit-user-select: none;
-  }
 }
 
 .market-bar-track {
@@ -430,8 +425,6 @@ h1 {
     #bbf7d0 100%
   );
   margin: 0 0 34px;
-  cursor: pointer;
-  touch-action: none;
 }
 
 .market-bar-fill {
@@ -442,12 +435,10 @@ h1 {
   background: var(--accent);
   opacity: 0.55;
   transition: width 0.3s ease;
-
-  &.dragging {
-    transition: none;
-  }
 }
 
+// Static marker showing where the offer's total CTC lands on the market
+// scale. Display-only — not draggable or otherwise editable by the user.
 .market-bar-dot {
   position: absolute;
   top: 50%;
@@ -459,13 +450,56 @@ h1 {
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.15);
   transform: translate(-50%, -50%);
   transition: left 0.3s ease;
-  cursor: grab;
-  touch-action: none;
+  pointer-events: none;
+}
 
-  &.dragging {
-    cursor: grabbing;
-    transition: none;
-    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.15), 0 1px 3px rgba(16, 24, 40, 0.15);
+.market-bar-dot-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: #10b981;
+  padding: 3px 8px;
+  border-radius: 6px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #10b981;
+  }
+
+  // When the dot sits near the left edge of the track, a centered tooltip
+  // would overflow outside the card. Pin it to the dot's left edge instead
+  // and slide the pointer arrow back to line up with the dot.
+  &.align-start {
+    left: 0;
+    transform: translateX(0);
+
+    &::after {
+      left: 8px;
+      transform: translateX(-50%);
+    }
+  }
+
+  // Same idea near the right edge, mirrored.
+  &.align-end {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+
+    &::after {
+      left: auto;
+      right: 8px;
+      transform: translateX(50%);
+    }
   }
 }
 

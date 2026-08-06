@@ -208,7 +208,7 @@ export class InviteUserComponent implements OnInit {
             this.close();
           }
           else{
-            this.notificationService.error(res?.message || res?.responsemessage);
+            this.notificationService.error(res?.errors?.[0] || res?.message || res?.responsemessage);
           }
         })
         .catch((error: any) => {

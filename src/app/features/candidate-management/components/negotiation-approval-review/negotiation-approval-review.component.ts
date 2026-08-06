@@ -631,23 +631,23 @@ export class NegotiationApprovalReviewComponent implements OnInit {
           offer_id: this.offerId,
           total_ctc: this.hrRecommendedPackage,
           approve: true,
-          probation_period:'15',
+          
           comments: 'Regenerating offer letter ahead of negotiation approval',
       }
       const response:any=await this.candidateService.regenerateOfferLetter(payload)
       
-
+      console.log(response);
       
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
-      window.open(objectUrl, '_blank');
+      // window.open(objectUrl, '_blank');
 
       this.isOfferLetterRegenerated = true;
       this.notificationService.success('Offer letter regenerated. You can now approve.');
     } catch (err) {
       console.error('Failed to regenerate offer letter', err);
       this.isOfferLetterRegenerated = false;
-      this.notificationService.error('Failed to regenerate the offer letter. Please try again.');
+      // this.notificationService.error('Failed to regenerate the offer letter. Please try again.');
     } finally {
       this.isRegeneratingOfferLetter = false;
       this.cdr.markForCheck();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import {
@@ -137,9 +137,6 @@ export class OfferRequestDetailsComponent implements OnInit {
   totalCTC = 0;
   donutSegments: DonutSegment[] = [];
   private notificationService=inject(NotificationService);
-  // --- Draggable market-percentile slider (visual only; doesn't touch other data) ---
-  @ViewChild('marketTrack') marketTrackRef?: ElementRef<HTMLDivElement>;
-  isDraggingMarket = false;
 
   @ViewChild('offerForm') offerForm?: NgForm;
 
@@ -289,47 +286,6 @@ export class OfferRequestDetailsComponent implements OnInit {
     if (percentile > 50) return 'You are offering above market median';
     if (percentile === 50) return 'You are offering at market median';
     return 'You are offering below market median';
-  }
-
-  // --- Draggable market-percentile slider ---------------------------------
-  // Visual only: updates marketComparison.percentile/message live as the
-  // user drags, without touching offeredCtc, totalCTC, or the donut chart.
-
-  onMarketPointerDown(event: PointerEvent): void {
-    event.preventDefault();
-    this.isDraggingMarket = true;
-    (event.target as HTMLElement)?.setPointerCapture?.(event.pointerId);
-    this.setMarketPercentileFromClientX(event.clientX);
-  }
-
-  @HostListener('window:pointermove', ['$event'])
-  onWindowPointerMove(event: PointerEvent): void {
-    if (!this.isDraggingMarket) return;
-    this.setMarketPercentileFromClientX(event.clientX);
-  }
-
-  @HostListener('window:pointerup')
-  @HostListener('window:pointercancel')
-  onWindowPointerUp(): void {
-    this.isDraggingMarket = false;
-  }
-
-  private setMarketPercentileFromClientX(clientX: number): void {
-    const track = this.marketTrackRef?.nativeElement;
-    if (!track) return;
-
-    const rect = track.getBoundingClientRect();
-    const ratio = rect.width === 0 ? 0 : (clientX - rect.left) / rect.width;
-    const percentile = Math.max(0, Math.min(100, Math.round(ratio * 100)));
-
-    if (percentile === this.marketComparison.percentile) return;
-
-    this.marketComparison = {
-      ...this.marketComparison,
-      percentile,
-      message: this.getMarketMessage(percentile),
-    };
-    this.cdr.markForCheck();
   }
 
   private getInitials(name: string): string {

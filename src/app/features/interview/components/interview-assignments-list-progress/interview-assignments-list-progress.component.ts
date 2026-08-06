@@ -83,7 +83,10 @@ export class InterviewAssignmentsListProgressComponent implements OnInit {
     this.currentPage = page;
     this.tablePayload = this.buildRequestBody();
   }
-
+  onFilterChange(data:any){
+    this.lastFilterPayload = data;
+    this.tablePayload = this.buildRequestBody();
+  }
   // ── Payload builder ───────────────────────────────────────────────────────
   private buildRequestBody(): object {
     const f = this.lastFilterPayload;
@@ -94,12 +97,12 @@ export class InterviewAssignmentsListProgressComponent implements OnInit {
       filters['search'] = f.search.trim();
     }
     console.log(f);
-    // Nested filters object
+    
     const nested = f?.filters ?? {};
 
-    // Priority
-    if (nested['priority']) {
-      filters['priority'] = nested['priority'];
+
+    if (nested['priority'] || f['priority']) {
+      filters['priority'] = nested['priority'] || f['priority'];
     }
 
     // Date filter

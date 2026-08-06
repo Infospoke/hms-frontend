@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../reusable-table/reusable-table.component';
-import { DateRangePickerComponent } from '../date-range-picker/date-range-picker.component';
 
 export interface JobAssignmentRow {
   jobTitle: string;
@@ -15,13 +14,15 @@ export interface JobAssignmentRow {
   /** Negative = overdue by N days, 0 = due today, positive = days left. */
   daysDue: number;
   slaStatus: 'On Track' | 'Completed' | 'At Risk' | 'Overdue';
+  jobId?: any;
+  srId?: any;
 }
 
 
 @Component({
   selector: 'app-job-assignments-table',
   standalone: true,
-  imports: [CommonModule, ReusableTableComponent,DateRangePickerComponent],
+  imports: [CommonModule, ReusableTableComponent],
   templateUrl: './job-assignments-table.component.html',
   styleUrl: './job-assignments-table.component.scss',
 })
@@ -30,7 +31,9 @@ export class JobAssignmentsTableComponent implements OnChanges {
   @Input() subTitle: string = '';
   @Input() rows: JobAssignmentRow[] = [];
   @Input() showLegend: boolean = true;
-  @Output() dateRangeChange=new EventEmitter<{ startDate: string; endDate: string }>();
+  /** Re-emits the reusable table's row click so callers can drill into a
+   * specific job assignment (e.g. to fetch its recruiter-performance detail). */
+  @Output() rowClick = new EventEmitter<JobAssignmentRow>();
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
 
 
@@ -82,8 +85,5 @@ export class JobAssignmentsTableComponent implements OnChanges {
     if (days < 0) return `${Math.abs(days)} Days`;
     if (days === 0) return '0 Days';
     return `${days} Days`;
-  }
-   onDateRangeChange(range:any): void {
-    this.dateRangeChange.emit(range);
   }
 }

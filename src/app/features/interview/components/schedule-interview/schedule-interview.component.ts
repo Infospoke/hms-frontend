@@ -74,7 +74,7 @@ export class ScheduleInterviewComponent implements OnInit {
       this.onCancel();
     }
     else{
-      this.notificationService.error(res?.responsemessage || res?.responseMessage);
+      this.notificationService.error(res?.errors?.[0] || res?.responsemessage || res?.responseMessage);
     }
     // this.router.navigate(['/schedule/success']);
   }

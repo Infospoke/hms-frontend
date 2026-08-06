@@ -128,7 +128,7 @@ export class RescheduleInterviewComponent implements OnInit {
       this.onCancel();
     }
     else{
-      this.notificationService.error(res?.message || 'Failed to reschedule interview');
+      this.notificationService.error(res?.errors?.[0] || res?.message || 'Failed to reschedule interview');
     }
   }
 }

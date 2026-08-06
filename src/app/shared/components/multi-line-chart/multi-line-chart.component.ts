@@ -42,13 +42,22 @@ export class MultiLineChartComponent implements OnChanges {
   chartSeries: ApexAxisChartSeries = [];
   colors: string[] = [];
   chart: ApexChart = {
+    id: 'hiring-trend-chart',
     type: 'line',
+    width: '100%',
     toolbar: { show: false },
-    animations: { enabled: true, speed: 500 },
+    // Animations off: rebuilding series on every data load recreates the
+    // chart's config objects, and a segment that needs to animate "growing"
+    // from 0 up to a real value can end up stuck mid-transition, rendering
+    // as a flat line at 0 instead of the real connecting line.
+    animations: { enabled: false },
     zoom: { enabled: false },
   };
   dataLabels: ApexDataLabels = { enabled: false };
-  stroke: ApexStroke = { curve: 'smooth', width: 2.5 };
+  // 'straight' (not 'smooth') — with only a couple of data points (common
+  // here, e.g. 2 weekly buckets), monotone-cubic smoothing can degenerate
+  // and the connecting line ends up not rendering at all.
+  stroke: ApexStroke = { curve: 'straight', width: 3, lineCap: 'round' };
   markers: ApexMarkers = { size: 4, strokeWidth: 2, strokeColors: '#fff', hover: { size: 6 } };
   tooltip: ApexTooltip = { theme: 'light', shared: true, intersect: false };
   grid: ApexGrid = { borderColor: '#F1F5F9', strokeDashArray: 3 };
@@ -58,7 +67,7 @@ export class MultiLineChartComponent implements OnChanges {
     axisTicks: { show: false },
     labels: { style: { colors: '#9ca3af', fontSize: '11px' } },
   };
-  yaxis: ApexYAxis = { labels: { style: { colors: '#9ca3af', fontSize: '11px' } } };
+  yaxis: ApexYAxis = { min: 0, labels: { style: { colors: '#9ca3af', fontSize: '11px' } } };
   legend: ApexLegend = { show: true, position: 'top', horizontalAlign: 'right', fontSize: '12px', markers: { size: 6 } };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,8 +78,11 @@ export class MultiLineChartComponent implements OnChanges {
 
   private build(): void {
     this.colors = this.series.map(s => s.color);
-    this.chartSeries = this.series.map(s => ({ name: s.name, data: s.data }));
-    this.xaxis = { ...this.xaxis, categories: this.categories };
+    // Plain arrays, not fresh {name,data} object refs holding the *same*
+    // arrays back into a brand-new outer array — ApexCharts should treat
+    // this as new data (not a resize), so it fully redraws every path.
+    this.chartSeries = this.series.map(s => ({ name: s.name, data: [...s.data] }));
+    this.xaxis = { ...this.xaxis, categories: [...this.categories] };
     this.chart = { ...this.chart, height: this.height };
   }
 }

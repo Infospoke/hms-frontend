@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { DashboardLayoutComponent } from '../dashboard-layout/dashboard-layout.component';
 import { recruitersPerformanceFilter } from '../../../../shared/constants/reusbale-filter';
 import { JobAssignmentsTableComponent, JobAssignmentRow } from '../../../../shared/components/job-assignments-table/job-assignments-table.component';
@@ -26,7 +27,7 @@ import { NotificationService } from '../../../../core/services/notification.serv
   templateUrl: './recruiters-performance-dashboard.component.html',
   styleUrl: './recruiters-performance-dashboard.component.scss',
 })
-export class RecruitersPerformanceDashboardComponent implements OnInit {
+export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestroy {
 
   heading = 'Recruiter Performance Drill-down';
   subHeading = "Track recruiter execution from job assignment to hiring outcome";
@@ -49,19 +50,38 @@ export class RecruitersPerformanceDashboardComponent implements OnInit {
   selectedJobTitle: string = '';
   performanceDetailLoaded = false;
 
+  // The recruiter dropdown and the date-range picker are two separate
+  // controls that can each fire their own change event in quick succession
+  // (e.g. editing "From" then "To" moments later) — debounce so that only
+  // fires ONE dashboard-count call once things settle, not one per field.
+  private filterChange$ = new Subject<any>();
+  private destroy$ = new Subject<void>();
+
   async ngOnInit(): Promise<void> {
     const range = this.resolveDateRange(null);
     this.fromDate = range.fromDate;
     this.toDate = range.toDate;
 
-   
+    this.filterChange$.pipe(
+      debounceTime(350),
+      takeUntil(this.destroy$)
+    ).subscribe(event => this.applyFilterChange(event));
+
     await this.loadRecruiters();
     this.getDashboardCount();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   // ── filters bar ──────────────────────────────────────────────────────────
   onFilterChange(event: any): void {
-    
+    this.filterChange$.next(event);
+  }
+
+  private applyFilterChange(event: any): void {
     if (event?.filters && 'recruiter' in event.filters) {
       this.selectedRecruiterId = event.filters.recruiter || '';
     }
@@ -70,12 +90,10 @@ export class RecruitersPerformanceDashboardComponent implements OnInit {
     this.fromDate = range.fromDate;
     this.toDate = range.toDate;
 
-    
     this.selectedJobId = null;
     this.selectedJobTitle = '';
     this.performanceDetailLoaded = false;
 
-    
     this.getDashboardCount();
   }
 
@@ -83,9 +101,7 @@ export class RecruitersPerformanceDashboardComponent implements OnInit {
     const today = new Date();
     const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
-    // The standalone date-range-picker's own change event uses
-    // startDate/endDate; a plain fromDate/toDate pair is also accepted in
-    // case it's forwarded from elsewhere with those keys already.
+   
     const rangeFrom = event?.fromDate || event?.startDate;
     const rangeTo = event?.toDate || event?.endDate;
     if (rangeFrom && rangeTo) {

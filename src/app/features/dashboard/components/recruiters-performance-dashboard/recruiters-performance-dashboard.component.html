@@ -5,8 +5,6 @@
     [subHeading]="subHeading"
     [showFiltersBar]="true"
     [filterDropdowns]="filterDropdowns"
-    [filterDefaultFromDate]="fromDate"
-    [filterDefaultToDate]="toDate"
     [dateRangeDefaultFrom]="fromDate"
     [dateRangeDefaultTo]="toDate"
     (filterChange)="onFilterChange($event)"
@@ -19,6 +17,8 @@
       title="Job Assignments"
       subTitle="Advanced Table (Conditional Formatting + Data Bars)"
       [rows]="jobAssignments"
+      [activeJobId]="selectedJobId"
+      maxBodyHeight="420px"
       (rowClick)="onJobRowClick($event)"
     />
   </div>

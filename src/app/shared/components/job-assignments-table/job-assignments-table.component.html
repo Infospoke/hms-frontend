@@ -5,7 +5,8 @@
     <span class="ja-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
   </div>
 
-  <app-reusable-table [columns]="columns" [data]="rows" [showHeader]="true" [tableLayout]="'fixed'"
+  <app-reusable-table [columns]="columns" [data]="rows" [showHeader]="true" [tableLayout]="'auto'"
+    [activeRowKey]="activeJobId" [rowKeyField]="'jobId'" [maxBodyHeight]="maxBodyHeight"
     [cellTemplate]="cellTpl" (rowClick)="rowClick.emit($event)" />
 
   <div class="ja-legend" *ngIf="showLegend">

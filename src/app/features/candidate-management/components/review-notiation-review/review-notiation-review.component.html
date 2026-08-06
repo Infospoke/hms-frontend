@@ -7,9 +7,10 @@
     [subHeading]="subHeading"
     [showBackButton]="true"
     buttonText="Back to candidate requested"
-    backButtonUrl="/candidate-management/offer-management"
+    backButtonUrl="/"
     [badge]="statusBadge"
     badgeStatus="cancelled"
+    (backClick)="onBack()"
   />
 
 

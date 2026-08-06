@@ -28,6 +28,13 @@
 .rt-scroll-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+
+  // Opt-in (via [maxBodyHeight]) — caps the table's height and scrolls
+  // vertically once there are more rows than fit, with the header staying
+  // put (see the sticky rule on thead th below).
+  &--capped {
+    overflow-y: auto;
+  }
 }
 
 .rt-table {
@@ -39,6 +46,15 @@
 // ── Base thead background ──────────────────────────────────────────────────────
 thead {
   background: #ebeeee;
+
+  // Only takes effect inside a height-capped, overflow-y:auto ancestor
+  // (.rt-scroll-wrapper--capped) — harmless no-op otherwise.
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #ebeeee;
+  }
 }
 
 // ── Normal single-row header ───────────────────────────────────────────────────
@@ -139,6 +155,22 @@ tbody {
     &:hover {
       background: #f8fafc;
       cursor: default;
+    }
+
+    // The row that drove the currently-shown detail/drill-down — see
+    // [activeRowKey]/[rowKeyField] on app-reusable-table. One accent stripe
+    // on the row's left edge only (not a border between every column).
+    &--active {
+      background: #eaf2fe;
+
+      &:hover {
+        background: #eaf2fe;
+      }
+
+      td:first-child {
+        border-left: 3px solid #2563eb;
+        padding-left: 13px;
+      }
     }
   }
 

@@ -170,8 +170,9 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   pipelineStages: ApprovalStage[] = [];
 
   // ── "View approved budget & compensation" popup ─────────────────────────
-  // TODO: no budget-band data in this API either — stays DUMMY until a
-  // real budget endpoint/field is confirmed.
+  // Populated in applyNegotiationDetails() from the closest available
+  // fields (minimumSalary/maximumSalary/hrRecommendedCtc/annualHiringCost)
+  // since there's no dedicated budget endpoint yet — see TODO there.
   showBudgetModal = false;
   budget: ApprovedBudgetInfo = {
     compensationBandMin: 0, compensationBandMax: 0,
@@ -383,6 +384,26 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     this.marketMax = data.maximumSalary ?? 0;
     this.offeredCtc = data.annualHiringCost ?? 0;
     this.askedCtc = data.totalRequestedAmount ?? 0;
+
+    // ── "View approved budget & compensation" modal ──
+    // No dedicated budget endpoint exists yet — this API doesn't return a
+    // department headcount budget or a "spent this quarter" figure, so we
+    // derive the closest available equivalents:
+    //   - compensation band  -> minimumSalary / maximumSalary
+    //   - department budget  -> hrRecommendedCtc (HR's approved annual figure)
+    //   - already allocated  -> annualHiringCost (this hire's committed cost)
+    //   - remaining          -> department budget - already allocated
+    // TODO: swap for real budget-endpoint fields once confirmed by backend.
+    const departmentBudgetAnnual = data.hrRecommendedCtc ?? 0;
+    const allocatedThisQuarter = data.annualHiringCost ?? 0;
+    this.budget = {
+      compensationBandMin: data.minimumSalary ?? 0,
+      compensationBandMax: data.maximumSalary ?? 0,
+      departmentBudgetAnnual,
+      allocatedThisQuarter,
+      remainingBudget: Math.max(0, departmentBudgetAnnual - allocatedThisQuarter),
+      note: data.hrReason ?? '',
+    };
 
     // ── Items — candidate's negotiation + HR's recommendation per field ──
     const hrRecMap = new Map<string, number>();

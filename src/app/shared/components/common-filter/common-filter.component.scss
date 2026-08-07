@@ -95,26 +95,31 @@ $ctrl-h: 38px;
     align-items: center;
     gap: 5px;
 
-    // ── Fixed widths, chosen once based on filter count (not on viewport) ──
-    // Default (4 effective filters): the baseline width.
-    // .is-wide  → <=3 effective filters: wider, since there's less to fit.
-    // .is-compact → >=5 effective filters: tighter, so they all still fit.
-    width: 155px;
+    // ── Content-driven width ────────────────────────────────────────────
+    // Was a hard fixed width (clipped normal values like "Human Resources").
+    // Now: a min-width to keep pills visually consistent when short, and a
+    // generous max-width as a safety cap for the rare very-long value —
+    // only that cap truncates (with a hover tooltip, see .dropdown-value).
+    min-width: 150px;
+    max-width: 260px;
+    width: auto;
     flex-shrink: 0;
 
     &.is-wide {
-      width: 205px;
+      min-width: 180px;
+      max-width: 320px;
 
       .dropdown-value {
-        width: 130px;
+        max-width: 260px;
       }
     }
 
     &.is-compact {
-      width: 128px;
+      min-width: 120px;
+      max-width: 200px;
 
       .dropdown-value {
-        width: 48px;
+        max-width: 140px;
       }
     }
 
@@ -162,12 +167,17 @@ $ctrl-h: 38px;
       font-size: 0.84rem;
       color: #6b7280;
       display: inline-block;
-      width: 80px;           // fixed — matches the default (non-wide) box width
+      max-width: 190px;       // cap only — normal values render in full now
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: middle;
       flex-shrink: 0;
+      cursor: default;
+
+      // Still-truncated values (long department/role names, etc.) get the
+      // full text on hover instead of silently cutting off — [title] on
+      // the element (set in the template) drives the native browser tooltip.
     }
 
     .chevron-icon {
@@ -185,7 +195,7 @@ $ctrl-h: 38px;
       top: calc(100% + 6px);
       left: 0;
       min-width: 100%;
-      max-width: min(230px, calc(100vw - 24px)); // never wider than the viewport on mobile
+      // max-width: min(230px, calc(100vw - 24px)); // never wider than the viewport on mobile
       background: #ffffff;
       border: 1px solid #e5e7eb;
       border-radius: 10px;
@@ -331,9 +341,9 @@ $ctrl-h: 38px;
       height: 12px;
     }
 
-    .dropdown-panel {
-      min-width: 220px;
-    }
+    // .dropdown-panel {
+    //   min-width: 220px;
+    // }
 
     // Opt-in via dropdown.hideLabel — drops the label line entirely and
     // collapses the box down to a single row (value + chevron only), so
@@ -384,10 +394,7 @@ $ctrl-h: 38px;
   flex-shrink: 0;
 }
 
-// ── Date Range Bar ───────────────────────────────────────────────────────────
-// Lives inside the date filter's own dropdown-panel now (see
-// .dropdown-panel--date above) instead of as a second box next to the pill,
-// so it blends into the panel rather than repeating its border/background.
+
 .date-range-bar {
   display: flex;
   align-items: center;

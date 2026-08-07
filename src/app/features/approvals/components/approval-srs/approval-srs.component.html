@@ -2,7 +2,7 @@
 
     <app-approval-layout [heading]="'My SRs — Approval Status'"
         subHeading="Track the progress of all your staffing requisitions" [showInfo]="true"
-        infoTooltip="More details about approval status" [searchPlaceholder]="'Search by SR ID or Job Title'"
+        infoTooltip="More details about approval status" [searchPlaceholder]="'Search by'"
         [dropDownData]="dropDownData" (filterChange)="filtersResponse($event)" />
 
     <div class="">
@@ -23,15 +23,15 @@
 
     <!-- Job Title — show first 10 chars then ".." -->
     <ng-container *ngIf="ctx.col.key === 'jobTitle'">
-        <span [title]="ctx.row['jobTitle']">
-            {{ truncate(ctx.row['jobTitle']) }}
+        <span [title]="ctx.row['jobTitle']" class="text-break">
+            {{ ctx.row['jobTitle'] }}
         </span>
     </ng-container>
 
     <!-- Department — show first 10 chars then ".." -->
     <ng-container *ngIf="ctx.col.key === 'department'">
-        <span [title]="ctx.row['department']">
-            {{ truncate(ctx.row['department']) }}
+        <span [title]="ctx.row['department']" class="text-break">
+            {{ ctx.row['department'] }}
         </span>
     </ng-container>
 

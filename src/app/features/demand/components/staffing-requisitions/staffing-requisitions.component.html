@@ -6,7 +6,7 @@
   </div>
 
   <app-approval-layout [showInfo]="false" [infoTooltip]="false" [cards]="cards" [tabs]="tabs"
-    (tabChange)="setTab($event)" [activeTab]="activeTab" [searchPlaceholder]="'Search by SR title ,SR ID..'"
+    (tabChange)="setTab($event)" [activeTab]="activeTab" [searchPlaceholder]="'Search by'"
     (filterChange)="filtersResponse($event)" [dropDownData]="dropDownData" />
 
   <div class="card-dd">
@@ -23,14 +23,14 @@
       <span class="rt-cell-link" (click)="$event.stopPropagation(); viewSR(ctx.row)">
         {{ ctx.row['srId'] || 'Draft' }}
       </span>
-      <span class="rt-cell-text" style="font-weight:500; color:#1e293b;">
-        {{ truncate(ctx.row['jobTitle'],15) }}
+      <span class="rt-cell-text text-break" style="font-weight:500; color:#1e293b;">
+        {{ ctx.row['jobTitle'] }}
       </span>
     </ng-container>
 
     <!-- Department -->
     <ng-container *ngIf="ctx.col.key === 'department'">
-      <span class="rt-cell-text" style="color:#475569;">{{ truncate(ctx.row['department'],12) }}</span>
+      <span class="rt-cell-text text-break" style="color:#475569;">{{ctx.row['department'] }}</span>
     </ng-container>
 
     <!-- Requested By (avatar + name) -->
@@ -39,7 +39,7 @@
         <div class="rt-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])">
           {{ initials(ctx.row['requestedBy']) }}
         </div>
-        <span class="rt-cell-user-name">{{ truncate(ctx.row['requestedBy'],10)}}</span>
+        <span class="rt-cell-user-name text-break">{{ ctx.row['requestedBy']}}</span>
       </div>
     </ng-container>
 

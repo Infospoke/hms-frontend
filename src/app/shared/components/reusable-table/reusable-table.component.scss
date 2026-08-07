@@ -1,5 +1,11 @@
 :host {
   display: block;
+  // min-width: 0 (not the flex/grid default "auto") is what lets a table
+  // with wide content actually shrink to its container and scroll
+  // internally (.rt-scroll-wrapper) instead of forcing the whole page
+  // wider when this component sits inside a flex or grid parent.
+  min-width: 0;
+  max-width: 100%;
   font-size: 13px;
   color: #1e293b;
 }
@@ -9,6 +15,7 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
+  max-width: 100%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 

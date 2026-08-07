@@ -23,7 +23,7 @@
       <span class="rt-cell-link" (click)="$event.stopPropagation(); viewSR(ctx.row)">
         {{ ctx.row['srId'] || 'Draft' }}
       </span>
-      <span class="rt-cell-text text-break" style="font-weight:500; color:#1e293b;">
+      <span class="rt-cell-text" style="font-weight:500; color:#1e293b;" [title]="ctx.row['jobTitle']">
         {{ ctx.row['jobTitle'] }}
       </span>
     </ng-container>

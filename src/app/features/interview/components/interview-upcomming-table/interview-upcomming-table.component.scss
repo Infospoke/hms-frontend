@@ -247,9 +247,9 @@
       font-size: 11px;
       color: #6366f1;
       text-decoration: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: break-word;
       max-width: 140px;
 
       &:hover { text-decoration: underline; }

@@ -28,7 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: 'fa-solid fa-briefcase',
     children: [
       {
-        label: "My SR's",
+        label: "My SRs",
         icon: 'fa-solid fa-file-contract',
         path: '/demand/my-jds',
         permissionName: 'MYSRS',

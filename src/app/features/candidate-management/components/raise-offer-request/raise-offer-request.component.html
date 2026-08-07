@@ -3,7 +3,7 @@
     <app-pipeline-stages [stages]="stages" [activeStageId]="activeStageId" (stageSelected)="onStageSelected($event)" />
     <div>
         
-        <app-common-filter searchPlaceholder="Search by candidate name, email or job title..." [dropdowns]="visibleDropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
+        <app-common-filter searchPlaceholder="Search by" [dropdowns]="visibleDropDownData"(filterChange)="handleFilterChange($event)" [tabs]="tabs" [activeTab]="activeTabId" (tabChange)="onTabSelected($event)"/>
     </div>
 
     

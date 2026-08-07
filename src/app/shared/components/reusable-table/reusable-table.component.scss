@@ -47,8 +47,7 @@
 thead {
   background: #ebeeee;
 
-  // Only takes effect inside a height-capped, overflow-y:auto ancestor
-  // (.rt-scroll-wrapper--capped) — harmless no-op otherwise.
+  
   th {
     position: sticky;
     top: 0;
@@ -82,7 +81,7 @@ tr.rt-group-row {
     &.rt-th--group {
       text-align: center;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 700;
       color: #000000;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -112,7 +111,7 @@ tr.rt-group-sub-row {
   th {
     padding: 6px 16px;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 700;
     color: #374151;
     text-transform: uppercase;
     letter-spacing: 0.05em;

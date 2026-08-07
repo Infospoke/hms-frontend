@@ -477,7 +477,7 @@ export class InterviewPerformanceComponent implements OnInit {
         this.notificationService.error(res?.message || res?.responsemessage|| 'Failed to update applicant status. Please try again.');
       }
       else{
-        this.notificationService.success(res?.message|| res?.resposemessage || res?.data)
+        this.notificationService.success(res?.errors?.[0] || res?.message|| res?.resposemessage || res?.data)
       }
      
     } catch (err: any) {

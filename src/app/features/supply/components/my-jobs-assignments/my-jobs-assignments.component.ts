@@ -18,7 +18,7 @@ export class MyJobsAssignmentsComponent implements OnInit {
 
   heading: string = 'My Job Assignments';
   subHeading: string = 'Review and respond to job assignments allocated to you';
-  searchPlaceholder = 'Search by Job Title..';
+  searchPlaceholder = 'Search by';
   activeTab = 'all';
   currentPage = 1;
   activeFilters: any = {};

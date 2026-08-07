@@ -76,7 +76,7 @@ export class AssignedInterviewRequestsComponent implements OnInit {
   }
 
   get searchPlaceholder():any{
-    return this.activeStageId=='ar' ? 'Search by Job Title,Department':'Search by Candidate name,Job Title'
+    return this.activeStageId=='ar' ? 'Search by':'Search by'
   }
   get activeFilters() {
     const noPriorityStages = ['ti', 'ui'];

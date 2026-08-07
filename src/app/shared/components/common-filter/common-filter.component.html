@@ -53,7 +53,7 @@
             {{ getSelectedLabel(dropdown) | profile }}
           </span>
           <i class="dropdown-icon" *ngIf="dropdown.icon && !dropdown.avatar" [class]="dropdown.icon"></i>
-          <span class="dropdown-value">{{ truncate(displayValue(dropdown), valueTruncateLimit) }}</span>
+          <span class="dropdown-value" [title]="displayValue(dropdown)">{{ displayValue(dropdown)}}</span>
         </span>
         <svg class="chevron-icon" viewBox="0 0 10 10" fill="none">
           <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4"
@@ -82,16 +82,13 @@
               <span class="option-avatar-badge" *ngIf="dropdown.avatar">
                 {{ option.label | profile }}
               </span>
-              {{ truncate(option.label,20) }}
+              {{ option.label }}
             </li>
           </ul>
         </div>
       </div>
 
-      <!-- ── Custom Date Range — shown as its own box directly to the right
-           of this dropdown's pill once "Custom" is picked, instead of living
-           inside the dropdown panel (which closes as soon as an option is
-           selected, hiding the inputs right when they're needed). ───────── -->
+      
       <div
         class="date-range-bar date-range-bar--adjacent"
         *ngIf="!dropdown.dateOnly && dropdown.isDateFilter && isCustomDate"

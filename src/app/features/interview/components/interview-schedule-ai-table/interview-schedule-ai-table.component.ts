@@ -36,6 +36,7 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
     this.loadData();
   }
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes detected in InterviewScheduleAiTableComponent:', this.activeFilters, changes);
     if (
       changes['activeFilters'] &&
       !changes['activeFilters'].firstChange
@@ -145,6 +146,12 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
     const reqBy = f?.['requestedBy'];
     if (reqBy) {
       filters['requestedBy'] = reqBy;
+    }
+    if(f?.['priority'] && f?.['priority'] !== 'ALL') {
+      filters['priority'] = f?.['priority'];
+    }
+    if(f?.['allInterviewPlans'] && f?.['allInterviewPlans'] !== 'ALL') {
+      filters['interviewPlan'] = f?.['allInterviewPlans'];
     }
     const questionStatus = f?.['questionStatus'];
     if (questionStatus) {

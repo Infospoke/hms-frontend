@@ -190,7 +190,7 @@ export class OfferManagementComponent implements OnInit {
   private async loadJobs() {
     const res: any = await this.interviewService.getAIInterviewZoneJobs();
     if (res?.responsecode == '00') {
-      const fun = this.map(res?.data ?? {});
+      const fun = this.mapJobs(res?.data ?? {});
       // ✅ Update only allJobs key, preserve everything else in allFilters
       this.dropDownData = this.dropDownData.map((item: any) =>
         item.key === 'allJobs' ? { ...item, options: fun } : item
@@ -203,6 +203,15 @@ export class OfferManagementComponent implements OnInit {
       ...data.map((item: any) => ({
         value: item.id,
         label: item.departmentName,
+      }))
+    ];
+  }
+  private mapJobs(data:any){
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.name,
       }))
     ];
   }

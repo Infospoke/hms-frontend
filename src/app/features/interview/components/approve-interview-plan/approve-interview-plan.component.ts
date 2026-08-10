@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -74,6 +74,12 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
 
   isLoading = false;
   errorMessage: string | null = null;
+
+  // Tracks whether the user has attempted to submit, so we don't show
+  // the "required" error before they've interacted with the form.
+  commentsTouched = false;
+
+  @ViewChild('commentsInput') commentsInput?: ElementRef<HTMLTextAreaElement>;
 
   planDetails: PlanDetails = {
     planName: '',
@@ -181,6 +187,26 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
     return this.planDetails.description?.length ?? 0;
   }
 
+  // Required comments must contain at least one non-whitespace character.
+  get isCommentsInvalid(): boolean {
+    return !this.requestedDetails.comments?.trim();
+  }
+
+  // ── Validation ────────────────────────────────────────────────────────────────
+
+  /** Returns true if the form is valid. Otherwise shows the error and focuses the field. */
+  private validateComments(): boolean {
+    this.commentsTouched = true;
+
+    if (this.isCommentsInvalid) {
+      //this.notificationService.error('Please enter your comments before approving or rejecting the plan.');
+      this.commentsInput?.nativeElement.focus();
+      return false;
+    }
+
+    return true;
+  }
+
   // ── Payload Builder ───────────────────────────────────────────────────────────
 
   
@@ -205,6 +231,7 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
 
   onApprovePlan(): void {
     if (!this.planId) return;
+    if (!this.validateComments()) return;
 
     const payload = this.buildPayload(true);
 
@@ -223,6 +250,7 @@ export class ApproveInterviewPlanComponent implements OnInit, OnDestroy {
 
   onRejectPlan(): void {
     if (!this.planId) return;
+    if (!this.validateComments()) return;
 
     const payload = this.buildPayload(false);
 

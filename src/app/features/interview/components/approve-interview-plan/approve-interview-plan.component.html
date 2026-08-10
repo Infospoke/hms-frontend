@@ -128,9 +128,16 @@
                 <label class="field-label" for="comments">
                     Requested Comments <span class="astrick">*</span>
                 </label>
-                <textarea id="comments" [(ngModel)]="requestedDetails.comments" [maxlength]="commentsMaxLength"
+                <textarea #commentsInput id="comments" [(ngModel)]="requestedDetails.comments"
+                    [maxlength]="commentsMaxLength" (blur)="commentsTouched = true"
+                    [class.invalid]="commentsTouched && isCommentsInvalid"
                     placeholder="Enter your comments here..." rows="4"></textarea>
-                <span class="char-count">{{ commentsLength }}/{{ commentsMaxLength }} characters</span>
+                <div class="comments-footer">
+                    <span class="field-error" *ngIf="commentsTouched && isCommentsInvalid">
+                        Comments are required before you can approve or reject.
+                    </span>
+                    <span class="char-count">{{ commentsLength }}/{{ commentsMaxLength }} characters</span>
+                </div>
             </div>
         </div>
 

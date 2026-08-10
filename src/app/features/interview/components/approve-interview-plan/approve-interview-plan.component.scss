@@ -242,14 +242,35 @@ table {
 
     &::placeholder { color: $text-muted; }
     &:focus { border-color: #94a3b8; }
+
+    &.invalid {
+      border-color: $red-border;
+      background: lighten($red-bg, 3%);
+
+      &:focus { border-color: $red-border; }
+    }
   }
+}
+
+.comments-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.field-error {
+  font-size: 12px;
+  color: $red-text;
+  font-weight: 500;
 }
 
 .char-count {
   font-size: 11px;
   color: $text-muted;
-  margin-top: 4px;
   display: block;
+  white-space: nowrap;
 }
 
 // Approval action buttons
@@ -274,6 +295,12 @@ table {
   border-style: solid;
 
   &:active { transform: scale(0.98); }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    transform: none;
+  }
 }
 
 .btn-approve {

@@ -63,7 +63,7 @@
       [class.ipa-status-badge--pending]="ctx.row['status'] === 'INPROGRESS'"
       [class.ipa-status-badge--approved]="ctx.row['status'] === 'Approved'"
       [class.ipa-status-badge--rejected]="ctx.row['status'] === 'Rejected'">
-      {{ ctx.row['status'] }}
+      {{ ctx.row['status']==='INPROGRESS'?'In progress':ctx.row['status'] }}
     </span>
   </ng-container>
 

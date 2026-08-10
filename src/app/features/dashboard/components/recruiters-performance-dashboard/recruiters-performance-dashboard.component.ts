@@ -50,10 +50,6 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
   selectedJobTitle: string = '';
   performanceDetailLoaded = false;
 
-  // The recruiter dropdown and the date-range picker are two separate
-  // controls that can each fire their own change event in quick succession
-  // (e.g. editing "From" then "To" moments later) — debounce so that only
-  // fires ONE dashboard-count call once things settle, not one per field.
   private filterChange$ = new Subject<any>();
   private destroy$ = new Subject<void>();
 
@@ -156,7 +152,7 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
 
       const users = this.flattenRecruiters(res?.data);
       const recruiterOptions = [
-        { value: '', label: 'All Recruiters' },
+        // { value: '', label: 'All Recruiters' },
         ...users.map((u: any) => ({ value: u.userId, label: u.recruiterName })),
       ];
 

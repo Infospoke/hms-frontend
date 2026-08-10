@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { SupplyService } from '../../services/supply-service';
 import { JobService } from '../../../job/services/job.service';
+import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 
 type Stage = 'Shortlisted' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
 type SlaStatus = 'BREACHED' | 'WARNING' | 'OK' | '';
@@ -85,7 +86,7 @@ function mapSlaPercent(color: string | null): number {
 @Component({
   selector: 'app-kanban',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzModalModule],
+  imports: [CommonModule, FormsModule, NzModalModule,HeadingComponent],
   templateUrl: './kanban.component.html',
   styleUrl: './kanban.component.scss',
 })

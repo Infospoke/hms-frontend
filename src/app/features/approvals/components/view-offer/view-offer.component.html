@@ -276,3 +276,78 @@
   </ng-container>
 
 </nz-modal>
+
+<!-- Applicant Details popup — triggered by "View Applicant Details" -->
+<nz-modal [(nzVisible)]="applicantDetailsModalVisible" nzTitle="Applicant Details" [nzFooter]="null"
+  nzWidth="560px" [nzCentered]="true" nzClassName="applicant-details-modal" 
+  (nzOnCancel)="closeApplicantDetailsModal()"   nzWrapClassName="custom-edit-modal">
+
+  <ng-container *nzModalContent>
+
+    <div class="ad-loading" *ngIf="applicantDetailsLoading">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      Loading applicant details…
+    </div>
+
+    <div class="ad-body" *ngIf="!applicantDetailsLoading && applicantDetails as d">
+
+      <div class="ad-header">
+        <div class="vo-avatar">{{ applicantDetailsInitials }}</div>
+        <div class="ad-header-text">
+          <h3 class="ad-name">{{ applicantDetailsFullName }}</h3>
+          <span class="vo-role-line">
+            {{ d.jobTitle }} <span class="vo-dot">·</span> {{ d.department }}
+          </span>
+          <span class="vo-email">
+            <i class="fa-regular fa-envelope"></i>
+            {{ d.email }}
+          </span>
+        </div>
+      </div>
+
+      <div class="ad-section">
+        <p class="vo-card-title">Contact</p>
+        <div class="vo-info-grid">
+          <div class="vo-info-col">
+            <div class="vo-info-row"><span class="vo-info-label">Phone</span><span class="vo-info-value">{{ d.phNo || '—' }}</span></div>
+            <div class="vo-info-row"><span class="vo-info-label">Applied On</span><span class="vo-info-value">{{ d.CreatedDate ? (d.CreatedDate | date:'dd MMM yyyy') : '—' }}</span></div>
+          </div>
+          <div class="vo-info-col">
+            <div class="vo-info-row"><span class="vo-info-label">Location</span><span class="vo-info-value">{{ d.location || '—' }}</span></div>
+            <div class="vo-info-row"><span class="vo-info-label">Job Code</span><span class="vo-info-value">{{ d.jobCode || '—' }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ad-section">
+        <p class="vo-card-title">Application</p>
+        <div class="vo-info-grid">
+          <div class="vo-info-col">
+            <div class="vo-info-row"><span class="vo-info-label">Current Stage</span><span class="vo-info-value">{{ d.currentStage || '—' }}</span></div>
+            <div class="vo-info-row"><span class="vo-info-label">Interview Plan</span><span class="vo-info-value">{{ d.planName || '—' }}</span></div>
+            <div class="vo-info-row"><span class="vo-info-label">Experience</span><span class="vo-info-value">{{ applicantDetailsExperience }}</span></div>
+          </div>
+          <div class="vo-info-col">
+            <div class="vo-info-row"><span class="vo-info-label">Interview Slot</span><span class="vo-info-value">{{ applicantDetailsInterview }}</span></div>
+            <div class="vo-info-row"><span class="vo-info-label">Stages Completed</span><span class="vo-info-value">{{ d.completedStages ?? 0 }} / {{ d.noOfStages ?? '—' }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ad-section" *ngIf="d.coverLetterDescription">
+        <p class="vo-card-title">Cover Letter</p>
+        <p class="ad-cover-letter">{{ d.coverLetterDescription }}</p>
+      </div>
+
+      <div class="ad-section ad-resume" *ngIf="d.Resume">
+        <p class="vo-card-title">Resume</p>
+        <a class="ad-resume-link" [href]="d.Resume" target="_blank" rel="noopener">
+          <i class="fa-regular fa-file-pdf"></i>
+          {{ d.Resume.split('/').pop() }}
+        </a>
+      </div>
+
+    </div>
+
+  </ng-container>
+</nz-modal>

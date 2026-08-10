@@ -263,4 +263,8 @@ export class JobService {
   async requestToReUpload(applicantId:any):Promise<any>{
     return await firstValueFrom(this.api.hrmspost(API.JOBS.REQUEST_FOR_REUPLOAD(applicantId),{}))
   }
+
+  async getApplicantDetailsById(applicantId:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmsget(API.JOBS.GET_APPLICANT_DETAILS_BY_ID(applicantId)))
+  }
 }

@@ -107,7 +107,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   requisitionsColumns: TableColumn[] = [
     { key: 'srName', label: 'SR Name', width: '10%' },
     { key: 'priority', label: 'Priority', width: '12%', align: 'center', custom: true },
-    { key: 'targetStartDate', label: 'Target Start Date', width: '12%', custom: true },
+    { key: 'targetStartDate', label: 'Target Start Date', width: '15%', custom: true ,align:'center'},
     { key: 'openings', label: 'Openings', width: '14%', align: 'center' },
     { key: 'my', label: 'My', width: '14%', align: 'center', group: 'Filled' },
     { key: 'team', label: 'Team', width: '10%', align: 'center', group: 'Filled' },

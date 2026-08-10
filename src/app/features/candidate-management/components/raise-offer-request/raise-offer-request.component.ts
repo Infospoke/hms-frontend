@@ -134,43 +134,43 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   tabsByStage: Record<string, { key: string; label: string; count: number, show: boolean }[]> = {
     rl: [
-      { key: 'pending', label: 'Pending release', count: 0, show: false },
-      { key: 'pendingReady', label: 'Re-release', count: 0, show: false },
+      { key: 'pending', label: 'Pending release', count: 0, show: true },
+      { key: 'pendingReady', label: 'Re-release', count: 0, show: true },
     ],
     rol: [
-      { key: 'offerApprovals', label: 'New offer approvals ', count: 0, show: false },
-      { key: 'negAppovals', label: 'Negotiation approvals', count: 0, show: false },
+      { key: 'offerApprovals', label: 'New offer approvals ', count: 0, show: true },
+      { key: 'negAppovals', label: 'Negotiation approvals', count: 0, show: true },
     ],
     cr: [
       {
         key: 'negotiating',
         label: 'Negotiating',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'pending',
         label: 'Pending',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'accepted',
         label: 'Accepted',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'rejected',
         label: 'Rejected',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'expired',
         label: 'Expired',
         count: 0,
-        show: false,
+        show: true,
       },
     ],
   };

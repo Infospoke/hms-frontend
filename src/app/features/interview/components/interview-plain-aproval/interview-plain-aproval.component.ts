@@ -15,7 +15,7 @@ import { CanDirective } from "../../../../shared/directives/can.directive";
   styleUrl: './interview-plain-aproval.component.scss',
 })
 export class InterviewPlainAprovalComponent implements OnInit {
-  private activeFilters: Record<string, string> = { dateFilter: "thisWeek" };
+  private activeFilters: Record<string, string> = { dateFilter: "" };
   private interviewService = inject(InterviewServiceService);
   columns: TableColumn[] = [
     { key: 'planName', label: 'Plan Name', width: '220px', custom: true },

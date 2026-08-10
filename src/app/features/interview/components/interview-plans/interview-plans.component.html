@@ -49,8 +49,10 @@
 
       {{
       (ctx.row['approvalStatus'] || '')
-      .toLowerCase()
       .replace(/_/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/INPROGRESS/gi, 'IN PROGRESS')
+      .toLowerCase()
       .replace(/\b\w/g, c => c.toUpperCase())
       }}
     </span>

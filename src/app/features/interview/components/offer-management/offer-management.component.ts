@@ -139,6 +139,7 @@ export class OfferManagementComponent implements OnInit {
     allJobs?: string;
     departments?: string;
     currentStage?: string;
+    dateFilter?:string
   } = {};
 
   private router = inject(Router);
@@ -265,6 +266,7 @@ export class OfferManagementComponent implements OnInit {
           jobId: this.currentFilters.allJobs || undefined,
           departmentId: this.currentFilters.departments || undefined,
           currentStage: this.currentFilters.currentStage || undefined,
+          dateFilter:this.currentFilters?.dateFilter ||undefined
         },
       };
 
@@ -321,16 +323,15 @@ export class OfferManagementComponent implements OnInit {
     this.loadListData();
   }
 
-  // ── Filters — app-approval-layout re-emits app-common-filter's payload
-  // shape { chainName, allJobs, departments, currentStage, ... }. Was
-  // previously not bound at all in the template, so changing a filter
-  // never re-fetched the list.
+  
   onFilterChange(payload: any): void {
     this.currentFilters = {
       search: payload?.chainName || undefined,
       allJobs: payload?.allJobs || undefined,
       departments: payload?.departments || undefined,
       currentStage: payload?.currentStage || undefined,
+      dateFilter:payload?.dateFilter || ''
+
     };
     this.currentPage = 1;
     this.loadListData();

@@ -189,7 +189,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
   private crTabStatusMap: Record<string, string> = {
     negotiating: 'Requested for Negotiation',
-    pending: 'Awaiting Response',
+    pending: 'Pending',
     accepted: 'Accepted',
     rejected: 'Rejected',
     expired: 'Expired',

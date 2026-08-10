@@ -219,25 +219,25 @@ export class HiringManagerDashboardComponent implements OnInit {
 
 
   sankeyNodes: SankeyNode[] = [
-    { id: 'released', label: 'Offer Released', value: 8, color: '#8B5CF6', column: 0 },
-    { id: 'negotiating', label: 'In Negotiation', value: 3, color: '#3B82F6', column: 1 },
-    { id: 'accepted_direct', label: 'Directly Accepted', value: 5, color: '#22C55E', column: 1 },
-    { id: 'mgr_review', label: 'Manager Review', value: 2, color: '#F59E0B', column: 2 },
-    { id: 'counter', label: 'Counter Offered', value: 1, color: '#F97316', column: 2 },
-    { id: 'closed_accepted', label: 'Closed (Accepted)', value: 6, color: '#16a34a', column: 3 },
-    { id: 'closed_declined', label: 'Closed (Declined)', value: 2, color: '#EF4444', column: 3 },
+    { id: 'released', label: 'Offer Released', value: 0, color: '#8B5CF6', column: 0 },
+    { id: 'negotiating', label: 'In Negotiation', value: 0, color: '#3B82F6', column: 1 },
+    { id: 'accepted_direct', label: 'Directly Accepted', value: 0, color: '#22C55E', column: 1 },
+    { id: 'mgr_review', label: 'Manager Review', value:0, color: '#F59E0B', column: 2 },
+    { id: 'counter', label: 'Counter Offered', value: 0, color: '#F97316', column: 2 },
+    { id: 'closed_accepted', label: 'Closed (Accepted)', value: 0, color: '#16a34a', column: 3 },
+    { id: 'closed_declined', label: 'Closed (Declined)', value:0, color: '#EF4444', column: 3 },
   ];
 
   sankeyLinks: SankeyLink[] = [
-    { source: 'released', target: 'negotiating', value: 3 },
-    { source: 'released', target: 'accepted_direct', value: 5 },
-    { source: 'negotiating', target: 'mgr_review', value: 2 },
-    { source: 'negotiating', target: 'counter', value: 1 },
-    { source: 'mgr_review', target: 'closed_accepted', value: 1 },
-    { source: 'mgr_review', target: 'closed_declined', value: 1 },
-    { source: 'counter', target: 'closed_accepted', value: 1 },
-    { source: 'accepted_direct', target: 'closed_accepted', value: 4 },
-    { source: 'accepted_direct', target: 'closed_declined', value: 1 },
+    { source: 'released', target: 'negotiating', value: 0 },
+    { source: 'released', target: 'accepted_direct', value: 0 },
+    { source: 'negotiating', target: 'mgr_review', value: 0 },
+    { source: 'negotiating', target: 'counter', value: 0 },
+    { source: 'mgr_review', target: 'closed_accepted', value: 0 },
+    { source: 'mgr_review', target: 'closed_declined', value:0 },
+    { source: 'counter', target: 'closed_accepted', value: 0 },
+    { source: 'accepted_direct', target: 'closed_accepted', value: 0 },
+    { source: 'accepted_direct', target: 'closed_declined', value: 0 },
   ];
 
   apexSankeyData: GraphData = {
@@ -251,14 +251,14 @@ export class HiringManagerDashboardComponent implements OnInit {
       { id: 'closed_declined', title: 'Closed (Declined)', color: '#EF4444' },
     ],
     edges: [
-      { source: 'released', target: 'neg_started', value: 3, type: 'flow' },
-      { source: 'released', target: 'mgr_review', value: 2, type: 'flow' },
-      { source: 'released', target: 'counter', value: 1, type: 'flow' },
-      { source: 'neg_started', target: 'fop', value: 1, type: 'flow' },
-      { source: 'neg_started', target: 'closed_accepted', value: 1, type: 'flow' },
-      { source: 'neg_started', target: 'closed_declined', value: 1, type: 'flow' },
-      { source: 'mgr_review', target: 'closed_accepted', value: 2, type: 'flow' },
-      { source: 'counter', target: 'closed_declined', value: 1, type: 'flow' },
+      { source: 'released', target: 'neg_started', value: 0, type: 'flow' },
+      { source: 'released', target: 'mgr_review', value: 0, type: 'flow' },
+      { source: 'released', target: 'counter', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'fop', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'closed_accepted', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'closed_declined', value: 0, type: 'flow' },
+      { source: 'mgr_review', target: 'closed_accepted', value: 0, type: 'flow' },
+      { source: 'counter', target: 'closed_declined', value: 0, type: 'flow' },
     ],
   };
 

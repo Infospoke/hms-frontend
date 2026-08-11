@@ -44,16 +44,16 @@ export class JobAssignmentsTableComponent implements OnChanges {
 
 
   columns: TableColumn[] = [
-    { key: 'jobTitle', label: 'Job Title', width: '15%' },
-    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '11%' },
-    { key: 'acceptedOn', label: 'Accepted On', width: '10%' },
-    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '9%' },
-    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '10%' },
-    { key: 'filled', label: 'Filled', align: 'center', width: '6%' },
-    { key: 'remaining', label: 'Remaining', align: 'center', width: '8%' },
-    { key: 'targetDate', label: 'Target Date', width: '10%' },
-    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '9%' },
-    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '12%' },
+    { key: 'jobTitle', label: 'Job Title', width: '150px' },
+    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '100px' },
+    { key: 'acceptedOn', label: 'Accepted On', width: '110px' },
+    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '150px' },
+    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '150px' },
+    { key: 'filled', label: 'Filled', align: 'center', width: '150px' },
+    { key: 'remaining', label: 'Remaining', align: 'center', width: '80px' },
+    { key: 'targetDate', label: 'Target Date', width: '100px' },
+    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '90px' },
+    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '110px' },
   ];
 
   maxOpenings = 1;

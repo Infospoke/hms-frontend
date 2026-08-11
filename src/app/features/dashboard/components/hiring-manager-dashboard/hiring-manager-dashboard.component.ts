@@ -93,13 +93,13 @@ export class HiringManagerDashboardComponent implements OnInit {
   ];
   reqData: any[] = [];
   reqColumns: TableColumn[] = [
-    { key: 'position', label: 'Position', width: '18%' },
-    { key: 'openings', label: 'Openings', width: '10%', align: 'center' },
-    { key: 'hired', label: 'Hired', width: '10%', align: 'center' },
-    { key: 'inProgress', label: 'In-Progress', width: '12%', align: 'center' },
-    { key: 'targetStart', label: 'Target Start Date', width: '16%', align: 'center', custom: true },
-    { key: 'priority', label: 'Priority', width: '12%', align: 'center', custom: true },
-    { key: 'slaStatus', label: 'SLA Status', width: '12%', align: 'center', custom: true },
+    { key: 'position', label: 'Position', width: '110px' },
+    { key: 'openings', label: 'Openings', width: '110px', align: 'center' },
+    { key: 'hired', label: 'Hired', width: '50px', align: 'center' },
+    { key: 'inProgress', label: 'In-Progress', width: '50px', align: 'center' },
+    { key: 'targetStart', label: 'Target Start Date', width: '150px', align: 'center', custom: true },
+    { key: 'priority', label: 'Priority', width: '50px', align: 'center', custom: true },
+    { key: 'slaStatus', label: 'SLA Status', width: '50px', align: 'center', custom: true },
   ];
   async ngOnInit(): Promise<void> {
     this.handleHeading();

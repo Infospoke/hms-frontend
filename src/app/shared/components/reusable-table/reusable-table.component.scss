@@ -46,6 +46,14 @@
 
 .rt-table {
   width: 100%;
+  // Without this, `width: 100%` + table-layout:auto lets the browser shrink
+  // every column down to its bare minimum content width (which, combined
+  // with word-break below, can collapse to a single character) instead of
+  // letting .rt-scroll-wrapper's overflow-x:auto kick in. min-width ensures
+  // the table never gets squeezed smaller than its content actually needs —
+  // it grows past the container and scrolls horizontally instead of
+  // crushing every column into a vertical stack of letters.
+  min-width: max-content;
   border-collapse: collapse;
   table-layout: auto;
 }
@@ -195,8 +203,15 @@ tbody {
 .rt-cell-text {
   display: block;
   white-space: normal;
-  word-break: break-word;
+  // overflow-wrap (not word-break) so a word only breaks mid-character as a
+  // last resort, when it genuinely can't fit even at min-width — normal
+  // wrapping still happens at spaces first.
   overflow-wrap: break-word;
+  word-break: normal;
+  // Floor so a column can't get squeezed to near-zero before content wraps
+  // — this is what was causing "Software Engineer" to render one letter
+  // per line.
+  min-width: 90px;
   max-width: 280px;
   line-height: 1.4;
 }

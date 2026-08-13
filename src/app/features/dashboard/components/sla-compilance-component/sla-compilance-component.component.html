@@ -1,1 +1,128 @@
-<p>sla-compilance-component works!</p>
+<div class="sla-dashboard">
+
+  <div class="ring-row">
+    <div class="card ring-card" *ngFor="let gauge of gauges">
+      <span class="ring-card__label">{{ gauge.label }}</span>
+
+      <div class="ring">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring__track" cx="60" cy="60" r="54" />
+          <circle
+            class="ring__value"
+            cx="60"
+            cy="60"
+            r="54"
+            [attr.stroke]="gauge.color"
+            [attr.stroke-dasharray]="gauge.dashArray"
+          />
+        </svg>
+        <div class="ring__center">
+          <span class="ring__percent" [style.color]="gauge.color">
+            {{ gauge.percent | number: '1.1-1' }}%
+          </span>
+        </div>
+      </div>
+
+      <span class="ring-card__fraction">{{ gauge.completed }} / {{ gauge.total }}</span>
+    </div>
+  </div>
+
+  <div class="card sla-card">
+    <div class="sla-card__header">
+      <span class="sla-card__title">SLA Compliance</span>
+      <span class="sla-card__subtitle">Overall status of requests against SLA</span>
+    </div>
+
+    <div class="sla-ring">
+      <svg viewBox="0 0 120 72">
+        <defs>
+          <linearGradient
+            id="slaGradient"
+            gradientUnits="userSpaceOnUse"
+            [attr.x1]="slaGradientX1" [attr.y1]="slaGradientY"
+            [attr.x2]="slaGradientX2" [attr.y2]="slaGradientY"
+          >
+            <stop offset="0%" stop-color="#EB5757" />
+            <stop offset="45%" stop-color="#F2994A" />
+            <stop offset="70%" stop-color="#F2C94C" />
+            <stop offset="100%" stop-color="#27AE60" />
+          </linearGradient>
+        </defs>
+        <path
+          class="sla-ring__track"
+          [attr.d]="slaTrackPath"
+          fill="none"
+          stroke="url(#slaGradient)"
+        />
+        <circle
+          class="sla-ring__marker"
+          [attr.cx]="slaMarkerPosition.x"
+          [attr.cy]="slaMarkerPosition.y"
+          [attr.stroke]="slaTierColor"
+          r="6"
+        />
+      </svg>
+
+      <div class="sla-ring__center">
+        <span class="sla-ring__percent" [style.color]="slaTierColor">{{ slaPercent | number: '1.0-0' }}%</span>
+        <span class="sla-ring__label">Overall SLA Compliance</span>
+
+        <span
+          class="sla-ring__trend"
+          *ngIf="changeVsLastMonth !== null && changeVsLastMonth !== undefined"
+          [class.sla-ring__trend--up]="trendDirection === 'up'"
+          [class.sla-ring__trend--down]="trendDirection === 'down'"
+        >
+          <ng-container [ngSwitch]="trendDirection">
+            <span *ngSwitchCase="'up'">&#8599;</span>
+            <span *ngSwitchCase="'down'">&#8600;</span>
+            <span *ngSwitchDefault>&#8594;</span>
+          </ng-container>
+          {{ changeVsLastMonth | number: '1.1-1' }}% vs Last Month
+        </span>
+      </div>
+    </div>
+
+    <div class="sla-breakdown">
+      <div class="sla-breakdown__item">
+        <span class="sla-breakdown__icon sla-breakdown__icon--track">
+          <i class="fa-solid fa-bullseye"></i>
+        </span>
+        <div class="sla-breakdown__text">
+          <span class="sla-breakdown__label sla-breakdown__label--track">On Track</span>
+          <span class="sla-breakdown__stats">
+            <strong>{{ onTrackCount }}</strong>
+            <span class="sla-breakdown__pct sla-breakdown__pct--track">{{ onTrackPercent | number: '1.1-1' }}%</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="sla-breakdown__item">
+        <span class="sla-breakdown__icon sla-breakdown__icon--risk">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </span>
+        <div class="sla-breakdown__text">
+          <span class="sla-breakdown__label sla-breakdown__label--risk">At Risk</span>
+          <span class="sla-breakdown__stats">
+            <strong>{{ atRiskCount }}</strong>
+            <span class="sla-breakdown__pct sla-breakdown__pct--risk">{{ atRiskPercent | number: '1.1-1' }}%</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="sla-breakdown__item">
+        <span class="sla-breakdown__icon sla-breakdown__icon--overdue">
+          <i class="fa-solid fa-clock"></i>
+        </span>
+        <div class="sla-breakdown__text">
+          <span class="sla-breakdown__label sla-breakdown__label--overdue">Overdue</span>
+          <span class="sla-breakdown__stats">
+            <strong>{{ overdueCount }}</strong>
+            <span class="sla-breakdown__pct sla-breakdown__pct--overdue">{{ overduePercent | number: '1.1-1' }}%</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

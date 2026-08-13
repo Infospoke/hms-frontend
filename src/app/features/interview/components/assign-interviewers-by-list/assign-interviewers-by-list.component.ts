@@ -407,7 +407,7 @@ export class AssignInterviewersByListComponent implements OnInit {
           this.router.navigate(['/demand/assign-interviewers']);
         }
         else {
-          this.notificationService.error(res?.responsemessage || res?.message)
+          this.notificationService.error( res?.errors?.[0] || res?.responsemessage || res?.message)
         }
       })
       .catch((error: any) => {

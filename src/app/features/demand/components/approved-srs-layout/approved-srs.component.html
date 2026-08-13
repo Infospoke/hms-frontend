@@ -22,12 +22,12 @@
 
         <!-- SR Title -->
         <ng-container *ngIf="ctx.col.key === 'jobTitle'">
-            <span class="cell-text-primary">{{ truncate(ctx.row.jobTitle,50) }}</span>
+            <span class="cell-text-primary text-break">{{ ctx.row.jobTitle }}</span>
         </ng-container>
 
         <!-- Department -->
         <ng-container *ngIf="ctx.col.key === 'department'">
-            <span class="cell-text-secondary">{{ truncate(ctx.row.department,50) }}</span>
+            <span class="cell-text-secondary text-break">{{ ctx.row.department }}</span>
         </ng-container>
 
         <!-- Requested By — avatar + name -->
@@ -36,7 +36,7 @@
                 <span class="cell-avatar" [style.background]="avatarColor(ctx.row['requestedBy'])">
                     {{ initials(ctx.row.requestby) | uppercase }}
                 </span>
-                <span class="cell-person-name">{{ truncate(ctx.row.requestby,30) }}</span>
+                <span class="cell-person-name text-break">{{ ctx.row.requestby }}</span>
             </div>
         </ng-container>
 
@@ -69,7 +69,7 @@
 
         <!-- Department -->
         <ng-container *ngIf="ctx.col.key === 'departmentName'">
-            <span class="cell-text-secondary">{{truncate( ctx.row.departmentName,30) }}</span>
+            <span class="cell-text-secondary text-break">{{ctx.row.departmentName }}</span>
         </ng-container>
 
         <!-- Requested By: colored circle avatar + name -->

@@ -194,9 +194,7 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
       this.buildCalendar();
     }, 60_000);
 
-    // Keep applicationId (and candidate data) in sync if the same component
-    // instance is reused for a different :applicantionId — e.g. navigating
-    // between candidates without leaving this route.
+    
     this.paramSub = this.route.paramMap.subscribe(() => {
       const next = this.readApplicationIdFromRoute();
       if (next !== this.applicationId) {

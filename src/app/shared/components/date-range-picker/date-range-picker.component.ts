@@ -1,3 +1,4 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   Component,
   EventEmitter,
@@ -21,6 +22,29 @@ export interface DateRange {
   styleUrl: './date-range-picker.component.scss'
 })
 export class DateRangePickerComponent {
+  @Input() startDate: string = ''; // bound to <input type="date">, native value is yyyy-MM-dd
+  @Input() endDate: string = '';
+
+  errorMessage: string = '';
+
+  @Output() dateRangeChange = new EventEmitter<DateRange>();
+
+  onStartDateChange(value: string): void {
+    this.startDate = value;
+    this.validateAndEmit();
+  }
+
+  onEndDateChange(value: string): void {
+    this.endDate = value;
+    this.validateAndEmit();
+  }
+
+  private validateAndEmit(): void {
+    this.errorMessage = '';
+
+    // Only validate/emit once both dates are provided
+    if (!this.startDate || !this.endDate) {
+      return;
 
   @Output()
   dateRangeChange = new EventEmitter<DateRange>();

@@ -112,7 +112,7 @@ export class ReleaseOfferLetterComponent implements OnInit {
     const res: any = await this.candidateService.getOfferDetails(this.applicantId);
 
     if (res?.responsecode !== '00' || !res?.data) {
-      this.notificationService.error(res?.message ?? 'Failed to load the offer. Please try again.');
+      this.notificationService.error(res?.errors?.[0] ?? res?.message ?? 'Failed to load the offer. Please try again.');
       return;
     }
 
@@ -167,7 +167,7 @@ export class ReleaseOfferLetterComponent implements OnInit {
     const res: any = await this.candidateService.getReReleaseOfferDetailsById(this.applicantId);
 
     if (res?.responsecode !== '00' || !res?.data) {
-      this.notificationService.error(res?.message ?? 'Failed to load the offer. Please try again.');
+      this.notificationService.error(res?.errors?.[0] ?? res?.message ?? 'Failed to load the offer. Please try again.');
       return;
     }
 
@@ -329,6 +329,6 @@ export class ReleaseOfferLetterComponent implements OnInit {
     }
   }
   onBackButtonClicked(){
-
+    this.router.navigate([`/candidate-management/offer-management`],{state:{activeType:'rl'}});
   }
 }

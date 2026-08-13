@@ -52,7 +52,7 @@ export interface CompensationVsMarket {
 
 export const OFFER_CREATOR_ROLE = 'HR';
 
-export const OFFER_APPROVAL_STAGES = ['Financial Analyst', 'Finance Head', 'HR Head'];
+export const OFFER_APPROVAL_STAGES = ['Finance Analyst', 'Finance Head', 'HR Head'];
 
 export const OFFER_STAGE_ORDER = [OFFER_CREATOR_ROLE, ...OFFER_APPROVAL_STAGES];
 

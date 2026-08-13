@@ -23,7 +23,7 @@ export class MyApprovedSrsComponent implements OnInit{
   private jobService = inject(JobService);
   currentPage = 1;
   activeFilters: any={ chainName: '', filters: {},dateFilter: '' };
-  searchPlaceholder = 'Search by SR Id, Title..';
+  searchPlaceholder = 'Search by';
 
   columns = [
     { key: 'srId',       label: 'SR ID',         width: '160px', custom: true },

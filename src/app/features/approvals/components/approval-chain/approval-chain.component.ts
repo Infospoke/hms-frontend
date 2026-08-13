@@ -139,7 +139,7 @@ export class ApprovalChainComponent implements OnInit {
           ? { ...item, options: fun ?? [] }
           : item
       );
-      console.log(this.dropDownData);
+      
       this.cdr.markForCheck();
     } catch (err) {
       console.error('[chainCount]', err);

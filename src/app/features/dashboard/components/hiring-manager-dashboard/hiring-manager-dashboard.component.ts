@@ -420,6 +420,14 @@ export class HiringManagerDashboardComponent
 
 
   reqColumns: TableColumn[] = [
+    { key: 'position', label: 'Position', width: '110px' },
+    { key: 'openings', label: 'Openings', width: '110px', align: 'center' },
+    { key: 'hired', label: 'Hired', width: '50px', align: 'center' },
+    { key: 'inProgress', label: 'In-Progress', width: '50px', align: 'center' },
+    { key: 'targetStart', label: 'Target Start Date', width: '150px', align: 'center', custom: true },
+    { key: 'priority', label: 'Priority', width: '50px', align: 'center', custom: true },
+    { key: 'slaStatus', label: 'SLA Status', width: '50px', align: 'center', custom: true },
+  ];
 
     {
 
@@ -997,6 +1005,14 @@ export class HiringManagerDashboardComponent
   // ============================================================
 
   sankeyNodes: SankeyNode[] = [
+    { id: 'released', label: 'Offer Released', value: 0, color: '#8B5CF6', column: 0 },
+    { id: 'negotiating', label: 'In Negotiation', value: 0, color: '#3B82F6', column: 1 },
+    { id: 'accepted_direct', label: 'Directly Accepted', value: 0, color: '#22C55E', column: 1 },
+    { id: 'mgr_review', label: 'Manager Review', value:0, color: '#F59E0B', column: 2 },
+    { id: 'counter', label: 'Counter Offered', value: 0, color: '#F97316', column: 2 },
+    { id: 'closed_accepted', label: 'Closed (Accepted)', value: 0, color: '#16a34a', column: 3 },
+    { id: 'closed_declined', label: 'Closed (Declined)', value:0, color: '#EF4444', column: 3 },
+  ];
 
     {
 
@@ -1099,12 +1115,44 @@ export class HiringManagerDashboardComponent
   ];
 
 
+  sankeyLinks: SankeyLink[] = [
+    { source: 'released', target: 'negotiating', value: 0 },
+    { source: 'released', target: 'accepted_direct', value: 0 },
+    { source: 'negotiating', target: 'mgr_review', value: 0 },
+    { source: 'negotiating', target: 'counter', value: 0 },
+    { source: 'mgr_review', target: 'closed_accepted', value: 0 },
+    { source: 'mgr_review', target: 'closed_declined', value:0 },
+    { source: 'counter', target: 'closed_accepted', value: 0 },
+    { source: 'accepted_direct', target: 'closed_accepted', value: 0 },
+    { source: 'accepted_direct', target: 'closed_declined', value: 0 },
+  ];
   sankeyLinks: SankeyLink[] = [];
 
 
   apexSankeyData: GraphData = {
 
     nodes: [
+      { id: 'released', title: 'Offers Released', color: '#8B5CF6' },
+      { id: 'neg_started', title: 'Negotiation Started', color: '#3B82F6' },
+      { id: 'mgr_review', title: 'Manager Review', color: '#22C55E' },
+      { id: 'counter', title: 'Counter Offered', color: '#7C3AED' },
+      { id: 'fop', title: 'Final Offer Pending', color: '#F59E0B' },
+      { id: 'closed_accepted', title: 'Closed (Accepted)', color: '#16a34a' },
+      { id: 'closed_declined', title: 'Closed (Declined)', color: '#EF4444' },
+    ],
+    edges: [
+      { source: 'released', target: 'neg_started', value: 0, type: 'flow' },
+      { source: 'released', target: 'mgr_review', value: 0, type: 'flow' },
+      { source: 'released', target: 'counter', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'fop', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'closed_accepted', value: 0, type: 'flow' },
+      { source: 'neg_started', target: 'closed_declined', value: 0, type: 'flow' },
+      { source: 'mgr_review', target: 'closed_accepted', value: 0, type: 'flow' },
+      { source: 'counter', target: 'closed_declined', value: 0, type: 'flow' },
+    ],
+  };
+
+  apexSankeyOptions: Partial<SankeyOptions> = {
 
       {
 

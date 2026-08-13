@@ -17,18 +17,15 @@
 // }
 
 // ── Truncation utility ────────────────────────────────────────────────────────
-// Apply to any cell that should clip text with "…" instead of wrapping.
-// The column must have a fixed px width set in the columns[] config so the
-// browser knows where to stop.
+// Cell text wraps onto a new line instead of clipping with "…".
 .truncate-cell {
-  display: block; // block so width constraint is respected
-  max-width: 100%; // stay inside the td
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
   font-size: 13px;
   color: #0f172a;
-  cursor: default; // native browser tooltip via [title] shows full text
 }
 
 // ── SR ID cell ────────────────────────────────────────────────────────────────
@@ -40,9 +37,9 @@
 .sr-id-link {
   display: block;
   max-width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
   font-size: 13px;
   font-weight: 500;
   color: #2563eb;
@@ -64,9 +61,9 @@
   font-size: 13px;
   font-weight: 600;
   color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
   max-width: 100%;
 }
 
@@ -166,17 +163,17 @@
   font-size: 13px;
   font-weight: 600;
   color: #0f172a;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .chain-desc {
   font-size: 11px;
   color: #64748b;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .level-badges {

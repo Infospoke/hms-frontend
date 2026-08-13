@@ -2,9 +2,10 @@
     <app-approval-layout
     heading="Assigned Interview Requests"
     subHeading="Review and manage interview requests assigned to you."
-    [searchPlaceholder]="'Search by Job Title, Department'"
+    [searchPlaceholder]="'Search by'"
     [dropDownData]="interviewPriority"
-    [cards]="cards"/>
+    [cards]="cards"
+    (filterChange)="onFilterChange($event)"/>
 
     <app-assigned-interview-requests-table
     [payload]="tablePayload"

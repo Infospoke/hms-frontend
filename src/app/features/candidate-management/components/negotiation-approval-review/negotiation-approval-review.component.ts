@@ -170,8 +170,9 @@ export class NegotiationApprovalReviewComponent implements OnInit {
   pipelineStages: ApprovalStage[] = [];
 
   // ── "View approved budget & compensation" popup ─────────────────────────
-  // TODO: no budget-band data in this API either — stays DUMMY until a
-  // real budget endpoint/field is confirmed.
+  // Populated in applyNegotiationDetails() from the closest available
+  // fields (minimumSalary/maximumSalary/hrRecommendedCtc/annualHiringCost)
+  // since there's no dedicated budget endpoint yet — see TODO there.
   showBudgetModal = false;
   budget: ApprovedBudgetInfo = {
     compensationBandMin: 0, compensationBandMax: 0,
@@ -384,6 +385,26 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     this.offeredCtc = data.annualHiringCost ?? 0;
     this.askedCtc = data.totalRequestedAmount ?? 0;
 
+    // ── "View approved budget & compensation" modal ──
+    // No dedicated budget endpoint exists yet — this API doesn't return a
+    // department headcount budget or a "spent this quarter" figure, so we
+    // derive the closest available equivalents:
+    //   - compensation band  -> minimumSalary / maximumSalary
+    //   - department budget  -> hrRecommendedCtc (HR's approved annual figure)
+    //   - already allocated  -> annualHiringCost (this hire's committed cost)
+    //   - remaining          -> department budget - already allocated
+    // TODO: swap for real budget-endpoint fields once confirmed by backend.
+    const departmentBudgetAnnual = data.hrRecommendedCtc ?? 0;
+    const allocatedThisQuarter = data.annualHiringCost ?? 0;
+    this.budget = {
+      compensationBandMin: data.minimumSalary ?? 0,
+      compensationBandMax: data.maximumSalary ?? 0,
+      departmentBudgetAnnual,
+      allocatedThisQuarter,
+      remainingBudget: Math.max(0, departmentBudgetAnnual - allocatedThisQuarter),
+      note: data.hrReason ?? '',
+    };
+
     // ── Items — candidate's negotiation + HR's recommendation per field ──
     const hrRecMap = new Map<string, number>();
     for (const rec of data.hrRecommendations ?? []) {
@@ -574,12 +595,12 @@ export class NegotiationApprovalReviewComponent implements OnInit {
 
   // ── Actions ──────────────────────────────────────────────────────────────
   onBack(): void {
-    this.router.navigateByUrl('/candidate-management/offer-management');
+    this.router.navigate([`/candidate-management/offer-management`],{state:{activeType:'rol'}});
+    // this.router.navigateByUrl('/candidate-management/offer-management');
   }
 
   onViewOfferLetter(): void {
-    // TODO: no confirmed applicantId -> offer-letter link on this screen
-    // yet — wire to candidateService.viewOfferLetter(id) once available.
+   
     this.notificationService.info('Offer letter preview coming soon');
   }
 
@@ -621,48 +642,34 @@ export class NegotiationApprovalReviewComponent implements OnInit {
     }
   }
 
-  // ── Regenerate offer letter (HR head only) ──────────────────────────────
-  // Must succeed before an HR head is allowed to approve — see canApprove.
   async onRegenerateOfferLetter(): Promise<void> {
     if (this.isRegeneratingOfferLetter) return;
     this.isRegeneratingOfferLetter = true;
     this.cdr.markForCheck();
     try {
-      // TODO: no confirmed offerId source when it's not present in the
-      // route — falling back to null and letting the backend reject it
-      // rather than guessing. Also TODO: move this fetch() into
-      // candidateService once this endpoint is wired into the shared API
-      // service layer, and confirm total_ctc should be hrRecommendedPackage
-      // (vs. the sum of "your decision" values in the table).
-      const response = await fetch('http://127.0.0.1:5002/api/admin/regenerate-offer-letter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          application_id: this.applicantId,
+      const payload={
+        application_id: this.applicantId,
           candidate_id: this.candidate.candidateId,
           offer_id: this.offerId,
           total_ctc: this.hrRecommendedPackage,
           approve: true,
+          
           comments: 'Regenerating offer letter ahead of negotiation approval',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Regenerate offer letter failed with status ${response.status}`);
       }
-
-      // Response is a PDF — open it for the HR head to review, and unlock
-      // the approve button.
+      const response:any=await this.candidateService.regenerateOfferLetter(payload)
+      
+      console.log(response);
+      
       const blob = await response.blob();
       const objectUrl = URL.createObjectURL(blob);
-      window.open(objectUrl, '_blank');
+      // window.open(objectUrl, '_blank');
 
       this.isOfferLetterRegenerated = true;
       this.notificationService.success('Offer letter regenerated. You can now approve.');
     } catch (err) {
       console.error('Failed to regenerate offer letter', err);
       this.isOfferLetterRegenerated = false;
-      this.notificationService.error('Failed to regenerate the offer letter. Please try again.');
+      // this.notificationService.error('Failed to regenerate the offer letter. Please try again.');
     } finally {
       this.isRegeneratingOfferLetter = false;
       this.cdr.markForCheck();

@@ -44,6 +44,17 @@
         *ngIf="!showingLayout">
     </app-heading>
 
+    
+    <div class="filters-row" *ngIf="showFiltersBar && filterDropdowns.length">
+         <app-common-filter [dropdowns]="filterDropdowns" [cardStyle]="true" [showSearch]="false"
+(filterChange)="onFilterChange($event)">
+        </app-common-filter>
+        <app-date-range-picker
+            [startDate]="dateRangeDefaultFrom"
+            [endDate]="dateRangeDefaultTo"
+            (dateRangeChange)="onDateRangeChange($event)" />
+    </div>
+
 
 
     <div class="card-dd">
@@ -90,6 +101,7 @@
                 (dateRangeChange)="onDateRangeChange($event)">
             </app-date-range-picker>
 
+            
         </div>
 
 
@@ -98,6 +110,7 @@
             [data]="tableConfig.data"
             [showHeader]="true"
             [tableLayout]="'fixed'"
+            [activeRowKey]="activeRowKey" [rowKeyField]="rowKeyField"
             [cellTemplate]="reqCell"
             (rowClick)="handleData($event)"
         >

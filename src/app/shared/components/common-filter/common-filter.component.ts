@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { TabKey } from '../../constants/candidate.modal';
+import { ProfilePipe } from '../../pipes/profile.pipe';
 
 
 const CUSTOM_VALUE = 'CUSTOM';
@@ -15,7 +16,7 @@ const CUSTOM_VALUE = 'CUSTOM';
 @Component({
   selector: 'app-common-filter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProfilePipe],
   templateUrl: './common-filter.component.html',
   styleUrl: './common-filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,12 +26,25 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
   @Input() searchPlaceholder: string = 'Search...';
   @Input() debounceMs: number = 400;
   @Input() dropdowns: any[] = [];
+  /** Set to false to hide the free-text search box — some filter bars (e.g.
+   * the recruiter-performance dashboard's card-style dropdowns) are purely
+   * dropdown-driven and don't need it. Defaults to true so every existing
+   * app-common-filter usage keeps its current look. */
+  @Input() showSearch: boolean = true;
   /** Bigger bordered "card" look (label above value, room for an icon/avatar
    * badge) instead of the default compact "Label: Value" pill — opt-in so
    * existing pages using app-common-filter keep their current style. Each
    * dropdown can also set `icon: 'fa-solid fa-user'` (or any FA class) and
-   * `avatar: true` to show it in a small circular badge instead of plain. */
+   * `avatar: true` to show it as an initials avatar (via ProfilePipe) instead
+   * of a plain icon. */
   @Input() cardStyle: boolean = false;
+
+  /** Seed values for the date-filter's From/To inputs when it defaults to
+   * "Custom Range" (see dropdown.selected === 'CUSTOM') — lets a page open
+   * with a real pre-filled range (e.g. a rolling one month) instead of an
+   * empty "All Time" pill that only fills in once the user picks dates. */
+  @Input() defaultFromDate: string = '';
+  @Input() defaultToDate: string = '';
 
   @Output() filterChange = new EventEmitter<any>();
 
@@ -78,11 +92,27 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
     this.destroy$?.complete();
   }
 
+  /** Keys the user has explicitly picked a value for — once touched, a later
+   * `dropdowns` input change (e.g. options loading async) must not clobber
+   * their choice. Untouched keys stay in sync with `d.selected`, so a
+   * dropdown whose options/default arrive after an API call (like the
+   * recruiter list) still ends up showing the right default once loaded. */
+  private touchedKeys = new Set<string>();
+
   private initSelectedFilters(): void {
     this.dropdowns.forEach(d => {
-      // ✅ Only set if not already set by user interaction
-      if (this.selectedFilters[d.key] === undefined) {
-        this.selectedFilters[d.key] = d.selected ?? d.options[0]?.value ?? '';
+      if (this.touchedKeys.has(d.key)) return;
+      const next = d.selected ?? d.options[0]?.value ?? '';
+      if (this.selectedFilters[d.key] !== next) {
+        this.selectedFilters[d.key] = next;
+      }
+      // A date filter that defaults straight into "Custom Range" (rather than
+      // requiring the user to open the dropdown and pick it), or a plain
+      // dateOnly filter (no dropdown/options at all — just From/To), needs
+      // its inputs pre-filled too, otherwise it'd render as an empty range.
+      if (d.isDateFilter && (d.dateOnly || next === CUSTOM_VALUE) && !this.fromDate && !this.toDate) {
+        this.fromDate = this.defaultFromDate;
+        this.toDate = this.defaultToDate;
       }
     });
   }
@@ -110,7 +140,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
 
   get isCustomDate(): boolean {
     const dd = this.dateDropdown;
-    return !!dd && this.selectedFilters[dd.key] === CUSTOM_VALUE;
+    return !!dd && (dd.dateOnly || this.selectedFilters[dd.key] === CUSTOM_VALUE);
   }
 
 
@@ -138,6 +168,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
 
   selectOption(key: string, value: string): void {
 
+    this.touchedKeys.add(key);
     this.selectedFilters[key] = value;
     console.log(key,value,"this is a filter");
     this.openDropdownKey = null;
@@ -224,7 +255,7 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
     this.toDate = '';
     const dd = this.dateDropdown;
     if (dd) {
-
+      this.touchedKeys.add(dd.key);
       this.selectedFilters[dd.key] = dd.options[0]?.value ?? '';
     }
     this.emitChange();

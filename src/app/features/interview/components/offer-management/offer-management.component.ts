@@ -139,6 +139,7 @@ export class OfferManagementComponent implements OnInit {
     allJobs?: string;
     departments?: string;
     currentStage?: string;
+    dateFilter?:string
   } = {};
 
   private router = inject(Router);
@@ -190,7 +191,7 @@ export class OfferManagementComponent implements OnInit {
   private async loadJobs() {
     const res: any = await this.interviewService.getAIInterviewZoneJobs();
     if (res?.responsecode == '00') {
-      const fun = this.map(res?.data ?? {});
+      const fun = this.mapJobs(res?.data ?? {});
       // ✅ Update only allJobs key, preserve everything else in allFilters
       this.dropDownData = this.dropDownData.map((item: any) =>
         item.key === 'allJobs' ? { ...item, options: fun } : item
@@ -203,6 +204,15 @@ export class OfferManagementComponent implements OnInit {
       ...data.map((item: any) => ({
         value: item.id,
         label: item.departmentName,
+      }))
+    ];
+  }
+  private mapJobs(data:any){
+    return [
+      { value: '', label: 'All' },
+      ...data.map((item: any) => ({
+        value: item.id,
+        label: item.name,
       }))
     ];
   }
@@ -256,6 +266,7 @@ export class OfferManagementComponent implements OnInit {
           jobId: this.currentFilters.allJobs || undefined,
           departmentId: this.currentFilters.departments || undefined,
           currentStage: this.currentFilters.currentStage || undefined,
+          dateFilter:this.currentFilters?.dateFilter ||undefined
         },
       };
 
@@ -312,16 +323,15 @@ export class OfferManagementComponent implements OnInit {
     this.loadListData();
   }
 
-  // ── Filters — app-approval-layout re-emits app-common-filter's payload
-  // shape { chainName, allJobs, departments, currentStage, ... }. Was
-  // previously not bound at all in the template, so changing a filter
-  // never re-fetched the list.
+  
   onFilterChange(payload: any): void {
     this.currentFilters = {
       search: payload?.chainName || undefined,
       allJobs: payload?.allJobs || undefined,
       departments: payload?.departments || undefined,
       currentStage: payload?.currentStage || undefined,
+      dateFilter:payload?.dateFilter || ''
+
     };
     this.currentPage = 1;
     this.loadListData();

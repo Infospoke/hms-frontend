@@ -413,36 +413,25 @@ export const candidateManagementFilter: any = [
   },
 ];
 
-// Recruiter Performance dashboard — "Recruiters" + "Date" filters (dummy
-// recruiter options for now).
+// Recruiter Performance dashboard — "Recruiters" + "Date" filters.
+// `recruiter.options` below is just the pre-load fallback ("All Recruiters"
+// only) — RecruitersPerformanceDashboardComponent.loadRecruiters() replaces
+// it at runtime with the live list of users holding the Recruiter role
+// (Recruiting Operations department → Recruiter role → user list).
+// Just the recruiter dropdown — the date range lives in the separate
+// app-date-range-picker that RecruitersPerformanceDashboardComponent renders
+// next to app-common-filter (see dashboard-layout's .filters-row), so this
+// array no longer needs its own dateFilter entry (that used to duplicate it).
 export const recruitersPerformanceFilter: any = [
   {
     key: 'recruiter',
     label: 'Select Recruiter',
+    hideLabel: true,
     selected: '',
     icon: 'fa-solid fa-user',
     avatar: true,
     options: [
       { value: '', label: 'All Recruiters' },
-      { value: 'rohit-kumar', label: 'Rohit Kumar' },
-      { value: 'priya-sharma', label: 'Priya Sharma' },
-      { value: 'arjun-mehta', label: 'Arjun Mehta' },
-      { value: 'sneha-rao', label: 'Sneha Rao' },
-      { value: 'karthik-iyer', label: 'Karthik Iyer' },
-    ],
-  },
-  {
-    key: 'dateFilter',
-    label: 'Date Range',
-    selected: '',
-    isDateFilter: true,
-    icon: 'fa-regular fa-calendar',
-    options: [
-      { value: '', label: 'All Time' },
-      { value: 'TODAY', label: 'Today' },
-      { value: 'thisWeek', label: 'This Week' },
-      { value: 'thisMonth', label: 'This Month' },
-      { value: 'CUSTOM', label: 'Custom Range' },
     ],
   },
 ];

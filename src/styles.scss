@@ -891,12 +891,10 @@ nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
 
 
 .text-break {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   white-space: normal;
-  word-break: break-word;
+  overflow: visible;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 
@@ -911,4 +909,19 @@ nz-select.ant-select-disabled nz-select-top-control nz-select-placeholder {
     margin-bottom: 0;
     padding: 0;
   }
+}
+
+
+
+
+.word-break{
+  font-size: 13px;
+  font-weight: 600;
+  // color: $text;
+
+  max-width: 140px;
+
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }

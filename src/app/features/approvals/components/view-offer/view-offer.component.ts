@@ -20,6 +20,7 @@ import { CandidateServiceComponent } from '../../../candidate-management/serviec
 // NOTE: confirm this import path matches where common-modal.component.ts actually lives in your repo.
 import { CommonModalComponent, CommentModalAction, CommentModalResult } from '../../../../shared/components/common-modal/common-modal.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { JobService } from '../../../job/services/job.service';
 
 // ─── API response shapes ───────────────────────────────────────────────────
 // GET /hms/offer-details/get-offer-details-by-applicant-id/{applicantId}
@@ -51,11 +52,7 @@ interface OfferDetailsApiResponse {
   responsecode: string;
 }
 
-// GET /hms/offer-details/get-offer-comments/{applicantId}
-// NOTE: the API pads this array with placeholder rows for stages that
-// haven't been reached yet — those rows have role/approvedOn/comments all
-// null and approved: false, which does NOT mean "rejected". Only rows with
-// a real (non-null) role represent an actual actioned stage.
+
 interface OfferCommentApiItem {
   role: string | null;
   approverName: string | null;
@@ -82,6 +79,43 @@ interface PythonApproveOfferResponse {
   pdf?: string;
 }
 
+// GET applicant details by id — powers the "View Applicant Details" popup.
+interface ApplicantDetailsApiData {
+  id: number;
+  jobId: number;
+  jobCode: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phNo: string;
+  Resume: string;
+  coverLetterDescription: string;
+  privacyPolicy: boolean;
+  contactFutureOpportunities: boolean;
+  CreatedDate: string;
+  jobTitle: string;
+  totalApplicants: number;
+  currentStage: string;
+  planName: string;
+  location: string;
+  minExperience: number;
+  maxExperience: number;
+  department: string;
+  interviewDate?: string;
+  startTime?: string;
+  endTime?: string;
+  currentStageType?: number;
+  noOfStages?: number;
+  completedStages?: number;
+  completedStageDetails?: unknown[];
+}
+
+interface ApplicantDetailsApiResponse {
+  data: ApplicantDetailsApiData;
+  message: string;
+  responsecode: string;
+}
+
 
 @Component({
   selector: 'app-view-offer',
@@ -101,7 +135,7 @@ interface PythonApproveOfferResponse {
 })
 export class ViewOfferComponent implements OnInit {
 
-  
+  private jobService=inject(JobService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
@@ -173,10 +207,7 @@ export class ViewOfferComponent implements OnInit {
   eSignaturePreviewUrl: string | null = null;
   comment = '';
   readonly COMMENT_MAX = 500;
-  // TODO: confirm where this should actually come from — the Python API sample
-  // sends a fixed value here (e.g. "sahitya"). Likely the signed-in approver's
-  // username/role rather than something the user types, so wire it up to
-  // whatever auth/session service holds that once it's available.
+  
   signatureType = '';
 
   
@@ -233,14 +264,10 @@ export class ViewOfferComponent implements OnInit {
     this.cdr.markForCheck();
 
     try {
-      // Step 1: e-signature + comments go to the Python offer-approval
-      // service first — it generates the signed offer letter and returns
-      // where it was saved.
+      
       const pyRes = await this.runPythonESignatureApproval(approved);
 
-      // Step 2: forward that result on to the existing Java approve-offer
-      // API so the rest of the approval flow (pipeline, notifications, etc.)
-      // works exactly as it did before.
+   
       await this.submitDecision(approved, {
         eSignature: pyRes.status,
         offerLetterPath: pyRes.path,
@@ -318,6 +345,11 @@ export class ViewOfferComponent implements OnInit {
   pdfUrl: any;
   isPdfVisible: boolean = false;
   private pdfObjectUrl: string | null = null;
+
+  // ── Applicant details popup ─────────────────────────────────────────────
+  applicantDetailsModalVisible = false;
+  applicantDetailsLoading = false;
+  applicantDetails: ApplicantDetailsApiData | null = null;
   constructor(private sanitizer: DomSanitizer){}
   // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
@@ -634,8 +666,76 @@ export class ViewOfferComponent implements OnInit {
     this.pdfUrl = null;
   }
 
-  viewApplicantDetails(): void {
-    // TODO: wire to your real applicant-details view (modal / route)
+  async viewApplicantDetails(): Promise<void> {
+    this.applicantDetailsModalVisible = true;
+    this.applicantDetailsLoading = true;
+    this.applicantDetails = null;
+    this.cdr.markForCheck();
+
+    try {
+      const res: ApplicantDetailsApiResponse = await this.jobService.getApplicantDetailsById(this.applicantId);
+      if (res?.responsecode === '00') {
+        this.applicantDetails = res.data;
+      } else {
+        this.notificationService.error(res?.message || 'Failed to fetch applicant details');
+        this.applicantDetailsModalVisible = false;
+      }
+    } catch (err) {
+      console.error('Failed to fetch applicant details', err);
+      this.notificationService.error('Failed to fetch applicant details. Please try again.');
+      this.applicantDetailsModalVisible = false;
+    } finally {
+      this.applicantDetailsLoading = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  closeApplicantDetailsModal(): void {
+    this.applicantDetailsModalVisible = false;
+    this.applicantDetails = null;
+    this.cdr.markForCheck();
+  }
+
+  /** "Anusha" + "Putike" -> "Anusha Putike" (falls back gracefully if either half is missing). */
+  get applicantDetailsFullName(): string {
+    if (!this.applicantDetails) return '';
+    return [this.applicantDetails.firstName, this.applicantDetails.lastName].filter(Boolean).join(' ');
+  }
+
+  get applicantDetailsInitials(): string {
+    return this.getInitials(this.applicantDetailsFullName);
+  }
+
+  get applicantDetailsExperience(): string {
+    const d = this.applicantDetails;
+    if (!d) return '';
+    if (d.minExperience == null && d.maxExperience == null) return '—';
+    return `${d.minExperience ?? 0} - ${d.maxExperience ?? 0} yrs`;
+  }
+
+  get applicantDetailsInterview(): string {
+    const d = this.applicantDetails;
+    if (!d?.interviewDate) return '—';
+    const date = this.formatDate(d.interviewDate);
+    if (d.startTime && d.endTime) {
+      return `${date}, ${this.formatTimeRange(d.startTime, d.endTime)}`;
+    }
+    return date;
+  }
+
+  /** "10:00:00" / "11:00:00" -> "10:00 AM - 11:00 AM" */
+  private formatTimeRange(start: string, end: string): string {
+    const toDisplay = (t: string): string => {
+      const [h, m] = t.split(':').map(Number);
+      const d = new Date();
+      d.setHours(h, m, 0, 0);
+      return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+    try {
+      return `${toDisplay(start)} - ${toDisplay(end)}`;
+    } catch {
+      return `${start} - ${end}`;
+    }
   }
 
   goBack(): void {

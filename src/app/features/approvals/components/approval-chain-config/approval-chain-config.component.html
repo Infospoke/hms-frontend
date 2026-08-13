@@ -7,7 +7,7 @@
     infoTooltip="Manage approval chains"
     [cards]="cards"
     [dropDownData]="dropDownData"
-    [searchPlaceholder]="'Search by chain name...'"
+    [searchPlaceholder]="'Search by'"
     (handle)="onCreate()"
     [showBtn]="'SYSTEM&ADMINS:APPROVALCHAINCONFIGURATION:CREATE'"
     [buttonType]="'Create Chain'"
@@ -47,8 +47,8 @@
         <i [class]="ctx.row.iconClass"></i>
       </div>
       <div class="chain-name-body">
-        <span class="chain-name-text">{{ truncate(ctx.row.chainName, 40) }}</span>
-        <span class="chain-desc">{{ truncate(ctx.row.description, 40) }}</span>
+        <span class="chain-name-text text-break">{{ ctx.row.chainName }}</span>
+        <span class="chain-desc text-break">{{ ctx.row.description }}</span>
       </div>
     </div>
   </ng-container>

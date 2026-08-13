@@ -75,12 +75,12 @@ export class InterviewPlansComponent implements OnInit {
 
   // ── Table config ────────────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'planName',    label: 'Plan Name',   width: '180px', custom: true },
-    { key: 'description', label: 'Description', width: '220px', custom: true },
+    { key: 'planName',    label: 'Plan Name',   width: '140px', custom: true },
+    { key: 'description', label: 'Description', width: '110px', custom: true },
     { key: 'rounds',      label: 'Rounds',      width: '50px',  align: 'center' },
     { key: 'status',      label: 'Status',      width: '110px', align: 'center', custom: true },
-    { key: 'approvalStatus',label: 'Approval Status',      width: '110px', align: 'center', custom: true },
-    { key: 'createdBy',   label: 'Created By',  width: '100px' },
+    { key: 'approvalStatus',label: 'Approval Status',      width: '80px', align: 'center', custom: true },
+    { key: 'createdBy',   label: 'Created By',  width: '80px' },
     { key: 'createdOn',   label: 'Created On',  width: '80px' ,custom: true},
     { key: 'actions',     label: 'Actions',     width: '90px',  align: 'center', custom: true },
   ];

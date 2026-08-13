@@ -57,6 +57,9 @@ export class CandidateServiceComponent {
   async generateOfferLetter(payload:any):Promise<any>{
     return await firstValueFrom(this.api.aiPostBlob(API.CANDIDATE_MANANGEMENT.GENERATE_OFFER_LETTER,payload))
   }
+   async regenerateOfferLetter(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.aiPostBlob(API.CANDIDATE_MANANGEMENT.RE_GENERATE_OFFER_LETTER,payload))
+  }
 
   async viewOfferLetter(id:any){
      return await firstValueFrom(

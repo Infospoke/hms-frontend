@@ -134,43 +134,43 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   tabsByStage: Record<string, { key: string; label: string; count: number, show: boolean }[]> = {
     rl: [
-      { key: 'pending', label: 'Pending release', count: 0, show: false },
-      { key: 'pendingReady', label: 'Re-release', count: 0, show: false },
+      { key: 'pending', label: 'Pending release', count: 0, show: true },
+      { key: 'pendingReady', label: 'Re-release', count: 0, show: true },
     ],
     rol: [
-      { key: 'offerApprovals', label: 'New offer approvals ', count: 0, show: false },
-      { key: 'negAppovals', label: 'Negotiation approvals', count: 0, show: false },
+      { key: 'offerApprovals', label: 'New offer approvals ', count: 0, show: true },
+      { key: 'negAppovals', label: 'Negotiation approvals', count: 0, show: true },
     ],
     cr: [
       {
         key: 'negotiating',
         label: 'Negotiating',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'pending',
         label: 'Pending',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'accepted',
         label: 'Accepted',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'rejected',
         label: 'Rejected',
         count: 0,
-        show: false,
+        show: true,
       },
       {
         key: 'expired',
         label: 'Expired',
         count: 0,
-        show: false,
+        show: true,
       },
     ],
   };
@@ -189,7 +189,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   }
   private crTabStatusMap: Record<string, string> = {
     negotiating: 'Requested for Negotiation',
-    pending: 'Awaiting Response',
+    pending: 'Pending',
     accepted: 'Accepted',
     rejected: 'Rejected',
     expired: 'Expired',
@@ -219,7 +219,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   totalReadyToRelease: number = 3;
   readyToReleaseOfferLetters: any[] = [];
   permissionName: any = 'CANDIDATEMANAGEMENT:OFFERMANAGEMENT:VIEW';
-  // ── Candidate requested / Pay revision requests: New requests ────────────
+  
   totalNewPayRevisionRequests: number = 4;
   newPayRevisionRequests: any[] = [];
 
@@ -642,7 +642,7 @@ export class RaiseOfferRequestComponent implements OnInit {
     //     activeType: this.activeStageId,
     //   }
     // })
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${row?.reReleaseOfferId}`],{
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${this.activeTabId==='pending'?row?.id:row?.reReleaseOfferId??row?.offerId}`],{
       state:{type: this.activeTabId}
     });
   }

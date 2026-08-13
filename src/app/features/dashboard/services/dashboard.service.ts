@@ -207,4 +207,10 @@ export class DashboardService {
 
   }
 
+  /** Per-job drill-down (candidate source performance, hiring trend, funnel)
+   * triggered when a row in the Job Assignments table is clicked. */
+  async getRecruiterPerformanceDetail(payload:any):Promise<any>{
+    return await firstValueFrom(this.api.hrmspost(API.DASHBOARD.RECRUITER_PERFORMANCE_DETAIL,payload));
+  }
+
 }

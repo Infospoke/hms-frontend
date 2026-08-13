@@ -22,13 +22,39 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   {
+    id: 'my-dashboards',
+    permissionName: 'MYDASHBOARDS',
+    label: 'My Dashboards',
+    icon: 'fa-solid fa-chart-line',
+    children: [
+      {
+        label: 'HM Dashboard',
+        icon: 'fa-solid fa-user-tie',
+        path: '/dashboard/hiring-manager-dashboard',
+        permissionName: 'HMDASHBOARD',
+      },
+      {
+        label: 'Recruiter Dashboard',
+        icon: 'fa-solid fa-chart-pie',
+        path: '/dashboard/recruiter-dashboard',
+        permissionName: 'RECRUITERSDASHBOARD',
+      },
+      {
+        label: 'Recruiter Performance Dashboard',
+        icon: 'fa-solid fa-chart-column',
+        path: '/dashboard/recruiters-performance-dashboard',
+        permissionName: 'RECRUITERPERFORMANCEDASHBOARD',
+      },
+    ],
+  },
+  {
     id: 'demand',
     permissionName: 'DEMAND',
     label: 'Demand',
     icon: 'fa-solid fa-briefcase',
     children: [
       {
-        label: "My SR's",
+        label: "My SRs",
         icon: 'fa-solid fa-file-contract',
         path: '/demand/my-jds',
         permissionName: 'MYSRS',

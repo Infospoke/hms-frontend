@@ -1,15 +1,13 @@
 <div class="ja-card">
 
-  <div class="flex-of-filter">
-    <div class="ja-header" *ngIf="title">
-      <h3>{{ title }}</h3>
-      <span class="ja-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
-    </div>
-    <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)" />
+  <div class="ja-header" *ngIf="title">
+    <h3>{{ title }}</h3>
+    <span class="ja-subtitle" *ngIf="subTitle">{{ subTitle }}</span>
   </div>
 
-  <app-reusable-table [columns]="columns" [data]="rows" [showHeader]="true" [tableLayout]="'fixed'"
-    [cellTemplate]="cellTpl" />
+  <app-reusable-table [columns]="columns" [data]="rows" [showHeader]="true" [tableLayout]="'auto'"
+    [activeRowKey]="activeJobId" [rowKeyField]="'jobId'" [maxBodyHeight]="maxBodyHeight"
+    [cellTemplate]="cellTpl" (rowClick)="rowClick.emit($event)" />
 
   <div class="ja-legend" *ngIf="showLegend">
     <span class="ja-legend-title">Priority:</span>

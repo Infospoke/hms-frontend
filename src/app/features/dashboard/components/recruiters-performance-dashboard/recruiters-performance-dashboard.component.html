@@ -5,10 +5,23 @@
     [subHeading]="subHeading"
     [showFiltersBar]="true"
     [filterDropdowns]="filterDropdowns"
+    [dateRangeDefaultFrom]="fromDate"
+    [dateRangeDefaultTo]="toDate"
     (filterChange)="onFilterChange($event)"
+    (dateRangeChange)="onFilterChange($event)"
     [cards]="cards"
   />
 
+  <div class="rp-row rp-row--full">
+    <app-job-assignments-table
+      title="Job Assignments"
+      subTitle="Advanced Table (Conditional Formatting + Data Bars)"
+      [rows]="jobAssignments"
+      [activeJobId]="selectedJobId"
+      maxBodyHeight="420px"
+      (rowClick)="onJobRowClick($event)"
+    />
+  </div>
  <div class="rp-row rp-row--full">
   <app-job-assignments-table
     [title]="'Job Assignments'"
@@ -18,45 +31,57 @@
   </app-job-assignments-table>
 </div>
 
-  <!-- <div class="rp-row rp-row--pair">
-    <app-hiring-flow-progress
-      title="SLA Compliance by Hiring Flow"
-      subTitle="Process Flow Diagram + Stacked Progress"
-      [stages]="flowStages"
-      overallLabel="Overall SLA Compliance"
-      [overallValue]="overallSlaCompliance"
-      overallColor="#1E9E5A"
-    /> -->
+  <!-- <div class="rp-row rp-row--full" *ngIf="performanceDetailLoaded">
+    <div class="rp-detail-heading">
+      <h3>Recruiter Performance Detail — {{ selectedJobTitle }}</h3>
+      <p>Source performance, hiring trend and funnel for the selected job assignment</p>
+    </div>
+  </div> -->
+
+  <div class="rp-row rp-row--pair">
+    <app-sla-compilance-component
+      [assignmentAcceptance]="slaAssignmentAcceptance"
+      [requisitionFulfillment]="slaRequisitionFulfillment"
+      [onTimeFulfillment]="slaOnTimeFulfillment"
+      [overallSlaCompliance]="slaOverallCompliancePercent"
+      [changeVsLastMonth]="slaChangeVsLastMonth"
+      [onTrackCount]="slaOnTrackCount"
+      [atRiskCount]="slaAtRiskCount"
+      [overdueCount]="slaOverdueCount"
+    />
 
     <app-source-performance-grid
+      *ngIf="performanceDetailLoaded"
       title="Candidate Source Performance"
       subTitle="Tree Map (by Applications Added)"
       [tiles]="sourceTiles"
       [footNote]="sourceFootNote"
     />
-  
+  </div>
 
-  <div class="rp-row rp-row--pair">
-    <!-- <app-funnel-chart
-      title="Recruitment Funnel"
-      subTitle="Funnel Chart with Conversion %"
-      [stages]="funnelStages"
-    /> -->
-    <app-candidate-pipeline [layout]="pipelineConfig.layout || 'horizontal'"
-                [title]="pipelineConfig.title"
-                [periods]="pipelineConfig.periods"
-                [selectedPeriod]="pipelineConfig.selectedPeriod"
-                [stages]="pipelineConfig.stages"
-                [overallConversionLabel]="pipelineConfig.overallConversionLabel"
-                [overallConversionRate]="pipelineConfig.overallConversionRate" 
-                class="chart-card" 
-                />
+  <div class="rp-row rp-row--pair" *ngIf="performanceDetailLoaded">
     <app-multi-line-chart
       title="Hiring Trend"
       subTitle="Multi-line Chart with Markers"
       [categories]="trendCategories"
       [series]="trendSeries"
     />
+
+    <app-candidate-pipeline [layout]="pipelineConfig.layout || 'horizontal'"
+                [title]="pipelineConfig.title"
+                [periods]="pipelineConfig.periods"
+                [selectedPeriod]="pipelineConfig.selectedPeriod"
+                [stages]="pipelineConfig.stages"
+                [overallConversionLabel]="pipelineConfig.overallConversionLabel"
+                [overallConversionRate]="pipelineConfig.overallConversionRate"
+                class="chart-card"
+                />
   </div>
+
+  <!-- <div class="rp-row rp-row--full" *ngIf="!performanceDetailLoaded">
+    <div class="rp-empty-hint">
+      Select a job assignment above to view its recruiter performance detail.
+    </div>
+  </div> -->
 
 </div>

@@ -5,7 +5,8 @@
     <span class="rt-sub-title" *ngIf="subTitle">{{subTitle}}</span>
   </div>
 
-  <div class="rt-scroll-wrapper">
+  <div class="rt-scroll-wrapper" [class.rt-scroll-wrapper--capped]="maxBodyHeight"
+       [style.max-height]="maxBodyHeight || null">
     <table class="rt-table" role="table" [style.table-layout]="tableLayout">
 
       <thead *ngIf="showHeader">
@@ -184,6 +185,7 @@
         <tr *ngFor="let row of data; let even = even"
           class="rt-row"
           [class.rt-row--even]="even"
+          [class.rt-row--active]="isActiveRow(row)"
           (click)="rowClick.emit(row)"
           role="row">
           <td *ngFor="let col of columns"

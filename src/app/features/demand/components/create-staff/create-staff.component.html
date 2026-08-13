@@ -33,14 +33,18 @@
                 <div class="field auto-wrap">
                     <label class="lbl">Job Title <span class="astrick">*</span></label>
                     <input type="text" formControlName="jobTitle" placeholder="e.g. Senior Backend Engineer"
-                        autocomplete="off"
-                        [class.err]="hasError(step0Form, 'jobTitle')"
-                        (focus)="onJobTitleFocus()" (blur)="onJobTitleBlur()" />
+                        autocomplete="off" [class.err]="hasError(step0Form, 'jobTitle')"
+                        (input)="blockNonLetters(step0Form, 'jobTitle', $event)"
+                        (blur)="trimField(step0Form, 'jobTitle')" (focus)="onJobTitleFocus()"
+                        (blur)="onJobTitleBlur()" />
 
                     <!-- Suggestions dropdown -->
-                    <div class="dropdown" *ngIf="showJobTitleDropdown && (jobTitleSuggestions.length || jobTitleLoading)">
+                    <div class="dropdown"
+                        *ngIf="showJobTitleDropdown && (jobTitleSuggestions.length || jobTitleLoading)">
                         <div class="option" *ngIf="jobTitleLoading">
-                            <div class="info"><div class="name">Searching…</div></div>
+                            <div class="info">
+                                <div class="name">Searching…</div>
+                            </div>
                         </div>
                         <ng-container *ngIf="!jobTitleLoading">
                             <div class="option" *ngFor="let jt of jobTitleSuggestions" (mousedown)="selectJobTitle(jt)">
@@ -131,7 +135,7 @@
                     </span>
                 </div>
 
-                
+
                 <!-- Seniority -->
                 <div class="field">
                     <label class="lbl">Seniority Level <span class="astrick">*</span></label>

@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../reusable-table/reusable-table.component';
-import { DateRangePickerComponent } from '../date-range-picker/date-range-picker.component';
 
 export interface JobAssignmentRow {
   jobTitle: string;
@@ -15,13 +14,15 @@ export interface JobAssignmentRow {
   /** Negative = overdue by N days, 0 = due today, positive = days left. */
   daysDue: number;
   slaStatus: 'On Track' | 'Completed' | 'At Risk' | 'Overdue';
+  jobId?: any;
+  srId?: any;
 }
 
 
 @Component({
   selector: 'app-job-assignments-table',
   standalone: true,
-  imports: [CommonModule, ReusableTableComponent,DateRangePickerComponent],
+  imports: [CommonModule, ReusableTableComponent],
   templateUrl: './job-assignments-table.component.html',
   styleUrl: './job-assignments-table.component.scss',
 })
@@ -30,21 +31,29 @@ export class JobAssignmentsTableComponent implements OnChanges {
   @Input() subTitle: string = '';
   @Input() rows: JobAssignmentRow[] = [];
   @Input() showLegend: boolean = true;
-  @Output() dateRangeChange=new EventEmitter<{ startDate: string; endDate: string }>();
+  /** jobId of the row currently driving the drill-down detail below the
+   * table — that row gets highlighted so it's clear which one is active. */
+  @Input() activeJobId: any = null;
+  /** Caps the table body height and makes it scroll vertically past that
+   * point (e.g. '420px') — unset means it just grows with the row count. */
+  @Input() maxBodyHeight: string = '';
+  /** Re-emits the reusable table's row click so callers can drill into a
+   * specific job assignment (e.g. to fetch its recruiter-performance detail). */
+  @Output() rowClick = new EventEmitter<JobAssignmentRow>();
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
 
 
   columns: TableColumn[] = [
-    { key: 'jobTitle', label: 'Job Title', width: '15%' },
-    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '11%' },
-    { key: 'acceptedOn', label: 'Accepted On', width: '10%' },
-    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '9%' },
-    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '10%' },
-    { key: 'filled', label: 'Filled', align: 'center', width: '6%' },
-    { key: 'remaining', label: 'Remaining', align: 'center', width: '8%' },
-    { key: 'targetDate', label: 'Target Date', width: '10%' },
-    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '9%' },
-    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '12%' },
+    { key: 'jobTitle', label: 'Job Title', width: '150px' },
+    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '100px' },
+    { key: 'acceptedOn', label: 'Accepted On', width: '110px' },
+    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '150px' },
+    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '150px' },
+    { key: 'filled', label: 'Filled', align: 'center', width: '150px' },
+    { key: 'remaining', label: 'Remaining', align: 'center', width: '80px' },
+    { key: 'targetDate', label: 'Target Date', width: '100px' },
+    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '90px' },
+    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '110px' },
   ];
 
   maxOpenings = 1;
@@ -82,8 +91,5 @@ export class JobAssignmentsTableComponent implements OnChanges {
     if (days < 0) return `${Math.abs(days)} Days`;
     if (days === 0) return '0 Days';
     return `${days} Days`;
-  }
-   onDateRangeChange(range:any): void {
-    this.dateRangeChange.emit(range);
   }
 }

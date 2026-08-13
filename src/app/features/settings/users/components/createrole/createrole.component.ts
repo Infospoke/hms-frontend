@@ -175,7 +175,7 @@ export class CreateRoleComponent implements OnInit {
             this.router.navigateByUrl("/users/role-permissions")
           }
           else{
-             this.notificationService.error(res?.responsemessage || res?.responseMessage || res?.message);
+             this.notificationService.error(res?.errors?.[0] ||res?.responsemessage || res?.responseMessage || res?.message);
           }
        })
       .catch((err: any) => {

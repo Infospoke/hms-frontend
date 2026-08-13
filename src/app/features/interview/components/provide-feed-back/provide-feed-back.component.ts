@@ -137,7 +137,7 @@ export class ProvideFeedBackComponent implements OnInit {
       this.jobId = data.jobId;
       this.roundId = data?.roundId;
       this.candidate = {
-        candidateId: scheduleId,
+        candidateId: data?.candidateId,
         firstName: data.candidateName?.split(' ')[0] || '',
         lastName: data.candidateName?.split(' ').slice(1).join(' ') || '',
         currentRole: data.jobTitle,

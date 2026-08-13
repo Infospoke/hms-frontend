@@ -21,7 +21,7 @@
   <!-- Status badge -->
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="ip-status-badge" [class.ip-status-badge--active]="ctx.row['status'] === 'ACTIVE'"
-      [class.ip-status-badge--inactive]="ctx.row['status'] === 'DEACTIVE'"
+      [class.ip-status-badge--inactive]="ctx.row['status'] === 'INACTIVE'"
       [class.ip-status-badge--in-progress]="ctx.row['status'] === 'INPROGRESS'">
 
       <span class="ip-status-dot"></span>

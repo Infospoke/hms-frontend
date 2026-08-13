@@ -34,6 +34,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
     phone: '',
     appliedOn: '',
     experience: '',
+    candidateId:' ',
   };
   private jobId:any;
   // ── Generation settings ──────────────────────────────────────────────────────
@@ -105,6 +106,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
           phone:      d.phNo ?? '',
           appliedOn:  this.formatDate(d.CreatedDate),
           experience: '',
+          candidateId:'hghjjjkkk' ,
         };
       }
     } catch {

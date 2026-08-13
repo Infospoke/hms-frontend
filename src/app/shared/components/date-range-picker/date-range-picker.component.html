@@ -1,36 +1,73 @@
 <div class="date-range-wrapper">
-  <div class="date-range-picker">
-    <div class="date-field">
-      <label for="fromDate">From</label>
+
+  <!-- FROM DATE -->
+  <div class="date-field">
+
+    <span class="date-label">FROM</span>
+
+    <div class="date-input-wrapper">
+
       <input
-        id="fromDate"
         type="date"
-        [value]="startDate"
-        (change)="onStartDateChange($any($event.target).value)"
-        [max]="endDate || null"
+        class="date-input"
+        [value]="fromDate"
+        [min]="minDate"
+        [max]="toDate || maxDate"
+        (change)="onFromDateChange($event)"
+        (click)="openCalendar($event)"
       />
+
+      <span class="calendar-icon">
+        <i class="fa-regular fa-calendar"></i>
+      </span>
+
     </div>
 
-    <div class="date-field">
-      <label for="toDate">To</label>
-      <input
-        id="toDate"
-        type="date"
-        [value]="endDate"
-        (change)="onEndDateChange($any($event.target).value)"
-        [min]="startDate || null"
-      />
-    </div>
-
-    <button
-      type="button"
-      class="clear-btn"
-      (click)="clearDates()"
-      *ngIf="startDate || endDate"
-    >
-      Clear
-    </button>
   </div>
 
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <!-- ARROW -->
+  <div class="date-arrow">
+    <i class="fa-solid fa-arrow-right"></i>
+  </div>
+
+
+  <!-- TO DATE -->
+  <div class="date-field">
+
+    <span class="date-label">TO</span>
+
+    <div class="date-input-wrapper">
+
+      <input
+        type="date"
+        class="date-input"
+        [value]="toDate"
+        [min]="fromDate || minDate"
+        [max]="maxDate"
+        (change)="onToDateChange($event)"
+        (click)="openCalendar($event)"
+      />
+
+      <span class="calendar-icon">
+        <i class="fa-regular fa-calendar"></i>
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- CLEAR BUTTON -->
+  <button
+    type="button"
+    class="clear-date-btn"
+    *ngIf="fromDate || toDate"
+    (click)="clearDates()"
+    title="Clear date filter"
+  >
+    <i class="fa-solid fa-xmark"></i>
+    Clear
+  </button>
+
 </div>

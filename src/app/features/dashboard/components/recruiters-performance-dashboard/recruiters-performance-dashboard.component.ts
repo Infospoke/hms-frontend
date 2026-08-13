@@ -30,17 +30,14 @@ export class RecruitersPerformanceDashboardComponent implements OnInit {
 
   private dashboardService=inject(DashboardService);
 
-  // Recruiters + Date filters — same app-common-filter dropdowns used in
-  // recruiter-assignment/approval-layout/etc. Dummy recruiter options for
-  // now.
+
   filterDropdowns = recruitersPerformanceFilter;
 
 ngOnInit(): void {
   this.getDashboardCount();
 }
   onFilterChange(event: any): void {
-    // Dummy data for now — nothing to re-query yet, but this is where the
-    // selected recruiter/date-range would drive a real API call.
+    
     console.log('recruiter dashboard filters changed', event);
   }
 

@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigureRoundsComponent, InterviewRound, EvaluationSettings } from '../configure-rounds/configure-rounds.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
 
-export type PlanStatus = 'ACTIVE' | 'DEACTIVE' | 'Pending' | 'Approved' | 'Rejected' | 'INPROGRESS';
+export type PlanStatus = 'ACTIVE' | 'INACTIVE' | 'Pending' | 'Approved' | 'Rejected' | 'INPROGRESS';
 
 export type TimelineEventType =
   | 'CREATED'
@@ -13,8 +13,8 @@ export type TimelineEventType =
   | 'APPROVE'
   | 'REJECTED'
   | 'ACTIVATE'
-  | 'DEACTIVE'
-  | 'EDITED' | 'Created' | 'Submitted' | 'Approve' | 'Rejected' | 'Activate' | 'Deactive' | 'Edited';
+  | 'INACTIVE'
+  | 'EDITED' | 'Created' | 'Submitted' | 'Approve' | 'Rejected' | 'Activate' | 'Inactive' | 'Edited';
 export interface TimelineEvent {
   action: TimelineEventType;
   title: string;
@@ -145,14 +145,14 @@ export class InterviewPlanViewComponent implements OnInit {
       APPROVE: 'fas fa-circle-check',
       REJECTED: 'fas fa-circle-xmark',
       ACTIVATE: 'fas fa-toggle-on',
-      DEACTIVE: 'fas fa-toggle-off',
+      INACTIVE: 'fas fa-toggle-off',
       EDITED: 'fas fa-pen-to-square',
       Created: 'fas fa-file-lines',
       Submitted: 'fas fa-paper-plane',
       Approve: 'fas fa-circle-check',
       Rejected: 'fas fa-circle-xmark',
       Activate: 'fas fa-toggle-on',
-      Deactive: 'fas fa-toggle-off',
+      Inactive: 'fas fa-toggle-off',
       Edited: 'fas fa-pen-to-square',
     };
 
@@ -166,14 +166,14 @@ export class InterviewPlanViewComponent implements OnInit {
       APPROVE: '#22c55e',
       REJECTED: '#ef4444',
       ACTIVATE: '#2563eb',
-      DEACTIVE: '#94a3b8',
+      INACTIVE: '#94a3b8',
       EDITED: '#8b5cf6',
       Created: '#2563eb',
       Submitted: '#f59e0b',
       Approve: '#22c55e',
       Rejected: '#ef4444',
       Activate: '#2563eb',
-      Deactive: '#f59e0b',
+      Inactive: '#f59e0b',
       Edited: '#8b5cf6',
     };
 

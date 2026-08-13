@@ -9,13 +9,14 @@
     [cards]="cards"
   />
 
-  <div class="rp-row rp-row--full">
-    <app-job-assignments-table
-      title="Job Assignments"
-      subTitle="Advanced Table (Conditional Formatting + Data Bars)"
-      [rows]="jobAssignments"
-    />
-  </div>
+ <div class="rp-row rp-row--full">
+  <app-job-assignments-table
+    [title]="'Job Assignments'"
+    [subTitle]="'Advanced Table (Conditional Formatting + Data Bars)'"
+    [rows]="jobAssignments"
+  >
+  </app-job-assignments-table>
+</div>
 
   <!-- <div class="rp-row rp-row--pair">
     <app-hiring-flow-progress

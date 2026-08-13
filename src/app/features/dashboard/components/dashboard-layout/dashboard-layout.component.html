@@ -1,121 +1,258 @@
-<div class="dl-root" *ngIf="showingLayout">
-    <div class="dl-header" *ngIf="heading">
-        <h1 class="dl-title">{{ heading }}</h1>
-        <p class="dl-subtitle" *ngIf="subHeading">{{ subHeading }}</p>
-    </div>
-    <div class="dl-body">
-        <ng-content></ng-content>
-    </div>
-</div>
-<div class="main-dashboard-layout" [class.recruiter-dashboard]="dashboardType === 'recruiter'">
 
-    <app-heading [heading]="heading" [subHeading]="subHeading" *ngIf="!showingLayout">
+
+<div class="dl-root" *ngIf="showingLayout">
+
+    <div
+        class="dl-header"
+        *ngIf="heading">
+
+        <h1 class="dl-title">
+            {{ heading }}
+        </h1>
+
+        <p
+            class="dl-subtitle"
+            *ngIf="subHeading">
+
+            {{ subHeading }}
+
+        </p>
+
+    </div>
+
+
+    <div class="dl-body">
+
+        <ng-content></ng-content>
+
+    </div>
+
+</div>
+
+
+
+
+<div
+    class="main-dashboard-layout"
+    *ngIf="!showingLayout"
+    [class.recruiter-dashboard]="dashboardType === 'recruiter'"
+>
+
+    <app-heading
+        [heading]="heading"
+        [subHeading]="subHeading"
+        *ngIf="!showingLayout">
     </app-heading>
 
-    <!-- Cards -->
+
+
     <div class="card-dd">
+
         <div *ngFor="let item of cards">
-            <app-dashboard-count-card [label]="item?.label" [value]="item?.value" [iconClass]="item?.iconClass"
-                [iconBgColor]="item?.iconBgColor" [iconColor]="item?.iconColor" [bottomText]="item?.subLabel"
-                [trend]="item?.trend" [trendColor]="item?.trendColor ?? '#16A34A'">
+
+            <app-dashboard-count-card
+                [label]="item?.label"
+                [value]="item?.value"
+                [iconClass]="item?.iconClass"
+                [iconBgColor]="item?.iconBgColor"
+                [iconColor]="item?.iconColor"
+                [bottomText]="item?.subLabel"
+                [trend]="item?.trend"
+                [trendColor]="item?.trendColor ?? '#16A34A'">
             </app-dashboard-count-card>
+
         </div>
+
     </div>
 
-    <!-- Full Width Table -->
-    <div class="chart-card requisitions-card card-ddd" *ngIf="table && tableConfig">
+    <div
+        class="chart-card requisitions-card card-ddd"
+        *ngIf="table && tableConfig"
+    >
+
         <div class="flex-of-filter">
-            <div class="chart-card-header" *ngIf="tableConfig.title">
-                <h3>{{ tableConfig.title }}</h3>
+
+            <div
+                class="chart-card-header"
+                *ngIf="tableConfig.title"
+            >
+
+                <h3>
+                    {{ tableConfig.title }}
+                </h3>
+
             </div>
-            <app-date-range-picker (dateRangeChange)="onDateRangeChange($event)" />
+
+
+            <!-- ONLY DATE FILTER -->
+
+            <app-date-range-picker
+                (dateRangeChange)="onDateRangeChange($event)">
+            </app-date-range-picker>
 
         </div>
 
-        <app-reusable-table [columns]="tableConfig.columns" [data]="tableConfig.data" [showHeader]="true"
-            [tableLayout]="'fixed'" [cellTemplate]="reqCell" (rowClick)="handleData($event)">
+
+        <app-reusable-table
+            [columns]="tableConfig.columns"
+            [data]="tableConfig.data"
+            [showHeader]="true"
+            [tableLayout]="'fixed'"
+            [cellTemplate]="reqCell"
+            (rowClick)="handleData($event)"
+        >
         </app-reusable-table>
 
     </div>
 
-    <!-- Pipeline + Offer Status -->
+
     <div class="dashboard-row">
 
-        <div class="chart-card large-card" *ngIf="pipeLine && pipelineConfig">
+        <!-- PIPELINE -->
 
-            <app-candidate-pipeline [layout]="pipelineConfig.layout || 'horizontal'"
+        <div
+            class="chart-card large-card"
+            *ngIf="pipeLine && pipelineConfig"
+        >
+
+            <app-candidate-pipeline
+                [layout]="pipelineConfig.layout || 'horizontal'"
                 [title]="pipelineConfig.title ?? 'Candidate Pipeline'"
                 [periods]="pipelineConfig.periods ?? ['This Month']"
-                [selectedPeriod]="pipelineConfig.selectedPeriod ?? (pipelineConfig.periods?.[0] ?? 'This Month')"
+                [selectedPeriod]="
+                    pipelineConfig.selectedPeriod ??
+                    (pipelineConfig.periods?.[0] ?? 'This Month')
+                "
                 [stages]="pipelineConfig.stages"
-                [overallConversionLabel]="pipelineConfig.overallConversionLabel ?? 'Overall Conversion Rate'"
-                [overallConversionRate]="pipelineConfig.overallConversionRate ?? 0">
+                [overallConversionLabel]="
+                    pipelineConfig.overallConversionLabel ??
+                    'Overall Conversion Rate'
+                "
+                [overallConversionRate]="
+                    pipelineConfig.overallConversionRate ?? 0
+                "
+            >
             </app-candidate-pipeline>
 
         </div>
 
-        <div class="chart-card small-card" *ngIf="pieCharts.length > 0">
+
+        <!-- OFFER STATUS -->
+
+        <div
+            class="chart-card small-card"
+            *ngIf="pieCharts.length > 0"
+        >
 
             <div class="chart-card-header">
-                <h3>{{ pieCharts[0].title }}</h3>
+
+                <h3>
+                    {{ pieCharts[0].title }}
+                </h3>
+
             </div>
 
-            <app-donut-pie-chart [segments]="pieCharts[0].segments" [centerLabel]="pieCharts[0].centerLabel"
-                [size]="pieCharts[0].size" [showCount]="true">
+
+            <app-donut-pie-chart
+                [segments]="pieCharts[0].segments"
+                [centerLabel]="pieCharts[0].centerLabel"
+                [size]="pieCharts[0].size"
+                [showCount]="true">
             </app-donut-pie-chart>
 
         </div>
 
     </div>
 
-    <!-- Negotiation + Source Performance -->
+
+
+
     <div class="dashboard-row">
 
-        <div class="chart-card large-card" *ngIf="pieCharts.length > 1">
+        <!-- NEGOTIATION -->
+
+        <div
+            class="chart-card large-card"
+            *ngIf="pieCharts.length > 1"
+        >
 
             <div class="chart-card-header">
-                <h3>{{ pieCharts[1].title }}</h3>
+
+                <h3>
+                    {{ pieCharts[1].title }}
+                </h3>
+
             </div>
 
-            <app-donut-pie-chart [segments]="pieCharts[1].segments" [centerLabel]="pieCharts[1].centerLabel"
-                [size]="pieCharts[1].size" [showCount]="true" [currencyPrefix]="' '">
+
+            <app-donut-pie-chart
+                [segments]="pieCharts[1].segments"
+                [centerLabel]="pieCharts[1].centerLabel"
+                [size]="pieCharts[1].size"
+                [showCount]="true"
+                [currencyPrefix]="' '">
             </app-donut-pie-chart>
 
         </div>
 
 
+        <!-- SOURCE PERFORMANCE -->
 
+        <div
+            class="chart-card small-card"
+            *ngIf="bubbleChart"
+        >
 
-        <div class="chart-card small-card" *ngIf="bubbleChart">
-
-            <app-bubble-chart-component [title]="bubbleChart.title" [bubbles]="bubbleChart.bubbles"
+            <app-bubble-chart-component
+                [title]="bubbleChart.title"
+                [bubbles]="bubbleChart.bubbles"
                 [tableData]="bubbleChart.tableData">
             </app-bubble-chart-component>
 
         </div>
 
 
+        <div
+            class="chart-card hh-card"
+            *ngIf="showSemiCircle && semiCircleConfig"
+        >
 
-        <!-- Hiring Health -->
-        <div class="chart-card hh-card" *ngIf="showSemiCircle && semiCircleConfig">
+            <div
+                class="chart-card-header"
+                *ngIf="semiCircleConfig.title"
+            >
 
-            <div class="chart-card-header" *ngIf="semiCircleConfig.title">
-
-                <h3>{{ semiCircleConfig.title }}</h3>
+                <h3>
+                    {{ semiCircleConfig.title }}
+                </h3>
 
             </div>
 
+
             <div class="hh-panel">
 
+                <!-- GAUGE -->
+
                 <div class="hh-gauge-col">
-                    <app-semi-circle-gauge [score]="semiCircleConfig.score" [size]="100">
+
+                    <app-semi-circle-gauge
+                        [score]="semiCircleConfig.score"
+                        [size]="100">
                     </app-semi-circle-gauge>
+
                 </div>
+
+
+                <!-- TABLE -->
 
                 <div class="hh-table-col">
 
-                    <app-reusable-table [columns]="semiCircleConfig.columns" [data]="semiCircleConfig.data"
-                        [showHeader]="true" [tableLayout]="'auto'" [cellTemplate]="statusCell">
+                    <app-reusable-table
+                        [columns]="semiCircleConfig.columns"
+                        [data]="semiCircleConfig.data"
+                        [showHeader]="true"
+                        [tableLayout]="'auto'"
+                        [cellTemplate]="statusCell">
                     </app-reusable-table>
 
                 </div>
@@ -124,31 +261,52 @@
 
         </div>
 
-        <!-- Templates -->
 
-        <ng-template #reqCell let-ctx>
+        <ng-template
+            #reqCell
+            let-ctx>
 
-            <span *ngIf="ctx.col.key === 'priority'" [class]="priorityClass(ctx.row.priority)">
+            <span
+                *ngIf="ctx.col.key === 'priority'"
+                [class]="priorityClass(ctx.row.priority)"
+            >
                 {{ ctx.row.priority }}
             </span>
 
-            <span *ngIf="ctx.col.key === 'targetStartDate'" class="date-cell">
+
+            <span
+                *ngIf="ctx.col.key === 'targetStartDate'"
+                class="date-cell"
+            >
                 {{ ctx.row.targetStartDate }}
             </span>
 
-            <span *ngIf="ctx.col.key === 'daysRemaining'" class="days-remaining-cell">
+
+            <span
+                *ngIf="ctx.col.key === 'daysRemaining'"
+                class="days-remaining-cell"
+            >
                 {{ ctx.row.daysRemaining }}
             </span>
 
-            <span *ngIf="ctx.col.key === 'slaStatus'" [class]="slaClass(ctx.row.slaStatus)">
+
+            <span
+                *ngIf="ctx.col.key === 'slaStatus'"
+                [class]="slaClass(ctx.row.slaStatus)"
+            >
                 {{ ctx.row.slaStatus }}
             </span>
 
         </ng-template>
 
-        <ng-template #statusCell let-ctx>
+        <ng-template
+            #statusCell
+            let-ctx>
 
-            <span *ngIf="ctx.col.key === 'status'" [class]="statusClass(ctx.row.status)">
+            <span
+                *ngIf="ctx.col.key === 'status'"
+                [class]="statusClass(ctx.row.status)"
+            >
 
                 <span class="dot"></span>
 
@@ -159,6 +317,5 @@
         </ng-template>
 
     </div>
-
 
 </div>

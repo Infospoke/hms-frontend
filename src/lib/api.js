@@ -158,11 +158,35 @@ export function getCandidateDetailsRequest(token, candidateId, signal) {
 
 export function applyJobRequest(token, { candidateId, jobId, resumeFile }) {
   const form = new FormData();
-  const dataBlob = new Blob([JSON.stringify({ candidateId, jobId })], { type: 'application/json' });
-  form.append('data', dataBlob);
-  if (resumeFile) form.append('resume', resumeFile);
 
-  return request('/hms/candidate/apply-job', { token, body: form, isFormData: true });
+  const dataBlob = new Blob(
+    [JSON.stringify({ candidateId, jobId })],
+    { type: 'application/json' }
+  );
+
+  form.append('data', dataBlob);
+
+  if (resumeFile) {
+    form.append('resume', resumeFile);
+  }
+
+  return request('/hms/candidate/apply-job', {
+    token,
+    body: form,
+    isFormData: true
+  });
+}
+
+
+export function analyzeResumeRequest(token, { batch_id, resume_batch }) {
+  return request('/api/resume/analyze/batch', {
+    token,
+    body: {
+      batch_id,
+      resume_batch
+    },
+    baseUrl: "https://2g7634mr-5002.inc1.devtunnels.ms"
+  });
 }
 
 export function changePasswordRequest(token, { oldPassword, newPassword }) {

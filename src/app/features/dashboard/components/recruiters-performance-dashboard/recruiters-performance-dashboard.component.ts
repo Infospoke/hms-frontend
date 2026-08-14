@@ -32,9 +32,12 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
   heading = 'Recruiter Performance Drill-down';
   subHeading = "Track recruiter execution from job assignment to hiring outcome";
 
-  private dashboardService=inject(DashboardService);
+  private dashboardService = inject(DashboardService);
+  private approvalService = inject(ApprovalService);
+  private jobService = inject(JobService);
+  private notificationService = inject(NotificationService);
 
-
+  
   filterDropdowns = recruitersPerformanceFilter;
 
   // ── active filter state ─────────────────────────────────────────────────
@@ -71,8 +74,115 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
 
   // ── filters bar ──────────────────────────────────────────────────────────
   onFilterChange(event: any): void {
-    
-    console.log('recruiter dashboard filters changed', event);
+    this.filterChange$.next(event);
+  }
+
+  private applyFilterChange(event: any): void {
+    if (event?.filters && 'recruiter' in event.filters) {
+      this.selectedRecruiterId = event.filters.recruiter || '';
+    }
+
+    const range = this.resolveDateRange(event);
+    this.fromDate = range.fromDate;
+    this.toDate = range.toDate;
+
+    this.selectedJobId = null;
+    this.selectedJobTitle = '';
+    this.performanceDetailLoaded = false;
+
+    this.getDashboardCount();
+  }
+
+  private resolveDateRange(event: any): { fromDate: string; toDate: string } {
+    const today = new Date();
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+   
+    const rangeFrom = event?.fromDate || event?.startDate;
+    const rangeTo = event?.toDate || event?.endDate;
+    if (rangeFrom && rangeTo) {
+      return { fromDate: rangeFrom, toDate: rangeTo };
+    }
+
+    const preset = event?.filters?.dateFilter;
+    if (preset === 'TODAY') {
+      return { fromDate: fmt(today), toDate: fmt(today) };
+    }
+    if (preset === 'thisWeek') {
+      const start = new Date(today);
+      start.setDate(today.getDate() - today.getDay());
+      return { fromDate: fmt(start), toDate: fmt(today) };
+    }
+    if (preset === 'thisMonth') {
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      return { fromDate: fmt(start), toDate: fmt(today) };
+    }
+    if (!preset) {
+      // Initial load, before the date filter has been touched — default to
+      // a rolling one-month window ending today (matches the Date Range
+      // card's From/To inputs, which are pre-filled with this same range).
+      const start = new Date(today);
+      start.setMonth(start.getMonth() - 1);
+      return { fromDate: fmt(start), toDate: fmt(today) };
+    }
+    // "All Time" / unrecognised preset → widest safe range.
+    return { fromDate: '2000-01-01', toDate: fmt(today) };
+  }
+
+ 
+  private async loadRecruiters(): Promise<void> {
+    try {
+      const deptRes: any = await this.approvalService.departments();
+      const departments: any[] = deptRes?.data ?? [];
+      const allowedNames = ['Recruiting Operations', 'Talent Acquisition'];
+      const departmentIds = departments
+        .filter((d: any) => allowedNames.includes(d?.name))
+        .map((d: any) => d.id);
+
+      const body = {
+        page: 0,
+        size: 200,
+        sortBy: 'id',
+        direction: 'DESC',
+        filters: departmentIds.length ? { departmentIds } : {},
+      };
+
+      const res: any = await this.jobService.getRecruiters(body);
+      if (res?.responsecode !== '00') return;
+
+      const users = this.flattenRecruiters(res?.data);
+      const recruiterOptions = [
+        // { value: '', label: 'All Recruiters' },
+        ...users.map((u: any) => ({ value: u.userId, label: u.recruiterName })),
+      ];
+
+      
+      const defaultRecruiter = users[0];
+      if (defaultRecruiter) {
+        this.selectedRecruiterId = defaultRecruiter.userId;
+      }
+
+      this.filterDropdowns = this.filterDropdowns.map((item: any) =>
+        item.key === 'recruiter'
+          ? { ...item, options: recruiterOptions, selected: defaultRecruiter ? defaultRecruiter.userId : '' }
+          : item
+      );
+    } catch (error) {
+      console.error('Failed to load recruiters', error);
+    }
+  }
+
+  private flattenRecruiters(data: any): any[] {
+    const departments: any[] = data?.departments ?? [];
+    const recruiters: any[] = [];
+    for (const dept of departments) {
+      for (const role of dept?.roles ?? []) {
+        for (const user of role?.users ?? []) {
+          recruiters.push(user);
+        }
+      }
+    }
+    return recruiters;
   }
 
   pipelineConfig = {

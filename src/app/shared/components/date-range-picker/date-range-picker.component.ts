@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   Component,
   EventEmitter,
-  Output
+  Output,
+  Input
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -22,37 +22,32 @@ export interface DateRange {
   styleUrl: './date-range-picker.component.scss'
 })
 export class DateRangePickerComponent {
-  @Input() startDate: string = ''; // bound to <input type="date">, native value is yyyy-MM-dd
-  @Input() endDate: string = '';
-
-  errorMessage: string = '';
-
-  @Output() dateRangeChange = new EventEmitter<DateRange>();
-
-  onStartDateChange(value: string): void {
-    this.startDate = value;
-    this.validateAndEmit();
-  }
-
-  onEndDateChange(value: string): void {
-    this.endDate = value;
-    this.validateAndEmit();
-  }
-
-  private validateAndEmit(): void {
-    this.errorMessage = '';
-
-    // Only validate/emit once both dates are provided
-    if (!this.startDate || !this.endDate) {
-      return;
 
   @Output()
-  dateRangeChange = new EventEmitter<DateRange>();
+  dateRangeChange =
+    new EventEmitter<DateRange>();
+
+  @Input()
+  startDate: string = '';
+
+  @Input()
+  endDate: string = '';
 
 
-  maxDate: string = this.formatDate(new Date());
+  // ============================================================
+  // DATE LIMITS
+  // ============================================================
 
-  minDate: string = this.getPrevious30Days();
+  maxDate: string =
+    this.formatDate(new Date());
+
+  minDate: string =
+    this.getPrevious30Days();
+
+
+  // ============================================================
+  // SELECTED DATES
+  // ============================================================
 
   fromDate: string = '';
 
@@ -60,23 +55,28 @@ export class DateRangePickerComponent {
 
 
   // ============================================================
-  // OPEN CALENDAR WHEN DATE FIELD IS CLICKED
+  // OPEN CALENDAR
   // ============================================================
 
-  openCalendar(event: MouseEvent): void {
+  openCalendar(event: Event): void {
+
+    event.stopPropagation();
 
     const input =
       event.currentTarget as HTMLInputElement;
 
-    if (typeof input.showPicker === 'function') {
+    input.focus();
 
-      try {
-        input.showPicker();
-      } catch {
-        // Calendar is already open
-      }
+    if ('showPicker' in input) {
+
+      (
+        input as HTMLInputElement & {
+          showPicker: () => void;
+        }
+      ).showPicker();
 
     }
+
   }
 
 
@@ -97,10 +97,13 @@ export class DateRangePickerComponent {
       this.fromDate &&
       this.fromDate > this.toDate
     ) {
+
       this.toDate = '';
+
     }
 
     this.emitDateRange();
+
   }
 
 
@@ -127,9 +130,11 @@ export class DateRangePickerComponent {
       input.value = '';
 
       return;
+
     }
 
     this.emitDateRange();
+
   }
 
 
@@ -144,19 +149,26 @@ export class DateRangePickerComponent {
     this.toDate = '';
 
     this.emitDateRange();
+
   }
 
 
   // ============================================================
-  // EMIT
+  // EMIT DATE RANGE
   // ============================================================
 
   private emitDateRange(): void {
 
     this.dateRangeChange.emit({
-      fromDate: this.fromDate || null,
-      toDate: this.toDate || null
+
+      fromDate:
+        this.fromDate || null,
+
+      toDate:
+        this.toDate || null
+
     });
+
   }
 
 
@@ -166,7 +178,8 @@ export class DateRangePickerComponent {
 
   private getPrevious30Days(): string {
 
-    const date = new Date();
+    const date =
+      new Date();
 
     date.setHours(
       0,
@@ -180,6 +193,7 @@ export class DateRangePickerComponent {
     );
 
     return this.formatDate(date);
+
   }
 
 
@@ -187,7 +201,9 @@ export class DateRangePickerComponent {
   // FORMAT DATE
   // ============================================================
 
-  private formatDate(date: Date): string {
+  private formatDate(
+    date: Date
+  ): string {
 
     const year =
       date.getFullYear();
@@ -203,6 +219,7 @@ export class DateRangePickerComponent {
       ).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+
   }
 
 }

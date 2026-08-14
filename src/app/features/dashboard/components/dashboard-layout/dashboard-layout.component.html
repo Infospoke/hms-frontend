@@ -1,35 +1,22 @@
-
-
 <div class="dl-root" *ngIf="showingLayout">
 
-    <div
-        class="dl-header"
-        *ngIf="heading">
+    <div class="dl-header" *ngIf="heading">
 
         <h1 class="dl-title">
             {{ heading }}
         </h1>
 
-        <p
-            class="dl-subtitle"
-            *ngIf="subHeading">
-
+        <p class="dl-subtitle" *ngIf="subHeading">
             {{ subHeading }}
-
         </p>
 
     </div>
 
-
     <div class="dl-body">
-
         <ng-content></ng-content>
-
     </div>
 
 </div>
-
-
 
 
 <div
@@ -44,19 +31,21 @@
         *ngIf="!showingLayout">
     </app-heading>
 
-    
+
+    <!-- TOP FILTERS -->
     <div class="filters-row" *ngIf="showFiltersBar && filterDropdowns.length">
-         <app-common-filter [dropdowns]="filterDropdowns" [cardStyle]="true" [showSearch]="false"
-(filterChange)="onFilterChange($event)">
+
+        <app-common-filter
+            [dropdowns]="filterDropdowns"
+            [cardStyle]="true"
+            [showSearch]="false"
+            (filterChange)="onFilterChange($event)">
         </app-common-filter>
-        <app-date-range-picker
-            [startDate]="dateRangeDefaultFrom"
-            [endDate]="dateRangeDefaultTo"
-            (dateRangeChange)="onDateRangeChange($event)" />
+
     </div>
 
 
-
+    <!-- COUNT CARDS -->
     <div class="card-dd">
 
         <div *ngFor="let item of cards">
@@ -76,6 +65,8 @@
 
     </div>
 
+
+
     <div
         class="chart-card requisitions-card card-ddd"
         *ngIf="table && tableConfig"
@@ -94,14 +85,6 @@
 
             </div>
 
-
-            <!-- ONLY DATE FILTER -->
-
-            <app-date-range-picker
-                (dateRangeChange)="onDateRangeChange($event)">
-            </app-date-range-picker>
-
-            
         </div>
 
 
@@ -110,23 +93,43 @@
             [data]="tableConfig.data"
             [showHeader]="true"
             [tableLayout]="'fixed'"
-            [activeRowKey]="activeRowKey" [rowKeyField]="rowKeyField"
+            [activeRowKey]="activeRowKey"
+            [rowKeyField]="rowKeyField"
             [cellTemplate]="reqCell"
-            (rowClick)="handleData($event)"
-        >
+            (rowClick)="handleData($event)">
         </app-reusable-table>
 
     </div>
 
 
+  
+
     <div class="dashboard-row">
 
-        <!-- PIPELINE -->
+
+       
 
         <div
             class="chart-card large-card"
             *ngIf="pipeLine && pipelineConfig"
         >
+
+            <!-- TITLE + DATE FILTER SAME LINE -->
+
+            <div class="chart-card-header chart-header-with-filter">
+
+                <h3>
+                    {{ pipelineConfig.title ?? 'Candidate Pipeline' }}
+                </h3>
+
+                <app-date-range-picker
+                    [startDate]="dateRangeDefaultFrom"
+                    [endDate]="dateRangeDefaultTo"
+                    (dateRangeChange)="onDateRangeChange($event)">
+                </app-date-range-picker>
+
+            </div>
+
 
             <app-candidate-pipeline
                 [layout]="pipelineConfig.layout || 'horizontal'"
@@ -150,18 +153,26 @@
         </div>
 
 
-        <!-- OFFER STATUS -->
+      
 
         <div
             class="chart-card small-card"
             *ngIf="pieCharts.length > 0"
         >
 
-            <div class="chart-card-header">
+            <!-- TITLE + DATE FILTER SAME LINE -->
+
+            <div class="chart-card-header chart-header-with-filter">
 
                 <h3>
                     {{ pieCharts[0].title }}
                 </h3>
+
+                <app-date-range-picker
+                    [startDate]="dateRangeDefaultFrom"
+                    [endDate]="dateRangeDefaultTo"
+                    (dateRangeChange)="onDateRangeChange($event)">
+                </app-date-range-picker>
 
             </div>
 
@@ -178,22 +189,27 @@
     </div>
 
 
-
-
     <div class="dashboard-row">
 
-        <!-- NEGOTIATION -->
 
         <div
             class="chart-card large-card"
             *ngIf="pieCharts.length > 1"
         >
 
-            <div class="chart-card-header">
+            <!-- TITLE + DATE FILTER SAME LINE -->
+
+            <div class="chart-card-header chart-header-with-filter">
 
                 <h3>
                     {{ pieCharts[1].title }}
                 </h3>
+
+                <app-date-range-picker
+                    [startDate]="dateRangeDefaultFrom"
+                    [endDate]="dateRangeDefaultTo"
+                    (dateRangeChange)="onDateRangeChange($event)">
+                </app-date-range-picker>
 
             </div>
 
@@ -209,12 +225,29 @@
         </div>
 
 
-        <!-- SOURCE PERFORMANCE -->
+    
 
         <div
             class="chart-card small-card"
             *ngIf="bubbleChart"
         >
+
+            <!-- TITLE + DATE FILTER SAME LINE -->
+
+            <div class="chart-card-header chart-header-with-filter">
+
+                <h3>
+                    {{ bubbleChart.title }}
+                </h3>
+
+                <app-date-range-picker
+                    [startDate]="dateRangeDefaultFrom"
+                    [endDate]="dateRangeDefaultTo"
+                    (dateRangeChange)="onDateRangeChange($event)">
+                </app-date-range-picker>
+
+            </div>
+
 
             <app-bubble-chart-component
                 [title]="bubbleChart.title"
@@ -223,6 +256,7 @@
             </app-bubble-chart-component>
 
         </div>
+
 
 
         <div
@@ -244,8 +278,6 @@
 
             <div class="hh-panel">
 
-                <!-- GAUGE -->
-
                 <div class="hh-gauge-col">
 
                     <app-semi-circle-gauge
@@ -255,8 +287,6 @@
 
                 </div>
 
-
-                <!-- TABLE -->
 
                 <div class="hh-table-col">
 
@@ -275,42 +305,41 @@
         </div>
 
 
+
         <ng-template
             #reqCell
             let-ctx>
 
             <span
                 *ngIf="ctx.col.key === 'priority'"
-                [class]="priorityClass(ctx.row.priority)"
-            >
+                [class]="priorityClass(ctx.row.priority)">
                 {{ ctx.row.priority }}
             </span>
 
 
             <span
                 *ngIf="ctx.col.key === 'targetStartDate'"
-                class="date-cell"
-            >
+                class="date-cell">
                 {{ ctx.row.targetStartDate }}
             </span>
 
 
             <span
                 *ngIf="ctx.col.key === 'daysRemaining'"
-                class="days-remaining-cell"
-            >
+                class="days-remaining-cell">
                 {{ ctx.row.daysRemaining }}
             </span>
 
 
             <span
                 *ngIf="ctx.col.key === 'slaStatus'"
-                [class]="slaClass(ctx.row.slaStatus)"
-            >
+                [class]="slaClass(ctx.row.slaStatus)">
                 {{ ctx.row.slaStatus }}
             </span>
 
         </ng-template>
+
+
 
         <ng-template
             #statusCell
@@ -318,8 +347,7 @@
 
             <span
                 *ngIf="ctx.col.key === 'status'"
-                [class]="statusClass(ctx.row.status)"
-            >
+                [class]="statusClass(ctx.row.status)">
 
                 <span class="dot"></span>
 

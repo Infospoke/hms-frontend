@@ -106,7 +106,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
           phone:      d.phNo ?? '',
           appliedOn:  this.formatDate(d.CreatedDate),
           experience: '',
-          candidateId:'hghjjjkkk' ,
+          candidateId:d.candidateId ?? '',
         };
       }
     } catch {

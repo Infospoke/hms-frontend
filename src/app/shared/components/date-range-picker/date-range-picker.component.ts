@@ -1,80 +1,225 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  Input
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 
 export interface DateRange {
-  startDate: string; // yyyy-MM-dd
-  endDate: string;   // yyyy-MM-dd
+  fromDate: string | null;
+  toDate: string | null;
 }
 
 @Component({
   selector: 'app-date-range-picker',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './date-range-picker.component.html',
-  styleUrls: ['./date-range-picker.component.scss']
+  styleUrl: './date-range-picker.component.scss'
 })
 export class DateRangePickerComponent {
-  @Input() startDate: string = ''; // bound to <input type="date">, native value is yyyy-MM-dd
-  @Input() endDate: string = '';
 
-  errorMessage: string = '';
+  @Output()
+  dateRangeChange =
+    new EventEmitter<DateRange>();
 
-  @Output() dateRangeChange = new EventEmitter<DateRange>();
+  @Input()
+  startDate: string = '';
 
-  onStartDateChange(value: string): void {
-    this.startDate = value;
-    this.validateAndEmit();
-  }
+  @Input()
+  endDate: string = '';
 
-  onEndDateChange(value: string): void {
-    this.endDate = value;
-    this.validateAndEmit();
-  }
 
-  private validateAndEmit(): void {
-    this.errorMessage = '';
+  // ============================================================
+  // DATE LIMITS
+  // ============================================================
 
-    // Only validate/emit once both dates are provided
-    if (!this.startDate || !this.endDate) {
-      return;
+  maxDate: string =
+    this.formatDate(new Date());
+
+  minDate: string =
+    this.getPrevious30Days();
+
+
+  // ============================================================
+  // SELECTED DATES
+  // ============================================================
+
+  fromDate: string = '';
+
+  toDate: string = '';
+
+
+  // ============================================================
+  // OPEN CALENDAR
+  // ============================================================
+
+  openCalendar(event: Event): void {
+
+    event.stopPropagation();
+
+    const input =
+      event.currentTarget as HTMLInputElement;
+
+    input.focus();
+
+    if ('showPicker' in input) {
+
+      (
+        input as HTMLInputElement & {
+          showPicker: () => void;
+        }
+      ).showPicker();
+
     }
 
-    const start = new Date(this.startDate);
-    const end = new Date(this.endDate);
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      this.errorMessage = 'Please enter valid dates.';
-      return;
-    }
-
-    if (start > end) {
-      this.errorMessage = 'From date must be before or equal to To date.';
-      return;
-    }
-
-    // Native date input already returns yyyy-MM-dd, but format explicitly
-    // in case the value ever comes from another source (e.g. Date object).
-    this.dateRangeChange.emit({
-      startDate: this.formatDate(start),
-      endDate: this.formatDate(end)
-    });
   }
 
-  private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+
+  // ============================================================
+  // FROM DATE
+  // ============================================================
+
+  onFromDateChange(event: Event): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    this.fromDate =
+      input.value;
+
+    if (
+      this.toDate &&
+      this.fromDate &&
+      this.fromDate > this.toDate
+    ) {
+
+      this.toDate = '';
+
+    }
+
+    this.emitDateRange();
+
   }
+
+
+  // ============================================================
+  // TO DATE
+  // ============================================================
+
+  onToDateChange(event: Event): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    this.toDate =
+      input.value;
+
+    if (
+      this.fromDate &&
+      this.toDate &&
+      this.toDate < this.fromDate
+    ) {
+
+      this.toDate = '';
+
+      input.value = '';
+
+      return;
+
+    }
+
+    this.emitDateRange();
+
+  }
+
+
+  // ============================================================
+  // CLEAR
+  // ============================================================
 
   clearDates(): void {
-    this.startDate = '';
-    this.endDate = '';
-    this.errorMessage = '';
+
+    this.fromDate = '';
+
+    this.toDate = '';
+
+    this.emitDateRange();
+
+  }
+
+
+  // ============================================================
+  // EMIT DATE RANGE
+  // ============================================================
+
+  private emitDateRange(): void {
 
     this.dateRangeChange.emit({
-      startDate: '',
-      endDate: ''
+
+      fromDate:
+        this.fromDate || null,
+
+      toDate:
+        this.toDate || null
+
     });
+
   }
+
+
+  // ============================================================
+  // PREVIOUS 30 DAYS
+  // ============================================================
+
+  private getPrevious30Days(): string {
+
+    const date =
+      new Date();
+
+    date.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+    date.setDate(
+      date.getDate() - 30
+    );
+
+    return this.formatDate(date);
+
+  }
+
+
+  // ============================================================
+  // FORMAT DATE
+  // ============================================================
+
+  private formatDate(
+    date: Date
+  ): string {
+
+    const year =
+      date.getFullYear();
+
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(2, '0');
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+
+  }
+
 }

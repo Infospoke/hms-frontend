@@ -63,6 +63,7 @@ export class InterviewUpcomingAiTableComponent implements OnChanges, OnInit {
             // candidate cell
             name: item.candidateName,
             email: item.email,
+            candidateId:item.candidateId,
             initials: this.getInitials(item.candidateName),
             initialsColor: this.getAvatarColor(item.candidateName),
             // rest

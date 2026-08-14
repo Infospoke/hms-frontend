@@ -120,25 +120,33 @@ export class InterviewUpcommingTableComponent implements OnInit,OnChanges {
 
       return {
         id: item.scheduleId?.toString(),
-        interviewId: `INT-${item.scheduleId}`,
-        round: item.round,
-        roundNumber,
-        totalRounds,
-        candidateName: item.candidateName,
-        candidateInitials: initials,
-        candidateId: `NXH-${item.applicantId}`,
-        jobTitle: item.jobTitle,
-        jobLevel: item.department,
-        department: item.department,
-        roundLabel: item.roundProgress,
-        scheduleDate,
-        scheduleTime: `${formatTime(item.startTime)} – ${formatTime(item.endTime)}`,
-        type: item.interviewMode,
-        location:
-          item.interviewMode === 'Online'
-            ? 'Google Meet'
-            : item.venueDetails || '',
-        meetLink: item.meetingLink,
+  interviewId: `INT-${item.scheduleId}`,
+
+  round: item.round,
+  roundNumber,
+  totalRounds,
+
+  candidateName: item.candidateName,
+  candidateInitials: initials,
+  candidateId: item.candidateId,
+
+  jobTitle: item.jobTitle,
+  jobLevel: item.department,
+  department: item.department,
+
+  roundLabel: item.roundProgress,
+
+  scheduleDate,
+  scheduleTime: `${formatTime(item.startTime)} – ${formatTime(item.endTime)}`,
+
+  type: item.interviewMode,
+
+  location:
+    item.interviewMode === 'Online'
+      ? 'Google Meet'
+      : item.venueDetails || '',
+
+  meetLink: item.meetingLink,
       };
     });
   }

@@ -22,7 +22,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
 
   private dashboardService = inject(DashboardService)
 
-  // ── Date filter state ────────────────────────────────────────────────────
+
   selectedJobId: any = null;
 
   dateRange: DateRange = this.getDefaultDateRange();
@@ -286,13 +286,6 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     }));
   }
 
-  /**
-   * Every stage's percentage is calculated against total Applications
-   * (the top of the funnel) — NOT the previous stage. This avoids
-   * a 0% result when an intermediate stage is 0 but a later stage isn't
-   * (e.g. Screening = 0, Shortlisted = 1 should still show a real %,
-   * not divide-by-zero against Screening).
-   */
   private mapConversionFunnel(funnel: any) {
     if (!funnel) return;
 
@@ -318,7 +311,7 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   }
 
   private offerStatusFlow(flow: any) {
-    if (!flow) return;
+    if (!flow) return;  
 
     const values = {
       offerRequestByHR: flow.offerRequestByHR ?? 0,

@@ -31,113 +31,87 @@ function handleUnauthorized() {
   }
 }
 
-
-/* =========================================================
-   COMMON REQUEST
-========================================================= */
-
-async function request(
-  path,
-  {
-    method = 'POST',
-    body,
-    token,
-    isFormData = false,
-    signal,
-    baseUrl = API_BASE_URL
-  } = {}
-) {
+async function request(path, { method = 'POST', body, token, isFormData = false, signal, baseUrl = API_BASE_URL } = {}) {
   let response;
-
   try {
     response = await fetch(`${baseUrl}${path}`, {
       method,
-
       headers: {
         'X-Channel': 'web',
 
-        ...(isFormData
-          ? {}
-          : {
-              'Content-Type': 'application/json'
-            }),
-
-        ...(token
-          ? {
-              Authorization: `Bearer ${token}`
-            }
-          : {})
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-
-      body: isFormData
-        ? body
-        : body !== undefined
-          ? JSON.stringify(body)
-          : undefined,
-
-      signal
+      body: isFormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+      signal,
     });
-
   } catch (err) {
 
-    if (err?.name === 'AbortError') {
-      throw err;
-    }
+    if (err?.name === 'AbortError') throw err;
 
-    throw new ApiError(
-      'Unable to reach the server. Please check your connection and try again.'
-    );
+    throw new ApiError('Unable to reach the server. Please check your connection and try again.');
   }
-
-
-  /* =========================================================
-     UNAUTHORIZED
-  ========================================================= */
 
   if (response.status === 401) {
     handleUnauthorized();
   }
 
-
-  /* =========================================================
-     READ RESPONSE
-  ========================================================= */
-
   let payload = null;
-
   try {
     payload = await response.json();
   } catch {
-    // Response may not contain JSON
+
   }
 
-
-  /* =========================================================
-     API ERROR HANDLING
-  ========================================================= */
-
   if (!payload || payload.responsecode !== '00') {
-
-    const errorMessage =
-      payload?.errors?.[0] ||
-      payload?.message ||
-      `Request failed (${response.status}).`;
-
-    throw new ApiError(errorMessage, {
+    throw new ApiError(payload?.message || `Request failed (${response.status}).`, {
       responsecode: payload?.responsecode,
       status: response.status,
-      errors: payload?.errors || []
     });
   }
 
+  return payload;
+}
+
+async function requestAI(path, { method = 'POST', body, token, isFormData = false, signal, baseUrl = API_BASE_URL_AI } = {}) {
+  let response;
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      method,
+      headers: {
+        'X-Channel': 'web',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: isFormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+      signal,
+    });
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err;
+    throw new ApiError('Unable to reach the server. Please check your connection and try again.');
+  }
+
+  if (response.status === 401) {
+    handleUnauthorized();
+  }
+
+  let payload = null;
+  try {
+    payload = await response.json();
+  } catch {
+    // no-op
+  }
+
+  if (!payload || payload.status !== 'ok') {
+    throw new ApiError(payload?.message || `Request failed (${response.status}).`, {
+      status: response.status,
+    });
+  }
 
   return payload;
 }
 
 
-/* =========================================================
-   LOGIN
-========================================================= */
 
 export function loginRequest(email, password) {
   return request('/hms/candidate/login', {
@@ -602,20 +576,7 @@ export function createCandidateRequest({
     }
   );
 }
-
-
-
-export function acceptOfferRequest(
-  token,
-  {
-    comments,
-    signatureFile,
-    signatureType,
-    candidateId,
-    offerId,
-    applicantId
-  }
-) {
+export function acceptOfferRequest(token, { comments, signatureFile, signatureType, candidateId, offerId, applicantId }) {
   const form = new FormData();
 
   form.append('comments', comments ?? '');
@@ -630,14 +591,7 @@ export function acceptOfferRequest(
 
   form.append('candidate_id', candidateId);
   form.append('offer_id', offerId);
-  form.append('approve', 'true');
+  form.append('approve', true);
   form.append('application_id', applicantId);
-
-  return request('/api/admin/accept-offer', {
-    token,
-    body: form,
-    isFormData: true,
-    baseUrl: API_BASE_URL_AI,
-  });
-
+  return requestAI('/api/admin/accept-offer', { token, body: form, isFormData: true });
 }

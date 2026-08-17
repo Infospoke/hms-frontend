@@ -14,7 +14,7 @@ export const SUPPLY_ROUTES: Routes = [
     loadComponent: () => import('../components/job-approval-detail/job-approval-detail.component').then(m => m.JobApprovalDetailComponent)
   },
   {
-    path: 'my-interview-requests/job-details/:id',
+    path: 'my-interview-requests/job-details/:id/:status',
     loadComponent: () => import('../components/job-approval-detail/job-approval-detail.component').then(m => m.JobApprovalDetailComponent)
   },
   {

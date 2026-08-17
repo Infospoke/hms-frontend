@@ -53,7 +53,7 @@ export class CandidateDetailComponent implements OnChanges {
       selectedDate.getFullYear() === now.getFullYear();
 
     let hour = 9;
-    let minute = 30;
+    let minute = 15;
 
     while (hour < 18 || (hour === 18 && minute === 0)) {
       const slotTime = new Date(selectedDate);
@@ -66,7 +66,7 @@ export class CandidateDetailComponent implements OnChanges {
         slots.push(`${h}:${m}`);
       }
 
-      minute += 30;
+      minute += 15;
 
       if (minute >= 60) {
         minute = 0;

@@ -142,9 +142,9 @@ export class ApprovalChainConfigComponent implements OnInit {
             iconColor: '#22c55e',
           },
           {
-            label: 'Deactive Chains',
-            value: countData?.deactive ?? 0,
-            iconClass: 'fa-solid fa-circle-pause',
+            label: 'Inactive Chains',
+            value: countData?.inactive ?? 0,
+            iconClass: 'fa-regular fa-circle-xmark',
             iconBgColor: '#fdf4ff',
             iconColor: '#a855f7',
           },
@@ -214,7 +214,7 @@ export class ApprovalChainConfigComponent implements OnInit {
         count:
           t.key === 'all' ? (listPayload?.counts?.total ?? 0) :
             t.key === 'active' ? (listPayload?.counts?.active ?? 0) :
-              t.key === 'inactive' ? (listPayload?.counts?.deactive ?? 0) :
+              t.key === 'inactive' ? (listPayload?.counts?.inactive ?? 0) :
                 t.count
       }));
 

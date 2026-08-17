@@ -37,6 +37,7 @@ interface CandidateOverview {
   interviewPlan: string;
   interviewType: string;
   duration: string;
+  candidateId:string;
 }
 
 // ── Slot generation config ───────────────────────────────────────────────────
@@ -119,6 +120,7 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
     interviewPlan: '',
     interviewType: DEFAULT_INTERVIEW_TYPE,
     duration: DEFAULT_DURATION,
+    candidateId:'',
   };
 
   private router = inject(Router);
@@ -250,6 +252,7 @@ export class ScheduleAiInterviewComponent implements OnInit, OnDestroy {
         interviewPlan: data.planName ?? '',
         interviewType: data.interviewType ?? DEFAULT_INTERVIEW_TYPE,
         duration: data.duration ?? DEFAULT_DURATION,
+        candidateId:data.candidateId ?? ' ',
       };
     } catch (err) {
       console.error('Failed to load candidate overview', err);

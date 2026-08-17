@@ -39,7 +39,7 @@ export class JobApprovalDetailComponent implements OnInit {
   assignmentId: any = null;
 
   get isAssignmentMode(): boolean {
-    return this.type === 'assignment';
+    return this.type == 'assignment';
   }
 
   // ── State
@@ -109,12 +109,20 @@ export class JobApprovalDetailComponent implements OnInit {
   ngOnInit(): void {
     this.jobId = this.route.snapshot.params['id'];
 
-    // 'type' is passed via router navigation state when coming from
-    // the interview-assignment list (e.g. { state: { type: 'assignment' } }).
+   
     const navState = (history.state ?? {}) as { type?: string,assignmentId:string };
     this.type = navState?.type ?? null;
     this.assignmentId=navState?.assignmentId ??null;
-   
+
+
+    const routeStatus = this.route.snapshot.params['status'];
+ 
+    if (this.isAssignmentMode && routeStatus && routeStatus !== 'Pending') {
+      this.existingResponse = {
+        status: routeStatus,
+        comments: '',
+      };
+    }
 
     this.loadJobDetail();
   }
@@ -196,15 +204,21 @@ export class JobApprovalDetailComponent implements OnInit {
       });
     }
 
-    // Existing response (already-submitted decision)
-    const myResponse = data.recruiters?.myResponse;
-    if (Array.isArray(myResponse) && myResponse.length > 0) {
-      const latest = myResponse[myResponse.length - 1];
-      if (latest?.status && latest.status !== 'PENDING') {
-        this.existingResponse = {
-          status: latest.status,
-          comments: latest.comments ?? '',
-        };
+    // Existing response (already-submitted decision).
+    // Assignment mode gets its status from the route (set in ngOnInit),
+    // not from data.recruiters?.myResponse — that array is specific to
+    // job-approval decisions, so skip it here to avoid overwriting the
+    // route-derived assignment status.
+    if (!this.isAssignmentMode) {
+      const myResponse = data.recruiters?.myResponse;
+      if (Array.isArray(myResponse) && myResponse.length > 0) {
+        const latest = myResponse[myResponse.length - 1];
+        if (latest?.status && latest.status !== 'PENDING') {
+          this.existingResponse = {
+            status: latest.status,
+            comments: latest.comments ?? '',
+          };
+        }
       }
     }
 

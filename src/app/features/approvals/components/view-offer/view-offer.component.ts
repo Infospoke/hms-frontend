@@ -456,7 +456,17 @@ export class ViewOfferComponent implements OnInit {
   // ── Pipeline construction ───────────────────────────────────────────────
   private buildPipelineStages(comments: OfferCommentApiItem[]): ApprovalStage[] {
 
-    const actioned = (comments ?? []).filter(c => !!c.role);
+    // A row exists for every stage in the pipeline from the moment the
+    // offer is created — including ones nobody has acted on yet, which
+    // come back as { role, approved: false, approverName: null,
+    // approvedOn: null, comments: null }. Filtering on `role` alone was
+    // treating those untouched rows as "actioned" and their default
+    // `approved: false` was then read as an explicit rejection, so every
+    // stage showed as Rejected before anything had actually happened.
+    // Only count a row as actioned once it has real decision evidence.
+    const actioned = (comments ?? []).filter(
+      c => !!c.role && (c.approverName != null || c.approvedOn != null)
+    );
 
     let foundInProgress = false;
     let foundRejected = false;

@@ -106,7 +106,7 @@ export class JobOverview {
         { id: 2, title: 'Screened', count: data?.resumeCount, total:data?.applicantCount },
         { id: 3, title: 'Shortlisted', count: data?.shortlisted, total: data?.applicantCount },
         { id: 4, title: 'Interview', count: data?.interviewCount, total: data?.applicantCount },
-        { id: 5, title: 'Offer', count: data?.offerReleased, total: data?.applicantCount },
+        { id: 5, title: 'Offer', count: data?.offerCount, total: data?.applicantCount },
         { id: 6, title: 'Hired', count: data?.hiredCount, total: data?.applicantCount },
       ];
       this.selectedJob = res?.data;

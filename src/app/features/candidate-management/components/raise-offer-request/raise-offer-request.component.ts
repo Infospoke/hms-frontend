@@ -517,32 +517,44 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   
   private mapPendingApprovalsList(data: any) {
-    return data?.map((item: any) => ({
+    return (data ?? []).map((item: any) => ({
       id: item?.applicationId,
       offerId: item?.offerId,
-
+  
       name: item?.applicantName,
       email: item?.applicantEmail,
-
+  
       avatarInitials: this.getAvatarInitials(item?.applicantName),
       avatarColor: this.getAvatarColor(item?.applicantName),
-
+  
       jobTitle: item?.jobTitle,
       department: item?.department,
-
-      approvalSteps: (item?.approvals && item.approvals.length > 0)
-        ? item.approvals.map((approval: any) => ({
-            label: approval?.role || 'Pending',
-            state: approval?.approved ? 'completed' : 'pending'
-          }))
-        : [{ label: 'Approval Pending', state: 'pending' }],
-
+  
+      approvalSteps:
+        (item?.approvals && item.approvals.length > 0)
+          ? item.approvals.map((approval: any) => ({
+              label: approval?.role || 'Pending',
+  
+              // true  → completed
+              // false → pending
+              // null  → pending
+              state:
+                approval?.approved === true
+                  ? 'completed'
+                  : 'pending'
+            }))
+          : [
+              {
+                label: 'Approval Pending',
+                state: 'pending'
+              }
+            ],
+  
       requestedOn: this.formatDate(item?.requestedOn),
       requestedOnTime: this.formatTime(item?.requestedOn),
       priority: item?.priority
     }));
   }
-
   async getReadyOfferLetters(payload: any) {
     const payloadData = {
       ...payload,

@@ -20,7 +20,7 @@
           Work email <span class="req">*</span>
         </label>
 
-        <input type="email" class="fi" formControlName="email" placeholder="Enter your email" />
+        <input type="email" class="fi" formControlName="email" placeholder="Enter your email" autocomplete="username"/>
 
         <!-- Error -->
         <div class="error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
@@ -41,7 +41,7 @@
 
         <div class="password-wrapper">
           <input [type]="hide() ? 'password' : 'text'" class="fi" formControlName="password"
-            placeholder="Enter your password" />
+            placeholder="Enter your password" autocomplete="current-password"/>
 
           <span class="eye-icon" (click)="hide.set(!hide())">
             <i *ngIf="hide()" class="fa fa-eye-slash"></i>

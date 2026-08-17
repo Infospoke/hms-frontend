@@ -20,6 +20,7 @@ export interface InterviewRequest {
   requestedDate: string;
   requestedTime: string;
   jobId:any;
+  status:any;
 }
 
 @Component({
@@ -89,6 +90,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
       priority: this.normalizePriority(item.priority),
       requestedDate: dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
       requestedTime: dt ? dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '',
+      status:item?.status,
     };
   }
 
@@ -115,13 +117,13 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   onViewDetails(req: InterviewRequest): void {
     this.router.navigate(
-      [`/supply/my-interview-requests/job-details/${req?.jobId}`],
+      [`/supply/my-interview-requests/job-details/${req?.jobId}/${req?.status}`],
       {state:{type:'assignment',assignmentId:req?.assignmentId}}
     );
   }
 
   onRowClick(row: InterviewRequest): void {
-    console.log('Row clicked:', row);
+    // console.log('Row clicked:', row);
   }
 
 

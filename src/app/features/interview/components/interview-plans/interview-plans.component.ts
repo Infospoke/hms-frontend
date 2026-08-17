@@ -52,11 +52,11 @@ export class InterviewPlansComponent implements OnInit {
       iconColor: '#22c55e'
     },
     {
-      label: 'Deactive Plans',
+      label: 'Inactive Plans',
       subLabel: 'Plans not available',
       value: 0,
       percentage: 'Plans not available',
-      iconClass: 'fa-regular fa-circle-pause',
+      iconClass: 'fa-regular fa-circle-xmark',
       iconBgColor: '#fff7ed',
       iconColor: '#f59e0b'
     },
@@ -67,7 +67,7 @@ export class InterviewPlansComponent implements OnInit {
   tabs: { key: string; label: string; count: number }[] = [
     { key: 'all',         label: 'All Plans',         count: 0 },
     { key: 'Active',      label: 'Active Plans',      count: 0 },
-    { key: 'deactive',    label: 'Deactive Plans',    count: 0 },
+    { key: 'Inactive',    label: 'Inactive Plans',    count: 0 },
    
   ];
 
@@ -126,13 +126,13 @@ export class InterviewPlansComponent implements OnInit {
     try {
       const res = await this.interviewService.plansCount();
       if (res?.responsecode === '00') {
-        const { allPlans, activePlans, deactivePlans, inProgressPlans } = res.data;
+        const { allPlans, activePlans, inactivePlans, inProgressPlans } = res.data;
         console.log(res?.data);
         // Update cards
         this.cards = [
           { ...this.cards[0], value: allPlans ?? 0 },
           { ...this.cards[1], value: activePlans ?? 0 },
-          { ...this.cards[2], value: deactivePlans ?? 0 },
+          { ...this.cards[2], value: inactivePlans ?? 0 },
          
         ];
 
@@ -158,13 +158,13 @@ export class InterviewPlansComponent implements OnInit {
 
         // ── Cards & tabs from counts returned by the list API ───────────────
         if (counts) {
-          const { allPlans, activePlans, deactivePlans, inProgressPlans } = counts;
+          const { allPlans, activePlans, inactivePlans, inProgressPlans } = counts;
 
           
           this.tabs = [
             { ...this.tabs[0], count: allPlans        ?? 0 },
             { ...this.tabs[1], count: activePlans     ?? 0 },
-            { ...this.tabs[2], count: deactivePlans   ?? 0 },
+            { ...this.tabs[2], count: inactivePlans   ?? 0 },
            
           ];
         }

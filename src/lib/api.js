@@ -67,6 +67,45 @@ async function request(path, { method = 'POST', body, token, isFormData = false,
   return payload;
 }
 
+async function requestAI(path, { method = 'POST', body, token, isFormData = false, signal, baseUrl = API_BASE_URL_AI } = {}) {
+  let response;
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      method,
+      headers: {
+        'X-Channel': 'web',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: isFormData ? body : body !== undefined ? JSON.stringify(body) : undefined,
+      signal,
+    });
+  } catch (err) {
+    if (err?.name === 'AbortError') throw err;
+    throw new ApiError('Unable to reach the server. Please check your connection and try again.');
+  }
+
+  if (response.status === 401) {
+    handleUnauthorized();
+  }
+
+  let payload = null;
+  try {
+    payload = await response.json();
+  } catch {
+    // no-op
+  }
+
+  if (!payload || payload.status !== 'ok') {
+    throw new ApiError(payload?.message || `Request failed (${response.status}).`, {
+      status: response.status,
+    });
+  }
+
+  return payload;
+}
+
+
 
 export function loginRequest(email, password) {
   return request('/hms/candidate/login', { body: { email, password } });
@@ -205,19 +244,14 @@ export function createCandidateRequest({
 
   return request('/hms/candidate/create', { body: form, isFormData: true });
 }
-export function acceptOfferRequest(token, { comments, signatureFile, signatureType, candidateId, offerId,applicantId }) {
+export function acceptOfferRequest(token, { comments, signatureFile, signatureType, candidateId, offerId, applicantId }) {
   const form = new FormData();
   form.append('comments', comments ?? '');
   if (signatureFile) form.append('signature', signatureFile);
   if (signatureType === 'type') form.append('signature_type', signatureType);
   form.append('candidate_id', candidateId);
   form.append('offer_id', offerId);
-  form.append('approve',true);
-  form.append('application_id',applicantId);
-  return request('/api/admin/accept-offer', {
-    token,
-    body: form,
-    isFormData: true,
-    baseUrl: API_BASE_URL_AI,
-  });
+  form.append('approve', true);
+  form.append('application_id', applicantId);
+  return requestAI('/api/admin/accept-offer', { token, body: form, isFormData: true });
 }

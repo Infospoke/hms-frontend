@@ -119,7 +119,8 @@ export default function OfferDetailPage() {
       offerId:offerId,
       applicantId: applicantId,
     });
-    setShowESignModal(false);
+    // setShowESignModal(false);
+    setShowSignModal(false);
    
   } catch (err) {
     // ApiError from api.js — show err.message to the user

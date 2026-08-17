@@ -44,13 +44,13 @@ export class PayRevisionRequestTableComponent {
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
   @Input() permissionName:any='';
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '22%' },
-    { key: 'jobTitle', label: 'Job title', width: '14%' },
-    { key: 'offerReleasedOn', label: 'Offer Released On', width: '19%', custom: true },
-    { key: 'requestedPackage', label: 'Requested package', width: '19%' },
-    { key: 'currentPackage', label: 'Current package', width: '16%' },
-    { key: 'priority', label: 'Priority', custom: true, width: '16%' },
-    { key: 'actions', label: 'Actions', custom: true, width: '16%' },
+    { key: 'candidate', label: 'Candidate', custom: true, width: '100px' },
+    { key: 'jobTitle', label: 'Job title', width: '100px' },
+    { key: 'offerReleasedOn', label: 'Offer Released On', width: '140px', custom: true },
+    { key: 'requestedPackage', label: 'Requested package', width: '140px' },
+    { key: 'currentPackage', label: 'Current package', width: '130px' },
+    { key: 'priority', label: 'Priority', custom: true, width: '100px' },
+    { key: 'actions', label: 'Actions', custom: true, width: '100px' },
   ];
 
   sortableColumns: string[] = ['offerReleasedOn'];

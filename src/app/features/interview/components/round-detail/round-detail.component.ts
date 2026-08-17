@@ -17,18 +17,14 @@ export class RoundDetailComponent implements OnInit {
   @Input() data!: any;
   @Input() roundTitle = 'Round';
 
-
-  competencies = [
-    { key: 'technical', label: 'Technical Knowledge', description: 'Core technical concepts and depth', rating: 5 },
-    { key: 'problem', label: 'Problem Solving', description: 'Analytical and debugging approach', rating: 4 },
-    { key: 'communication', label: 'Communication', description: 'Clarity and articulation', rating: 4 },
-    { key: 'analytical', label: 'Analytical Thinking', description: 'Critical and logical thinking', rating: 4 },
-    { key: 'cultural', label: 'Cultural Fit', description: 'Alignment with team values', rating: 5 },
-  ]
+  
+  competencies:any[] = []
 
   private interviewService = inject(InterviewServiceService);
   ngOnInit(): void {
-   
+   this.competencies=this.data?.feedback?.competencies ?? []
+  
+
   }
 
   

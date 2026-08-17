@@ -133,7 +133,7 @@
 
             <app-candidate-pipeline
                 [layout]="pipelineConfig.layout || 'horizontal'"
-                [title]="pipelineConfig.title ?? 'Candidate Pipeline'"
+                [title]="''"
                 [periods]="pipelineConfig.periods ?? ['This Month']"
                 [selectedPeriod]="
                     pipelineConfig.selectedPeriod ??
@@ -250,7 +250,7 @@
 
 
             <app-bubble-chart-component
-                [title]="bubbleChart.title"
+                [title]="''"
                 [bubbles]="bubbleChart.bubbles"
                 [tableData]="bubbleChart.tableData">
             </app-bubble-chart-component>

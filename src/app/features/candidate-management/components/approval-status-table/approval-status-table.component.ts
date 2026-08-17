@@ -55,12 +55,12 @@ export class ApprovalStatusTableComponent {
 
   get columns(): TableColumn[] {
     const cols: TableColumn[] = [
-      { key: 'candidate', label: 'Candidate', custom: true, width: '170px' },
-      { key: 'jobTitle', label: 'Job title', width: '100px' },
-      { key: 'package', label: 'Package', width: '110px' },
+      { key: 'candidate', label: 'Candidate', custom: true, width: '120px' },
+      { key: 'jobTitle', label: 'Job title', width: '120px' },
+      { key: 'package', label: 'Package', width: '100px' },
       { key: 'releasedOn', label: 'Released on', sortable: true, width: '100px' },
-      { key: 'recruiter', label: 'Recruiter', custom: true, width: '90px' },
-      { key: 'status', label: 'Status', custom: true, width: '90px' },
+      { key: 'recruiter', label: 'Recruiter', custom: true, width: '100px' },
+      { key: 'status', label: 'Status', custom: true, width: '140px' },
     ];
 
     if (this.showActions) {

@@ -518,22 +518,6 @@
 }
 
 
-/* =========================================================
-   ⭐ FOUR FLOW-CHART DATE FILTERS
-   =========================================================
-   
-   This is the important part.
-
-   The title and date picker stay on the SAME LINE:
-
-   My Conversion Funnel     [ FROM -> TO ]
-
-   Offer Status Flow         [ FROM -> TO ]
-
-   Negotiation Flow          [ FROM -> TO ]
-
-   Source Performance        [ FROM -> TO ]
-   ========================================================= */
 
 .chart-header-with-filter {
   display: flex;
@@ -561,168 +545,168 @@
 
 /* Date picker container */
 
-.chart-header-with-filter app-date-range-picker {
-  margin-left: auto;
-  flex: 0 0 auto;
-  min-width: 0;
-}
+// .chart-header-with-filter app-date-range-picker {
+//   margin-left: auto;
+//   flex: 0 0 auto;
+//   min-width: 0;
+// }
 
 
 /* =========================================================
    DATE PICKER INSIDE FLOW CHART HEADER
    ========================================================= */
 
-.chart-header-with-filter {
+// .chart-header-with-filter {
 
-  ::ng-deep app-date-range-picker {
+//   ::ng-deep app-date-range-picker {
 
-    .date-range-wrapper {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-end;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    .date-range-picker {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-
-      height: 44px;
-
-      gap: 8px;
-
-      padding: 6px 10px;
-
-      border: 1px solid #D8E0EA;
-
-      border-radius: 10px;
-
-      background: #FFFFFF;
-
-      box-sizing: border-box;
-
-      white-space: nowrap;
-
-      box-shadow: none;
-    }
+//     .date-range-wrapper {
+//       display: flex;
+//       flex-direction: row;
+//       align-items: center;
+//       justify-content: flex-end;
+//       margin: 0;
+//       padding: 0;
+//     }
 
 
-    /* Individual date field */
+//     .date-range-picker {
+//       display: flex;
+//       flex-direction: row;
+//       align-items: center;
+//       justify-content: center;
 
-    .date-field {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 5px;
+//       height: 44px;
 
-      margin: 0;
-      padding: 0;
-    }
+//       gap: 8px;
 
+//       padding: 6px 10px;
 
-    /* FROM / TO */
+//       border: 1px solid #D8E0EA;
 
-    .date-field label {
-      margin: 0;
+//       border-radius: 10px;
 
-      font-size: 11px;
+//       background: #FFFFFF;
 
-      font-weight: 600;
+//       box-sizing: border-box;
 
-      letter-spacing: 0.02em;
+//       white-space: nowrap;
 
-      color: #334155;
-
-      white-space: nowrap;
-    }
+//       box-shadow: none;
+//     }
 
 
-    /* Date input */
+//     /* Individual date field */
 
-    .date-field input[type="date"] {
-      width: 105px;
+//     .date-field {
+//       display: flex;
+//       flex-direction: row;
+//       align-items: center;
+//       gap: 5px;
 
-      min-width: 105px;
-
-      height: 28px;
-
-      border: none;
-
-      outline: none;
-
-      background: transparent;
-
-      padding: 0;
-
-      margin: 0;
-
-      font-size: 13px;
-
-      color: #64748B;
-
-      font-family: inherit;
-
-      cursor: pointer;
-
-      box-sizing: border-box;
-    }
+//       margin: 0;
+//       padding: 0;
+//     }
 
 
-    /* Browser calendar icon */
+//     /* FROM / TO */
 
-    .date-field input[type="date"]::-webkit-calendar-picker-indicator {
-      opacity: 1;
+//     .date-field label {
+//       margin: 0;
 
-      cursor: pointer;
+//       font-size: 11px;
 
-      width: 16px;
+//       font-weight: 600;
 
-      height: 16px;
-    }
+//       letter-spacing: 0.02em;
 
+//       color: #334155;
 
-    /* Arrow between FROM and TO */
-
-    .date-range-arrow {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      margin: 0 2px;
-
-      color: #94A3B8;
-
-      flex-shrink: 0;
-    }
+//       white-space: nowrap;
+//     }
 
 
-    /* Clear button */
+//     /* Date input */
 
-    .clear-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+//     .date-field input[type="date"] {
+//       width: 105px;
 
-      width: 26px;
-      height: 26px;
+//       min-width: 105px;
 
-      padding: 0;
+//       height: 28px;
 
-      border: none;
+//       border: none;
 
-      background: transparent;
+//       outline: none;
 
-      cursor: pointer;
-    }
+//       background: transparent;
 
-  }
+//       padding: 0;
 
-}
+//       margin: 0;
+
+//       font-size: 13px;
+
+//       color: #64748B;
+
+//       font-family: inherit;
+
+//       cursor: pointer;
+
+//       box-sizing: border-box;
+//     }
+
+
+//     /* Browser calendar icon */
+
+//     .date-field input[type="date"]::-webkit-calendar-picker-indicator {
+//       opacity: 1;
+
+//       cursor: pointer;
+
+//       width: 16px;
+
+//       height: 16px;
+//     }
+
+
+//     /* Arrow between FROM and TO */
+
+//     .date-range-arrow {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+
+//       margin: 0 2px;
+
+//       color: #94A3B8;
+
+//       flex-shrink: 0;
+//     }
+
+
+//     /* Clear button */
+
+//     .clear-btn {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+
+//       width: 26px;
+//       height: 26px;
+
+//       padding: 0;
+
+//       border: none;
+
+//       background: transparent;
+
+//       cursor: pointer;
+//     }
+
+//   }
+
+// }
 
 
 /* =========================================================

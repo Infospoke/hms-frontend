@@ -39,12 +39,12 @@ export class RecruitersAndResponseComponent implements OnInit, OnChanges {
   ];
 
   tableColumns: TableColumn[] = [
-    { key: 'recruiter', label: 'Recruiter', custom: true, width: '250px' },
-    { key: 'role', label: 'Role', width: '200px' },
-    { key: 'assignedOn', label: 'Assigned On', custom: true, width: '200px' },
-    { key: 'status', label: 'Status', custom: true, width: '190px', align: 'center' },
-    { key: 'respondedOn', label: 'Responded On', custom: true, width: '140px' },
-    { key: 'comments', label: 'Comments', custom: true },
+    { key: 'recruiter', label: 'Recruiter', custom: true, width: '200px' },
+    { key: 'role', label: 'Role', width: '100px' },
+    { key: 'assignedOn', label: 'Assigned On', custom: true, width: '90px' },
+    { key: 'status', label: 'Status', custom: true, width: '90px', align: 'center' },
+    { key: 'respondedOn', label: 'Responded On', custom: true, width: '90px' },
+    { key: 'comments', label: 'Comments', custom: true ,width:'100px'},
   ];
   private router = inject(Router);
   private route = inject(ActivatedRoute);

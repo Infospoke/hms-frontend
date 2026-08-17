@@ -26,23 +26,11 @@ export class CommonFilterComponent implements OnInit, OnDestroy,OnChanges {
   @Input() searchPlaceholder: string = 'Search...';
   @Input() debounceMs: number = 400;
   @Input() dropdowns: any[] = [];
-  /** Set to false to hide the free-text search box — some filter bars (e.g.
-   * the recruiter-performance dashboard's card-style dropdowns) are purely
-   * dropdown-driven and don't need it. Defaults to true so every existing
-   * app-common-filter usage keeps its current look. */
+  
   @Input() showSearch: boolean = true;
-  /** Bigger bordered "card" look (label above value, room for an icon/avatar
-   * badge) instead of the default compact "Label: Value" pill — opt-in so
-   * existing pages using app-common-filter keep their current style. Each
-   * dropdown can also set `icon: 'fa-solid fa-user'` (or any FA class) and
-   * `avatar: true` to show it as an initials avatar (via ProfilePipe) instead
-   * of a plain icon. */
+ 
   @Input() cardStyle: boolean = false;
 
-  /** Seed values for the date-filter's From/To inputs when it defaults to
-   * "Custom Range" (see dropdown.selected === 'CUSTOM') — lets a page open
-   * with a real pre-filled range (e.g. a rolling one month) instead of an
-   * empty "All Time" pill that only fills in once the user picks dates. */
   @Input() defaultFromDate: string = '';
   @Input() defaultToDate: string = '';
 

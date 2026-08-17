@@ -734,10 +734,10 @@ export class InterviewPerformanceComponent implements OnInit {
 
   /** Maps a raw /interview-feedback response into the shape RoundDetailComponent expects. */
   private mapFeedbackToViewModel(feedback: any): any {
+    console.log(feedback);
     return {
       overview: {
-        // interview_date comes straight from the feedback API and is used
-        // for the round's scheduled date/time.
+       
         interviewDateTime: this.formatDateTime(feedback.interview_date),
         duration: '--',
         score: (feedback.overall_rating ?? 0) * 20,

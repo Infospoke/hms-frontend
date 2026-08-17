@@ -109,21 +109,35 @@ export default function OfferDetailPage() {
   const handleDecline = () => {
     setStatus('declined');
   };
-  const handleAcceptOffer = async ({ signatureFile, signatureType, comments }) => {
+const handleAcceptOffer = async ({
+  signatureFile,
+  signatureType,
+  comments
+}) => {
   try {
-    await acceptOfferRequest(token, {
+    const response = await acceptOfferRequest(token, {
       comments,
       signatureFile,
       signatureType,
       candidateId: offer.candidateId,
-      offerId:offerId,
+      offerId: offerId,
       applicantId: applicantId,
     });
-    // setShowESignModal(false);
-    setShowSignModal(false);
-   
+
+    console.log('Accept offer response:', response);
+
+    if (response?.status === 'ok') {
+      console.log('Message:', response.message);
+      console.log('Generated file:', response.minio_file_name);
+
+      setShowESignModal(false);
+    } else {
+      console.error(
+        response?.message || 'Failed to accept offer'
+      );
+    }
+
   } catch (err) {
-    // ApiError from api.js — show err.message to the user
     console.error(err);
   }
 };

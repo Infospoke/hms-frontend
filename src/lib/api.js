@@ -58,7 +58,8 @@ async function request(path, { method = 'POST', body, token, isFormData = false,
   }
 
   if (!payload || payload.responsecode !== '00') {
-    throw new ApiError(payload?.message || `Request failed (${response.status}).`, {
+    console.log(payload)
+    throw new ApiError(payload?.errors?.[0] ||payload?.message || `Request failed (${response.status}).`, {
       responsecode: payload?.responsecode,
       status: response.status,
     });

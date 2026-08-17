@@ -139,11 +139,9 @@ export default function SignupPage() {
         additionalFile: additionalDocFile,
       });
 
-      // /create returns a candidate ID, not a session token, so we can't
-      // auto-sign-in here — send them to Login instead (same pattern the
-      // reset-password flow already uses for its success message).
       navigate('/login', { state: { accountCreated: true } });
     } catch (err) {
+      console.log(err);
       setError(err.message || 'Could not create your account. Please try again.');
     } finally {
       setSubmitting(false);

@@ -7,10 +7,12 @@
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  // Fixed card height — once rows exceed this, the table body scrolls
-  // internally (header stays pinned) instead of pushing the rest of the
-  // page down.
-  height: 420px;
+
+  
+  height: 100%;
+  min-height: 320px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -18,6 +20,7 @@
 
 .ja-header {
   padding: 18px 20px 4px;
+  flex: 0 0 auto;
 
   h3 {
     margin: 0;
@@ -37,13 +40,12 @@
   }
 }
 
-// Flatten the wrapped reusable-table's own card chrome — .ja-card already
-// provides the border/shadow/radius, so avoid double-carding it. Also make
-// the table itself fill the remaining card height and scroll internally
-// (sticky header) instead of the card growing to fit all rows.
+
 ::ng-deep app-reusable-table {
   flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
+  width: 100%;
   display: flex;
 
   .rt-container {
@@ -52,19 +54,25 @@
     box-shadow: none;
     flex: 1 1 auto;
     min-height: 0;
+    min-width: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
   }
 
+  
   .rt-scroll-wrapper {
     flex: 1 1 auto;
     min-height: 0;
+    min-width: 0;
     overflow-y: auto;
+   
     overflow-x: auto;
   }
 
   .rt-table {
     table-layout: fixed;
+    width: 100%;
   }
 
   // Keep the header visible while rows scroll underneath it.
@@ -75,23 +83,23 @@
   }
 
   tr.rt-normal-row th {
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     padding: 9px 6px !important;
     white-space: normal !important;
-    line-height: 1.3;
+    line-height: 1.1;
     color: #6b7280;
     vertical-align: top;
   }
 
   td {
-    font-size: 11px;
-    padding: 8px 6px;
+    font-size: 10px;
+    padding: 4px 3px;
     vertical-align: middle;
     overflow-wrap: break-word;
   }
 
   .rt-cell-text {
-    font-size: 11px;
+    font-size: 10px;
     color: #374151;
     white-space: normal;
     word-break: normal;
@@ -132,6 +140,7 @@
   &--high   { background: #DC2626; }
   &--medium { background: #F59E0B; }
   &--low    { background: #22C55E; }
+  &--standard    { background: #f3c737; }
 }
 
 // ── Requested Openings data bar ──────────────────────────────────────────
@@ -187,8 +196,16 @@
   align-items: center;
   gap: 16px;
   padding: 12px 20px 16px;
-  border-top: 1px solid #f1f5f9;
-  margin-top: auto;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0;
+
+  // Never let it shrink or let scrolled row content render underneath it —
+  // this is what was causing the legend to sit on top of the last row.
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .ja-legend-title {

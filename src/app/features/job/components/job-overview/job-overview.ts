@@ -194,7 +194,7 @@ export class JobOverview {
           this.notificationService.success(res?.responsemessage || res?.message)
         }
         else{
-          this.notificationService.error(res?.message || res?.message || res?.erros?.[0])
+          this.notificationService.error(res?.errors?.[0]  || res?.message || res?.message || res?.erros?.[0])
         }
         return;
       }

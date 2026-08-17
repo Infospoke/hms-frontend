@@ -114,7 +114,7 @@ export class RaiseOfferLetterReadyTableComponent implements OnChanges {
       this. notificationService.success(res?.message || res?.data || res?.resposemessage);
     }
     else{
-      this.notificationService.error(res?.message||res?.errors?.[0])
+      this.notificationService.error(res?.errors?.[0] ||res?.message||res?.errors?.[0])
     }
   }
  

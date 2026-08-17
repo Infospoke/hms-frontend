@@ -2,7 +2,8 @@ import {
   Component,
   EventEmitter,
   Output,
-  Input
+  Input,
+  OnInit
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -21,7 +22,7 @@ export interface DateRange {
   templateUrl: './date-range-picker.component.html',
   styleUrl: './date-range-picker.component.scss'
 })
-export class DateRangePickerComponent {
+export class DateRangePickerComponent implements OnInit {
 
   @Output()
   dateRangeChange =
@@ -32,7 +33,7 @@ export class DateRangePickerComponent {
 
   @Input()
   endDate: string = '';
-
+  @Input() showClear:boolean=false
 
   // ============================================================
   // DATE LIMITS
@@ -54,10 +55,10 @@ export class DateRangePickerComponent {
   toDate: string = '';
 
 
-  // ============================================================
-  // OPEN CALENDAR
-  // ============================================================
-
+  ngOnInit(): void {
+    this.fromDate = this.startDate;
+    this.toDate = this.endDate;
+  }
   openCalendar(event: Event): void {
 
     event.stopPropagation();
@@ -158,7 +159,7 @@ export class DateRangePickerComponent {
   // ============================================================
 
   private emitDateRange(): void {
-
+    if(this.fromDate && this.toDate){
     this.dateRangeChange.emit({
 
       fromDate:
@@ -168,6 +169,7 @@ export class DateRangePickerComponent {
         this.toDate || null
 
     });
+  }
 
   }
 
@@ -220,6 +222,9 @@ export class DateRangePickerComponent {
 
     return `${year}-${month}-${day}`;
 
+  }
+  isShow(){
+    return (this.fromDate || this.toDate) && !this.showClear
   }
 
 }

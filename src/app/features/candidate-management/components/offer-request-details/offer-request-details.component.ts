@@ -470,7 +470,7 @@ export class OfferRequestDetailsComponent implements OnInit {
         this.notificationService.success(res?.message);
         this.onBack()
       } else {
-        this.notificationService.error(res?.erros?.[0] || res?.message);
+        this.notificationService.error(res?.errors?.[0] || res?.message);
       }
     } catch (err) {
       console.error('Error submitting offer request', err);

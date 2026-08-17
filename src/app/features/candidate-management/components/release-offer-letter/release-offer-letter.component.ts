@@ -314,7 +314,7 @@ export class ReleaseOfferLetterComponent implements OnInit {
       const res: any = await this.candidateService.releaseOffer({
         applicationIds: [this.applicantId],
       });
-      if (res?.responsecode === '00') {
+      if (res?.responsecode == '00') {
         this.notificationService.success(res?.message ?? 'Offer letter released to the candidate');
         this.onCancel();
       } else {

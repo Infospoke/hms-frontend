@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input,HostBinding, OnChanges, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReusableTableComponent, TableColumn } from '../reusable-table/reusable-table.component';
 
@@ -28,6 +28,9 @@ export interface JobAssignmentRow {
 })
 export class JobAssignmentsTableComponent implements OnChanges {
   @Input() title: string = 'Job Assignments';
+
+  @HostBinding('attr.title') hostTitle: null = null;
+
   @Input() subTitle: string = '';
   @Input() rows: JobAssignmentRow[] = [];
   @Input() showLegend: boolean = true;
@@ -43,17 +46,18 @@ export class JobAssignmentsTableComponent implements OnChanges {
   @ViewChild('cellTpl', { static: true }) cellTpl!: TemplateRef<any>;
 
 
+ 
   columns: TableColumn[] = [
-    { key: 'jobTitle', label: 'Job Title', width: '150px' },
-    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '100px' },
-    { key: 'acceptedOn', label: 'Accepted On', width: '110px' },
-    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '150px' },
-    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '150px' },
-    { key: 'filled', label: 'Filled', align: 'center', width: '150px' },
-    { key: 'remaining', label: 'Remaining', align: 'center', width: '80px' },
-    { key: 'targetDate', label: 'Target Date', width: '100px' },
-    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '90px' },
-    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '110px' },
+    { key: 'jobTitle', label: 'Job Title', width: '100px' },
+    { key: 'assignmentStatus', label: 'Assignment Status', custom: true, width: '90px' },
+    { key: 'acceptedOn', label: 'Accepted On', width: '80px' },
+    { key: 'priority', label: 'Priority', custom: true, align: 'center', width: '100px' },
+    { key: 'requestedOpenings', label: 'Requested Openings', custom: true, align: 'center', width: '120px' },
+    { key: 'filled', label: 'Filled', align: 'center', width: '10px' },
+    { key: 'remaining', label: 'Remaining', align: 'center', width: '10px' },
+    { key: 'targetDate', label: 'Target Date', width: '70px' },
+    { key: 'daysDue', label: 'Days Due', custom: true, align: 'center', width: '50px' },
+    { key: 'slaStatus', label: 'SLA Status', custom: true, width: '70px' },
   ];
 
   maxOpenings = 1;

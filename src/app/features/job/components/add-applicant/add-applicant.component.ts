@@ -125,7 +125,7 @@ export class AddApplicantComponent implements OnInit {
         this.handleResume(res?.id);
         this.handleClose();
       }else{
-        this.notificationService.error(res?.responseMessage || 'Failed to submit application. Please try again.');
+        this.notificationService.error(res?.errors?.[0] || res?.responseMessage || 'Failed to submit application. Please try again.');
       }
     } else {
       this.applicationForm.markAllAsTouched();

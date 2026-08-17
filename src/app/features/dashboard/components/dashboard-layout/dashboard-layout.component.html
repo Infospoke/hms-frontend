@@ -41,7 +41,11 @@
             [showSearch]="false"
             (filterChange)="onFilterChange($event)">
         </app-common-filter>
-
+        <app-date-range-picker
+            [startDate]="dateRangeDefaultFrom"
+            [endDate]="dateRangeDefaultTo"
+            (dateRangeChange)="onDateRangeChange($event)"
+            [showClear]="true" />
     </div>
 
 

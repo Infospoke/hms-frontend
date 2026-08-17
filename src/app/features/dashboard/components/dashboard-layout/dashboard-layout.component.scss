@@ -195,6 +195,10 @@
       background: #EAF3FF;
       color: #2E7BE0;
     }
+    .priority-pill--standard {
+      background: #fff7ea;
+      color: #e0a22e;
+    }
 
     .priority-pill--critical {
       background: #FDE8E8;
@@ -204,6 +208,10 @@
     .sla-pill--on-track {
       background: #E7F6EC;
       color: #1E9E5A;
+    }
+    .sla-pill--standard {
+      background: #e7f1f6;
+      color: #1e939e;
     }
 
     .sla-pill--at-risk {

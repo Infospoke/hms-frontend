@@ -24,6 +24,9 @@ export class RecruiterDashboardComponentComponent implements OnInit {
 
 
   selectedJobId: any = null;
+  /** Row data only has jobId/srId, never 'id' — dashboard-layout's default
+   * rowKeyField ('id') never matched, so no row ever highlighted. */
+  rowKeyField = 'jobId';
 
   dateRange: DateRange = this.getDefaultDateRange();
 
@@ -105,15 +108,15 @@ export class RecruiterDashboardComponentComponent implements OnInit {
   showTable = true;
 
   requisitionsColumns: TableColumn[] = [
-    { key: 'srName', label: 'SR Name', width: '10%' },
-    { key: 'priority', label: 'Priority', width: '12%', align: 'center', custom: true },
-    { key: 'targetStartDate', label: 'Target Start Date', width: '15%', custom: true ,align:'center'},
-    { key: 'openings', label: 'Openings', width: '14%', align: 'center' },
-    { key: 'my', label: 'My', width: '14%', align: 'center', group: 'Filled' },
-    { key: 'team', label: 'Team', width: '10%', align: 'center', group: 'Filled' },
-    { key: 'inProgress', label: 'In Progress', width: '14%', align: 'center' },
-    { key: 'daysRemaining', label: 'Days Remaining', width: '14%', align: 'center', custom: true },
-    { key: 'slaStatus', label: 'SLA Status', width: '12%', align: 'center', custom: true }
+    { key: 'srName', label: 'SR Name', width: '100px' },
+    { key: 'priority', label: 'Priority', width: '110px', align: 'center', custom: true },
+    { key: 'targetStartDate', label: 'Target Start Date', width: '110px', custom: true ,align:'center'},
+    { key: 'openings', label: 'Openings', width: '90px', align: 'center' },
+    { key: 'my', label: 'My', width: '20px', align: 'center', group: 'Filled' },
+    { key: 'team', label: 'Team', width: '20px', align: 'center', group: 'Filled' },
+    { key: 'inProgress', label: 'In Progress', width: '90px', align: 'center' },
+    { key: 'daysRemaining', label: 'Days Remaining', width: '90px', align: 'center', custom: true },
+    { key: 'slaStatus', label: 'SLA Status', width: '110px', align: 'center', custom: true }
   ];
 
   requisitionsData: any[] = [];

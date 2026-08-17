@@ -101,7 +101,7 @@ export class InterviewQuestionGenerateComponent implements OnInit, AfterViewInit
           status:     d.currentStage ?? '',
           role:       d.jobTitle ?? '',
           planName:   d.planName ?? '',
-          noOfRounds: d.noOfRounds ?? 0,
+          noOfRounds: d.noOfStages ?? 0,
           email:      d.email ?? '',
           phone:      d.phNo ?? '',
           appliedOn:  this.formatDate(d.CreatedDate),

@@ -4,9 +4,11 @@
   [tableConfig]="tableConfig"
   [pipeLine]="true"
   [pipelineConfig]="pipelineConfig"
+  [activeRowKey]="selectedJobId"
+  [rowKeyField]="rowKeyField"
   [pieCharts]="pieCharts"
   [bubbleChart]="bubbleChart"
   [dashboardType]="'recruiter'"
   (cardClick)="cardClick($event)"
   (dateRangeChange)="onDateRangeChange($event)">
-</app-dashboard-layout> 
+</app-dashboard-layout>

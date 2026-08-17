@@ -312,7 +312,7 @@ export class RecruiterAssignmentStepComponent implements OnInit {
           `/demand/recruiter-assignment-management/recruiter-and-response/${this.id}/${this.srId}`
         );
       } else {
-        this.notificationService.error(res?.message || 'Failed to assign recruiters.');
+        this.notificationService.error(res?.errors?.[0] ||res?.message || 'Failed to assign recruiters.');
       }
     } catch (err: any) {
       console.error('onAssignRecruiters error:', err);

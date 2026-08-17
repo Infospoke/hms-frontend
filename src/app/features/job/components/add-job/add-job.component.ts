@@ -207,7 +207,7 @@ export class AddJobComponent implements OnInit {
           this.handleClose();
         }
         else {
-          this.notificationService.error(res?.message)
+          this.notificationService.error(res?.errors?.[0] ||res?.message)
         }
       }
       catch (error: any) {

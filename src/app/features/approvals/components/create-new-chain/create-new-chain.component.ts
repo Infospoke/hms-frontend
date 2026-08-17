@@ -488,7 +488,7 @@ export class CreateNewChainComponent implements OnInit {
         this.showCommentModal = false;
         this.router.navigateByUrl(this.url || '/approval/chain-config');
       } else {
-        this.notificationService.error(
+        this.notificationService.error(res?.errors?.[0] ??
           res?.message ?? res?.responsemessage ?? res?.errors?.[0] ?? 'Action failed. Please try again.',
           'Error',
         );

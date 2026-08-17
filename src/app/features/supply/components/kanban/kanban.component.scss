@@ -24,6 +24,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-width: 100%;
+  overflow-x: hidden; // safety net: never let the page itself scroll horizontally
 }
 
 // ─── FILTER BAR ──────────────────────────────────────────
@@ -40,13 +42,15 @@
   position: relative;
 }
 
-// Single-row: buttons + chips side by side
+// Buttons + chips side by side, wrapping onto a new line
+// when there isn't enough room instead of overflowing the page
 .filter-controls {
   display: flex;
   align-items: center;
   gap: 8px;
+  row-gap: 8px;
   width: 100%;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   min-width: 0;
 }
 
@@ -55,10 +59,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: 1;
+  row-gap: 6px;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: visible;  // must not clip dropdown
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 // "+N more" overflow pill

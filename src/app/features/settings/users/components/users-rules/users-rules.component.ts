@@ -114,7 +114,7 @@ export class UsersRulesComponent implements OnInit {
           this.edit(user?.id, res?.user?.data);
         }
         else {
-          this.notificationService.error(res?.user?.message || res?.user?.responsemessage);
+          this.notificationService.error(res?.errors?.[0] || res?.user?.message || res?.user?.responsemessage);
         }
 
 

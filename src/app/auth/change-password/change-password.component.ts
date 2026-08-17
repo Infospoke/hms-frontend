@@ -85,7 +85,7 @@ export class ChangePasswordComponent {
         this.router.navigate(['/auth/login']);
         }
         else {
-          this.notificationService.error(res?.responsemessage || res?.message);
+          this.notificationService.error(res?.errors?.[0] || res?.responsemessage || res?.message);
         }
       },
       error: () => {

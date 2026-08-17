@@ -62,7 +62,7 @@
   <button
     type="button"
     class="clear-date-btn"
-    *ngIf="fromDate || toDate"
+    *ngIf="isShow()"
     (click)="clearDates()"
     title="Clear date filter"
   >

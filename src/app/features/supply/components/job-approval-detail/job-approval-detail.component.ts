@@ -139,7 +139,7 @@ export class JobApprovalDetailComponent implements OnInit {
           this.jobData = res.data;
           this.buildDisplayData(res.data);
         } else {
-          this.notificationService.error(res?.message ?? 'Failed to load job details');
+          this.notificationService.error( res?.errors?.[0] ?? res?.message ?? 'Failed to load job details');
         }
       })
       .catch((err: any) => {
@@ -268,7 +268,7 @@ export class JobApprovalDetailComponent implements OnInit {
             state: { activeType: 'ar' },
           });
         } else {
-          this.notificationService.error(res?.message ?? 'Failed to update assignment');
+          this.notificationService.error( res?.errors?.[0] ?? res?.message ?? 'Failed to update assignment');
         }
       } else {
         const payload = {
@@ -288,11 +288,11 @@ export class JobApprovalDetailComponent implements OnInit {
             state: { activeType: 'ar' },
           });
         } else {
-          this.notificationService.error(res?.message ?? 'Failed to submit decision');
+          this.notificationService.error( res?.errors?.[0] ?? res?.message ?? 'Failed to submit decision');
         }
       }
     } catch (err: any) {
-      this.notificationService.error(err?.message ?? 'Failed to submit decision');
+      this.notificationService.error( err?.message ?? 'Failed to submit decision');
     } finally {
       this.isSubmitting = false;
     }

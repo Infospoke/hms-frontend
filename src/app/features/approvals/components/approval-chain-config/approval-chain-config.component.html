@@ -72,7 +72,7 @@
   <ng-container *ngIf="ctx.col.key === 'status'">
     <span class="status-badge"
       [ngClass]="ctx.row.status === 'ACTIVE' ? 'active' : 'deactivated'">
-      {{ ctx.row.status }}
+      {{ ctx.row.status==='ACTIVE'?'Active':'In Active' }}
     </span>
   </ng-container>
 

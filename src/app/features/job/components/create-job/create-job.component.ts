@@ -182,7 +182,7 @@ export class CreateJobComponent implements OnInit {
           }
           return;
         }
-        this.notificationService.error(res?.message ?? 'Failed to fetch job details from SR');
+        this.notificationService.error(res?.errors?.[0] ?? res?.message ?? 'Failed to fetch job details from SR');
       })
       .catch((error: any) => {
         this.notificationService.error(error?.message ?? 'Failed to fetch job details from SR');
@@ -372,7 +372,7 @@ export class CreateJobComponent implements OnInit {
           this.notificationService.success(res?.message || 'Job created successfully');
           this.onCancel();
         } else {
-          this.notificationService.error(res?.message || 'Failed to create job');
+          this.notificationService.error( res?.errors?.[0] ||res?.message || 'Failed to create job');
         }
       })
       .catch((error: any) => {

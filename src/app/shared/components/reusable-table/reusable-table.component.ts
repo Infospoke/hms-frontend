@@ -32,17 +32,11 @@ interface ColumnGroup {
 })
 export class ReusableTableComponent implements OnChanges {
 
-  // ── Inputs ────────────────────────────────────────────────────────────────
-  /** Table heading text (rendered in .rt-title). NOTE: `title` collides with
-   * the native global HTML `title` attribute — without the HostBinding below,
-   * Angular reflects this value onto the host element's `title` attribute,
-   * which makes the browser show it as a tooltip when hovering over ANY
-   * descendant (e.g. the column headers) that doesn't have its own title. */
+
   @Input() title?: string;
 
-  /** Always keep the host's native `title` attribute empty so the heading
-   * text never shows up as a stray tooltip on hover. */
   @HostBinding('attr.title') hostTitle: null = null;
+  
   @Input() subTitle?: any;
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];

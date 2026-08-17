@@ -661,6 +661,7 @@ export class RaiseOfferRequestComponent implements OnInit {
 
   onPageChange(page: any) {
     this.currentPage = page;
+    this.handleApiCalling();
   }
 
  

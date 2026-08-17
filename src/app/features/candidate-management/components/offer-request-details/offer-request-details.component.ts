@@ -336,36 +336,105 @@ export class OfferRequestDetailsComponent implements OnInit {
   }
 
  
+  // async generateOfferLetter(): Promise<void> {
+  //   const templateCtrl = this.offerForm?.controls['offerTemplate'];
+  //   if (templateCtrl && templateCtrl.invalid) {
+  //     templateCtrl.markAsTouched();
+  //     this.cdr.markForCheck();
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     application_id: Number(this.applicantId),
+  //     job_id: this.jobId,
+  //     offer_id:this.offerId,
+  //     candidate_id: this.candidateId, // TODO: confirm this field once offer-details response is updated
+  //          // TODO: confirm this field once offer-details response is updated
+  //     basic_salary: this.getCompensationValue('Basic salary'),
+  //     signing_bonus: this.getCompensationValue('Signing bonus'),
+  //     equity_rsu: this.getCompensationValue('Annual RSU / ESOP value'),
+  //     other_benefits: this.getCompensationValue('Other benefits'),
+  //     notice_period: this.extractNoticePeriodDays(this.offerTerms.noticePeriod),
+  //   };
+
+  //   try {
+  //     const response:any=await this.candidateService.generateOfferLetter(payload);
+  //     const blob = await response.blob();
+  //     const objectUrl = URL.createObjectURL(blob);
+  //     window.open(objectUrl, '_blank');
+  //     this.notificationService.success('Offer letter generated');
+  //   } catch (err) {
+  //     console.error('Error generating offer letter', err);
+  //     this.notificationService.error('Failed to generate the offer letter. Please try again.');
+  //   }
+  // }
+
   async generateOfferLetter(): Promise<void> {
-    const templateCtrl = this.offerForm?.controls['offerTemplate'];
+
+    const templateCtrl =
+      this.offerForm?.controls['offerTemplate'];
+  
     if (templateCtrl && templateCtrl.invalid) {
       templateCtrl.markAsTouched();
       this.cdr.markForCheck();
       return;
     }
-
+  
     const payload = {
       application_id: Number(this.applicantId),
       job_id: this.jobId,
-      offer_id:this.offerId,
-      candidate_id: this.candidateId, // TODO: confirm this field once offer-details response is updated
-           // TODO: confirm this field once offer-details response is updated
-      basic_salary: this.getCompensationValue('Basic salary'),
-      signing_bonus: this.getCompensationValue('Signing bonus'),
-      equity_rsu: this.getCompensationValue('Annual RSU / ESOP value'),
-      other_benefits: this.getCompensationValue('Other benefits'),
-      notice_period: this.extractNoticePeriodDays(this.offerTerms.noticePeriod),
+      offer_id: this.offerId,
+      candidate_id: this.candidateId,
+  
+      basic_salary:
+        this.getCompensationValue('Basic salary'),
+  
+      signing_bonus:
+        this.getCompensationValue('Signing bonus'),
+  
+      equity_rsu:
+        this.getCompensationValue('Annual RSU / ESOP value'),
+  
+      other_benefits:
+        this.getCompensationValue('Other benefits'),
+  
+      notice_period:
+        this.extractNoticePeriodDays(
+          this.offerTerms.noticePeriod
+        ),
     };
-
+  
     try {
-      const response:any=await this.candidateService.generateOfferLetter(payload);
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      window.open(objectUrl, '_blank');
-      this.notificationService.success('Offer letter generated');
+  
+      const response: any =
+        await this.candidateService
+          .generateOfferLetter(payload);
+  
+      console.log('Generate offer letter response:', response);
+  
+      if (response) {
+  
+        this.notificationService.success(
+          response.message ||
+          'Offer letter generated successfully'
+        );
+  
+        console.log(
+          'Generated file name:',
+          response.fileName
+        );
+      }
+  
     } catch (err) {
-      console.error('Error generating offer letter', err);
-      this.notificationService.error('Failed to generate the offer letter. Please try again.');
+  
+      console.error(
+        'Error generating offer letter',
+        err
+      );
+  
+      this.notificationService.error(
+        'Failed to generate the offer letter. Please try again.'
+      );
     }
   }
 

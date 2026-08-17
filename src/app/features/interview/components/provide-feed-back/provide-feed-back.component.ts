@@ -104,14 +104,14 @@ export class ProvideFeedBackComponent implements OnInit {
       history.state?.['type'] ??
       false;
   }
-
+     applicantId:any;
   ngOnInit(): void {
-    const applicantId = this.route.snapshot.params['id'];
+     this.applicantId = this.route.snapshot.params['id'];
 
-    this.getInterviewSummary(applicantId);
+    this.getInterviewSummary(this.applicantId);
 
     if (this.shouldFetchExistingFeedback) {
-      this.loadFeedBackDetails(applicantId, this.currentStageId);
+      this.loadFeedBackDetails(this.applicantId, this.currentStageId);
     }
   }
 
@@ -158,7 +158,7 @@ export class ProvideFeedBackComponent implements OnInit {
 
     const payload = {
       decision: value.decision ? (this.FORM_DECISION_LABEL[value.decision] ?? '') : '',
-      applicantId: this.candidate?.candidateId ?? 1,
+      applicantId: this.applicantId?? 1,
       interviewType: this.interview.type,
       roundType: this.interview.jobBadge,
       overallRating: value.overallRating,

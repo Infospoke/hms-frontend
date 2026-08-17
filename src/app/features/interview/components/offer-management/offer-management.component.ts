@@ -116,11 +116,11 @@ export class OfferManagementComponent implements OnInit {
 
   // ── Table config ──────────────────────────────────────────────────────────
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', width: '220px', custom: true },
+    { key: 'candidate', label: 'Candidate', width: '190px', custom: true },
     { key: 'jobTitle', label: 'Job Title', width: '180px', custom: true },
-    { key: 'roundProgress', label: 'Round Progress', width: '220px', custom: true, align: 'center' },
-    { key: 'currentStage', label: 'Current Stage', width: '160px', custom: true },
-    { key: 'lastActivity', label: 'Last Activity', width: '140px', custom: true },
+    { key: 'roundProgress', label: 'Round Progress', width: '210px', custom: true, align: 'center' },
+    { key: 'currentStage', label: 'Current Stage', width: '140px', custom: true },
+    { key: 'lastActivity', label: 'Last Activity', width: '120px', custom: true },
     { key: 'actions', label: 'Actions', width: '100px', custom: true, align: 'center' },
   ];
 

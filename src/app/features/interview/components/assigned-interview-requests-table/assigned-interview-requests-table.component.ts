@@ -36,8 +36,8 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
   columns: TableColumn[] = [
    
     { key: 'jobTitle', label: 'Job Title', custom: true, width: '200px' },
-     { key: 'description', label: 'Department', custom: true, width: '200px' },
-    { key: 'round', label: 'Round', custom: true, width: '200px' },
+     { key: 'description', label: 'Department', custom: true, width: '150px' },
+    { key: 'round', label: 'Round', custom: true, width: '150px' },
     { key: 'priority', label: 'Priority', custom: true, width: '110px', align: 'center' },
     { key: 'requestedOn', label: 'Requested On', custom: true, width: '160px' },
     { key: 'action', label: 'Action', custom: true, width: '180px', align: 'center' },

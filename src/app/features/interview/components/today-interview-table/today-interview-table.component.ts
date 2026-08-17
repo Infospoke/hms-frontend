@@ -39,11 +39,11 @@ export class TodayInterviewTableComponent implements OnInit, OnChanges {
   columns: TableColumn[] = [
 
     { key: 'time', label: 'Time', custom: true, width: '120px' },
-    { key: 'candidate', label: 'Candidate', custom: true, width: '200px' },
-    { key: 'jobTitle', label: 'Job Title', custom: true, width: '210px' },
+    { key: 'candidate', label: 'Candidate', custom: true, width: '140px' },
+    { key: 'jobTitle', label: 'Job Title', custom: true, width: '160px' },
     { key: 'round', label: 'Round', custom: true, width: '120px' },
-    { key: 'type', label: 'Type', custom: true, width: '130px' },
-    { key: 'action', label: 'Action', custom: true, width: '180px', align: 'right' },
+    { key: 'type', label: 'Type', custom: true, width: '100px' },
+    { key: 'action', label: 'Action', custom: true, width: '140px', align: 'right' },
   ];
 
   totalItems: any;

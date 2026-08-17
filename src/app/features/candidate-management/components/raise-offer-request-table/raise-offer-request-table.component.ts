@@ -32,13 +32,13 @@ export class RaiseOfferRequestTableComponent {
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
  
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '260px' },
-    { key: 'jobTitle', label: 'Job title' },
-    { key: 'department', label: 'Department' },
-    { key: 'movedToHireOn', label: 'Moved to hire on', custom: true },
-    { key: 'recruiter', label: 'Recruiter', custom: true },
-    { key: 'priority', label: 'Priority', custom: true, align: 'left' },
-    { key: 'actions', label: 'Actions', custom: true },
+    { key: 'candidate', label: 'Candidate', custom: true, width: '100px' },
+    { key: 'jobTitle', label: 'Job title' ,width: '100px'},
+    { key: 'department', label: 'Department',width: '140px' },
+    { key: 'movedToHireOn', label: 'Moved to hire on', custom: true,width: '90px' },
+    { key: 'recruiter', label: 'Recruiter', custom: true,width: '90px' },
+    { key: 'priority', label: 'Priority', custom: true, align: 'left',width: '90px' },
+    { key: 'actions', label: 'Actions', custom: true ,width: '120px'},
   ];
  
   sortableColumns: string[] = ['movedToHireOn'];

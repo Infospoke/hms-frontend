@@ -55,16 +55,16 @@ export class ApprovalStatusTableComponent {
 
   get columns(): TableColumn[] {
     const cols: TableColumn[] = [
-      { key: 'candidate', label: 'Candidate', custom: true, width: '20%' },
-      { key: 'jobTitle', label: 'Job title', width: '14%' },
-      { key: 'package', label: 'Package', width: '14%' },
-      { key: 'releasedOn', label: 'Released on', sortable: true, width: '14%' },
-      { key: 'recruiter', label: 'Recruiter', custom: true, width: '14%' },
-      { key: 'status', label: 'Status', custom: true, width: '14%' },
+      { key: 'candidate', label: 'Candidate', custom: true, width: '170px' },
+      { key: 'jobTitle', label: 'Job title', width: '100px' },
+      { key: 'package', label: 'Package', width: '110px' },
+      { key: 'releasedOn', label: 'Released on', sortable: true, width: '100px' },
+      { key: 'recruiter', label: 'Recruiter', custom: true, width: '90px' },
+      { key: 'status', label: 'Status', custom: true, width: '90px' },
     ];
 
     if (this.showActions) {
-      cols.push({ key: 'actions', label: 'Actions', custom: true, width: '10%' });
+      cols.push({ key: 'actions', label: 'Actions', custom: true, width: '100px' });
     }
 
     return cols;

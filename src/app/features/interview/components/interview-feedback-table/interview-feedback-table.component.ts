@@ -33,13 +33,13 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
   private interviewService = inject(InterviewServiceService);
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', custom: true, width: '180px' },
-    { key: 'jobTitle', label: 'Job Title', custom: true, width: '190px' },
-    { key: 'round', label: 'Round', custom: true, width: '170px' },
+    { key: 'jobTitle', label: 'Job Title', custom: true, width: '150px' },
+    { key: 'round', label: 'Round', custom: true, width: '150px' },
     { key: 'interviewDate', label: 'Interview Date', custom: true, width: '150px', sortable: true },
     { key: 'priority', label: 'Priority', custom: true, width: '110px' },
     { key: 'status', label: 'Status', custom: true, width: '110px' },
     
-    { key: 'action', label: 'Action', custom: true, width: '160px', align: 'center' },
+    { key: 'action', label: 'Action', custom: true, width: '140px', align: 'center' },
   ];
 
   sortableColumns = ['interviewDate'];

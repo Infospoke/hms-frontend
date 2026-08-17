@@ -18,14 +18,14 @@ export class InterviewPlainAprovalComponent implements OnInit {
   private activeFilters: Record<string, string> = { dateFilter: "" };
   private interviewService = inject(InterviewServiceService);
   columns: TableColumn[] = [
-    { key: 'planName', label: 'Plan Name', width: '220px', custom: true },
+    { key: 'planName', label: 'Plan Name', width: '160px', custom: true },
     { key: 'rounds', label: 'Rounds', width: '80px', align: 'center' },
 
-    { key: 'requestedBy', label: 'Requested By', width: '170px', custom: true },
-    { key: 'requestedOn', label: 'Requested On', width: '170px', custom: true },
+    { key: 'requestedBy', label: 'Requested By', width: '120px', custom: true },
+    { key: 'requestedOn', label: 'Requested On', width: '120px', custom: true },
     { key: 'requestType', label: 'Request Type', width: '120px', custom: true },
-    { key: 'status', label: 'Status', width: '120px', align: 'center', custom: true },
-    { key: 'action', label: 'Action', width: '120px', align: 'center', custom: true },
+    { key: 'status', label: 'Status', width: '100px', align: 'center', custom: true },
+    { key: 'action', label: 'Action', width: '100px', align: 'center', custom: true },
   ];
 
   allPlans: any[] = [];

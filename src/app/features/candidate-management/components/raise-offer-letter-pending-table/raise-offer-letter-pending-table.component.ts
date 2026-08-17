@@ -29,13 +29,13 @@ export class RaiseOfferLetterPendingTableComponent {
   @Output() sortChange = new EventEmitter<{ col: string; dir: 'asc' | 'desc' }>();
  
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '100px' },
-    { key: 'jobTitle', label: 'Job title' },
-    { key: 'department', label: 'Department' },
-    { key: 'approvalStatus', label: 'Current approval status', custom: true, width: '320px' },
-    { key: 'requestedOn', label: 'Requested on', sortable: true,custom:true },
-    { key: 'priority', label: 'Priority', custom: true },
-    { key: 'actions', label: 'Actions', custom: true },
+    { key: 'candidate', label: 'Candidate', custom: true, width: '190px' },
+    { key: 'jobTitle', label: 'Job title', width: '100px' },
+    { key: 'department', label: 'Department', width: '70px' },
+    { key: 'approvalStatus', label: 'Current approval status', custom: true, width: '100px' },
+    { key: 'requestedOn', label: 'Requested on', sortable: true,custom:true, width: '100px' },
+    { key: 'priority', label: 'Priority', custom: true, width: '90px' },
+    { key: 'actions', label: 'Actions', custom: true, width: '100px' },
   ];
  
   sortableColumns: string[] = ['requestedOn'];

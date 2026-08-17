@@ -292,9 +292,9 @@ export class HiringManagerDashboardComponent implements OnInit {
   hiringHealthScore = 0;
 
   healthColumns: TableColumn[] = [
-    { key: 'metric', label: 'Metric', width: '52%' },
-    { key: 'score', label: 'Score', width: '18%', align: 'center' },
-    { key: 'status', label: 'Status', width: '30%', align: 'center', custom: true },
+    { key: 'metric', label: 'Metric', width: '190px' },
+    { key: 'score', label: 'Score', width: '50px', align: 'center' },
+    { key: 'status', label: 'Status', width: '100px', align: 'center', custom: true },
   ];
 
   healthData = [

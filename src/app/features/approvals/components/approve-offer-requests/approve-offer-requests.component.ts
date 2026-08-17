@@ -42,14 +42,14 @@ export class ApproveOfferRequestsComponent implements OnInit{
   private authService=inject(AuthService);
   private router=inject(Router);
   columns: TableColumn[] = [
-    { key: 'candidate', label: 'Candidate', custom: true, width: '22%' },
-    { key: 'jobTitle', label: 'Job Title', width: '13%' },
-    { key: 'department', label: 'Department', width: '12%' },
-    { key: 'priority', label: 'Priority', custom: true, width: '9%' },
-    { key: 'requestedOn', label: 'Requested On', custom: true, sortable: true, width: '13%' },
-    { key: 'offerType', label: 'Offer Type', width: '9%' },
-    { key: 'requestedBy', label: 'Requested By', custom: true, width: '13%' },
-    { key: 'action', label: 'Action', custom: true, align: 'center', width: '9%' },
+    { key: 'candidate', label: 'Candidate', custom: true, width: '200px' },
+    { key: 'jobTitle', label: 'Job Title', width: '130px' },
+    { key: 'department', label: 'Department', width: '120px' },
+    { key: 'priority', label: 'Priority', custom: true, width: '90px' },
+    { key: 'requestedOn', label: 'Requested On', custom: true, sortable: true, width: '130px' },
+    { key: 'offerType', label: 'Offer Type', width: '90px' },
+    { key: 'requestedBy', label: 'Requested By', custom: true, width: '130px' },
+    { key: 'action', label: 'Action', custom: true, align: 'center', width: '90px' },
   ];
 
   sortableColumns: string[] = ['requestedOn'];

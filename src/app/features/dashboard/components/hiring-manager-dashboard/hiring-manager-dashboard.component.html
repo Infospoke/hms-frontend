@@ -178,7 +178,7 @@
       [ngClass]="{
         'badge--critical': cell.row.priority === 'Critical',
         'badge--high': cell.row.priority === 'High',
-        'badge--medium': cell.row.priority === 'Medium',
+        'badge--medium': cell.row.priority === 'Medium' ||cell.row.priority === 'Standard' ,
         'badge--low': cell.row.priority === 'Low'
       }"
     >

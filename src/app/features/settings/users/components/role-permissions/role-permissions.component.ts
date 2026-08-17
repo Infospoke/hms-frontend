@@ -33,9 +33,9 @@ export class RolePermissionsComponent implements OnInit {
 
    private cdr = inject(ChangeDetectorRef);
   columns: TableColumn[] = [
-    { key: 'role', label: 'Role', width: '260px', custom: true }, 
+    { key: 'role', label: 'Role', width: '190px', custom: true }, 
     { key: 'users', label: 'Users', width: '120px', custom: true },
-    { key: 'description', label: 'Description', width: 'auto', custom: true }, 
+    { key: 'description', label: 'Description', width: '120px', custom: true }, 
         { key: 'actions', label: 'Actions', width: '110px', align: 'center', custom: true },
   ];
   data: any[] = [];

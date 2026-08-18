@@ -37,11 +37,7 @@ export interface JobInfo {
 export class JobInfoCardComponent {
   @Input({ required: true }) job!: JobInfo;
 
-  /**
-   * Automatically switches to detail layout (Image 1) when
-   * any interview-specific field is present.
-   * Can also be forced via [detailMode]="true".
-   */
+ 
   @Input() detailMode?: boolean;
 
   get isDetailMode(): boolean {

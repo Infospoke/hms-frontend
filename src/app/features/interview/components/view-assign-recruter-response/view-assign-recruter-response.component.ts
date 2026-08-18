@@ -125,7 +125,7 @@ export class ViewAssignRecruterResponseComponent implements OnInit {
   private mapApiResponse(data: any): void {
     let assign: any = localStorage.getItem('jobAssigned')
     const jobData: any = JSON.parse(assign);
-    console.log(jobData);
+
     this.job = {
       title: jobData.jobTitle ?? 'N/A',
       id: ``,

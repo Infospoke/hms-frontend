@@ -139,7 +139,7 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
       priority: item.priority,
 
       requestedOn: {
-        date: new Date(item.requestedOn).toLocaleDateString(),
+        date:item.requestedOn ? new Date(item.requestedOn).toLocaleDateString():'-',
         time: new Date(item.requestedOn).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit'

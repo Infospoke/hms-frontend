@@ -58,7 +58,7 @@ export const CANDIDATE_ROUTES: Routes = [
         loadComponent:()=>import("../components/offer-request-details/offer-request-details.component").then(m=>m.OfferRequestDetailsComponent)
     },
     {
-        path:"offer-management/release-offer-letter-details/:offerId",
+        path:"offer-management/release-offer-letter-details/:offerId/:id",
         loadComponent:()=>import("../../approvals/components/view-offer/view-offer.component").then(m=>m.ViewOfferComponent)
     },
     {

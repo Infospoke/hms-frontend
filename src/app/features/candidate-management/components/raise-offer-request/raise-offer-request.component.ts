@@ -635,7 +635,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       this.router.navigate([`/candidate-management/offer-management/negotiation-approvals/${row?.id}/${row?.offerId}`])   
     }
     else{
-      this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}`], {
+      this.router.navigate([`/candidate-management/offer-management/release-offer-letter-details/${row?.id}/${row?.offerId}`], {
       state: {
         mode: 'view',
         url: '/candidate-management/offer-management',

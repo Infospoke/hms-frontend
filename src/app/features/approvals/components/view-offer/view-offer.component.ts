@@ -295,11 +295,7 @@ export class ViewOfferComponent implements OnInit {
     }
 
     const formData = new FormData();
-    // TODO: confirm which id belongs in application_id vs offer_id — the
-    // sample payload has these as distinct values but this component only
-    // tracks one id (this.offerId, which currently doubles as applicantId)
-    // plus this.applicantId from the offer-details response. Using the best
-    // guess below; adjust once the Python API's exact id semantics are confirmed.
+   
     formData.append('application_id', String(this.offerId));
     formData.append('approve', String(approved));
     formData.append('comments', this.comment.trim());
@@ -350,6 +346,7 @@ export class ViewOfferComponent implements OnInit {
   applicantDetailsModalVisible = false;
   applicantDetailsLoading = false;
   applicantDetails: ApplicantDetailsApiData | null = null;
+  offerIdForViewOffer:any;
   constructor(private sanitizer: DomSanitizer){}
   // ── Lifecycle ────────────────────────────────────────────────────────────
   ngOnInit(): void {
@@ -357,6 +354,7 @@ export class ViewOfferComponent implements OnInit {
     // Prefer whatever was passed via router state; fall back to the route param.
     this.offerId = state.offerId ?? this.route.snapshot.paramMap.get('offerId') ?? '';
     this.url = state.url;
+    this.offerIdForViewOffer=this.route.snapshot.paramMap.get('id');
     this.activeType = state.activeType;
     // True only when the navigating user's role is 'Finance Head' (set by the caller).
     this.isUpload = !!state.isUpload;
@@ -641,7 +639,7 @@ export class ViewOfferComponent implements OnInit {
 
   async viewOfferLetter() {
     try {
-      const res: any = await this.candidateService.viewOfferLetter(this.offerId);
+      const res: any = await this.candidateService.viewOfferLetter(this.offerIdForViewOffer);
       const blob: Blob = res instanceof Blob ? res : new Blob([res], { type: 'application/pdf' });
 
     

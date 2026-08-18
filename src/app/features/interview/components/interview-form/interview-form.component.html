@@ -306,7 +306,7 @@
             <!-- Meeting Link (Online only) -->
             <div class="form-row" *ngIf="showMeetingLink">
                 <div class="form-field full-width">
-                    <label class="field-label" for="meetingLink">Meeting Link</label>
+                    <label class="field-label" for="meetingLink">Meeting Link <span class="req">*</span></label>
                     <div class="input-icon-wrap link-wrap">
                         <svg class="field-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <path d="M6.5 9.5a3.5 3.5 0 005 0l2-2a3.5 3.5 0 00-5-5l-1 1" stroke="#9ca3af"
@@ -318,7 +318,8 @@
                             [class.error]="isInvalid('meetingLink')"
                             placeholder="https://meet.google.com/abc-defg-hij" />
                     </div>
-                    <span class="field-error" *ngIf="isInvalid('meetingLink')">Enter a valid Google Meet, Zoom,
+                    <span class="field-error" *ngIf="isInvalid('meetingLink') && form.get('meetingLink')?.hasError('required')">Meeting link is required.</span>
+                    <span class="field-error" *ngIf="isInvalid('meetingLink') && !form.get('meetingLink')?.hasError('required')">Enter a valid Google Meet, Zoom,
                         Microsoft Teams, Webex, or Skype link.</span>
                 </div>
             </div>

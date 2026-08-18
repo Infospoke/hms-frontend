@@ -122,7 +122,7 @@ export class AddApplicantComponent implements OnInit {
         this.additionalFileName = '';
         this.resumeFileName = '';
         this.notificationService.success(res?.responseMessage || 'Application submitted successfully');
-        this.handleResume(res?.id);
+        this.handleResume(res?.data);
         this.handleClose();
       }else{
         this.notificationService.error(res?.errors?.[0] || res?.responseMessage || 'Failed to submit application. Please try again.');

@@ -312,22 +312,43 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       venueDetails:  [prefill?.venueDetails ?? ''],
     });
 
+    this.updateMeetingLinkValidators();
     this.applyInterviewTypeLock();
     this.applyAlreadyRescheduledLock();
 
     // If the candidate switches between Online / Offline, clear out whichever
-    // field no longer applies so a stale value can't block submission later.
+    // field no longer applies so a stale value can't block submission later,
+    // and keep the meeting-link "required" rule in sync with the new type.
     this.form.get('interviewType')?.valueChanges.subscribe((type) => {
       if (type === 'Online') {
         this.form.get('venueDetails')?.setValue('');
       } else if (type === 'Offline') {
         this.form.get('meetingLink')?.setValue('');
       }
+      this.updateMeetingLinkValidators();
     });
 
     // If the date changes to today (or was already today), drop any selected
     // start/end slot that has now fallen in the past so it can't be submitted.
     this.form.get('interviewDate')?.valueChanges.subscribe(() => this.clearPastSlotsIfStale());
+  }
+
+  /**
+   * Meeting Link is only mandatory while Interview Type is 'Online' — Offline
+   * interviews use Venue Details instead. Re-applied every time interviewType
+   * changes (including programmatic changes from applyInterviewTypeLock /
+   * patchNewSchedule, which set the value with emitEvent: false and so don't
+   * trigger the valueChanges subscription).
+   */
+  private updateMeetingLinkValidators(): void {
+    const ctrl = this.form.get('meetingLink');
+    if (!ctrl) return;
+    const type = this.form.get('interviewType')?.value;
+    const validators = type === 'Online'
+      ? [Validators.required, meetingLinkValidator]
+      : [meetingLinkValidator];
+    ctrl.setValidators(validators);
+    ctrl.updateValueAndValidity({ emitEvent: false });
   }
 
   private clearPastSlotsIfStale(): void {
@@ -354,6 +375,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       meetingLink:   this.currentSchedule.meetingLink ?? '',
       venueDetails:  this.currentSchedule.venueDetails ?? '',
     });
+    this.updateMeetingLinkValidators();
     this.applyInterviewTypeLock();
   }
 
@@ -377,6 +399,7 @@ export class InterviewFormComponent implements OnInit, OnChanges {
       } else {
         this.form.get('meetingLink')?.setValue('');
       }
+      this.updateMeetingLinkValidators();
     } else {
       ctrl.enable({ emitEvent: false });
     }

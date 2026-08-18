@@ -227,7 +227,7 @@ export function offerLetterUrl(
   applicantId,
   action = 'view'
 ) {
-  return `${API_BASE_URL}${OFFER_LETTER_PATH}?appId=${applicantId}&action=${action}`;
+  return `${API_BASE_URL}${OFFER_LETTER_PATH}?offerId=${applicantId}&action=${action}`;
 }
 
 

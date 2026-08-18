@@ -83,7 +83,7 @@ export default function OfferDetailPage() {
     setLetterLoading(true);
     setLetterError('');
 
-    fetchOfferLetterBlob(token, applicantId, 'view', controller.signal)
+    fetchOfferLetterBlob(token, offerId, 'view', controller.signal)
       .then((blob) => {
         setLetterBlob(blob);
       })
@@ -145,7 +145,8 @@ const handleAcceptOffer = async ({
     setDownloadBusy(true);
     setDownloadError('');
     try {
-      const blob = await fetchOfferLetterBlob(token, applicantId, 'download');
+      console.log(offerId)
+      const blob = await fetchOfferLetterBlob(token,offerId, 'download');
       openBlob(blob, { download: true, filename: offerLetterFilename(offer?.candidateName, applicantId) });
     } catch (err) {
       setDownloadError(err.message || 'Could not download the offer letter. Please try again.');

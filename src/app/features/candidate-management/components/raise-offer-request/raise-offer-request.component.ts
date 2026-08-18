@@ -654,7 +654,7 @@ export class RaiseOfferRequestComponent implements OnInit {
     //     activeType: this.activeStageId,
     //   }
     // })
-    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${this.activeTabId==='pending'?row?.id:row?.reReleaseOfferId??row?.offerId}`],{
+    this.router.navigate([`/candidate-management/offer-management/release-offer-letter/${row?.id}`],{
       state:{type: this.activeTabId}
     });
   }

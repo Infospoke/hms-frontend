@@ -15,7 +15,7 @@ import { JobService } from '../../../job/services/job.service';
 export class MyApprovedSrsComponent implements OnInit{
 
   heading: string = 'Job Requisitions';
-  subheading: string = 'Create jobs from approved service requests';
+  subheading: string = 'Create jobs from approved staffing requests';
   dropDownData = approvedSrs;
   private staffingService=inject(StaffingServiceService);
   private approvalService=inject(ApprovalService);

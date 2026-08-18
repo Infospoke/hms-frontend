@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigureRoundsComponent, InterviewRound, EvaluationSettings } from '../configure-rounds/configure-rounds.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
 
-export type PlanStatus = 'ACTIVE' | 'INACTIVE' | 'Pending' | 'Approved' | 'Rejected' | 'INPROGRESS';
+export type PlanStatus = 'ACTIVE' | 'INACTIVE' | 'Pending' | 'Approved' | 'Rejected' | 'INPROGRESS' | 'Active' | 'In Active';
 
 export type TimelineEventType =
   | 'CREATED'
@@ -94,7 +94,7 @@ export class InterviewPlanViewComponent implements OnInit {
       const response = res?.data;
       const plan: InterviewPlanDetail = {
         planName: response.planName ?? response.plan_name ?? '',
-        status: response.status ?? 'Pending',
+        status: response.status==='ACTIVE'?'Active' :response.status==='INACTIVE'?'In Active':response?.status ?? 'Pending',
         createdBy: response.createdBy ?? response.created_by ?? '',
         createdOn: response.createdOn ?? response.created_on ?? '',
         description: response.description ?? '',

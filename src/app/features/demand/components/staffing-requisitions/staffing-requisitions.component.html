@@ -12,7 +12,7 @@
   <div class="card-dd">
     <app-reusable-table [columns]="columns" [data]="requisitions" [totalItems]="totalElements" [pageSize]="pageSize"
       [currentPage]="currentPage" [showPagination]="true" [emptyMessage]="'No staffing requisitions found.'"
-      [cellTemplate]="srCellTpl" (pageChange)="onPageChange($event)" (rowClick)="viewSR($event)"></app-reusable-table>
+      [cellTemplate]="srCellTpl" (pageChange)="onPageChange($event)" ></app-reusable-table>
   </div>
 
 
@@ -20,7 +20,7 @@
 
     <!-- SR Number + Job Title -->
     <ng-container *ngIf="ctx.col.key === 'srId'">
-      <span class="rt-cell-link" (click)="$event.stopPropagation(); viewSR(ctx.row)">
+      <span class="rt-cell-link" (click)="$event.stopPropagation()">
         {{ ctx.row['srId'] || 'Draft' }}
       </span>
       <span class="rt-cell-text" style="font-weight:500; color:#1e293b;" [title]="ctx.row['jobTitle']">

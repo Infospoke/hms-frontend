@@ -558,7 +558,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   async getReadyOfferLetters(payload: any) {
     const payloadData = {
       ...payload,
-      sortBy: 'finalApprovalTime'
+      sortBy: 'dateOfApproval3'
     }
     const res: any = await this.candidateService.readyToReleaseOffer(payloadData);
     if (res?.responsecode == '00') {

@@ -35,20 +35,12 @@ export class DateRangePickerComponent implements OnInit {
   endDate: string = '';
   @Input() showClear:boolean=false
 
-  // ============================================================
-  // DATE LIMITS
-  // ============================================================
-
+ 
   maxDate: string =
     this.formatDate(new Date());
 
-  minDate: string =
-    this.getPrevious30Days();
+  minDate: string = '';
 
-
-  // ============================================================
-  // SELECTED DATES
-  // ============================================================
 
   fromDate: string = '';
 
@@ -69,7 +61,6 @@ export class DateRangePickerComponent implements OnInit {
     input.focus();
 
     if ('showPicker' in input) {
-
       (
         input as HTMLInputElement & {
           showPicker: () => void;
@@ -81,10 +72,7 @@ export class DateRangePickerComponent implements OnInit {
   }
 
 
-  // ============================================================
-  // FROM DATE
-  // ============================================================
-
+  
   onFromDateChange(event: Event): void {
 
     const input =
@@ -108,10 +96,7 @@ export class DateRangePickerComponent implements OnInit {
   }
 
 
-  // ============================================================
-  // TO DATE
-  // ============================================================
-
+  
   onToDateChange(event: Event): void {
 
     const input =
@@ -139,10 +124,7 @@ export class DateRangePickerComponent implements OnInit {
   }
 
 
-  // ============================================================
-  // CLEAR
-  // ============================================================
-
+ 
   clearDates(): void {
 
     this.fromDate = '';
@@ -154,10 +136,7 @@ export class DateRangePickerComponent implements OnInit {
   }
 
 
-  // ============================================================
-  // EMIT DATE RANGE
-  // ============================================================
-
+  
   private emitDateRange(): void {
     if(this.fromDate && this.toDate){
     this.dateRangeChange.emit({
@@ -174,35 +153,7 @@ export class DateRangePickerComponent implements OnInit {
   }
 
 
-  // ============================================================
-  // PREVIOUS 30 DAYS
-  // ============================================================
-
-  private getPrevious30Days(): string {
-
-    const date =
-      new Date();
-
-    date.setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-    date.setDate(
-      date.getDate() - 30
-    );
-
-    return this.formatDate(date);
-
-  }
-
-
-  // ============================================================
-  // FORMAT DATE
-  // ============================================================
-
+  
   private formatDate(
     date: Date
   ): string {

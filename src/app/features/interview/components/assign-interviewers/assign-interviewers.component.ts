@@ -30,15 +30,15 @@ export class AssignInterviewersComponent implements OnInit {
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID)
   columns: TableColumn[] = [
-    { key: 'jobTitle', label: 'Job Title', width: '200px', custom: true },
-    { key: 'deptName', label: 'Department', width: '120px' },
-    { key: 'planName', label: 'Plan Name', width: '120px' },
+    { key: 'jobTitle', label: 'Job Title', width: '180px', custom: true },
+    { key: 'deptName', label: 'Department', width: '110px' },
+    { key: 'planName', label: 'Plan Name', width: '110px' },
     { key: 'r1', label: 'R1', align: 'center', width: '90px', custom: true, group: 'Interviewer Assignment Status' },
     { key: 'r2', label: 'R2', align: 'center', width: '90px', custom: true, group: 'Interviewer Assignment Status' },
     { key: 'r3', label: 'R3', align: 'center', width: '90px', custom: true, group: 'Interviewer Assignment Status' },
     { key: 'r4', label: 'R4', align: 'center', width: '90px', custom: true, group: 'Interviewer Assignment Status' },
 
-    { key: 'action', label: 'Action', align: 'center', width: '160px', custom: true },
+    { key: 'action', label: 'Action', align: 'center', width: '140px', custom: true },
   ];
 
   tableData: any[] = [];

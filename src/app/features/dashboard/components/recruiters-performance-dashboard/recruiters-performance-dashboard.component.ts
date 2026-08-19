@@ -266,10 +266,16 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
   slaOverdueCount = 0;
 
   // ── Candidate Source Performance ──────────────────────────────────────────
-  sourceTiles: SourceTile[] = [];
-  sourceFootNote = 'Added / Interviewed / Offered / Hired counts per source';
-
   private readonly sourceColorPalette = ['#3B5BDB', '#6D28D9', '#15803D', '#EA580C', '#0D9488', '#B91C1C', '#0369A1'];
+
+  // Fallback source names used only when the API returns no source-performance
+  // rows at all, so the grid still shows the usual multi-tile layout (with
+  // the usual palette colors) instead of collapsing to one tile or nothing.
+  // Swap these for the app's real source list if one exists elsewhere.
+  private readonly defaultSourceNames = ['LinkedIn', 'Employee Referral', 'Job Boards', 'Career Portal'];
+
+  sourceTiles: SourceTile[] = this.emptySourceTiles();
+  sourceFootNote = 'Added / Interviewed / Offered / Hired counts per source';
 
   // ── Hiring Trend ───────────────────────────────────────────────────────────
   trendCategories: string[] = [];
@@ -458,7 +464,13 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
   }
 
   private mapSourceTiles(sources: any[]): SourceTile[] {
-    return (sources ?? []).map((s: any, index: number) => ({
+    if (!sources?.length) {
+      // No source-performance data for this job/date range — show a single
+      // zeroed-out tile instead of leaving the grid blank.
+      return this.emptySourceTiles();
+    }
+
+    return sources.map((s: any, index: number) => ({
       name: s.source,
       color: this.sourceColorPalette[index % this.sourceColorPalette.length],
       stats: [
@@ -466,6 +478,22 @@ export class RecruitersPerformanceDashboardComponent implements OnInit, OnDestro
         { label: 'Interviewed', value: s.interviewed ?? 0 },
         { label: 'Offered', value: s.offered ?? 0 },
         { label: 'Hired', value: s.hired ?? 0 },
+      ],
+    }));
+  }
+
+  /** Placeholder tiles shown before the first API call resolves, and whenever
+   * candidateSourcePerformance comes back empty — same look as real data
+   * (one tile per source, palette colors), just zeroed out. */
+  private emptySourceTiles(): SourceTile[] {
+    return this.defaultSourceNames.map((name, index) => ({
+      name,
+      color: this.sourceColorPalette[index % this.sourceColorPalette.length],
+      stats: [
+        { label: 'Added', value: 0 },
+        { label: 'Interviewed', value: 0 },
+        { label: 'Offered', value: 0 },
+        { label: 'Hired', value: 0 },
       ],
     }));
   }

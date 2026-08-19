@@ -381,19 +381,25 @@ export class RecruiterDashboardComponentComponent implements OnInit {
     const maxHires = Math.max(...raw.map(r => r.hires), 1);
     const minSize = 60, maxSize = 120;
 
+    /** When there's no data at all (every source is 0), don't filter every
+     * row away — that leaves bubbles/tableData empty and the card renders
+     * blank. Instead keep all sources at 0 so the chart/table still show
+     * their normal layout with placeholder zero values. */
+    const rowsToShow = total > 0 ? raw.filter(r => r.hires > 0) : raw;
+
     this.bubbleChart = {
       ...this.bubbleChart,
-      bubbles: raw
-        .filter(r => r.hires > 0)
+      bubbles: rowsToShow
         .map(r => ({
           label: r.label,
           value: r.hires,
           color: r.color,
-          size: minSize + Math.round((r.hires / maxHires) * (maxSize - minSize)),
+          size: total > 0
+            ? minSize + Math.round((r.hires / maxHires) * (maxSize - minSize))
+            : minSize,
           percentage: this.calcPercentage(r.hires, total)
         })),
-      tableData: raw
-        .filter(r => r.hires > 0)
+      tableData: rowsToShow
         .map(r => ({
           source: r.label,
           hires: r.hires,

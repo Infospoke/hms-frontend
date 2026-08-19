@@ -545,7 +545,8 @@ export class InterviewPerformanceComponent implements OnInit {
       averageAiScore: data.average_ai_score || data?.ai_score,
 
       totalRoundsCompleted: data.total_rounds_completed,
-
+      totalQuestions:data?.total_questions_count,
+      questionAttempted:data?.attempted_questions_count,
       totalRounds: data.total_rounds,
 
       averageScoreAcrossRounds: data.average_score_across_rounds,

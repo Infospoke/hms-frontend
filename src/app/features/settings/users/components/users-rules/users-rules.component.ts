@@ -107,11 +107,11 @@ export class UsersRulesComponent implements OnInit {
   editUser(user: any) {
     forkJoin({
 
-      user: this.userService.getUserById(user?.id),
+      user: this.userService.getUserById(user?.userId),
     }).subscribe({
       next: (res: any) => {
         if (res?.user?.responsecode == '00') {
-          this.edit(user?.id, res?.user?.data);
+          this.edit(user?.userId, res?.user?.data);
         }
         else {
           this.notificationService.error(res?.errors?.[0] || res?.user?.message || res?.user?.responsemessage);

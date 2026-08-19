@@ -8,6 +8,7 @@ import { InterviewServiceService } from '../../service/interview-service.service
 import { HeadingComponent } from "../../../../shared/components/heading/heading.component";
 import { JobService } from '../../../job/services/job.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UserService } from '../../../settings/users/servics/user-service';
 
 /** Round keys that are backed by the interview-feedback API. */
 type FeedbackRoundKey = 'technical' | 'managerial' | 'hr';
@@ -59,17 +60,14 @@ export class InterviewPerformanceComponent implements OnInit {
   private jobService = inject(JobService);
 
 
-  /** current_stage_id to send per round when calling the interview-feedback API — populated from
-   *  the applicant-details response (see extractStageIds), keyed by round. Falls back to these
-   *  defaults only if the applicant-details response doesn't include stage ids for a round. */
+  
   private stageIdByRound: Record<FeedbackRoundKey, number> = {
     technical: 2,
     managerial: 3,
     hr: 4,
   };
 
-  /** How many interview stages/rounds the applicant has completed so far, and the total round count.
-   *  Both come from the applicant-details API response. */
+  private userService=inject(UserService);
   completedStages = 0;
   noOfRounds = 0;
 
@@ -95,7 +93,7 @@ export class InterviewPerformanceComponent implements OnInit {
 
   /** Accept/Hold/Reject decision buttons are only relevant while reviewing an interview round. */
   get showDecisionActions(): boolean {
-    return ['evaluation','ai-interview', 'technical', 'managerial'].includes(this.activeTab) && this.candidate?.noOfStages===this.candidate?.completedStages;
+    return ['evaluation'].includes(this.activeTab) && this.candidate?.noOfStages===this.candidate?.completedStages;
   }
 
   /** "Calculate Evaluation Summary" only makes sense once every round has been completed. */
@@ -124,13 +122,11 @@ export class InterviewPerformanceComponent implements OnInit {
 
         this.jobId = d.jobId;
 
-        // Drives which round tabs are unlocked, and whether the evaluation summary
-        // can be calculated yet (only once every round is completed).
+
         this.completedStages = d.completedStages ?? 0;
         this.noOfRounds = d.noOfStages ?? 0;
 
-        // The stage/round ids used to call the interview-feedback API come from
-        // applicant-details itself rather than being hardcoded.
+        
         this.stageIdByRound = this.extractStageIds(d);
 
         this.candidate = {
@@ -172,17 +168,7 @@ export class InterviewPerformanceComponent implements OnInit {
     }
   }
 
-  /**
-   * Pulls the technical/managerial/hr stage ids out of the applicant-details response so
-   * the interview-feedback API can be called with the correct current_stage_id per round,
-   * instead of a hardcoded value.
-   *
-   * Supports either shape the applicant-details API may return:
-   *  - an array, e.g. `stages: [{ stageType: 'Technical', stageId: 12 }, ...]`
-   *  - a flat object, e.g. `stageIds: { technical: 12, managerial: 13, hr: 14 }`
-   *
-   * Falls back to the existing stageIdByRound value for any round not present in the response.
-   */
+  
   private extractStageIds(d: any): Record<FeedbackRoundKey, number> {
     const result: Record<FeedbackRoundKey, number> = { ...this.stageIdByRound };
 
@@ -708,6 +694,7 @@ export class InterviewPerformanceComponent implements OnInit {
       const payload = {
         application_id: this.applicationId,
         current_stage_id: this.stageIdByRound[key],
+        current_stage_type: this.stageIdByRound[key],
       };
 
       const res: any = await this.interviewService.getAIFeedBackDetails(payload);
@@ -715,8 +702,8 @@ export class InterviewPerformanceComponent implements OnInit {
       if (!res?.success || !res?.data) {
         throw new Error(res?.message || 'No feedback available for this round.');
       }
-
-      const mapped = this.mapFeedbackToViewModel(res.data);
+      const interviewerData:any=await this.userService.getUserById(res?.data?.interviewer_id)
+      const mapped = this.mapFeedbackToViewModel(res.data,interviewerData?.data);
 
       if (key === 'technical') {
         this.technicalData = mapped;
@@ -732,14 +719,14 @@ export class InterviewPerformanceComponent implements OnInit {
     }
   }
 
-  /** Maps a raw /interview-feedback response into the shape RoundDetailComponent expects. */
-  private mapFeedbackToViewModel(feedback: any): any {
-    console.log(feedback);
+ 
+  private mapFeedbackToViewModel(feedback: any,interviewerData:any): any {
+    console.log(feedback,interviewerData);
     return {
       overview: {
        
-        interviewDateTime: this.formatDateTime(feedback.interview_date),
-        duration: '--',
+        interviewDateTime: this.formatInterviewDateTime(feedback.interview_date,feedback?.start_time),
+        duration: this.getTimeDifferenceInMinutes(feedback?.start_time,feedback?.end_time),
         score: (feedback.overall_rating ?? 0) * 20,
         recommendation: this.formatRecommendation(feedback.decision),
         interviewer: {
@@ -747,12 +734,12 @@ export class InterviewPerformanceComponent implements OnInit {
           title: feedback.interview_type ?? '--',
           avatarInitials: feedback.submitted_by ? this.getInitials(feedback.submitted_by) : '--',
           employeeId: feedback.user_id != null ? `EMP-${feedback.user_id}` : '--',
-          department: '--',
-          email: '--',
-          phone: '--',
-          totalExperience: '--',
+          department: interviewerData?.departmentName,
+          email: interviewerData?.email,
+          phone: interviewerData?.mobileNumber,
+          totalExperience:interviewerData?.roleName,
           interviewConducted: '--',
-          // interview_mode comes straight from the feedback API (e.g. "Google Meet").
+         
           mode: feedback.interview_mode ?? '--',
         },
       },
@@ -772,7 +759,37 @@ export class InterviewPerformanceComponent implements OnInit {
       },
     };
   }
+  private formatInterviewDateTime(
+  interviewDate: string,
+  startTime: string
+): string {
+  if (!interviewDate || !startTime) {
+    return '--';
+  }
 
+  const date = new Date(`${interviewDate}T${startTime}`);
+
+  return date.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+  getTimeDifferenceInMinutes(startTime: string, endTime: string): number {
+  const [startHours, startMinutes, startSeconds] = startTime.split(':').map(Number);
+  const [endHours, endMinutes, endSeconds] = endTime.split(':').map(Number);
+
+  const startTotalSeconds =
+    startHours * 3600 + startMinutes * 60 + startSeconds;
+
+  const endTotalSeconds =
+    endHours * 3600 + endMinutes * 60 + endSeconds;
+
+  return (endTotalSeconds - startTotalSeconds) / 60;
+}
   /** Maps the feedback API's `decision` string to the value RoundDetailComponent's UI expects. */
   private mapDecision(value: string): string {
     switch ((value ?? '').toLowerCase()) {

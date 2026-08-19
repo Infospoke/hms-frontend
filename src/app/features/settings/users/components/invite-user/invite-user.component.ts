@@ -45,7 +45,7 @@ export class InviteUserComponent implements OnInit {
     if (state) {
       this.isView = true;
       this.userData = state.user;
-      this.userId = this.userData?.id;
+      this.userId = this.userData?.userId;
     }
   }
 

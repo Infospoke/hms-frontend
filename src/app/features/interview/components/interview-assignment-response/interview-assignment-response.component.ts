@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
-import { JobInfoCardComponent } from '../job-info-card/job-info-card.component';
+
 import { InterviewCandidateInfoComponent } from '../interview-candidate-info/interview-candidate-info.component';
 import { JobDetailsComponent } from '../job-details/job-details.component';
 import { InterviewServiceService } from '../../service/interview-service.service';
@@ -15,7 +15,7 @@ import { CommonModalComponent } from '../../../../shared/components/common-modal
     CommonModule,
     RouterModule,
     HeadingComponent,
-    JobInfoCardComponent,
+    
     InterviewCandidateInfoComponent,
     JobDetailsComponent,
     CommonModalComponent,
@@ -62,7 +62,7 @@ export class InterviewAssignmentResponseComponent implements OnInit {
 
     Promise.all([
       this.loadRoundTypeJobDetails(this.jobId),
-      this.loadJobDetails(this.assignmentId),
+      // this.loadJobDetails(this.assignmentId),
       this.loadCandidateInfo(this.assignmentId),
     ]).finally(() => (this.isLoading = false));
   }
@@ -159,8 +159,7 @@ export class InterviewAssignmentResponseComponent implements OnInit {
  
     this.candidateData = {
       // ── Header ─────────────────────────────────────────────────
-      firstName:       (d.name ?? '').split(' ')[0],
-      lastName:        (d.name ?? '').split(' ').slice(1).join(' '),
+      candidateName:d?.name,
       currentRole:     d.designation      ?? '',
       candidateId:     `APP-${d.application_id ?? ''}`,
       email:           d.email            ?? '',

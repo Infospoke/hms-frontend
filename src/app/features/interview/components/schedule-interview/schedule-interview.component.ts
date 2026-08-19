@@ -44,17 +44,15 @@ private async loadCandidateDetails() {
 
   if (res?.responsecode === '00') {
 
-    console.log('FULL API RESPONSE:', res);
-    console.log('CANDIDATE ID FROM API:', res.data?.candidateId);
-
     const data = res.data;
 
     this.roundId = data?.roundId || null;
 
     this.summary = {
       candidate: {
-        firstName: data?.firstName || '',
-        lastName: data?.lastName || '',
+        // firstName: data?.firstName || '',
+        // lastName: data?.lastName || '',
+        candidateName:data?.candidateName,
         candidateId: data?.candidateId || '',
 
         email: data?.email || '',
@@ -81,12 +79,7 @@ private async loadCandidateDetails() {
       }
     };
 
-    // IMPORTANT DEBUG
-    console.log('SUMMARY CREATED:', this.summary);
-    console.log(
-      'CANDIDATE ID IN SUMMARY:',
-      this.summary.candidate.candidateId
-    );
+   
   }
 }
   onCancel(): void {

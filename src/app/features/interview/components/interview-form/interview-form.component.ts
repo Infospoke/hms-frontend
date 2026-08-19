@@ -142,22 +142,13 @@ export class InterviewFormComponent implements OnInit, OnChanges {
     const v = this.form?.get('endTime')?.value;
     return this.timeSlots.find((s) => s.value === v)?.label ?? '';
   }
-  /**
-   * Maps summary.candidate (the shape used by interview-form) to the
-   * CandidateData interface expected by InterviewCandidateInfoComponent.
-   */
+  
   get candidateData(): CandidateData {
     const c = this.summary?.candidate ?? {};
-    // Split the full name into first / last if the parent passes a single
-    // `name` string, or pass through firstName / lastName directly.
-    const firstName: string =
-      c.firstName ?? (c.name ? c.name.split(' ')[0] : '');
-    const lastName: string =
-      c.lastName ?? (c.name ? c.name.split(' ').slice(1).join(' ') : '');
-
+    const candidateName=c?.candidateName;
+    
     return {
-      firstName,
-      lastName,
+      candidateName,
       currentRole: c.role ?? c.currentRole,
       candidateId: c.candidateId,
       email: c.email,

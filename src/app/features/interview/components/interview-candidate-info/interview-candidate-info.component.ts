@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 export interface CandidateData {
-  // Basic / header
-  firstName: string;
-  lastName: string;
+  candidateName: string;
   currentRole?: string;
   candidateId?: string;
   email?: string;
@@ -82,28 +80,28 @@ export interface CandidateData {
   styleUrl: './interview-candidate-info.component.scss',
 })
 export class InterviewCandidateInfoComponent implements OnInit {
-  @Input() candidate: CandidateData = { firstName: '', lastName: '' };
+  @Input() candidate: CandidateData = { candidateName: '' };
 
   @Input() tabs: any[] = [];
 
-  /**
-   * When true, uses tighter spacing (smaller padding/margins) suited to
-   * contexts like a side-by-side summary card where this component has no
-   * tabs and shouldn't reserve extra vertical room. Defaults to false so
-   * existing full-page usages are unaffected.
-   */
+
   @Input() compact = false;
 
   activeTab: 'personal' | 'education' | 'experience' | 'projects' | 'certifications' = 'personal';
 
   get initials(): string {
-    const f = this.candidate.firstName?.[0] ?? '';
-    const l = this.candidate.lastName?.[0] ?? '';
-    return (f + l).toUpperCase();
+    return (
+      this.candidate?.candidateName
+        ?.trim()
+        .split(/\s+/)
+        .map(name => name.charAt(0))
+        .join("")
+        .toUpperCase() || ""
+    );
   }
 
   get fullName(): string {
-    return `${this.candidate.firstName} ${this.candidate.lastName}`.trim();
+    return this.candidate?.candidateName || "";
   }
 
   setTab(key: string): void {
@@ -119,5 +117,5 @@ export class InterviewCandidateInfoComponent implements OnInit {
     return Array.isArray(val);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }

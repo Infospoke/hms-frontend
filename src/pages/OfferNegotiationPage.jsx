@@ -465,7 +465,7 @@ export default function OfferNegotiationPage() {
           type="button"
           onClick={() =>
             navigate(
-              `/dashboard-careers/offer/${applicantId}`
+              `/dashboard-careers/offer/${applicantId}/${offerId}`
             )
           }
           className="mt-8 rounded-full bg-gradient-to-r from-brand-600 to-brand-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition hover:-translate-y-0.5"
@@ -488,7 +488,7 @@ export default function OfferNegotiationPage() {
         type="button"
         onClick={() =>
           navigate(
-            `/dashboard-careers/offer/${applicantId}`
+            `/dashboard-careers/offer/${applicantId}/${offerId}`
           )
         }
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 transition hover:text-slate-800"
@@ -764,7 +764,7 @@ export default function OfferNegotiationPage() {
                 type="button"
                 onClick={() =>
                   navigate(
-                    `/dashboard-careers/offer/${applicantId}`
+                    `/dashboard-careers/offer/${applicantId}/${offerId}`
                   )
                 }
                 className="rounded-full border border-brand-600 px-6 py-2.5 text-sm font-semibold text-brand-600 transition hover:bg-brand-50"

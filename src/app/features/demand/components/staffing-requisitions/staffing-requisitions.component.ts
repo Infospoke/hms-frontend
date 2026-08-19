@@ -323,11 +323,11 @@ export class StaffingRequisitionsComponent implements OnInit {
   editSR(row: unknown): void {
     const sr = row as SrRow;
     if (!sr?.srId) return;
-    this.router.navigate(['/demand/create'], { queryParams: { id: sr.srId, type: 'edit' } });
+    this.router.navigate(['/demand/my-jds/create'], { queryParams: { id: sr.srId, type: 'edit' } });
   }
 
   newSR(): void {
-    this.router.navigateByUrl('/demand/create?step=0');
+    this.router.navigateByUrl('/demand/my-jds/create?step=0');
   }
 
   // ── Stepper helper ────────────────────────────────────────────────────────────

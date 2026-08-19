@@ -1,6 +1,6 @@
 <div class="actions-cell">
 
-  <button class="action-btn view-btn" [title]="isCreate? 'Create' :'View'" (click)="view.emit()" *appCan="viewPermission">
+  <button class="action-btn view-btn" [title]="isCreate? 'Create' :'View'" (click)="view.emit()" *appCan="viewPermission" [disabled]="disableView">
     <i [class]="isCreate
         ? 'fa-solid fa-plus'
         : 'fa-regular fa-eye'">

@@ -114,21 +114,9 @@
 
     <!-- Actions -->
     <ng-container *ngIf="ctx.col.key === 'actions'">
-      <!-- <div class="rt-actions" (click)="$event.stopPropagation()">
-        <button class="rt-action-btn" title="View" (click)="viewSR(ctx.row)">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-            <path d="M1 8C1 8 3.5 3 8 3s7 5 7 5-2.5 5-7 5S1 8 1 8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-            <circle cx="8" cy="8" r="1.8" stroke="currentColor" stroke-width="1.4"/>
-          </svg>
-        </button>
-        <button class="rt-action-btn" title="Edit" (click)="editSR(ctx.row)">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M11.5 2.5l2 2L5 13H3v-2L11.5 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </div> -->
+      
       <app-common-table-actions [viewPermission]="'DEMAND:MYSRS:VIEW'" [editPermission]="'DEMAND:MYSRS:EDIT'"
-        [editDisabled]="ctx.row.status !== 'Draft'" (view)="viewSR(ctx.row)" (edit)="editSR(ctx.row)">
+        [editDisabled]="ctx.row.status !== 'Draft'" [disableView]="ctx.row.status === 'Draft'" (view)="viewSR(ctx.row)" (edit)="editSR(ctx.row)">
       </app-common-table-actions>
     </ng-container>
 

@@ -473,7 +473,7 @@ export class InterviewPerformanceComponent implements OnInit {
       const res: any = await this.interviewService.updateInterviewCompletionStatus(payload);
 
      if(res?.responsecode !== '00') {
-        this.notificationService.error(res?.message || res?.responsemessage|| 'Failed to update applicant status. Please try again.');
+        this.notificationService.error(res?.errors?.[0]||res?.message || res?.responsemessage|| 'Failed to update applicant status. Please try again.');
       }
       else{
         this.notificationService.success(res?.errors?.[0] || res?.message|| res?.resposemessage || res?.data)

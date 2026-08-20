@@ -5,22 +5,22 @@ import { InterviewServiceService } from '../../service/interview-service.service
 import { CanDirective } from "../../../../shared/directives/can.directive";
 import { Router } from '@angular/router';
 
-export type Priority = 'High' | 'Medium' | 'Low';
-
+export type Priority = 'High' | 'Medium' | 'Low' ;
+export type InterviewStatus = 'Accepted' | 'Pending' | 'Rejected';
 export interface InterviewRequest {
   id: string;
   name: string;
   initials: string;
   jobTitle: string;
-  assignmentId:any;
+  assignmentId: any;
   department: string;
   round: string;
   roundCount: number;
   priority: Priority;
   requestedDate: string;
   requestedTime: string;
-  jobId:any;
-  status:any;
+  jobId: any;
+  status: any;
 }
 
 @Component({
@@ -35,12 +35,13 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
   @Output() pageChange = new EventEmitter<number>();
   private router = inject(Router);
   columns: TableColumn[] = [
-   
-    { key: 'jobTitle', label: 'Job Title', custom: true, width: '200px' },
-     { key: 'description', label: 'Department', custom: true, width: '150px' },
-    { key: 'round', label: 'Round', custom: true, width: '150px' },
+
+    { key: 'jobTitle', label: 'Job Title', custom: true, width: '150px' },
+    { key: 'description', label: 'Department', custom: true, width: '150px' },
+    { key: 'round', label: 'Round', custom: true, width: '100px' },
     { key: 'priority', label: 'Priority', custom: true, width: '110px', align: 'center' },
     { key: 'requestedOn', label: 'Requested On', custom: true, width: '160px' },
+    { key: 'status', label: 'Status', custom: true, width: '100px' },
     { key: 'action', label: 'Action', custom: true, width: '180px', align: 'center' },
   ];
 
@@ -60,7 +61,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   private async loadData(): Promise<void> {
     try {
-      const payload={
+      const payload = {
         ...this.payload,
         sortBy: "createdAt",
       }
@@ -79,21 +80,29 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
     const dt = item.requestedOn ? new Date(item.requestedOn) : null;
     return {
       id: `NXH-${item.assignmentId}`,
-      assignmentId:item?.assignmentId,
+      assignmentId: item?.assignmentId,
       name: item.candidateName ?? '',
       initials: this.toInitials(item.candidateName),
       jobTitle: item.jobTitle ?? '',
       department: item.department ?? '',
-      jobId:item?.jobId,
+      jobId: item?.jobId,
       round: item.round ?? '',
       roundCount: this.parseRoundCount(item.round),
       priority: this.normalizePriority(item.priority),
       requestedDate: dt ? dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
       requestedTime: dt ? dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '',
-      status:item?.status,
+      status: this.normalizeStatus(item?.status),
     };
   }
+  private normalizeStatus(raw: string = ''): InterviewStatus {
+    const map: Record<string, InterviewStatus> = {
+      accepted: 'Accepted',
+      pending: 'Pending',
+      rejected: 'Rejected'
+    };
 
+    return map[raw.toLowerCase()] ?? 'Pending';
+  }
   private toInitials(name: string = ''): string {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
   }
@@ -118,7 +127,7 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
   onViewDetails(req: InterviewRequest): void {
     this.router.navigate(
       [`/supply/my-interview-requests/job-details/${req?.jobId}/${req?.status}`],
-      {state:{type:'assignment',assignmentId:req?.assignmentId}}
+      { state: { type: 'assignment', assignmentId: req?.assignmentId } }
     );
   }
 
@@ -129,6 +138,13 @@ export class AssignedInterviewRequestsTableComponent implements OnChanges {
 
   priorityClass(p: Priority): string {
     return { High: 'ir-badge--high', Medium: 'ir-badge--medium', Low: 'ir-badge--low' }[p] ?? '';
+  }
+  priorityStatus(p: Priority): string {
+    return {
+      Rejected: 'ir-badge--high',
+      Pending: 'ir-badge--medium',
+      Accepted: 'ir-badge--low'
+    }[p as 'Rejected' | 'Pending' | 'Accepted'] ?? '';
   }
 
   roundBadgeClass(count: number): string {

@@ -315,7 +315,7 @@
   }
 }
 
-// ── ApexSankey wrapper ────────────────────────────────────────────────────────
+// ── Offer Negotiation Flow donut wrapper ───────────────────────────────────────
 .neo-flow-wrap {
   flex: 1;
   min-height: 0;
@@ -323,24 +323,6 @@
   flex-direction: column;
   padding: 4px 0;
   overflow: hidden;
-}
-
-// Make the ngx-apexsankey host + its inner SVG fill the full wrapper height
-.neo-flow-sankey {
-  flex: 1;
-  min-height: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-::ng-deep {
-  // Inner canvas/SVG container rendered by ApexSankey
-  .neo-flow-wrap ngx-apexsankey > div,
-  .neo-flow-wrap ngx-apexsankey svg {
-    width: 100% !important;
-    height: 100% !important;
-  }
 }
 
 // ── Bottom row: left (big donut) + right (gauge + table stack) ────────────────

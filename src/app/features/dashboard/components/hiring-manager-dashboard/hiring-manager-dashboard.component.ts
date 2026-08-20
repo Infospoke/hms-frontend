@@ -66,39 +66,11 @@ import {
 
 import {
 
-  SankeyNode,
-
-  SankeyLink
-
-} from '../../../../shared/components/sankey-diagram/sankey-diagram.component';
-
-
-
-import {
-
   DonutPieChartComponent,
 
   DonutSegment
 
 } from '../../../candidate-management/components/donut-pie-chart/donut-pie-chart.component';
-
-
-
-import {
-
-  NgxApexsankeyComponent
-
-} from 'ngx-apexsankey';
-
-
-
-import type {
-
-  GraphData,
-
-  SankeyOptions
-
-} from 'ngx-apexsankey';
 
 
 
@@ -457,10 +429,6 @@ export interface HiringManagerAnalyticsResponse {
 
 
     DonutPieChartComponent,
-
-
-
-    NgxApexsankeyComponent,
 
 
 
@@ -1912,457 +1880,75 @@ export class HiringManagerDashboardComponent
 
   // ============================================================
 
-  // SANKEY
+  // NEGOTIATION FLOW (DONUT)
 
   // ============================================================
 
 
 
-  sankeyNodes: SankeyNode[] = [
-
-
+  negotiationFlowSegments: DonutSegment[] = [
 
     {
 
+      label: 'Negotiation Requested',
 
+      value: 0,
 
-      id: 'released',
-
-
-
-      label: 'Offer Released',
-
-
-
-      value: 8,
-
-
-
-      color: '#8B5CF6',
-
-
-
-      column: 0
-
-
+      color: '#3B82F6'
 
     },
 
-
-
     {
 
+      label: 'HR Review',
 
+      value: 0,
 
-      id: 'negotiating',
-
-
-
-      label: 'In Negotiation',
-
-
-
-      value: 3,
-
-
-
-      color: '#3B82F6',
-
-
-
-      column: 1
-
-
+      color: '#F59E0B'
 
     },
 
-
-
     {
 
+      label: 'Under Review',
 
+      value: 0,
 
-      id: 'accepted_direct',
-
-
-
-      label: 'Directly Accepted',
-
-
-
-      value: 5,
-
-
-
-      color: '#22C55E',
-
-
-
-      column: 1
-
-
+      color: '#8B5CF6'
 
     },
 
-
-
     {
 
+      label: 'Re-Released Offer',
 
+      value: 0,
 
-      id: 'mgr_review',
-
-
-
-      label: 'Manager Review',
-
-
-
-      value: 2,
-
-
-
-      color: '#F59E0B',
-
-
-
-      column: 2
-
-
+      color: '#F97316'
 
     },
 
-
-
     {
 
+      label: 'Candidate Accepted',
 
+      value: 0,
 
-      id: 'counter',
-
-
-
-      label: 'Counter Offered',
-
-
-
-      value: 1,
-
-
-
-      color: '#F97316',
-
-
-
-      column: 2
-
-
+      color: '#10B981'
 
     },
 
-
-
     {
 
+      label: 'Candidate Rejected',
 
+      value: 0,
 
-      id: 'closed_accepted',
-
-
-
-      label: 'Closed (Accepted)',
-
-
-
-      value: 6,
-
-
-
-      color: '#16a34a',
-
-
-
-      column: 3
-
-
-
-    },
-
-
-
-    {
-
-
-
-      id: 'closed_declined',
-
-
-
-      label: 'Closed (Declined)',
-
-
-
-      value: 2,
-
-
-
-      color: '#EF4444',
-
-
-
-      column: 3
-
-
+      color: '#EF4444'
 
     }
 
-
-
   ];
-
-
-
-
-
-  sankeyLinks: SankeyLink[] = [];
-
-
-
-
-
-  apexSankeyData: GraphData = {
-
-
-
-    nodes: [
-
-
-
-      {
-
-
-
-        id: 'released',
-
-
-
-        title: 'Offers Released',
-
-
-
-        color: '#8B5CF6'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'neg_started',
-
-
-
-        title: 'Negotiation Started',
-
-
-
-        color: '#3B82F6'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'mgr_review',
-
-
-
-        title: 'Manager Review',
-
-
-
-        color: '#22C55E'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'counter',
-
-
-
-        title: 'Counter Offered',
-
-
-
-        color: '#7C3AED'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'fop',
-
-
-
-        title: 'Final Offer Pending',
-
-
-
-        color: '#F59E0B'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'closed_accepted',
-
-
-
-        title: 'Closed (Accepted)',
-
-
-
-        color: '#16a34a'
-
-
-
-      },
-
-
-
-      {
-
-
-
-        id: 'closed_declined',
-
-
-
-        title: 'Closed (Declined)',
-
-
-
-        color: '#EF4444'
-
-
-
-      }
-
-
-
-    ],
-
-
-
-    edges: []
-
-
-
-  };
-
-
-
-
-
-  apexSankeyOptions:
-
-    Partial<SankeyOptions> = {
-
-
-
-    width: '100%',
-
-
-
-    height: '100%',
-
-
-
-    nodeWidth: 22,
-
-
-
-    spacing: 24,
-
-
-
-    edgeGradientFill: true,
-
-
-
-    edgeOpacity: 0.52,
-
-
-
-    edgeGap: 2,
-
-
-
-    fontSize: '11px',
-
-
-
-    fontFamily:
-
-      'Inter, sans-serif',
-
-
-
-    fontColor:
-
-      '#374151',
-
-
-
-    enableToolbar: false,
-
-
-
-    highlightOnHover: true,
-
-
-
-    dimOnHover: true,
-
-
-
-    enableAnimation: true,
-
-
-
-    animationDuration: 800
-
-
-
-  };
 
 
 
@@ -4208,279 +3794,69 @@ export class HiringManagerDashboardComponent
 
 
 
-    const edges:
+    this.negotiationFlowSegments = [
 
-      GraphData['edges'] = [];
+      {
 
+        label: 'Negotiation Requested',
 
+        value: nf.negotiationRequest ?? 0,
 
+        color: '#3B82F6'
 
+      },
 
-    if (nf.negotiationRequest) {
+      {
 
+        label: 'HR Review',
 
+        value: nf.hrReview ?? 0,
 
-      edges.push({
+        color: '#F59E0B'
 
+      },
 
+      {
 
-        source:
+        label: 'Under Review',
 
-          'released',
+        value: nf.underReview ?? 0,
 
+        color: '#8B5CF6'
 
+      },
 
-        target:
+      {
 
-          'neg_started',
+        label: 'Re-Released Offer',
 
+        value: nf.reReleaseOffer ?? 0,
 
+        color: '#F97316'
 
-        value:
+      },
 
-          nf.negotiationRequest,
+      {
 
+        label: 'Candidate Accepted',
 
+        value: nf.candidateAccepted ?? 0,
 
-        type:
+        color: '#10B981'
 
-          'flow'
+      },
 
+      {
 
+        label: 'Candidate Rejected',
 
-      });
+        value: nf.candidateRejected ?? 0,
 
+        color: '#EF4444'
 
+      }
 
-    }
-
-
-
-
-
-    if (nf.hrReview) {
-
-
-
-      edges.push({
-
-
-
-        source:
-
-          'neg_started',
-
-
-
-        target:
-
-          'mgr_review',
-
-
-
-        value:
-
-          nf.hrReview,
-
-
-
-        type:
-
-          'flow'
-
-
-
-      });
-
-
-
-    }
-
-
-
-
-
-    if (nf.underReview) {
-
-
-
-      edges.push({
-
-
-
-        source:
-
-          'mgr_review',
-
-
-
-        target:
-
-          'fop',
-
-
-
-        value:
-
-          nf.underReview,
-
-
-
-        type:
-
-          'flow'
-
-
-
-      });
-
-
-
-    }
-
-
-
-
-
-    if (nf.reReleaseOffer) {
-
-
-
-      edges.push({
-
-
-
-        source:
-
-          'fop',
-
-
-
-        target:
-
-          'counter',
-
-
-
-        value:
-
-          nf.reReleaseOffer,
-
-
-
-        type:
-
-          'flow'
-
-
-
-      });
-
-
-
-    }
-
-
-
-
-
-    if (nf.candidateAccepted) {
-
-
-
-      edges.push({
-
-
-
-        source:
-
-          'fop',
-
-
-
-        target:
-
-          'closed_accepted',
-
-
-
-        value:
-
-          nf.candidateAccepted,
-
-
-
-        type:
-
-          'flow'
-
-
-
-      });
-
-
-
-    }
-
-
-
-
-
-    if (nf.candidateRejected) {
-
-
-
-      edges.push({
-
-
-
-        source:
-
-          'fop',
-
-
-
-        target:
-
-          'closed_declined',
-
-
-
-        value:
-
-          nf.candidateRejected,
-
-
-
-        type:
-
-          'flow'
-
-
-
-      });
-
-
-
-    }
-
-
-
-
-
-    this.apexSankeyData = {
-
-
-
-      ...this.apexSankeyData,
-
-
-
-      edges
-
-
-
-    };
+    ];
 
 
 

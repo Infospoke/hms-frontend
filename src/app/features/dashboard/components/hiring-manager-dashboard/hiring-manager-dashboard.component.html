@@ -235,11 +235,16 @@
 
       <div class="neo-flow-wrap">
 
-        <ngx-apexsankey
-          class="neo-flow-sankey"
-          [data]="apexSankeyData"
-          [options]="apexSankeyOptions">
-        </ngx-apexsankey>
+        <div class="chart-center">
+
+          <app-donut-pie-chart
+            [segments]="negotiationFlowSegments"
+            [centerLabel]="'Total'"
+            [size]="220"
+            [currencyPrefix]="' '">
+          </app-donut-pie-chart>
+
+        </div>
 
       </div>
 

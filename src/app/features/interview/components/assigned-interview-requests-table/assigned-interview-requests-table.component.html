@@ -50,6 +50,11 @@
       {{ ctx.row.priority }}
     </span>
   </ng-container>
+  <ng-container *ngIf="ctx.col.key === 'status'">
+    <span class="ir-priority" [ngClass]="priorityStatus(ctx.row.status)">
+      {{ ctx.row.status }}
+    </span>
+  </ng-container>
 
   <!-- ── REQUESTED ON ───────────────────────────────────────────────────── -->
   <ng-container *ngIf="ctx.col.key === 'requestedOn'">

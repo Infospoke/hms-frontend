@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApprovalStage, STAGE_STATUS_CONFIG, StageStatus, StageStatusDef } from '../../../../shared/constants/approval.stage.modal';
 
@@ -19,6 +19,9 @@ export class ApprovalPipelineComponent {
 
   @Input() titleIcon = 'fa-solid fa-diagram-project';
 
+  @HostBinding('attr.title') get _suppressNativeTitleTooltip(): null {
+    return null;
+  }
   @Input() stageStatusCfg: Record<StageStatus, StageStatusDef> = STAGE_STATUS_CONFIG;
 
   get progressPercent(): number {

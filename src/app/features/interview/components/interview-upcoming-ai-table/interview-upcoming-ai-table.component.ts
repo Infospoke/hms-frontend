@@ -23,7 +23,7 @@ export class InterviewUpcomingAiTableComponent implements OnChanges, OnInit {
     { key: 'candidate', label: 'Candidate', width: '210px', custom: true },
     { key: 'jobTitle', label: 'Job Title', width: '170px' },
     { key: 'scheduledAt', label: 'Scheduled At', width: '160px', custom: true },
-    { key: 'scheduledBy', label: 'Scheduled By', width: '220px', custom: true },
+    { key: 'scheduledBy', label: 'Scheduled By', width: '150px', custom: true },
     { key: 'status', label: 'Status', width: '130px', custom: true },
     { key: 'actions', label: 'Actions', width: '130px', custom: true, align: 'center' },
   ];

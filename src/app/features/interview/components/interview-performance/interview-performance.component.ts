@@ -557,56 +557,54 @@ export class InterviewPerformanceComponent implements OnInit {
 
       overallScore: data.average_score_across_rounds,
 
-      rounds: (data.rounds_performance || []).map((round: any) => ({
+      rounds: (data.rounds_performance || []).map((round: any, index: number, arr: any[]) => {
+  const isLastRound = index === arr.length - 1;
+  const rawRecommendation = round.recommendation;
 
-        round: round.round_number,
+  const recommendation =
+    isLastRound && rawRecommendation === 'Move to Next Round'
+      ? 'Proceed to Final Evaluation Summary'
+      : this.formatRecommendation(rawRecommendation);
 
-        roundType: round.round_type,
-
-        interviewerName: round.interviewer_name,
-
-        interviewerTitle: '',
-
-        score: round.score_percentage,
-
-        recommendation: this.formatRecommendation(round.recommendation),
-
-        expanded: false,
-
-        evalSummary: round.feedback_details
-          ? {
-            skills: [
-              {
-                label: 'Technical Skills',
-                score: round.feedback_details.technical_skills?.toString() ?? '0'
-              },
-              {
-                label: 'Problem Solving',
-                score: round.feedback_details.problem_solving_skills?.toString() ?? '0'
-              },
-              {
-                label: 'Coding Efficiency',
-                score: round.feedback_details.coding_efficiency?.toString() ?? '0'
-              },
-              {
-                label: 'System Design',
-                score: round.feedback_details.system_design?.toString() ?? '0'
-              },
-              {
-                label: 'Communication',
-                score: round.feedback_details.communication?.toString() ?? '0'
-              }
-            ],
-
-            totalScore:
-              `${round.score_percentage}/100`
+  return {
+    round: round.round_number,
+    roundType: round.round_type,
+    interviewerName: round.interviewer_name,
+    interviewerTitle: '',
+    score: round.score_percentage,
+    recommendation,
+    expanded: false,
+    evalSummary: round.feedback_details
+      ? {
+        skills: [
+          {
+            label: 'Technical Skills',
+            score: round.feedback_details.technical_skills?.toString() ?? '0'
+          },
+          {
+            label: 'Problem Solving',
+            score: round.feedback_details.problem_solving_skills?.toString() ?? '0'
+          },
+          {
+            label: 'Coding Efficiency',
+            score: round.feedback_details.coding_efficiency?.toString() ?? '0'
+          },
+          {
+            label: 'System Design',
+            score: round.feedback_details.system_design?.toString() ?? '0'
+          },
+          {
+            label: 'Communication',
+            score: round.feedback_details.communication?.toString() ?? '0'
           }
-          : null,
+        ],
+        totalScore: `${round.score_percentage}/100`
+      }
+      : null,
 
-        interviewerFeedback:
-          round.feedback_details?.interview_feedback ?? ''
-
-      })),
+    interviewerFeedback: round.feedback_details?.interview_feedback ?? ''
+  };
+}),
 
       keyStrengths:
         data.consolidated_evaluation?.key_strengths ?? [],

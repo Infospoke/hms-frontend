@@ -73,7 +73,7 @@ export class InterviewFeedbackTableComponent implements OnInit, OnChanges {
       id: item.applicationId,
       candidateInitials: this.getInitials(item.applicantName),
       candidateName: item.applicantName,
-      candidateId: item.jobCode,
+      candidateId: item.candidateId,
       jobTitle: item.jobTitle,
       department: item.department,
       round: item.currentStageType,

@@ -41,7 +41,7 @@
         <div class="cell-candidate__avatar">{{ ctx.row.candidateInitials }}</div>
         <div class="cell-candidate__info">
           <span class="cell-candidate__name">{{ ctx.row.candidateName }}</span>
-          <span class="cell-candidate__id">{{ ctx.row.candidateId}}</span>
+          <span class="cell-candidate__id">{{ ctx.row.candidateId ??'-'}}</span>
         </div>
       </div>
     </ng-container>

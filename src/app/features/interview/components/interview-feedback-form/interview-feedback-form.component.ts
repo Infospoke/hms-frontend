@@ -104,12 +104,7 @@ export class InterviewFeedbackFormComponent implements OnInit, OnChanges {
     this.syncFromInputs();
   }
 
-  /**
-   * Runs whenever any @Input() changes — not just once at creation.
-   * Needed because the parent often fetches existing feedback asynchronously;
-   * by the time initialStrengths/initialDecision/etc. arrive, ngOnInit has
-   * already run once with the empty defaults, so ngOnInit alone isn't enough.
-   */
+  
   ngOnChanges(changes: SimpleChanges): void {
     const initialInputKeys = [
       'initialRating',
@@ -131,11 +126,50 @@ export class InterviewFeedbackFormComponent implements OnInit, OnChanges {
     this.decision            = this.initialDecision;
   }
 
+  
+  get minAllowedCompetencyRating(): number {
+    return this.overallRating > 0 ? Math.max(1, this.overallRating - 1) : 1;
+  }
+
+  get maxAllowedCompetencyRating(): number {
+    return this.overallRating > 0 ? Math.min(5, this.overallRating + 1) : 5;
+  }
+
+  /** Whether a given competency-column value should be disabled for selection. */
+  isCompetencyValueDisabled(value: number): boolean {
+    return value < this.minAllowedCompetencyRating || value > this.maxAllowedCompetencyRating;
+  }
+
   // Handlers
   setRating(value: number): void {
     this.overallRating = value;
     if (this.overallRating > 0) {
       this.overallRatingError = null;
+    }
+    this.clampCompetencyRatings();
+  }
+
+  /**
+   * Clears any competency rating that has fallen outside the newly allowed
+   * window now that the overall rating has changed, so the user can't
+   * submit a stale, now-disabled selection.
+   */
+  private clampCompetencyRatings(): void {
+    const min = this.minAllowedCompetencyRating;
+    const max = this.maxAllowedCompetencyRating;
+    let cleared = false;
+
+    this.competencies.forEach(c => {
+      if (c.rating != null && (c.rating < min || c.rating > max)) {
+        c.rating = null;
+        cleared = true;
+      }
+    });
+
+    if (cleared) {
+      this.competencyError = this.competencies.every(c => c.rating != null)
+        ? null
+        : 'Please rate every competency.';
     }
   }
 

@@ -14,6 +14,7 @@ export interface InterviewRequest {
     name: string;
     code: string;
     avatarClass: string;
+    candidateId:string;
   };
   job: {
     title: string;
@@ -46,10 +47,11 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
   private router = inject(Router);
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', custom: true, width: '180px' },
-    { key: 'jobTitle', label: 'Job Title', custom: true, width: '200px' },
-    { key: 'round', label: 'Round', custom: true, width: '175px' },
+    { key: 'candidateId', label: 'Candidate Id', custom: true, width: '90px' },
+    { key: 'jobTitle', label: 'Job Title', custom: true, width: '150px' },
+    { key: 'round', label: 'Round', custom: true, width: '125px' },
     { key: 'priority', label: 'Priority', custom: true, width: '100px' },
-    { key: 'requestedOn', label: 'Requested On', custom: true, width: '140px' },
+    { key: 'requestedOn', label: 'Requested On', custom: true, width: '100px' },
     { key: 'action', label: 'Action', custom: true, width: '160px', align: 'center' },
   ];
 
@@ -86,14 +88,13 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
 
   scheduleInterview(event: MouseEvent, row: InterviewRequest): void {
     event.stopPropagation();
-    console.log('Schedule interview for:', row.candidate.name);
-    // e.g. this.router.navigate(['/interviews/schedule'], { queryParams: { candidateId: row.id } });
+    
     this.router.navigateByUrl(`/candidate-management/in-person-interview/schedule-interview/${row.id}`)
   }
 
   toggleExpand(event: MouseEvent, row: InterviewRequest): void {
     event.stopPropagation();
-    console.log('Expand row:', row);
+    
   }
 
   // ── Type cast helper ───────────────────────────────────────────────────────
@@ -107,9 +108,7 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
       sortBy:'moveToScheduleDateTime'
     };
     const res: any = await this.interviewService.getScheduleList(payload);
-    console.log(res);
     if (res?.responsecode== '00') {
-      console.log(res?.data?.content);
       this.requests = this.mapInterviews(res?.data?.content);
       this.totalItems = res?.data?.totalElements;
     }
@@ -122,7 +121,8 @@ export class InterviewscheduledTableComponent implements OnInit, OnChanges {
         initials: this.getInitials(item.candidateName),
         name: item.candidateName,
         code: `APP-${item.applicationId}`,
-        avatarClass: this.getAvatarClass(item.priority)
+        avatarClass: this.getAvatarClass(item.priority),
+        candidateId:item?.candidateId,
       },
 
       job: {

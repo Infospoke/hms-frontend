@@ -50,9 +50,9 @@ export class InterviewUpcommingTableComponent implements OnInit,OnChanges {
   columns: TableColumn[] = [
     { key: 'interview', label: 'Interview Detail', custom: true, width: '100px' },
     { key: 'candidate', label: 'Candidate', custom: true, width: '160px' },
-    { key: 'job', label: 'Job & Round', custom: true, width: '190px' },
-    { key: 'schedule', label: 'Schedule', custom: true, width: '170px' },
-    { key: 'typeLocation', label: 'Type & Location', custom: true, width: '200px' },
+    { key: 'job', label: 'Job & Round', custom: true, width: '130px' },
+    { key: 'schedule', label: 'Schedule', custom: true, width: '120px' },
+    { key: 'typeLocation', label: 'Type & Location', custom: true, width: '180px' },
     { key: 'action', label: 'Action', custom: true, align: 'center', width: '130px' }
   ];
   ngOnChanges(changes: SimpleChanges): void {

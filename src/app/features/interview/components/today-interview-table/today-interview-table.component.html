@@ -42,6 +42,9 @@
   <ng-container *ngIf="ctx.col.key === 'time'">
     <span class="ti-time">{{ ctx.row.time }}</span>
   </ng-container>
+   <ng-container *ngIf="ctx.col.key === 'candidateId'">
+    <span class="ti-time">{{ ctx.row.candidateId }}</span>
+  </ng-container>
 
   <!-- CANDIDATE -->
   <ng-container *ngIf="ctx.col.key === 'candidate'">

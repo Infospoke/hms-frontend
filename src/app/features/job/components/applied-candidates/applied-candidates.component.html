@@ -29,7 +29,7 @@
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.35-4.35" />
       </svg>
-      <input type="text" placeholder="Search by" [(ngModel)]="searchQuery"
+      <input type="text" placeholder="Search by name, ID, email or phone" [(ngModel)]="searchQuery"
         (ngModelChange)="applyFilter(candidates())" />
     </div>
     <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="applyFilter(candidates())" nzFormat="dd-MM-yyyy"
@@ -49,6 +49,7 @@
               }}</span>
           </div>
           <p class="candidate-role">{{ candidate?.role }} &middot; Applied on : {{ candidate.appliedDate }}</p>
+          <p class="candidate-id" *ngIf="candidate?.candidateId">ID: {{ candidate.candidateId }}</p>
         </div>
       </div>
       <div class="skill-tags">
@@ -77,6 +78,14 @@
         <div class="meta-item">
           <span class="meta-label">MATCH SCORE</span>
           <span class="meta-value match-score">{{ candidate.matchScore }}</span>
+        </div>
+        <div class="meta-item" *ngIf="candidate.email">
+          <span class="meta-label">EMAIL</span>
+          <span class="meta-value email">{{ candidate.email }}</span>
+        </div>
+        <div class="meta-item" *ngIf="candidate.phone">
+          <span class="meta-label">PHONE</span>
+          <span class="meta-value phone">{{ candidate.phone }}</span>
         </div>
       </div>
     </div>

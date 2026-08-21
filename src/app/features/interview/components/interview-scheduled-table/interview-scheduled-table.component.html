@@ -36,6 +36,12 @@
     </ng-container>
 
     <!-- ── JOB TITLE ──────────────────────────────────────────────────────── -->
+      <ng-container *ngSwitchCase="'candidateId'">
+      <div class="cell-job">
+        <span class="job-title">{{ asRequest(ctx.row).candidate.candidateId }}</span>
+
+      </div>
+    </ng-container>
     <ng-container *ngSwitchCase="'jobTitle'">
       <div class="cell-job">
         <span class="job-title">{{ asRequest(ctx.row).job.title }}</span>

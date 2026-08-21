@@ -31,13 +31,23 @@
 <section class="iff-card">
   <h2 class="iff-section-title">2. Competency Evaluation</h2>
   <p class="iff-section-sub">Rate the candidate on the following key competencies.</p>
+  <p class="iff-hint" *ngIf="!readonly && overallRating > 0">
+    Based on your overall rating of {{ overallRating }}, only ratings {{ minAllowedCompetencyRating }}–{{ maxAllowedCompetencyRating }} can be selected below.
+  </p>
+  <p class="iff-hint" *ngIf="!readonly && overallRating === 0">
+    Select an overall rating above to unlock the applicable competency ratings.
+  </p>
 
   <div class="iff-table-wrap">
     <table class="iff-table">
       <thead>
         <tr>
           <th class="iff-col-label">Competency</th>
-          <th *ngFor="let col of competencyColumns" class="iff-col-rating">
+          <th
+            *ngFor="let col of competencyColumns"
+            class="iff-col-rating"
+            [class.iff-col-rating--disabled]="!readonly && isCompetencyValueDisabled(col.value)"
+          >
             {{ col.label }}
             <span class="iff-col-num">{{ col.value }}</span>
           </th>
@@ -50,17 +60,25 @@
             <span class="iff-comp-desc">{{ comp.description }}</span>
           </td>
           <td *ngFor="let col of competencyColumns" class="iff-radio-cell">
-            <label class="iff-radio-wrap" [style.cursor]="readonly ? 'default' : 'pointer'">
+            <label
+              class="iff-radio-wrap"
+              [class.iff-radio-wrap--disabled]="!readonly && isCompetencyValueDisabled(col.value)"
+              [style.cursor]="(readonly || isCompetencyValueDisabled(col.value)) ? 'default' : 'pointer'"
+            >
               <input
                 type="radio"
                 [name]="comp.key"
                 [value]="col.value"
                 [(ngModel)]="comp.rating"
                 (ngModelChange)="onCompetencyRatingChange()"
-                [disabled]="readonly"
+                [disabled]="readonly || isCompetencyValueDisabled(col.value)"
                 class="iff-radio-hidden"
               />
-              <span class="iff-radio-custom" [class.selected]="comp.rating === col.value"></span>
+              <span
+                class="iff-radio-custom"
+                [class.selected]="comp.rating === col.value"
+                [class.disabled]="!readonly && isCompetencyValueDisabled(col.value)"
+              ></span>
             </label>
           </td>
         </tr>
@@ -72,7 +90,7 @@
 
 <!-- ── STRENGTHS ─────────────────────────────────────────────────────── -->
 <section class="iff-card">
-  <h2 class="iff-section-title">3. Strengths</h2>
+  <h2 class="iff-section-title">3. Strengths <span class="astrick">*</span></h2>
   <p class="iff-section-sub">What did you like about this candidate?</p>
   <div class="iff-textarea-wrap">
     <textarea
@@ -92,7 +110,7 @@
 
 <!-- ── AREAS OF IMPROVEMENT ──────────────────────────────────────────── -->
 <section class="iff-card">
-  <h2 class="iff-section-title">4. Areas of Improvement</h2>
+  <h2 class="iff-section-title">4. Areas of Improvement <span class="astrick">*</span></h2>
   <p class="iff-section-sub">Where can the candidate improve?</p>
   <div class="iff-textarea-wrap">
     <textarea

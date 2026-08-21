@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 import { ApiService } from '../../../core/services/api.service';
 import { environment } from '../../../../environments/environment.prod';
@@ -12,6 +13,10 @@ export class StaffingServiceService {
   private apiUrl = environment.hrmsApiUrl;
   private atsURL = environment.atsUrl;
   private api = inject(ApiService);
+  private http = inject(HttpClient);
+
+  private readonly COUNTRIES_API = 'https://countriesnow.space/api/v0.1/countries/positions';
+  private readonly CITIES_API = 'https://countriesnow.space/api/v0.1/countries/cities';
 
   async createStaffing(payload: any) {
     return await firstValueFrom(
@@ -136,6 +141,24 @@ export class StaffingServiceService {
   async searchJobTitles(jobTitle:string):Promise<any>{
     return await firstValueFrom(
       this.api.aiGet(API.SRS.SEARCH_JOB(jobTitle))
+    );
+  }
+
+ 
+  async getCountries(): Promise<any> {
+    return await firstValueFrom(
+      this.http.get<any>(this.COUNTRIES_API)
+    );
+  }
+
+  /**
+   * Fetches the list of cities for a given country from the free
+   * Countries Now API. Used to populate the Location dropdown once
+   * a Country has been selected.
+   */
+  async getCitiesByCountry(country: string): Promise<any> {
+    return await firstValueFrom(
+      this.http.post<any>(this.CITIES_API, { country })
     );
   }
 }

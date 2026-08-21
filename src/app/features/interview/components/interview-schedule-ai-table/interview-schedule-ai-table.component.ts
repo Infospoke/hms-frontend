@@ -64,7 +64,7 @@ export class InterviewScheduleAiTableComponent implements OnInit, OnChanges {
       // Candidate Info
       name: item.candidateName,
       email: item.email,
-
+      candidateId:item?.candidateId,
       // Table Columns
       jobTitle: item.jobTitle || '-',
       interviewPlan: item.interviewPlan || '-',

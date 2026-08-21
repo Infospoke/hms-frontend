@@ -16,6 +16,7 @@ export interface TodayInterview {
   time: string;         // e.g. "10:30 AM"
   round: string;        // e.g. "Round 1"
   type: InterviewType;
+  candidateId:any;
 }
 
 @Component({
@@ -38,9 +39,10 @@ export class TodayInterviewTableComponent implements OnInit, OnChanges {
   private router = inject(Router);
   columns: TableColumn[] = [
 
-    { key: 'time', label: 'Time', custom: true, width: '120px' },
+    { key: 'time', label: 'Time', custom: true, width: '80px' },
     { key: 'candidate', label: 'Candidate', custom: true, width: '140px' },
-    { key: 'jobTitle', label: 'Job Title', custom: true, width: '160px' },
+     { key: 'candidateId', label: 'Candidate Id', custom: true, width: '100px' },
+    { key: 'jobTitle', label: 'Job Title', custom: true, width: '120px' },
     { key: 'round', label: 'Round', custom: true, width: '120px' },
     { key: 'type', label: 'Type', custom: true, width: '100px' },
     { key: 'action', label: 'Action', custom: true, width: '140px', align: 'right' },
@@ -100,6 +102,7 @@ export class TodayInterviewTableComponent implements OnInit, OnChanges {
     return data.map((item: any) => ({
       id: item.applicationId || item.id,
       name: item.applicantName,
+      candidateId:item?.candidateId,
       initials: this.getInitials(item.applicantName),
       jobTitle: item.jobTitle,
       jobCode: item.jobCode,

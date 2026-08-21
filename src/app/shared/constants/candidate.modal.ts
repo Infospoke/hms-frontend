@@ -29,4 +29,6 @@ export interface Candidate {
   screeningData?: any;
   interviewData?: any;
   postedOn?: string;
+  candidateId:string;
+  
 }

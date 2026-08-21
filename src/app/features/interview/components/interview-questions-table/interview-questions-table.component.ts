@@ -74,7 +74,7 @@ export class InterviewQuestionsTableComponent implements OnInit, OnChanges {
 
             name: item.applicantName || '-',
             email: item.email || '-',
-
+            candidateId:item?.candidateId || '-',
             jobTitle: item.jobTitle || '-',
 
             questionStatus: item.questionStatus

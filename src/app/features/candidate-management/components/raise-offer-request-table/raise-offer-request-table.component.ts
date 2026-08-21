@@ -34,7 +34,7 @@ export class RaiseOfferRequestTableComponent {
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', custom: true, width: '100px' },
     { key: 'jobTitle', label: 'Job title' ,width: '100px'},
-    { key: 'department', label: 'Department',width: '140px' },
+    { key: 'department', label: 'Department',width: '120px' },
     { key: 'movedToHireOn', label: 'Moved to hire on', custom: true,width: '90px' },
     { key: 'recruiter', label: 'Recruiter', custom: true,width: '90px' },
     { key: 'priority', label: 'Priority', custom: true, align: 'left',width: '90px' },

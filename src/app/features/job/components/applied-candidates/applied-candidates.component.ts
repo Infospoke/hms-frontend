@@ -60,6 +60,7 @@ export class AppliedCandidatesComponent implements OnChanges {
       return {
         id: app.id,
         jobId: app.jobId,
+        candidateId: app.candidateId || 'N/A',
         name: `${app.firstName} ${app.lastName}`,
         initials: this.getInitials(app.firstName, app.lastName),
         avatarBg: this.getAvatarColor(app.id),
@@ -227,7 +228,10 @@ export class AppliedCandidatesComponent implements OnChanges {
         c.name.toLowerCase().includes(q) ||
         c.role.toLowerCase().includes(q) ||
         (c.status || '').toLowerCase().includes(q) ||
-        (c.displayStatus || '').toLowerCase().includes(q)
+        (c.displayStatus || '').toLowerCase().includes(q) ||
+        ((c as any).candidateId || '').toString().toLowerCase().includes(q) ||
+        ((c as any).email || '').toString().toLowerCase().includes(q) ||
+        ((c as any).phone || '').toString().toLowerCase().includes(q)
       );
     }
 

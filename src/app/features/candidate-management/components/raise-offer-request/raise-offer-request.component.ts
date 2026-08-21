@@ -451,6 +451,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       id: item.negotiationId ?? item.candidateId,
       name: item.candidateName,
       applicantId:item?.applicantId,
+      candidateId:item?.candidateId,
       email: item.email,
       avatarInitials: this.getAvatarInitials(item.candidateName),
       avatarColor: this.getAvatarColor(item.candidateName) as ApprovalStatusRow['avatarColor'],
@@ -481,6 +482,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       jobId:item?.jobId,
       offerId:item?.offerId,
       email: item.candidateEmail,
+      candidateId:item?.candidateId,
       avatarInitials: this.getAvatarInitials(item.candidateName),
       avatarColor: this.getAvatarColor(item.candidateName),
       jobTitle: item.jobTitle,
@@ -511,12 +513,14 @@ export class RaiseOfferRequestComponent implements OnInit {
     const res: any = await this.candidateService.getOfferApprovalsList(payloadRequest);
     if (res?.responsecode == '00') {
       this.pendingApprovalOfferLetters = this.mapPendingApprovalsList(res?.data?.pendingApprovals);
+      console.log(this.pendingApprovalOfferLetters);
       this.totalPendingApproval = res?.data?.totalElements;
     }
   }
 
   
   private mapPendingApprovalsList(data: any) {
+    console.log(data);
     return (data ?? []).map((item: any) => ({
       id: item?.applicationId,
       offerId: item?.offerId,
@@ -526,7 +530,7 @@ export class RaiseOfferRequestComponent implements OnInit {
   
       avatarInitials: this.getAvatarInitials(item?.applicantName),
       avatarColor: this.getAvatarColor(item?.applicantName),
-  
+      candidateId:item?.candidateId,
       jobTitle: item?.jobTitle,
       department: item?.department,
   
@@ -573,6 +577,7 @@ export class RaiseOfferRequestComponent implements OnInit {
       offerId: item.offerId,
       reReleaseOfferId:item?.reReleaseOfferId,
       name: item.candidateName,
+      candidateId:item?.candidateId,
       email: item.email,
       avatarInitials: this.getAvatarInitials(item.candidateName),
       avatarColor: this.getAvatarColor(item.candidateName),

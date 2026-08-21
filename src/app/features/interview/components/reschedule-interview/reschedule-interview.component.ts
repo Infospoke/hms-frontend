@@ -81,6 +81,7 @@ export class RescheduleInterviewComponent implements OnInit {
           name: data.candidateName,
           role: data.jobTitle,
           badge: data.currentStage,
+          canidateId:data?.candidateId,
           // avatarUrl: 'assets/avatars/default-avatar.jpg', // Default avatar
           email: data.email,
           phone: data.phone,

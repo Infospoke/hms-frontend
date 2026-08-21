@@ -116,6 +116,7 @@
                 <div class="field">
                     <label class="lbl">Country <span class="astrick">*</span></label>
                     <nz-select formControlName="country" nzPlaceHolder="Select Country" [nzOptionOverflowSize]="5"
+                        nzShowSearch [nzLoading]="countriesLoading"
                         [class.err]="hasError(step0Form, 'country')" class="nz-field-select">
                         <nz-option *ngFor="let c of countries" [nzValue]="c.value" [nzLabel]="c.label"></nz-option>
                     </nz-select>
@@ -126,10 +127,12 @@
                 <!-- Location -->
                 <div class="field">
                     <label class="lbl">Location <span class="astrick">*</span></label>
-                    <input type="text" formControlName="location" placeholder="e.g. Hyderabad"
-                        [class.err]="hasError(step0Form, 'location')"
-                        (input)="blockNonLetters(step0Form, 'location', $event)"
-                        (blur)="trimField(step0Form, 'location')" />
+                    <nz-select formControlName="location"
+                        [nzPlaceHolder]="step0Form.get('country')?.value ? 'Select Location' : 'Select a country first'"
+                        nzShowSearch [nzLoading]="locationLoading" [nzDisabled]="!step0Form.get('country')?.value"
+                        [class.err]="hasError(step0Form, 'location')" class="nz-field-select">
+                        <nz-option *ngFor="let loc of locationOptions" [nzValue]="loc" [nzLabel]="loc"></nz-option>
+                    </nz-select>
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
                         {{ getError(step0Form, 'location','Location') }}
                     </span>

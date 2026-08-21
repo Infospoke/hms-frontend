@@ -61,27 +61,6 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
   return selected >= today ? null : { pastDate: true };
 }
 
-// Catches empty-string / whitespace-only input (e.g. user types only spaces),
-// which Validators.required alone does NOT flag since a string of spaces
-// has length > 0.
-function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
-  const value = control.value;
-  if (value === null || value === undefined || value === '') return null;
-  const isOnlyWhitespace = typeof value === 'string' && value.trim().length === 0;
-  return isOnlyWhitespace ? { whitespace: true } : null;
-}
-
-// Allows letters, spaces, and the punctuation that legitimately shows up in
-// place names (hyphen, apostrophe, period, comma) — blocks digits and other
-// symbols, e.g. "Hyderabad2" or "12345" would fail.
-const LETTERS_ONLY_PATTERN = /^[A-Za-z\s.,'-]+$/;
-function lettersOnlyValidator(control: AbstractControl): ValidationErrors | null {
-  const value = control.value;
-  if (value === null || value === undefined || value === '') return null;
-  return LETTERS_ONLY_PATTERN.test(value) ? null : { lettersOnly: true };
-}
-
-
 @Component({
   selector: 'app-create-staff',
   standalone: true,
@@ -134,10 +113,14 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   readonly priorities = ['Critical', 'High', 'Standard'];
   educationOpts: any[] = [];
   travelOpts: any = [];
-  readonly countries = [
-    { label: 'India', value: 'India' },
-    { label: 'USA', value: 'USA' }
-  ];
+
+  // Country / Location (city) are fetched from the free Countries Now API
+  // (https://countriesnow.space) instead of a hardcoded list.
+  countries: { label: string; value: string }[] = [];
+  countriesLoading = false;
+  locationOptions: string[] = [];
+  locationLoading = false;
+
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
 
   readonly approvers: ApproverInfo[] = [
@@ -236,8 +219,47 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.showJobTitleDropdown = this.jobTitleSuggestions.length > 0;
     });
 
+    this.loadCountries();
+
+    this.step0Form.get('country')?.valueChanges.subscribe((value: string) => {
+      // Reset the previously selected city whenever the country changes,
+      // since the old value likely won't belong to the new country's list.
+      this.step0Form.get('location')?.setValue('', { emitEvent: false });
+      this.loadCitiesForCountry(value);
+    });
+
     this.captureRouteParams();
     this.goTo(0);
+  }
+
+  private async loadCountries(): Promise<void> {
+    this.countriesLoading = true;
+    try {
+      const res: any = await this.demandService.getCountries();
+      const data = res?.data ?? [];
+      this.countries = data
+        .map((c: any) => ({ label: c.name, value: c.name }))
+        .sort((a: { label: string }, b: { label: string }) => a.label.localeCompare(b.label));
+    } catch {
+      this.notificationService?.error?.('Unable to load countries. Please try again.');
+    } finally {
+      this.countriesLoading = false;
+    }
+  }
+
+  private async loadCitiesForCountry(country: string): Promise<void> {
+    this.locationOptions = [];
+    if (!country) return;
+
+    this.locationLoading = true;
+    try {
+      const res: any = await this.demandService.getCitiesByCountry(country);
+      this.locationOptions = (res?.data ?? []).sort((a: string, b: string) => a.localeCompare(b));
+    } catch {
+      this.notificationService?.error?.('Unable to load locations for the selected country.');
+    } finally {
+      this.locationLoading = false;
+    }
   }
 
   private captureRouteParams(): void {
@@ -265,7 +287,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       dept: ['', Validators.required],
       bu: ['', Validators.required],
       manager: [[], [Validators.required, minItemsValidator(1)]],
-      location: ['', [Validators.required, noWhitespaceValidator, lettersOnlyValidator]],
+      location: ['', Validators.required],
       country: ['', Validators.required],
       workMode: ['', Validators.required],
       empType: ['', Validators.required],

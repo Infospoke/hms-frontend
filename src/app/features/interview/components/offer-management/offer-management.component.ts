@@ -29,6 +29,7 @@ export interface CandidateApiItem {
   lastActivity: string;
   roundDetails: RoundDetail[];
   totalRounds: number;
+  candidateId:any;
 }
 
 // ── Display shape (used by the table / template) ──────────────────────────────
@@ -47,6 +48,7 @@ export interface Candidate {
   stageStatus: 'Completed' | 'In Progress';
   lastActivity: string;
   lastActivityTime: string;
+  candidateId:any;
 }
 
 @Component({
@@ -117,6 +119,7 @@ export class OfferManagementComponent implements OnInit {
   // ── Table config ──────────────────────────────────────────────────────────
   columns: TableColumn[] = [
     { key: 'candidate', label: 'Candidate', width: '190px', custom: true },
+    // { key: 'candidateId', label: 'Candidate Id', width: '100px', custom: true },
     { key: 'jobTitle', label: 'Job Title', width: '180px', custom: true },
     { key: 'roundProgress', label: 'Round Progress', width: '210px', custom: true, align: 'center' },
     { key: 'currentStage', label: 'Current Stage', width: '140px', custom: true },
@@ -297,7 +300,7 @@ export class OfferManagementComponent implements OnInit {
     const stageStatus: 'Completed' | 'In Progress' =
       allDone ? 'Completed' : (inProgress ? 'In Progress' : 'In Progress');
 
-    // Format lastActivity ISO string
+
     const { datePart, timePart } = this.formatDateTime(item.lastActivity);
 
     return {
@@ -305,6 +308,7 @@ export class OfferManagementComponent implements OnInit {
       firstName,
       lastName,
       email: item.email,
+      candidateId:item?.candidateId,
       jobTitle: item.jobTitle,
       department: item.department,
       roundsCompleted: item.completedRounds,

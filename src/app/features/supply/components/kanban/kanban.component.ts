@@ -22,6 +22,7 @@ interface Candidate {
   ref?: boolean;
   jr?: string;
   selected: boolean;
+  candidateId:string;
 }
 
 interface FilterChip {
@@ -42,6 +43,7 @@ interface ApiCandidate {
   source: string;
   [key: string]: any;
   slaPercentage: any;
+  candidateId:string;
 }
 
 interface ApiResponse {
@@ -208,6 +210,7 @@ export class KanbanComponent implements OnInit {
       const candidate: Candidate = {
         id: apiC.id,
         name: `${apiC.firstName} ${apiC.lastName}`.trim(),
+        candidateId:apiC?.candidateId,
         sla: (stage === 'Hired' || stage === 'Offer') ? 'OK' : mapSlaColor(apiC.slaColor),
         days: apiC.daysInStage ?? 0,
         percent: apiC?.slaPercentage,

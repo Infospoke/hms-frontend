@@ -1,4 +1,4 @@
- <app-heading [heading]="'Kanban Board'"></app-heading>
+<app-heading [heading]="'Kanban Board'"></app-heading>
 <div class="kanban-page">
     <div class="filter-bar">
     <!-- Controls + chips in one single row -->
@@ -256,9 +256,13 @@
                   {{ getInitials(c.name) }}
                 </div>
                 <div class="card-name-wrap">
-                  <span class="cand-name">{{ c.name }}</span>
-                  <span class="ref-badge" *ngIf="c.ref">REF</span>
+                  <div class="cand-name-row">
+                    <span class="cand-name">{{ c.name }}</span>
+                    <span class="ref-badge" *ngIf="c.ref">REF</span>
+                  </div>
+                  <span class="cand-id" *ngIf="c.candidateId">{{ c.candidateId }}</span>
                 </div>
+                
               </div>
 
               <div class="card-divider"></div>

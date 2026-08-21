@@ -837,9 +837,16 @@
 
 .card-name-wrap {
   display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cand-name-row {
+  display: flex;
   align-items: center;
   gap: 5px;
-  flex: 1;
   min-width: 0;
 }
 
@@ -850,6 +857,16 @@
   color: #1E293B;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Candidate ID (shown below the name)
+.cand-id {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #94A3B8;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

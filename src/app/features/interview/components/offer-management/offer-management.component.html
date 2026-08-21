@@ -6,7 +6,7 @@
     subHeading="View candidate progress and review interview details, feedback, and scores for each round before taking the next hiring action."
     [cards]="cards"
     [dropDownData]="dropDownData"
-    [searchPlaceholder]="'Search name or email'"
+    [searchPlaceholder]="'Search By'"
     (filterChange)="onFilterChange($event)"/>
 
   <div class="">
@@ -43,6 +43,7 @@
             {{ ctx.row.firstName }} {{ ctx.row.lastName }}
           </span>
           <span class="om-candidate-email">{{ ctx.row.email }}</span>
+           <span class="om-candidate-email">{{ ctx.row.candidateId ?? '-' }}</span>
         </div>
       </div>
     </ng-container>
@@ -51,6 +52,7 @@
     <ng-container *ngIf="ctx.col.key === 'jobTitle'">
       <span class="om-cell-text">{{ ctx.row.jobTitle }}</span>
     </ng-container>
+    
 
     <!-- Round Progress: coloured dots connected by a line -->
     <ng-container *ngIf="ctx.col.key === 'roundProgress'">

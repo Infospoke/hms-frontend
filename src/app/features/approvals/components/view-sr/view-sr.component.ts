@@ -115,7 +115,7 @@ export class ViewSrComponent implements OnInit {
   private demandSvc = inject(StaffingServiceService);
   private notificationService = inject(NotificationService);
 
-
+  isFinalApprovalStage = false;
   isLoading = true;
   isSubmitting = false;
   isFullSrOpen = false;
@@ -353,65 +353,65 @@ export class ViewSrComponent implements OnInit {
   }
 
   private buildPipelineStages(basics: PositionBasicsResponse): ApprovalStage[] {
-    const slots = [
-      { approvedFlag: basics.approver1, approverBy: basics.approver1By, approverRole: basics.approver1Role, dateApproval: basics.dateOfApproval1, comments: basics.commentsByApprover1 },
-      { approvedFlag: basics.approver2, approverBy: basics.approver2By, approverRole: basics.approver2Role, dateApproval: basics.dateOfApproval2, comments: basics.commentsByApprover2 },
-      { approvedFlag: basics.approver3, approverBy: basics.approver3By, approverRole: basics.approver3Role, dateApproval: basics.dateOfApproval3, comments: basics.commentsByApprover3 },
-    ];
+  const slots = [
+    { approvedFlag: basics.approver1, approverBy: basics.approver1By, approverRole: basics.approver1Role, dateApproval: basics.dateOfApproval1, comments: basics.commentsByApprover1 },
+    { approvedFlag: basics.approver2, approverBy: basics.approver2By, approverRole: basics.approver2Role, dateApproval: basics.dateOfApproval2, comments: basics.commentsByApprover2 },
+    { approvedFlag: basics.approver3, approverBy: basics.approver3By, approverRole: basics.approver3Role, dateApproval: basics.dateOfApproval3, comments: basics.commentsByApprover3 },
+  ];
 
-    const defined = slots.filter(s => s.approverRole !== null && s.approverRole !== undefined);
-    if (!defined.length) { this.hasRealApproverData = false; return []; }
+  const defined = slots.filter(s => s.approverRole !== null && s.approverRole !== undefined);
+  this.isFinalApprovalStage = false;
+  if (!defined.length) { this.hasRealApproverData = false; return []; }
 
-    this.hasRealApproverData = true;
-    let foundInProgress = false;
-    let foundRejected = false;
+  this.hasRealApproverData = true;
+  let foundInProgress = false;
+  let foundRejected = false;
 
-    const approverStages: ApprovalStage[] = defined.map((slot, i) => {
-      let status: StageStatus;
-      if (slot.dateApproval) {
-        // A decision date exists — check whether it was approved or rejected
-        if (slot.approvedFlag === false) {
-          status = 'REJECTED';
-          foundRejected = true;
-        } else {
-          status = 'APPROVED';
-        }
-      } else if (foundRejected) {
-        // Prior stage was rejected — this one is blocked
-        status = 'PENDING';
-      } else if (!foundInProgress) {
-        // No decision yet and no prior in-progress — this is the current active stage
-        status = 'IN_PROGRESS';
-        foundInProgress = true;
+  const approverStages: ApprovalStage[] = defined.map((slot, i) => {
+    let status: StageStatus;
+    if (slot.dateApproval) {
+      if (slot.approvedFlag === false) {
+        status = 'REJECTED';
+        foundRejected = true;
       } else {
-        // A later stage still waiting
-        status = 'PENDING';
+        status = 'APPROVED';
       }
-      const name = slot.approverBy ?? '';
-      return {
-        id: i + 2, role: slot.approverRole ?? `Approver ${i + 1}`,
-        approverName: name, approverInitials: this.getInitials(name),
-        status,
-        timestamp: slot.dateApproval ? this.formatDateTime(slot.dateApproval) : undefined,
-        comments: slot.comments ?? '',
-        prevRejected: status === 'PENDING' && foundRejected,
-      };
-    });
+    } else if (foundRejected) {
+      status = 'PENDING';
+    } else if (!foundInProgress) {
+      status = 'IN_PROGRESS';
+      foundInProgress = true;
+      if (i === defined.length - 1) {
+        this.isFinalApprovalStage = true;
+      }
+    } else {
+      status = 'PENDING';
+    }
 
-    // ── Prepend the HM Manager stage (always APPROVED — they created the SR) ──
-    const creatorName = basics.createdBy ?? '';
-    const hmStage: ApprovalStage = {
-      id: 1,
-      role: 'HM Manager',
-      approverName: creatorName,
-      approverInitials: this.getInitials(creatorName),
-      status: 'CREATED',
-      timestamp: this.formatDateTime(basics.createdOn),
-      comments: 'SR submitted for approval.',
+    const name = slot.approverBy ?? '';
+    return {
+      id: i + 2, role: slot.approverRole ?? `Approver ${i + 1}`,
+      approverName: name, approverInitials: this.getInitials(name),
+      status,
+      timestamp: slot.dateApproval ? this.formatDateTime(slot.dateApproval) : undefined,
+      comments: slot.comments ?? '',
+      prevRejected: status === 'PENDING' && foundRejected,
     };
+  });
 
-    return [hmStage, ...approverStages];
-  }
+  const creatorName = basics.createdBy ?? '';
+  const hmStage: ApprovalStage = {
+    id: 1,
+    role: 'HM Manager',
+    approverName: creatorName,
+    approverInitials: this.getInitials(creatorName),
+    status: 'CREATED',
+    timestamp: this.formatDateTime(basics.createdOn),
+    comments: 'SR submitted for approval.',
+  };
+
+  return [hmStage, ...approverStages];
+}
 
   private formatDate(iso: string | null): string {
     if (!iso) return '';
@@ -451,32 +451,38 @@ export class ViewSrComponent implements OnInit {
 
 
   async onModalConfirmed(result: CommentModalResult): Promise<void> {
-    if (!this.allSectionsReviewed) return;
+  if (!this.allSectionsReviewed) return;
 
-    this.isSubmitting = true;
-    this.cdr.markForCheck();
+  this.isSubmitting = true;
+  this.cdr.markForCheck();
 
-    try {
-      const res: any = await this.approvalSvc.approveOrReject({
-        srId: this.srId,
-        approved: result.action === 'approve',
-        comments: result.comment,
-      });
+  try {
+    const payload: any = {
+      srId: this.srId,
+      approved: result.action === 'approve',
+      comments: result.comment,
+    };
 
-      if (res?.responsecode === '00') {
-        this.notificationService.success(res?.message || res?.responseMessage);
-        this.showCommentModal = false;
-        this.goBack();
-      } else {
-        this.notificationService.error(res?.errors?.[0] || res?.message || res?.responseMessage);
-      }
-    } catch (err) {
-      console.error('Approval/Rejection failed', err);
-    } finally {
-      this.isSubmitting = false;
-      this.cdr.markForCheck();
+    if (result.action === 'approve' && this.isFinalApprovalStage) {
+      payload.finalApprovalStatus = true;
     }
+
+    const res: any = await this.approvalSvc.approveOrReject(payload);
+
+    if (res?.responsecode === '00') {
+      this.notificationService.success(res?.message || res?.responseMessage);
+      this.showCommentModal = false;
+      this.goBack();
+    } else {
+      this.notificationService.error(res?.errors?.[0] || res?.message || res?.responseMessage);
+    }
+  } catch (err) {
+    console.error('Approval/Rejection failed', err);
+  } finally {
+    this.isSubmitting = false;
+    this.cdr.markForCheck();
   }
+}
 
 
   onApprove(): void {

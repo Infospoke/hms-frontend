@@ -375,6 +375,51 @@ h1 {
   height: 42px;
 }
 
+.generate-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.view-offer-btn {
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #fff;
+      border-color: var(--border);
+    }
+  }
+
+  &.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+
+    &:hover {
+      background: #2946c4;
+      border-color: #2946c4;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------
+// Offer letter PDF preview
+// -----------------------------------------------------------------------
+
+.pdf-loading {
+  text-align: center;
+  padding: 20px;
+}
+
+.pdf-preview-frame {
+  height: 75vh;
+  border: none;
+  display: block;
+}
+
 // -----------------------------------------------------------------------
 // Market comparison
 // -----------------------------------------------------------------------
@@ -576,6 +621,11 @@ h1 {
   }
 
   .template-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .generate-btn-group {
     flex-direction: column;
     align-items: stretch;
   }

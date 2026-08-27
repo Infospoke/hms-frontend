@@ -6,218 +6,213 @@
 
   <ng-container *ngIf="!isLoading">
 
-  <form #offerForm="ngForm">
+    <form #offerForm="ngForm">
 
-  <a class="back-link" href="javascript:void(0)" (click)="onBack()">&larr; Back to offer requests</a>
+      <a class="back-link" href="javascript:void(0)" (click)="onBack()">&larr; Back to offer requests</a>
 
-  <div class="page-header">
-    <h1>Offer request details</h1>
-    <span class="badge">{{ candidate.status }}</span>
-  </div>
-  <p class="page-subtitle">Review the offer request details and track the approval progress.</p>
-
-  <!-- Candidate card -->
-  <div class="card">
-    <div class="candidate-row">
-      <div class="avatar">{{ candidate.initials }}</div>
-      <div class="candidate-info">
-        <div class="candidate-name">{{ candidate.name }}</div>
-        <div class="candidate-email">{{ candidate.email }}</div>
+      <div class="page-header">
+        <h1>Offer request details</h1>
+        <span class="badge">{{ candidate.status }}</span>
       </div>
-      <div class="meta-grid">
-        <div class="meta-item">
-          <span class="meta-label">Job title</span>
-          <span class="meta-value">{{ candidate.jobTitle }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Department</span>
-          <span class="meta-value">{{ candidate.department }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Recruiter</span>
-          <span class="meta-value link">{{ candidate.recruiter }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Request ID</span>
-          <span class="meta-value">{{ candidate.requestId }}</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Requested on</span>
-          <span class="meta-value">{{ candidate.requestedOn }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+      <p class="page-subtitle">Review the offer request details and track the approval progress.</p>
 
-  <!-- Compensation card -->
-  <div class="card">
-    <h2 class="section-title">Compensation details</h2>
-
-    <div class="comp-layout">
-      <table class="comp-table">
-        <thead>
-          <tr>
-            <th>Component</th>
-            <!-- <th>Type</th> -->
-            <th class="amount-col">Annual (INR)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of compensation; trackBy: trackByLabel">
-            <td>{{ row.label }}</td>
-            <!-- <td class="type-cell">{{ row.type }}</td> -->
-            <td class="amount-cell">₹{{ formatINR(row.value) }}</td>
-          </tr>
-          <tr class="total-row">
-            <td>Total CTC</td>
-            <td class="amount-cell">₹{{ formatINR(totalCTC) }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <app-donut-pie-chart
-        [segments]="donutSegments"
-        centerLabel="Total CTC"
-        [size]="190"
-        [formatValue]="formatINR"
-      ></app-donut-pie-chart>
-    </div>
-  </div>
-
-  <!-- Offer terms card -->
-  <div class="card">
-    <h2 class="section-title">Offer terms</h2>
-
-    <div class="terms-grid">
-      <div class="field">
-        <label for="noticePeriod">Notice period <span class="req">*</span></label>
-        <select
-          id="noticePeriod"
-          name="noticePeriod"
-          required
-          #noticePeriodCtrl="ngModel"
-          [class.invalid]="noticePeriodCtrl.invalid && noticePeriodCtrl.touched"
-          [(ngModel)]="offerTerms.noticePeriod"
-        >
-          <option *ngFor="let opt of noticePeriodOptions" [value]="opt">{{ opt }}</option>
-        </select>
-        <p class="field-error" *ngIf="noticePeriodCtrl.invalid && noticePeriodCtrl.touched">Notice period is required.</p>
-      </div>
-
-      <div class="field">
-        <label for="probationPeriod">Probation period <span class="req">*</span></label>
-        <select
-          id="probationPeriod"
-          name="probationPeriod"
-          required
-          #probationPeriodCtrl="ngModel"
-          [class.invalid]="probationPeriodCtrl.invalid && probationPeriodCtrl.touched"
-          [(ngModel)]="offerTerms.probationPeriod"
-        >
-          <option *ngFor="let opt of probationPeriodOptions" [value]="opt">{{ opt }}</option>
-        </select>
-        <p class="field-error" *ngIf="probationPeriodCtrl.invalid && probationPeriodCtrl.touched">Probation period is required.</p>
-      </div>
-
-      <div class="field">
-        <label for="joiningDate">Joining date <span class="req">*</span></label>
-        <input
-          type="date"
-          id="joiningDate"
-          name="joiningDate"
-          required
-          [min]="minJoiningDate"
-          #joiningDateCtrl="ngModel"
-          [class.invalid]="joiningDateCtrl.invalid && joiningDateCtrl.touched"
-          [(ngModel)]="offerTerms.joiningDate"
-        />
-        <p class="field-error" *ngIf="joiningDateCtrl.invalid && joiningDateCtrl.touched">
-          Please select a future joining date (today and past dates aren't allowed).
-        </p>
-      </div>
-    </div>
-
-    <div class="terms-grid">
-      <div class="field">
-        <label for="offerTemplate">Offer letter template <span class="req">*</span></label>
-        <select
-          id="offerTemplate"
-          name="offerTemplate"
-          required
-          #offerTemplateCtrl="ngModel"
-          [class.invalid]="offerTemplateCtrl.invalid && offerTemplateCtrl.touched"
-          [(ngModel)]="offerTerms.template"
-        >
-          <option value="" disabled>Select an offer template</option>
-          <option *ngFor="let opt of offerTemplateOptions" [value]="opt?.id">{{ opt?.name }}</option>
-        </select>
-        <p class="field-error" *ngIf="offerTemplateCtrl.invalid && offerTemplateCtrl.touched">Offer letter template is required.</p>
-        <p class="field-hint" *ngIf="!(offerTemplateCtrl.invalid && offerTemplateCtrl.touched)">The selected template will be used to generate the offer letter.</p>
-      </div>
-
-      <div class="field generate-field">
-        <label class="label-spacer" aria-hidden="true">&nbsp;</label>
-        <button type="button" class="btn btn-outline generate-btn" (click)="generateOfferLetter()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-            <path d="M14 2v5h5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-            <path d="M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-          Generate offer letter
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Market comparison card -->
-  <div class="card">
-    <h2 class="section-title">Compensation vs market</h2>
-
-    <div class="market-summary">
-      <span class="market-label">Market percentile</span>
-      <div class="percentile-value">P{{ marketComparison.percentile }}</div>
-      <p class="percentile-message">{{ marketComparison.message }}</p>
-    </div>
-
-    <div class="market-bar-wrap">
-      <div class="market-bar-track">
-        <div class="market-bar-fill" [style.width.%]="marketComparison.percentile"></div>
-        <div class="market-bar-dot" [style.left.%]="marketComparison.percentile">
-          <span
-            class="market-bar-dot-tooltip"
-            [class.align-start]="marketComparison.percentile < 8"
-            [class.align-end]="marketComparison.percentile > 92"
-          >
-            Your offer: ₹{{ formatINR(totalCTC) }}
-          </span>
+      <!-- Candidate card -->
+      <div class="card">
+        <div class="candidate-row">
+          <div class="avatar">{{ candidate.initials }}</div>
+          <div class="candidate-info">
+            <div class="candidate-name">{{ candidate.name }}</div>
+            <div class="candidate-email">{{ candidate.email }}</div>
+          </div>
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="meta-label">Job title</span>
+              <span class="meta-value">{{ candidate.jobTitle }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Department</span>
+              <span class="meta-value">{{ candidate.department }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Recruiter</span>
+              <span class="meta-value link">{{ candidate.recruiter }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Request ID</span>
+              <span class="meta-value">{{ candidate.requestId }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Requested on</span>
+              <span class="meta-value">{{ candidate.requestedOn }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="market-bar-labels">
-        <div
-          class="market-marker"
-          *ngFor="let m of marketComparison.markers; trackBy: trackByMarker"
-          [style.left.%]="m.percentile"
-        >
-          <span class="marker-label">{{ m.label }}</span>
-          <span class="marker-value">₹{{ formatINR(m.value) }}</span>
+      <!-- Compensation card -->
+      <div class="card">
+        <h2 class="section-title">Compensation details</h2>
+
+        <div class="comp-layout">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <!-- <th>Type</th> -->
+                <th class="amount-col">Annual (INR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of compensation; trackBy: trackByLabel">
+                <td>{{ row.label }}</td>
+                <!-- <td class="type-cell">{{ row.type }}</td> -->
+                <td class="amount-cell">₹{{ formatINR(row.value) }}</td>
+              </tr>
+              <tr class="total-row">
+                <td>Total CTC</td>
+                <td class="amount-cell">₹{{ formatINR(totalCTC) }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <app-donut-pie-chart [segments]="donutSegments" centerLabel="Total CTC" [size]="190"
+            [formatValue]="formatINR"></app-donut-pie-chart>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Sticky action bar -->
-  <div class="action-bar">
-    <button type="button" class="btn btn-outline" (click)="onBack()">&larr; Back</button>
-    <div class="action-bar-right">
-      <!-- <button type="button" class="btn btn-outline" (click)="onSaveDraft()">Save draft</button> -->
-      <button type="button" class="btn btn-primary" (click)="onSubmit()">
-        Submit for finance approval &rarr;
-      </button>
-    </div>
-  </div>
+      <!-- Offer terms card -->
+      <div class="card">
+        <h2 class="section-title">Offer terms</h2>
 
-  </form>
+        <div class="terms-grid">
+          <div class="field">
+            <label for="noticePeriod">Notice period <span class="req">*</span></label>
+            <select id="noticePeriod" name="noticePeriod" required #noticePeriodCtrl="ngModel"
+              [class.invalid]="noticePeriodCtrl.invalid && noticePeriodCtrl.touched"
+              [(ngModel)]="offerTerms.noticePeriod">
+              <option *ngFor="let opt of noticePeriodOptions" [value]="opt">{{ opt }}</option>
+            </select>
+            <p class="field-error" *ngIf="noticePeriodCtrl.invalid && noticePeriodCtrl.touched">Notice period is
+              required.</p>
+          </div>
+
+          <div class="field">
+            <label for="probationPeriod">Probation period <span class="req">*</span></label>
+            <select id="probationPeriod" name="probationPeriod" required #probationPeriodCtrl="ngModel"
+              [class.invalid]="probationPeriodCtrl.invalid && probationPeriodCtrl.touched"
+              [(ngModel)]="offerTerms.probationPeriod">
+              <option *ngFor="let opt of probationPeriodOptions" [value]="opt">{{ opt }}</option>
+            </select>
+            <p class="field-error" *ngIf="probationPeriodCtrl.invalid && probationPeriodCtrl.touched">Probation period
+              is required.</p>
+          </div>
+
+          <div class="field">
+            <label for="joiningDate">Joining date <span class="req">*</span></label>
+            <input type="date" id="joiningDate" name="joiningDate" required [min]="minJoiningDate"
+              #joiningDateCtrl="ngModel" [class.invalid]="joiningDateCtrl.invalid && joiningDateCtrl.touched"
+              [(ngModel)]="offerTerms.joiningDate" />
+            <p class="field-error" *ngIf="joiningDateCtrl.invalid && joiningDateCtrl.touched">
+              Please select a future joining date (today and past dates aren't allowed).
+            </p>
+          </div>
+        </div>
+
+        <div class="terms-grid">
+          <div class="field">
+            <label for="offerTemplate">Offer letter template <span class="req">*</span></label>
+            <select id="offerTemplate" name="offerTemplate" required #offerTemplateCtrl="ngModel"
+              [class.invalid]="offerTemplateCtrl.invalid && offerTemplateCtrl.touched"
+              [(ngModel)]="offerTerms.template">
+              <option value="" disabled>Select an offer template</option>
+              <option *ngFor="let opt of offerTemplateOptions" [value]="opt?.id">{{ opt?.name }}</option>
+            </select>
+            <p class="field-error" *ngIf="offerTemplateCtrl.invalid && offerTemplateCtrl.touched">Offer letter template
+              is required.</p>
+            <p class="field-hint" *ngIf="!(offerTemplateCtrl.invalid && offerTemplateCtrl.touched)">The selected
+              template will be used to generate the offer letter.</p>
+          </div>
+
+          <div class="field generate-field">
+            <label class="label-spacer" aria-hidden="true">&nbsp;</label>
+            <div class="generate-btn-group">
+              <button type="button" class="btn btn-outline generate-btn" (click)="generateOfferLetter()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z" stroke="currentColor"
+                    stroke-width="1.6" stroke-linejoin="round" />
+                  <path d="M14 2v5h5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                  <path d="M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                Generate offer letter
+              </button>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Market comparison card -->
+      <div class="card">
+        <h2 class="section-title">Compensation vs market</h2>
+
+        <div class="market-summary">
+          <span class="market-label">Market percentile</span>
+          <div class="percentile-value">P{{ marketComparison.percentile }}</div>
+          <p class="percentile-message">{{ marketComparison.message }}</p>
+        </div>
+
+        <div class="market-bar-wrap">
+          <div class="market-bar-track">
+            <div class="market-bar-fill" [style.width.%]="marketComparison.percentile"></div>
+            <div class="market-bar-dot" [style.left.%]="marketComparison.percentile">
+              <span class="market-bar-dot-tooltip" [class.align-start]="marketComparison.percentile < 8"
+                [class.align-end]="marketComparison.percentile > 92">
+                Your offer: ₹{{ formatINR(totalCTC) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="market-bar-labels">
+            <div class="market-marker" *ngFor="let m of marketComparison.markers; trackBy: trackByMarker"
+              [style.left.%]="m.percentile">
+              <span class="marker-label">{{ m.label }}</span>
+              <span class="marker-value">₹{{ formatINR(m.value) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky action bar -->
+      <div class="action-bar">
+        <button type="button" class="btn btn-outline" (click)="onBack()">&larr; Back</button>
+        <div class="action-bar-right">
+          <!-- <button type="button" class="btn btn-outline" (click)="onSaveDraft()">Save draft</button> -->
+          <button type="button" class="btn btn-outline generate-btn view-offer-btn" [disabled]="!isOfferLetterGenerated"
+            [class.active]="isOfferLetterGenerated" (click)="viewOfferLetter()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z" stroke="currentColor"
+                stroke-width="1.6" stroke-linejoin="round" />
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+            View offer letter
+          </button>
+          <button type="button" class="btn btn-primary" (click)="onSubmit()">
+            Submit for finance approval &rarr;
+          </button>
+        </div>
+      </div>
+
+    </form>
+
+    <nz-modal [(nzVisible)]="isPdfVisible" nzTitle="Preview" [nzFooter]="null" nzWidth="80%" [nzCentered]="true"
+      nzClassName="pdf-preview-modal" (nzOnCancel)="closePdfPreview()">
+      <ng-container *nzModalContent>
+        <div *ngIf="!pdfUrl" class="pdf-loading">Loading PDF...</div>
+
+        <iframe *ngIf="pdfUrl" [attr.src]="pdfUrl" width="100%" class="pdf-preview-frame"></iframe>
+      </ng-container>
+    </nz-modal>
 
   </ng-container>
 

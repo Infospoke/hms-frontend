@@ -7,7 +7,8 @@ import {
   computed,
   effect,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  OnInit
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +16,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { Candidate, TabKey } from '../../../../shared/constants/candidate.modal';
 import { JobService } from '../../services/job.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-applied-candidates',
@@ -22,12 +24,14 @@ import { Router } from '@angular/router';
   templateUrl: './applied-candidates.component.html',
   styleUrl: './applied-candidates.component.scss',
 })
-export class AppliedCandidatesComponent implements OnChanges {
+export class AppliedCandidatesComponent implements OnChanges,OnInit {
   @Input() jobId: any = null;
   @Output() candidateSelected = new EventEmitter<Candidate>();
   @Output() statusSelected = new EventEmitter<any>();
 
   private job = inject(JobService);
+  private authService=inject(AuthService);
+  roleName:any;
   private router = inject(Router);
   tabs = [
     { label: 'Applied', key: 'applied', value: 'APPLIED' },
@@ -90,7 +94,12 @@ export class AppliedCandidatesComponent implements OnChanges {
       };
     });
   });
-
+  ngOnInit(): void {
+    this.roleName=this.authService.getUserName();
+  }
+  get isDisable():boolean{
+    return this.roleName==='Interviewer';
+  }
   private candidateEffect = effect(() => {
     const list = this.candidates();
     this.applyFilter(list);

@@ -62,7 +62,10 @@ export class JobDashboardComponent implements OnInit {
 
       this.jobsListData = res?.data;
       this.selectedJobId = res?.data?.[0]?.jobId;
-      this.handleJobSelection();
+      if(this.selectedJobId){
+        this.handleJobSelection();
+      }
+      
     }
     catch (error) {
 

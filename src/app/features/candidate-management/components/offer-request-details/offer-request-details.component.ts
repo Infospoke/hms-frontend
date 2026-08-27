@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import {
   DonutPieChartComponent,
   DonutSegment,
@@ -84,13 +86,13 @@ interface OfferDetailsApiResponse {
 @Component({
   selector: 'app-offer-request-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, DonutPieChartComponent],
+  imports: [CommonModule, FormsModule, DonutPieChartComponent, NzModalModule],
   templateUrl: './offer-request-details.component.html',
   styleUrls: ['./offer-request-details.component.scss'],
   
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OfferRequestDetailsComponent implements OnInit {
+export class OfferRequestDetailsComponent implements OnInit, OnDestroy {
   isLoading = true;
 
   candidate: Candidate = {
@@ -138,6 +140,13 @@ export class OfferRequestDetailsComponent implements OnInit {
   donutSegments: DonutSegment[] = [];
   private notificationService=inject(NotificationService);
 
+  // --- Offer letter preview -----------------------------------------------
+  isOfferLetterGenerated = false;
+  isPdfVisible = false;
+  pdfUrl: SafeResourceUrl | null = null;
+  private pdfObjectUrl: string | null = null;
+  private offerIdForViewOffer: any;
+
   @ViewChild('offerForm') offerForm?: NgForm;
 
   private applicantId: any;
@@ -149,6 +158,7 @@ export class OfferRequestDetailsComponent implements OnInit {
   private router = inject(Router);
   private activeRoute = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
  
   ngOnInit(): void {
     this.applicantId = this.activeRoute.snapshot.paramMap.get('id');
@@ -157,6 +167,12 @@ export class OfferRequestDetailsComponent implements OnInit {
     Promise.all([this.getOfferTemplates(), this.loadOfferDetailsById()])
 
   }
+  ngOnDestroy(): void {
+    if (this.pdfObjectUrl) {
+      window.URL.revokeObjectURL(this.pdfObjectUrl);
+    }
+  }
+
   private async getOfferTemplates() {
     const res: any = await this.candidateService.getOfferTemplates();
     if (res?.responsecode == '00') {
@@ -423,6 +439,11 @@ export class OfferRequestDetailsComponent implements OnInit {
           'Generated file name:',
           response.fileName
         );
+
+        // Enable "View offer letter" once generation succeeds.
+        this.offerIdForViewOffer = response.offerId ?? this.offerId;
+        this.isOfferLetterGenerated = true;
+        this.cdr.markForCheck();
       }
   
     } catch (err) {
@@ -436,6 +457,43 @@ export class OfferRequestDetailsComponent implements OnInit {
         'Failed to generate the offer letter. Please try again.'
       );
     }
+  }
+
+  async viewOfferLetter(): Promise<void> {
+    try {
+      const res: any = await this.candidateService.viewOfferLetter(this.offerIdForViewOffer);
+      const blob: Blob = res instanceof Blob ? res : new Blob([res], { type: 'application/pdf' });
+
+      if (blob.type && !blob.type.includes('pdf')) {
+        const text = await blob.text();
+        console.error('Offer letter endpoint did not return a PDF. Response:', text);
+        this.notificationService.error('Could not load the offer letter. Please try again.');
+        return;
+      }
+
+      if (this.pdfObjectUrl) {
+        window.URL.revokeObjectURL(this.pdfObjectUrl);
+      }
+
+      this.pdfObjectUrl = window.URL.createObjectURL(blob);
+      const safeUrl = this.pdfObjectUrl + '#toolbar=0&navpanes=0&scrollbar=0';
+      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
+      this.isPdfVisible = true;
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('Failed to load offer letter PDF', err);
+      this.notificationService.error('Failed to load offer letter. Please try again.');
+    }
+  }
+
+  closePdfPreview(): void {
+    this.isPdfVisible = false;
+    if (this.pdfObjectUrl) {
+      window.URL.revokeObjectURL(this.pdfObjectUrl);
+      this.pdfObjectUrl = null;
+    }
+    this.pdfUrl = null;
+    this.cdr.markForCheck();
   }
 
   onBack(): void {

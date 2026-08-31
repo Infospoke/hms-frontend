@@ -144,8 +144,8 @@ export class AgencyAssignmentComponent implements OnInit, OnDestroy {
     // trigger fetchAgencies() directly.
     this.filterChange$.pipe(debounceTime(350)).subscribe(() => this.fetchAgencies());
 
-    this.fetchAgencyCategories();
-    this.fetchAgencies();
+    // this.fetchAgencyCategories();
+    // this.fetchAgencies();
   }
 
   ngOnDestroy(): void {

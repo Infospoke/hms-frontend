@@ -225,10 +225,10 @@ export class CreateJobComponent implements OnInit {
   
     if (this.currentStep === 3) {
       const selectedAgencies = this.step5Form.get('selectedAgencyDetails')?.value ?? [];
-      if (!selectedAgencies.length) {
-        this.notificationService.info('Please assign at least one agency before proceeding.');
-        return;
-      }
+      // if (!selectedAgencies.length) {
+      //   this.notificationService.info('Please assign at least one agency before proceeding.');
+      //   return;
+      // }
     }
 
     if(this.currentStep === 4) {

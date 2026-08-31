@@ -66,10 +66,26 @@ export class AddApplicantComponent implements OnInit {
     const maxSize= 5 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
+        if (type === 'resume') {
+          this.applicationForm.get('resume')?.setErrors({ invalidType: true });
+          this.applicationForm.get('resume')?.markAsTouched();
+        }
+        if (type === 'additional') {
+          this.applicationForm.get('additionalFile')?.setErrors({ invalidType: true });
+          this.applicationForm.get('additionalFile')?.markAsTouched();
+        }
         this.notificationService.error('Invalid file type. Please upload a PDF or Word document.');
         return;
     }
     if (file.size > maxSize) {
+        if (type === 'resume') {
+          this.applicationForm.get('resume')?.setErrors({ fileSize: true });
+          this.applicationForm.get('resume')?.markAsTouched();
+        }
+        if (type === 'additional') {
+          this.applicationForm.get('additionalFile')?.setErrors({ fileSize: true });
+          this.applicationForm.get('additionalFile')?.markAsTouched();
+        }
         this.notificationService.error('File size exceeds the 5MB limit. Please upload a smaller file.');
         return;
     }

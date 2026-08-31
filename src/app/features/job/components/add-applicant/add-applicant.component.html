@@ -50,7 +50,7 @@
 
             <div class="form-group">
                 <label>Phone Number <span class="required">*</span></label>
-                <input formControlName="phone" placeholder="Enter phone number" />
+                <input formControlName="phone" placeholder="Enter phone number" maxlength="10" />
                 <div class="muted-text-error m-0"
                     *ngIf="applicationForm.get('phone')?.touched && applicationForm.get('phone')?.invalid"
                     style="text-align: left;">
@@ -112,6 +112,16 @@
                         <input type="file" (change)="onFileSelected($event, 'additional')" hidden />
                     </label>
                 </div>
+                <div class="muted-text-error m-0"
+                    *ngIf="applicationForm.get('additionalFile')?.touched && applicationForm.get('additionalFile')?.invalid"
+                    style="text-align: left;">
+                    <small class="error-text" *ngIf="applicationForm.get('additionalFile')?.errors?.['fileSize']">
+                        File size exceeds the 5MB limit.
+                    </small>
+                    <small class="error-text" *ngIf="applicationForm.get('additionalFile')?.errors?.['invalidType']">
+                        Please upload a valid PDF or Word document.
+                    </small>
+                </div>
             </div>
 
             <!-- Resume -->
@@ -133,6 +143,12 @@
                     style="text-align: left;">
                     <small class="error-text" *ngIf="applicationForm.get('resume')?.errors?.['required']">
                         Resume is required.
+                    </small>
+                    <small class="error-text" *ngIf="applicationForm.get('resume')?.errors?.['fileSize']">
+                        Resume file size exceeds the 5MB limit.
+                    </small>
+                    <small class="error-text" *ngIf="applicationForm.get('resume')?.errors?.['invalidType']">
+                        Please upload a valid PDF or Word document.
                     </small>
 
                 </div>

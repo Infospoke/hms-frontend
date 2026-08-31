@@ -73,6 +73,14 @@
                     <span class="review-label">Target Start Date</span>
                     <span class="review-val">{{ step0.startDate || '—' }}</span>
                 </div>
+                <div class="review-row">
+                    <span class="review-label">Client Name</span>
+                    <span class="review-val">{{ step0.clientName || '—' }}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-label">Client POC</span>
+                    <span class="review-val">{{ step0.clientPoc || '—' }}</span>
+                </div>
             </div>
             <ng-template #noData><span class="review-val">—</span></ng-template>
         </div>

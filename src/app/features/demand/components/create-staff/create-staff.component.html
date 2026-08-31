@@ -206,6 +206,28 @@
                     </span>
                 </div>
 
+                <!-- Client Name -->
+                <div class="field">
+                    <label class="lbl">Client Name <span class="astrick">*</span></label>
+                    <input type="text" formControlName="clientName" placeholder="e.g. Infospoke" autocomplete="off"
+                        [class.err]="hasError(step0Form, 'clientName')"
+                        (blur)="trimField(step0Form, 'clientName')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'clientName')">
+                        {{ getError(step0Form, 'clientName','Client Name') }}
+                    </span>
+                </div>
+
+                <!-- Client POC -->
+                <div class="field">
+                    <label class="lbl">Client POC <span class="astrick">*</span></label>
+                    <input type="text" formControlName="clientPoc" placeholder="Enter Client POC" autocomplete="off"
+                        [class.err]="hasError(step0Form, 'clientPoc')"
+                        (blur)="trimField(step0Form, 'clientPoc')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'clientPoc')">
+                        {{ getError(step0Form, 'clientPoc','Client POC') }}
+                    </span>
+                </div>
+
             </div>
 
             <div class="footer-btns">
@@ -835,6 +857,14 @@
                     <div class="review-row">
                         <span class="review-label">Target Start Date</span>
                         <span class="review-val">{{ step0Form.get('startDate')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Client Name</span>
+                        <span class="review-val">{{ step0Form.get('clientName')?.value || '—' }}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-label">Client POC</span>
+                        <span class="review-val">{{ step0Form.get('clientPoc')?.value || '—' }}</span>
                     </div>
                 </div>
             </div>

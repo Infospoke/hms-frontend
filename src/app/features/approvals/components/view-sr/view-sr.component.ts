@@ -47,6 +47,7 @@ interface PositionBasicsResponse {
   commentsByApprover1: string | null; commentsByApprover2: string | null; commentsByApprover3: string | null;
   approver1Role: string | null; approver2Role: string | null; approver3Role: string | null;
   submittedOn:string | null;
+  clientName: string | null; clientPoc: string | null;
 }
 
 interface BusinessJustificationResponse {
@@ -272,6 +273,7 @@ export class ViewSrComponent implements OnInit {
       location: basics.location, country:basics?.country,workMode: basics.workMode, empType: basics.employmentType,
       seniority: basics.seniorityLevelName, openings: basics.openings,
       priority: basics.priority, startDate: basics.targetStartDate,
+      clientName: basics.clientName, clientPoc: basics.clientPoc,
     };
 
     this.selectedManagers = Array.isArray(basics.reportingManagerInfo)

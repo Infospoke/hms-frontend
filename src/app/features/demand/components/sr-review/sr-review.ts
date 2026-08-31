@@ -29,6 +29,8 @@ export class SrReviewComponent implements OnInit {
     openings: number;
     priority: string;
     startDate: string;
+    clientName?: string | null;
+    clientPoc?: string | null;
   } | null = null;
 
   @Input() step1: {

@@ -295,7 +295,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       openings: [1, [Validators.required, Validators.min(1), Validators.max(999)]],
       priority: ['', Validators.required],
       startDate: ['', [Validators.required, futureDateValidator]],
-      managerSearch: ['']
+      managerSearch: [''],
+      clientName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      clientPoc: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]]
     });
 
     this.step1Form = this.fb.group({
@@ -714,7 +716,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       targetStartDate: f.startDate,
       workMode: f.workMode,
       employmentType: f.empType,
-      priority: f.priority
+      priority: f.priority,
+      clientName: f.clientName,
+      clientPoc: f.clientPoc
     };
   }
 
@@ -834,7 +838,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
         seniority: senior?.id ?? '',
         openings: p.openings ?? 1,
         priority: p.priority ?? '',
-        startDate: p.targetStartDate ?? ''
+        startDate: p.targetStartDate ?? '',
+        clientName: p.clientName ?? '',
+        clientPoc: p.clientPoc ?? ''
       });
 
       // Reporting managers
@@ -1382,7 +1388,9 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       seniority: f.seniority,
       openings: f.openings,
       priority: f.priority,
-      startDate: f.startDate
+      startDate: f.startDate,
+      clientName: f.clientName,
+      clientPoc: f.clientPoc
     };
   }
 

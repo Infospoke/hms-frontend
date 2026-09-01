@@ -21,6 +21,12 @@
     height: auto;
     max-height: none;
   }
+
+  // When the Manual tab is active, the AI versions panel is hidden — let
+  // the editor column take the full width instead of leaving a gap.
+  &.ajd-layout--manual {
+    grid-template-columns: 1fr;
+  }
 }
 
 // ── Grid item wrappers (direct children of .ajd-layout) ──────────────────────
@@ -99,6 +105,46 @@
   color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.5;
+}
+
+// ── Manual / AI mode toggle ───────────────────────────────────────────────────
+.ajd-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: #f1f5f9;
+  border-radius: 9px;
+  width: fit-content;
+}
+
+.ajd-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  i { font-size: 12px; }
+
+  &:hover:not(&--active) {
+    color: var(--color-text);
+  }
+
+  &--active {
+    background: #fff;
+    color: var(--color-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
 }
 
 
@@ -319,6 +365,45 @@
   }
 }
 
+// ── Manual mode empty state ──────────────────────────────────────────────────
+.ajd-manual-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px 24px;
+  text-align: center;
+  flex-shrink: 0;
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    color: var(--color-primary);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2a4a;
+    margin: 0 0 6px;
+  }
+
+  &__sub {
+    font-size: 12.5px;
+    color: #6b7a99;
+    max-width: 340px;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
 // ── Generating shimmer ────────────────────────────────────────────────────────
 .ajd-generating {
   padding: 24px 20px;
@@ -425,6 +510,13 @@
   }
 
   &:focus { outline: none; }
+
+  // Manual mode placeholder text, shown only while the editable div is empty.
+  &--manual:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-text-secondary, #94a3b8);
+    pointer-events: none;
+  }
 
   // ── Styles for generated JD content rendered inside the editor ─────────
   ::ng-deep {

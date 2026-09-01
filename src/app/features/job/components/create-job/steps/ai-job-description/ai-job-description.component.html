@@ -1,4 +1,4 @@
-<div class="ajd-layout" (click)="closeMenus()">
+<div class="ajd-layout" [class.ajd-layout--manual]="mode === 'manual'" (click)="closeMenus()">
 
   <!-- ── Left: Editor ──────────────────────────────────────────────────── -->
   <div class="ajd-editor-col">
@@ -19,54 +19,79 @@
           </div>
         </div>
 
+        <!-- Manual / AI mode toggle -->
+        <div class="ajd-mode-toggle" (click)="$event.stopPropagation()">
+          <button type="button" class="ajd-mode-btn" [class.ajd-mode-btn--active]="mode === 'ai'"
+            (click)="switchMode('ai')">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate with AI
+          </button>
+          <button type="button" class="ajd-mode-btn" [class.ajd-mode-btn--active]="mode === 'manual'"
+            (click)="switchMode('manual')">
+            <i class="fa-solid fa-pen"></i> Write Manually
+          </button>
+        </div>
+
         <!-- Action buttons -->
         <div class="ajd-actions">
 
-          <div class="ajd-generate-wrap">
-            <button class="ajd-btn ajd-btn--generate" (click)="generateJD()"
-              [disabled]="isGenerating || isRegenerating || (hasContent && !renameButton)"
-              [title]="hasContent && !renameButton ? 'Select an AI option above to regenerate the JD' : null">
-              <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating || isRegenerating"></i>
-              <i class="fa-solid fa-rotate" *ngIf="!isGenerating && !isRegenerating && hasContent"></i>
-              <i class="fa-solid fa-stars" *ngIf="!isGenerating && !isRegenerating && !hasContent"></i>
-              {{ isGenerating ? 'Generating…' : isRegenerating ? 'Regenerating…' : (hasContent ? 'Regenerate JD' : 'Generate JD') }}
-            </button>
-          </div>
-
-          <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
-            <button class="ajd-btn ajd-btn--outline" [class.ajd-btn--selected]="renameButton"
-              (click)="toggleMoreAIOptions($event)" [disabled]="isGenerating || isRegenerating || !hasContent">
-              <ng-container *ngIf="renameButton; else defaultOptionLabel">
-                <span class="ajd-btn__selected-text">{{ options }}</span>
-                <i class="fa-solid fa-xmark ajd-btn__clear" title="Clear this option" (click)="cancelOption($event)"></i>
-              </ng-container>
-              <ng-template #defaultOptionLabel>More AI Options</ng-template>
-              <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
-            </button>
-
-            <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
-              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Senior level'" (click)="applyAIOption('Rewrite for Senior level')">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-                Rewrite for senior levels
-              </button>
-              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Junior Level'" (click)="applyAIOption('Rewrite for Junior Level')">
-                <i class="fa-solid fa-arrow-trend-down"></i>
-                Rewrite for junior levels
-              </button>
-              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Expand Responsibilities'" (click)="applyAIOption('Expand Responsibilities')">
-                <i class="fa-solid fa-list-check"></i>
-                Expand Responsibilities
-              </button>
-              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make more Technical'" (click)="applyAIOption('Make more Technical')">
-                <i class="fa-solid fa-microchip"></i>
-                Make more technical
-              </button>
-              <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make Concise'" (click)="applyAIOption('Make Concise')">
-                <i class="fa-solid fa-compress"></i>
-                Make concise
+          <ng-container *ngIf="mode === 'ai'">
+            <div class="ajd-generate-wrap">
+              <button class="ajd-btn ajd-btn--generate" (click)="generateJD()"
+                [disabled]="isGenerating || isRegenerating || (hasContent && !renameButton)"
+                [title]="hasContent && !renameButton ? 'Select an AI option above to regenerate the JD' : null">
+                <i class="fa-solid fa-spinner fa-spin" *ngIf="isGenerating || isRegenerating"></i>
+                <i class="fa-solid fa-rotate" *ngIf="!isGenerating && !isRegenerating && hasContent"></i>
+                <i class="fa-solid fa-stars" *ngIf="!isGenerating && !isRegenerating && !hasContent"></i>
+                {{ isGenerating ? 'Generating…' : isRegenerating ? 'Regenerating…' : (hasContent ? 'Regenerate JD' : 'Generate JD') }}
               </button>
             </div>
-          </div>
+
+            <div class="ajd-more-wrap" (click)="$event.stopPropagation()">
+              <button class="ajd-btn ajd-btn--outline" [class.ajd-btn--selected]="renameButton"
+                (click)="toggleMoreAIOptions($event)" [disabled]="isGenerating || isRegenerating || !hasContent">
+                <ng-container *ngIf="renameButton; else defaultOptionLabel">
+                  <span class="ajd-btn__selected-text">{{ options }}</span>
+                  <i class="fa-solid fa-xmark ajd-btn__clear" title="Clear this option" (click)="cancelOption($event)"></i>
+                </ng-container>
+                <ng-template #defaultOptionLabel>More AI Options</ng-template>
+                <i class="fa-solid fa-chevron-down" [class.fa-chevron-up]="showMoreAIOptions"></i>
+              </button>
+
+              <div class="ajd-dropdown" *ngIf="showMoreAIOptions">
+                <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Senior level'" (click)="applyAIOption('Rewrite for Senior level')">
+                  <i class="fa-solid fa-arrow-trend-up"></i>
+                  Rewrite for senior levels
+                </button>
+                <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Rewrite for Junior Level'" (click)="applyAIOption('Rewrite for Junior Level')">
+                  <i class="fa-solid fa-arrow-trend-down"></i>
+                  Rewrite for junior levels
+                </button>
+                <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Expand Responsibilities'" (click)="applyAIOption('Expand Responsibilities')">
+                  <i class="fa-solid fa-list-check"></i>
+                  Expand Responsibilities
+                </button>
+                <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make more Technical'" (click)="applyAIOption('Make more Technical')">
+                  <i class="fa-solid fa-microchip"></i>
+                  Make more technical
+                </button>
+                <button class="ajd-dropdown-item" [class.ajd-dropdown-item--active]="renameButton && options === 'Make Concise'" (click)="applyAIOption('Make Concise')">
+                  <i class="fa-solid fa-compress"></i>
+                  Make concise
+                </button>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- <ng-container *ngIf="mode === 'manual'">
+            <button class="ajd-btn ajd-btn--outline" (click)="pasteFromClipboard()">
+              <i class="fa-solid fa-paste"></i> Paste
+            </button>
+          </ng-container>
+
+          <button class="ajd-btn ajd-btn--outline" (click)="copyContent()" [disabled]="!hasContent">
+            <i class="fa-solid" [class.fa-copy]="copyStatus === 'idle'" [class.fa-check]="copyStatus === 'copied'"></i>
+            {{ copyStatus === 'copied' ? 'Copied!' : 'Copy' }}
+          </button> -->
 
           <!-- <button class="ajd-btn ajd-btn--outline"
             (click)="regenerate()"
@@ -88,8 +113,8 @@
         Please generate a Job Description before proceeding to the next step.
       </div>
 
-      <!-- ── Empty state ─────────────────────────────────────────────── -->
-      <div class="ajd-empty" *ngIf="!hasContent && !isGenerating">
+      <!-- ── Empty state (AI mode) ───────────────────────────────────── -->
+      <div class="ajd-empty" *ngIf="mode === 'ai' && !hasContent && !isGenerating">
 
         <!-- Illustration -->
         <svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -164,8 +189,18 @@
         </p>
       </div>
 
+      <!-- ── Empty state (Manual mode) ───────────────────────────────── -->
+      <div class="ajd-manual-empty" *ngIf="mode === 'manual' && !hasContent">
+        <i class="fa-solid fa-file-pen ajd-manual-empty__icon"></i>
+        <p class="ajd-manual-empty__title">Write your own job description</p>
+        <p class="ajd-manual-empty__sub">
+          Type directly in the box below, or use the Paste button above to
+          bring in a description you've already written elsewhere.
+        </p>
+      </div>
+
       <!-- ── Generating shimmer ──────────────────────────────────────── -->
-      <div class="ajd-generating" *ngIf="isGenerating && !hasContent">
+      <div class="ajd-generating" *ngIf="mode === 'ai' && isGenerating && !hasContent">
         <div class="ajd-shimmer"></div>
         <div class="ajd-shimmer ajd-shimmer--sm"></div>
         <div class="ajd-shimmer"></div>
@@ -175,7 +210,7 @@
       </div>
 
       <!-- ── Toolbar + Editor ────────────────────────────────────────── -->
-      <ng-container *ngIf="hasContent">
+      <ng-container *ngIf="mode === 'manual' || hasContent">
 
         <!-- Toolbar -->
         <!-- <div class="ajd-toolbar">
@@ -234,7 +269,9 @@
         </div> -->
 
         <!-- Editable content area -->
-        <div class="ajd-editor" #editor contenteditable="true" (input)="onEditorInput()" spellcheck="true">
+        <div class="ajd-editor" [class.ajd-editor--manual]="mode === 'manual'" #editor contenteditable="true"
+          (input)="onEditorInput()" spellcheck="true"
+          [attr.data-placeholder]="mode === 'manual' ? 'Start typing the job description, or paste one in…' : null">
         </div>
 
         <!-- Footer -->
@@ -258,7 +295,7 @@
   </div>
 
   <!-- ── Right: Versions panel ─────────────────────────────────────────── -->
-  <div class="ajd-versions-col">
+  <div class="ajd-versions-col" *ngIf="mode === 'ai'">
     <div class="ajd-versions-card">
 
       <div class="ajd-versions-header">

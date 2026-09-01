@@ -75,6 +75,7 @@ export class AiJobDescriptionStepComponent
   private modal = inject(NzModalService);
 
   readonly STORAGE_KEY = 'ai_jd_versions';
+  readonly MANUAL_STORAGE_KEY = 'ai_jd_manual_content';
 
   versions: JdVersion[] = [];
   selectedVersionId: number | null = null;
@@ -89,11 +90,25 @@ export class AiJobDescriptionStepComponent
   renameButton:boolean=false;
   private saveTimer: any;
 
+  // ── Manual vs AI entry mode ────────────────────────────────────────────────
+  mode: 'ai' | 'manual' = 'ai';
+  manualContent = '';
+  hasManualContent = false;
+  copyStatus: 'idle' | 'copied' = 'idle';
+  private copyStatusTimer: any;
+
   // ── Lifecycle ───────────────────────────────────────────────────────────────
 
   ngOnInit(): void {
     if (!this.form.get('jobDescription')) {
       this.form.addControl('jobDescription', new FormControl('', Validators.required));
+    }
+
+    // ── Restore manually-typed/pasted content, if any ─────────────────────
+    const storedManual = localStorage.getItem(this.MANUAL_STORAGE_KEY);
+    if (storedManual) {
+      this.manualContent = storedManual;
+      this.hasManualContent = !!this.stripHtml(storedManual).trim();
     }
 
     // ── Step 1: try to restore all versions from localStorage ────────────────
@@ -126,6 +141,13 @@ export class AiJobDescriptionStepComponent
       }
     }
 
+    // No AI versions saved — if there's manual content instead, default to
+    // the Manual tab so the user sees what they last wrote.
+    if (this.hasManualContent) {
+      this.mode = 'manual';
+      this.form.get('jobDescription')?.setValue(this.manualContent);
+    }
+
     // ── Step 2: nothing in localStorage — try the form value ─────────────────
     const existingJd = this.form.get('jobDescription')?.value;
     if (existingJd && typeof existingJd === 'object') {
@@ -147,25 +169,28 @@ export class AiJobDescriptionStepComponent
   }
 
   ngAfterViewInit(): void {
-    // Paint the currently selected version into the editor
-    if (this.selectedVersionId !== null && this.versions.length > 0) {
-      const v =
-        this.versions.find(ver => ver.id === this.selectedVersionId) ??
-        this.versions[0];
-      if (v) {
-        setTimeout(() => {
-          if (this.editorRef?.nativeElement) {
-            this.editorRef.nativeElement.innerHTML = v.content;
-            this.updateWordCount();
-          }
-          this.cdr.detectChanges();
-        }, 0);
+    // Paint the currently selected content into the editor
+    setTimeout(() => {
+      if (!this.editorRef?.nativeElement) return;
+      if (this.mode === 'manual') {
+        this.editorRef.nativeElement.innerHTML = this.manualContent;
+        this.updateWordCount();
+      } else if (this.selectedVersionId !== null && this.versions.length > 0) {
+        const v =
+          this.versions.find(ver => ver.id === this.selectedVersionId) ??
+          this.versions[0];
+        if (v) {
+          this.editorRef.nativeElement.innerHTML = v.content;
+          this.updateWordCount();
+        }
       }
-    }
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   ngOnDestroy(): void {
     clearTimeout(this.saveTimer);
+    clearTimeout(this.copyStatusTimer);
     // Keep localStorage — versions survive Back→Forward within the stepper
   }
 
@@ -210,6 +235,80 @@ export class AiJobDescriptionStepComponent
     event.stopPropagation();
     this.renameButton = false;
     this.options = '';
+  }
+
+  // ── Manual vs AI mode ────────────────────────────────────────────────────────
+
+  switchMode(mode: 'ai' | 'manual'): void {
+    if (this.mode === mode) return;
+    this.mode = mode;
+    this.closeMenus();
+    this.copyStatus = 'idle';
+
+    // Repaint the editor with whatever content belongs to the tab we just
+    // switched to, and keep the form control in sync with it.
+    setTimeout(() => {
+      if (!this.editorRef?.nativeElement) return;
+
+      if (mode === 'manual') {
+        this.editorRef.nativeElement.innerHTML = this.manualContent;
+        this.form.get('jobDescription')?.setValue(this.manualContent);
+      } else {
+        const v =
+          this.versions.find(ver => ver.id === this.selectedVersionId) ??
+          this.versions[0];
+        this.editorRef.nativeElement.innerHTML = v ? v.content : '';
+        this.form.get('jobDescription')?.setValue(v ? v.rawResponse : '');
+      }
+
+      this.updateWordCount();
+      this.cdr.detectChanges();
+    }, 0);
+  }
+
+  /** Reads the clipboard and drops its text into the manual editor. */
+  async pasteFromClipboard(): Promise<void> {
+    if (!this.editorRef?.nativeElement) return;
+    this.editorRef.nativeElement.focus();
+
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) return;
+
+      if (this.hasManualContent) {
+        document.execCommand('insertText', false, text);
+      } else {
+        this.editorRef.nativeElement.innerText = text;
+      }
+      this.onEditorInput();
+    } catch {
+      // Clipboard permission denied/unavailable — the editor is still
+      // focused, so the user can fall back to Ctrl+V / Cmd+V themselves.
+    }
+  }
+
+  /** Copies the current editor content (plain text) to the clipboard. */
+  async copyContent(): Promise<void> {
+    const text = this.editorRef?.nativeElement?.innerText || '';
+    if (!text.trim()) return;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      this.copyStatus = 'copied';
+      clearTimeout(this.copyStatusTimer);
+      this.copyStatusTimer = setTimeout(() => {
+        this.copyStatus = 'idle';
+        this.cdr.detectChanges();
+      }, 1500);
+    } catch {
+      // Ignore — clipboard write isn't available in this context.
+    }
+  }
+
+  private stripHtml(html: string): string {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
   }
 
   // ── Core API call ───────────────────────────────────────────────────────────
@@ -431,6 +530,14 @@ export class AiJobDescriptionStepComponent
 
   onEditorInput(): void {
     this.updateWordCount();
+
+    if (this.mode === 'manual') {
+      this.manualContent = this.editorRef?.nativeElement?.innerHTML || '';
+      this.hasManualContent = !!(this.editorRef?.nativeElement?.innerText || '').trim();
+      this.form.get('jobDescription')?.setValue(this.manualContent);
+      localStorage.setItem(this.MANUAL_STORAGE_KEY, this.manualContent);
+    }
+
     this.triggerSave();
   }
 
@@ -474,6 +581,8 @@ export class AiJobDescriptionStepComponent
   }
 
   get hasContent(): boolean {
-    return this.versions.length > 0;
+    return this.mode === 'manual'
+      ? this.hasManualContent
+      : this.versions.length > 0;
   }
 }

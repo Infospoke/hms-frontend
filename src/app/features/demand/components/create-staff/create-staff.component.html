@@ -127,12 +127,10 @@
                 <!-- Location -->
                 <div class="field">
                     <label class="lbl">Location <span class="astrick">*</span></label>
-                    <nz-select formControlName="location"
-                        [nzPlaceHolder]="step0Form.get('country')?.value ? 'Select Location' : 'Select a country first'"
-                        nzShowSearch [nzLoading]="locationLoading" [nzDisabled]="!step0Form.get('country')?.value"
-                        [class.err]="hasError(step0Form, 'location')" class="nz-field-select">
-                        <nz-option *ngFor="let loc of locationOptions" [nzValue]="loc" [nzLabel]="loc"></nz-option>
-                    </nz-select>
+                    <input type="text" formControlName="location"
+                        placeholder="e.g. Hyderabad, Bangalore, Remote" autocomplete="off"
+                        (blur)="trimField(step0Form, 'location')"
+                        [class.err]="hasError(step0Form, 'location')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
                         {{ getError(step0Form, 'location','Location') }}
                     </span>

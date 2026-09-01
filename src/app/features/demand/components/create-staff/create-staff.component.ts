@@ -114,12 +114,12 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   educationOpts: any[] = [];
   travelOpts: any = [];
 
-  // Country / Location (city) are fetched from the free Countries Now API
+  // Country is fetched from the free Countries Now API
   // (https://countriesnow.space) instead of a hardcoded list.
+  // Location is now a free-text field: the user types one or more
+  // comma-separated locations and the raw string is sent to the backend as-is.
   countries: { label: string; value: string }[] = [];
   countriesLoading = false;
-  locationOptions: string[] = [];
-  locationLoading = false;
 
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
 
@@ -221,13 +221,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     this.loadCountries();
 
-    this.step0Form.get('country')?.valueChanges.subscribe((value: string) => {
-      // Reset the previously selected city whenever the country changes,
-      // since the old value likely won't belong to the new country's list.
-      this.step0Form.get('location')?.setValue('', { emitEvent: false });
-      this.loadCitiesForCountry(value);
-    });
-
     this.captureRouteParams();
     this.goTo(0);
   }
@@ -244,21 +237,6 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.notificationService?.error?.('Unable to load countries. Please try again.');
     } finally {
       this.countriesLoading = false;
-    }
-  }
-
-  private async loadCitiesForCountry(country: string): Promise<void> {
-    this.locationOptions = [];
-    if (!country) return;
-
-    this.locationLoading = true;
-    try {
-      const res: any = await this.demandService.getCitiesByCountry(country);
-      this.locationOptions = (res?.data ?? []).sort((a: string, b: string) => a.localeCompare(b));
-    } catch {
-      this.notificationService?.error?.('Unable to load locations for the selected country.');
-    } finally {
-      this.locationLoading = false;
     }
   }
 

@@ -116,10 +116,19 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
   // Country is fetched from the free Countries Now API
   // (https://countriesnow.space) instead of a hardcoded list.
-  // Location is now a free-text field: the user types one or more
-  // comma-separated locations and the raw string is sent to the backend as-is.
+  // Location is fetched from the same API scoped to the selected Country
+  // and lets the user pick multiple locations. "Pan India" is always
+  // available as a static option regardless of country. Selected values are
+  // joined into a comma-separated string before being sent to the backend
+  // (see the `location` getter below).
   countries: { label: string; value: string }[] = [];
   countriesLoading = false;
+  readonly staticLocations: string[] = ['Pan India'];
+  locationOptions: string[] = ['Pan India'];
+  locationLoading = false;
+  showLocationDropdown = false;
+  filteredLocationOptions: string[] = [];
+  @ViewChild('locationInput') locationInput!: ElementRef;
 
   readonly assessmentOpts = ['Technical', 'Personality', 'Case Study', 'Psychometric'];
 
@@ -221,6 +230,14 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     this.loadCountries();
 
+    this.step0Form.get('country')?.valueChanges.subscribe((value: string) => {
+      // Reset the previously selected location(s) whenever the country
+      // changes, since the old picks likely won't belong to the new
+      // country's list.
+      this.step0Form.get('location')?.setValue([], { emitEvent: false });
+      this.loadLocations(value);
+    });
+
     this.captureRouteParams();
     this.goTo(0);
   }
@@ -237,6 +254,27 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.notificationService?.error?.('Unable to load countries. Please try again.');
     } finally {
       this.countriesLoading = false;
+    }
+  }
+
+  private async loadLocations(country: string): Promise<void> {
+    this.locationOptions = [...this.staticLocations];
+    if (!country) return;
+
+    this.locationLoading = true;
+    try {
+      const res: any = await this.demandService.getCitiesByCountry(country);
+      const fetched: string[] = (res?.data ?? [])
+        .map((loc: any) => (typeof loc === 'string' ? loc : loc?.name))
+        .filter(Boolean)
+        .sort((a: string, b: string) => a.localeCompare(b));
+      // "Pan India" is always offered, in addition to whatever the API returns.
+      this.locationOptions = [...this.staticLocations, ...fetched.filter(l => !this.staticLocations.includes(l))];
+    } catch {
+      this.notificationService?.error?.('Unable to load locations for the selected country.');
+      this.locationOptions = [...this.staticLocations];
+    } finally {
+      this.locationLoading = false;
     }
   }
 
@@ -265,7 +303,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       dept: ['', Validators.required],
       bu: ['', Validators.required],
       manager: [[], [Validators.required, minItemsValidator(1)]],
-      location: ['', Validators.required],
+      location: [[], [Validators.required, minItemsValidator(1)]],
       country: ['', Validators.required],
       workMode: ['', Validators.required],
       empType: ['', Validators.required],
@@ -274,6 +312,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       priority: ['', Validators.required],
       startDate: ['', [Validators.required, futureDateValidator]],
       managerSearch: [''],
+      locationSearch: [''],
       clientName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       clientPoc: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]]
     });
@@ -687,7 +726,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       departmentId: f.dept,
       businessUnitId: f.bu,
       reportingManagerInfo: f.manager,
-      location: f.location,
+      location: this.location,
       country: f.country,
       seniorityLevel: f.seniority,
       openings: f.openings,
@@ -810,7 +849,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       this.step0Form.patchValue({
         bu: buss?.id ?? '',
         country: p.country ?? '',
-        location: p.location ?? '',
+        location: this.splitCsv(p.location),
         workMode: p.workMode ?? '',
         empType: p.employmentType ?? '',
         seniority: senior?.id ?? '',
@@ -917,7 +956,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     return this.deptKeys.find(d => d?.id === deptId)?.name || '';
   }
-  get location(): string { return this.step0Form.get('location')?.value; }
+  get location(): string { return (this.step0Form.get('location')?.value || []).join(', '); }
   get country(): string { return this.step0Form.get('country')?.value; }
   get seniority(): string {
     const ser = this.seniorityIC.find(item => item.id == this.step0Form.get('seniority')?.value);
@@ -1092,6 +1131,58 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       m.username?.toLowerCase().includes(value) || m.name?.toLowerCase().includes(value)
     );
   }
+  // --- Location tag-input (same pattern as Reporting Manager) ---
+
+  get selectedLocations(): string[] {
+    return this.step0Form.get('location')?.value ?? [];
+  }
+
+  private getUnselectedLocations(): string[] {
+    return this.locationOptions.filter(l => !this.selectedLocations.includes(l));
+  }
+
+  focusLocationInput() {
+    this.locationInput?.nativeElement?.focus();
+    this.filteredLocationOptions = this.getUnselectedLocations();
+    this.showLocationDropdown = true;
+  }
+
+  selectLocation(loc: string): void {
+    if (!loc) return;
+    const current = this.selectedLocations;
+    if (!current.includes(loc)) {
+      this.step0Form.get('location')?.setValue([...current, loc]);
+      this.step0Form.get('location')?.markAsTouched();
+    }
+    this.step0Form.get('locationSearch')?.setValue('');
+    this.filteredLocationOptions = this.getUnselectedLocations();
+    this.showLocationDropdown = false;
+  }
+
+  removeLocation(loc: string): void {
+    const current = this.selectedLocations;
+    this.step0Form.get('location')?.setValue(current.filter(l => l !== loc));
+    this.step0Form.get('location')?.markAsTouched();
+    this.filteredLocationOptions = this.getUnselectedLocations();
+  }
+
+  onSearchLocation($event: any): void {
+    const value = this.step0Form.get('locationSearch')?.value?.toLowerCase() || '';
+    this.filteredLocationOptions = this.getUnselectedLocations().filter(l =>
+      l.toLowerCase().includes(value)
+    );
+  }
+
+  hideLocationDropdown(): void {
+    // Same rationale as hideDropdown() for managers: only a real dropdown
+    // pick should ever leave a value behind. Anything left typed in the
+    // search box after blur is unmatched free text, so clear it.
+    setTimeout(() => {
+      this.showLocationDropdown = false;
+      this.step0Form.get('locationSearch')?.setValue('');
+    }, 200);
+  }
+
   onSearchReplace() {
     const value = this.step1Form.get('replaceSearch')?.value?.toLowerCase() || '';
     this.filteredManagers = this.managersList.filter(m =>
@@ -1359,7 +1450,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       jobTitle: f.jobTitle,
       dept: f.dept,
       bu: f.bu,
-      location: f.location,
+      location: this.location,
       workMode: f.workMode,
       empType: f.empType,
       country: f.country,

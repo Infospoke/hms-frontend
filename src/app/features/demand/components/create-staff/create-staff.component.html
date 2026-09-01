@@ -125,12 +125,35 @@
                     </span>
                 </div>
                 <!-- Location -->
-                <div class="field">
+                <div class="field auto-wrap">
                     <label class="lbl">Location <span class="astrick">*</span></label>
-                    <input type="text" formControlName="location"
-                        placeholder="e.g. Hyderabad, Bangalore, Remote" autocomplete="off"
-                        (blur)="trimField(step0Form, 'location')"
-                        [class.err]="hasError(step0Form, 'location')" />
+
+                    <!-- Tag Input Container -->
+                    <div class="tag-input" [class.err]="hasError(step0Form, 'location')"
+                        (click)="focusLocationInput()">
+
+                        <span class="tag" *ngFor="let loc of selectedLocations">
+                            {{ loc }}
+                            <span class="tx" (click)="$event.stopPropagation(); removeLocation(loc)">×</span>
+                        </span>
+
+                        <input #locationInput type="text" formControlName="locationSearch"
+                            placeholder="Search location..." (input)="onSearchLocation($event)"
+                            (focus)="showLocationDropdown = true" (blur)="hideLocationDropdown()" />
+
+                        <i class="fa-solid fa-chevron-down loc-arrow" [class.open]="showLocationDropdown"></i>
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div class="dropdown" *ngIf="showLocationDropdown && filteredLocationOptions.length">
+                        <div class="option" *ngFor="let loc of filteredLocationOptions"
+                            (mousedown)="selectLocation(loc)">
+                            <div class="info">
+                                <div class="name">{{ loc }}</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <span class="err-msg" *ngIf="hasError(step0Form, 'location')">
                         {{ getError(step0Form, 'location','Location') }}
                     </span>
@@ -826,7 +849,7 @@
                     </div>
                     <div class="review-row">
                         <span class="review-label">Location</span>
-                        <span class="review-val">{{ step0Form.get('location')?.value || '—' }}</span>
+                        <span class="review-val">{{ location || '—' }}</span>
                     </div>
                     <div class="review-row">
                         <span class="review-label">Country</span>
@@ -1092,7 +1115,7 @@
             <div class="success-sub">
                 {{ step0Form.get('jobTitle')?.value || 'Senior Backend Engineer' }} ·
                 {{ step0Form.get('dept')?.value || 'Engineering' }} ·
-                {{ step0Form.get('location')?.value || 'Hyderabad' }}
+                {{ location || 'Hyderabad' }}
             </div>
         </div>
 

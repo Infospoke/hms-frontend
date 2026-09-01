@@ -3,7 +3,7 @@ export const environment = {
   // apiUrl: 'https://0m8wdbziw1.execute-api.ap-south-2.amazonaws.com/infospokeProd/Infospoke',
   tokenRefreshInterval: 840000,
   apiUrl: 'http://172.16.1.101:5003/infospoke-portal',
-  hrmsApiUrl:'http://172.16.1.101:5006',
+  hrmsApiUrl:'http://172.16.1.100:5006',
   websiteURL:'http://172.16.1.101:5003/infospoke-website',
   atsUrl : 'http://172.16.1.101:5002',
   // atsUrl : 'http://172.29.96.1:5002',

@@ -1235,6 +1235,22 @@ input[type="range"] {
   border-color: #2563eb;
 }
 
+.tag-input.err {
+  border-color: #e24b4a;
+}
+
+.loc-arrow {
+  margin-left: auto;
+  padding: 0 4px;
+  font-size: 12px;
+  color: #64748b;
+  transition: transform 0.15s ease;
+}
+
+.loc-arrow.open {
+  transform: rotate(180deg);
+}
+
 .tag {
   display: flex;
   align-items: center;

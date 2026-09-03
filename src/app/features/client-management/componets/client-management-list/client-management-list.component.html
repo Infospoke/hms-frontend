@@ -56,6 +56,7 @@
         type="button"
         class="action-btn view-btn"
         title="View"
+        *appCan="'CLIENTMANAGEMENT:CLIENTMANAGEMENTDETAILS:VIEW'"
         (click)="viewClient(ctx.row); $event.stopPropagation()"
       >
         <i class="fa-regular fa-eye"></i>
@@ -64,6 +65,7 @@
         type="button"
         class="action-btn edit-btn"
         title="Edit"
+        *appCan="'CLIENTMANAGEMENT:CLIENTMANAGEMENTDETAILS:EDIT'"
         (click)="editClient(ctx.row); $event.stopPropagation()"
       >
         <i class="fa-solid fa-pencil"></i>

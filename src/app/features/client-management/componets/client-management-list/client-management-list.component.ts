@@ -6,12 +6,13 @@ import { ReusableTableComponent, TableColumn } from '../../../../shared/componen
 import { HeadingComponent } from '../../../../shared/components/heading/heading.component';
 import { CommonFilterComponent } from '../../../../shared/components/common-filter/common-filter.component';
 import { ClientManagementService } from '../../services/client-management.service';
+import { CanDirective } from '../../../../shared/directives/can.directive';
 
 
 
 @Component({
   selector: 'app-client-management-list',
-  imports: [CommonModule, ReusableTableComponent, HeadingComponent, CommonFilterComponent],
+  imports: [CommonModule, ReusableTableComponent, HeadingComponent, CommonFilterComponent,CanDirective],
   templateUrl: './client-management-list.component.html',
   styleUrl: './client-management-list.component.scss',
 })

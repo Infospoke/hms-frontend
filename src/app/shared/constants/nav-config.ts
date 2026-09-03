@@ -180,7 +180,7 @@ export const NAV_ITEMS: NavItem[] = [
       label: 'Client Management List',
       icon: 'fa-solid fa-users',
       path: '/client-management/client-management-list',
-      permissionName: 'CLIENTMANAGEMENTLIST',
+      permissionName: 'CLIENTMANAGEMENTDETAILS',
     },
     ]
   },

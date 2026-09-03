@@ -24,6 +24,10 @@ export const routes: Routes = [
         path:'candidate-management',
         loadChildren:()=>import("./features/candidate-management/routes/candidate-routes").then(r=>r.CANDIDATE_ROUTES)
       },
+      {
+        path:'client-management',
+        loadChildren:()=>import("./features/client-management/routes/client-management.routes").then(r=>r.CLIENT_MANAGEMENT_ROUTES)
+      },
       
     //   { path: 'candidates', loadChildren: () => import('./features/candidates/candidates.routes').then(r => r.CANDIDATES_ROUTES) },
     //   { path: 'interviews', loadChildren: () => import('./features/interviews/interviews.routes').then(r => r.INTERVIEWS_ROUTES) },

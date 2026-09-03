@@ -1,0 +1,74 @@
+<div class="cm-page">
+
+  <div class="cm-title-row">
+    <app-heading
+      [heading]="'Client Management'"
+      [subHeading]="'Manage your clients, agreements and points of contact'"
+    ></app-heading>
+
+    <div class="cm-header-actions">
+      <button type="button" class="btn-primary" (click)="addClient()">
+        <i class="fa-solid fa-plus"></i> Add Client
+      </button>
+      <!-- <button type="button" class="btn-outline" (click)="exportCsv()">
+        <i class="fa-solid fa-arrow-up-from-bracket"></i> Export
+      </button> -->
+    </div>
+  </div>
+
+  <app-common-filter
+    [searchPlaceholder]="'Search clients...'"
+    [dropdowns]="statusDropdowns"
+    (filterChange)="onFilterChange($event)"
+  ></app-common-filter>
+
+  <div class="card-dd">
+    <app-reusable-table
+      [columns]="columns"
+      [data]="clients"
+      [showPagination]="true"
+      [totalItems]="totalItems"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [emptyMessage]="'No clients found. Try adjusting your search or filters.'"
+      [cellTemplate]="cellTpl"
+      (pageChange)="onPageChange($event)"
+    ></app-reusable-table>
+  </div>
+
+</div>
+
+<ng-template #cellTpl let-ctx>
+
+  <ng-container *ngIf="ctx.col.key === 'clientStatus'">
+    <span
+      class="status-badge"
+      [class.status-badge--active]="ctx.row.clientStatus === 'Active'"
+      [class.status-badge--inactive]="ctx.row.clientStatus === 'Inactive'"
+    >
+      <span class="status-dot"></span>{{ ctx.row.clientStatus }}
+    </span>
+  </ng-container>
+
+  <ng-container *ngIf="ctx.col.key === 'actions'">
+    <div class="actions-cell">
+      <button
+        type="button"
+        class="action-btn view-btn"
+        title="View"
+        (click)="viewClient(ctx.row); $event.stopPropagation()"
+      >
+        <i class="fa-regular fa-eye"></i>
+      </button>
+      <button
+        type="button"
+        class="action-btn edit-btn"
+        title="Edit"
+        (click)="editClient(ctx.row); $event.stopPropagation()"
+      >
+        <i class="fa-solid fa-pencil"></i>
+      </button>
+    </div>
+  </ng-container>
+
+</ng-template>

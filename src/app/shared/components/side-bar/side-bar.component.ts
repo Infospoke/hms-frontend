@@ -64,17 +64,20 @@ export class SideBarComponent implements OnInit {
 
   private filterNavItems() {
     this.navItems = this.navItems
-      .filter(item => this.permissionMap.has(item.permissionName!))
+      // An item with no permissionName is always shown (used for flat/leaf
+      // nav entries that aren't gated behind a backend permission yet).
+      .filter(item => !item.permissionName || this.permissionMap.has(item.permissionName))
       .map(item => ({
         ...item,
         children: item.children?.filter(child =>
-          this.permissionMap
-            .get(item.permissionName!)!
-            .has(child.permissionName!)
+          !child.permissionName ||
+          this.permissionMap.get(item.permissionName!)?.has(child.permissionName)
         ),
       }))
-      .filter(item => item.children && item.children.length > 0);
-      
+      // A leaf item (its own path, no children -- e.g. Client Management)
+      // survives even with an empty/undefined children array.
+      .filter(item => !!item.path || (item.children && item.children.length > 0));
+
   }
 
   private syncOpenMenu() {

@@ -224,5 +224,11 @@ export const API = {
 
         RECRUITER_PERFORMANCE_DETAIL:`/hms/dashboard/recruiter-performance`
 
+    },
+    CLIENT_MANAGEMENT:{
+        GET_ALL_CLIENTS:`/hms/client/list`,
+        GET_CLIENT_BY_ID:(id:any)=>`/hms/client/client-details/${id}`,
+        ADD_CLIENT:`/hms/client/add-client`,
+        UPDATE_CLIENT:`/hms/client/update`,
     }
 };

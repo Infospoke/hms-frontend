@@ -170,6 +170,21 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    id: 'client-management',
+    permissionName: 'CLIENTMANAGEMENT',
+    label: 'Client Management',
+    icon: 'fa-solid fa-building',
+    path: '/client-management/client-management-list',
+    children: [
+       {
+      label: 'Client Management List',
+      icon: 'fa-solid fa-users',
+      path: '/client-management/client-management-list',
+      permissionName: 'CLIENTMANAGEMENTLIST',
+    },
+    ]
+  },
+  {
     id: 'My Approvals',
     permissionName: 'MYAPPROVAL',
     label: 'My Approvals',

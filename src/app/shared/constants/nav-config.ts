@@ -174,10 +174,10 @@ export const NAV_ITEMS: NavItem[] = [
     permissionName: 'CLIENTMANAGEMENT',
     label: 'Client Management',
     icon: 'fa-solid fa-building',
-    path: '/client-management/client-management-list',
+   
     children: [
        {
-      label: 'Client Management List',
+      label: 'Client Management Details',
       icon: 'fa-solid fa-users',
       path: '/client-management/client-management-list',
       permissionName: 'CLIENTMANAGEMENTDETAILS',

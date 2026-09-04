@@ -96,7 +96,7 @@ export class JobService {
   }
   async getjobsByCountry(country: any) {
     return await firstValueFrom(
-      this.api.websiteGet(API.JOBS.GET_JOBS_BY_COUNTRY(country))
+      this.api.hrmsget(API.JOBS.GET_JOBS_BY_COUNTRY(country))
     );
   }
 

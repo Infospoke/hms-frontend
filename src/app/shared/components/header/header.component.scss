@@ -13,6 +13,14 @@
   color: var(--brand-color);
   width: 180px;
   margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  max-width: 100%;
+  height: 32px;
+  object-fit: contain;
 }
 
 .tr {

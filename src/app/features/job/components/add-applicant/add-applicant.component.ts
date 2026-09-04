@@ -49,7 +49,7 @@ export class AddApplicantComponent implements OnInit {
   async getJobByCountry(country: string) {
     try {
       const data: any = await this.jobApi.getjobsByCountry(country);
-      this.jobRoles=Object.values(data).map((job:any)=>({jobId:job.jobId, jobTitle:job.jobTitle,jobCode:job.jobCode, jobLocation:job.jobLocation}));
+      this.jobRoles=Object.values(data?.data || []).map((job:any)=>({jobId:job.jobId, jobTitle:job.jobTitle,jobCode:job.jobCode, jobLocation:job.jobLocation}));
     }
     catch (error) {
       console.error('Error fetching job list:', error);

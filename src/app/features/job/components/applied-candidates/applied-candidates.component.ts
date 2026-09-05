@@ -65,6 +65,7 @@ export class AppliedCandidatesComponent implements OnChanges,OnInit {
         id: app.id,
         jobId: app.jobId,
         candidateId: app.candidateId || 'N/A',
+        resumeUrl:app.Resume,
         name: `${app.firstName} ${app.lastName}`,
         initials: this.getInitials(app.firstName, app.lastName),
         avatarBg: this.getAvatarColor(app.id),

@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UtilService } from '../../../../shared/util.service';
+import { CandidateServiceComponent } from '../../../candidate-management/serviecs/candidate-service.component';
 @Component({
   selector: 'app-job-overview',
   imports: [
@@ -33,6 +34,7 @@ import { UtilService } from '../../../../shared/util.service';
 })
 export class JobOverview {
   private jobApi = inject(JobService);
+  private candidateService=inject(CandidateServiceComponent);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   util = inject(UtilService);
@@ -165,8 +167,8 @@ export class JobOverview {
           break;
 
         case 'viewResume':
-          res = await this.jobApi.viewResume('resume', event.candidate.id, 'view');
-
+          // res = await this.jobApi.viewResume('resume', event.candidate.id, 'view');
+          res = await this.candidateService.viewDocument({ filePath: event.candidate.resumeUrl });
           break;
         case 'reupload':
           res=await this.jobApi.requestToReUpload(event.candidate.id);

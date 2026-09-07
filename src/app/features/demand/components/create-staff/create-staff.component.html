@@ -176,7 +176,11 @@
                 <div class="field">
                     <label class="lbl">Number of Openings <span class="astrick">*</span></label>
 
-                    <input type="number" formControlName="openings" min="1" max="999" />
+                    <input type="number" formControlName="openings" min="1" max="999"
+                        [class.err]="hasError(step0Form, 'openings')" />
+                    <span class="err-msg" *ngIf="hasError(step0Form, 'openings')">
+                        {{ getError(step0Form, 'openings','Number of Openings') }}
+                    </span>
                 </div>
 
                 <!-- Start Date -->
@@ -232,6 +236,7 @@
                     <label class="lbl">Client Name <span class="astrick">*</span></label>
                     <input type="text" formControlName="clientName" placeholder="e.g. Infospoke" autocomplete="off"
                         [class.err]="hasError(step0Form, 'clientName')"
+                        (input)="blockLeadingSpace(step0Form, 'clientName', $event)"
                         (blur)="trimField(step0Form, 'clientName')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'clientName')">
                         {{ getError(step0Form, 'clientName','Client Name') }}
@@ -243,6 +248,7 @@
                     <label class="lbl">Client POC <span class="astrick">*</span></label>
                     <input type="text" formControlName="clientPoc" placeholder="Enter Client POC" autocomplete="off"
                         [class.err]="hasError(step0Form, 'clientPoc')"
+                        (input)="blockLeadingSpace(step0Form, 'clientPoc', $event)"
                         (blur)="trimField(step0Form, 'clientPoc')" />
                     <span class="err-msg" *ngIf="hasError(step0Form, 'clientPoc')">
                         {{ getError(step0Form, 'clientPoc','Client POC') }}

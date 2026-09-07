@@ -177,7 +177,7 @@ export class MyApprovedSrsComponent implements OnInit{
     return {
       page: this.currentPage - 1,   // API is 0-based
       size: this.pageSize,
-      sortBy: 'createdOn',
+      sortBy: 'dateOfApproval1',
       status:this.activeTab !== 'all'? this.activeTab : '',
       direction: 'DESC',
       filters,

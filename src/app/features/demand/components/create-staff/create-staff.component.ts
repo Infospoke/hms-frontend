@@ -61,6 +61,15 @@ function futureDateValidator(control: AbstractControl): ValidationErrors | null 
   return selected >= today ? null : { pastDate: true };
 }
 
+// Flags a value that is empty/blank once leading & trailing spaces are
+// stripped, even though the raw value itself isn't empty (i.e. the user
+// typed only spaces, or started typing with a leading space).
+function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (!value) return null;
+  return value.trim().length === 0 ? { whitespace: true } : null;
+}
+
 @Component({
   selector: 'app-create-staff',
   standalone: true,
@@ -313,8 +322,8 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       startDate: ['', [Validators.required, futureDateValidator]],
       managerSearch: [''],
       locationSearch: [''],
-      clientName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-      clientPoc: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]]
+      clientName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), noWhitespaceValidator]],
+      clientPoc: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100), noWhitespaceValidator]]
     });
 
     this.step1Form = this.fb.group({
@@ -1278,6 +1287,20 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
 
     // Allow letters, numbers, spaces, ., -, &, /, ()
     value = value.replace(/[^a-zA-Z0-9\s.&()/-]/g, '');
+
+    if (value !== input.value) {
+      input.value = value;
+      form.get(field)?.setValue(value, { emitEvent: false });
+    }
+  }
+
+  // Prevents the field from ever starting with a space (e.g. Client Name,
+  // Client POC). Spaces already typed after the first character are left
+  // alone; only a leading space (or a space typed as the very first
+  // character) is stripped as the user types.
+  blockLeadingSpace(form: FormGroup, field: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.replace(/^\s+/, '');
 
     if (value !== input.value) {
       input.value = value;

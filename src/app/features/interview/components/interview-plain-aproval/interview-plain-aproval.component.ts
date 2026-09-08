@@ -54,7 +54,7 @@ export class InterviewPlainAprovalComponent implements OnInit {
 
   handleReviewApprove(plan: any): void {
     this.router.navigate(
-      ['/approval/interview-approval-plans/review-and-approve', plan.id],
+      ['/approval/interview-plan-approval/review-and-approve', plan.id],
       {
         queryParams: { requestType: plan.requestType }
       }

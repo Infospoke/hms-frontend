@@ -13,10 +13,10 @@ import { NotificationWebsocketService } from '../../services/notification-websoc
 
 export type TabKey = 'all' | 'unread' | 'read';
 
-const TAB_READ_MAP: Record<TabKey, boolean | undefined> = {
-  all:    undefined,
-  unread: false,
-  read:   true,
+const TAB_READ_MAP: Record<TabKey, string | undefined> = {
+  all:    "all",
+  unread: "false",
+  read:   "true",
 };
 
 @Component({
@@ -79,12 +79,12 @@ export class AllNotificationsComponent implements OnInit {
   private location = inject(Location);
   // ── Pagination ─────────────────────────────────────────────────────────────
   currentPage = 1;
-  pageSize    = 8;
+  pageSize    = 10;
   totalItems  = 0;
 
-  private activeFilters: Partial<any> = { dateFilter: 'thisMonth' };
+  private activeFilters: Partial<any> = { dateFilter: '' };
   goBack() {
-    this.location.back(); // navigates to the actual previous history entry
+    this.location.back();
   }
   private notificationWebsocketService=inject(NotificationWebsocketService);
   // ── Lifecycle ──────────────────────────────────────────────────────────────

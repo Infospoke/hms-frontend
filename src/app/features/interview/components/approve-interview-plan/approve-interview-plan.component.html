@@ -31,7 +31,8 @@
                     <span class="field-label">Status</span>
                     <span class="badge-status" [ngClass]="planDetails.status | lowercase">
                         <span class="badge-dot"></span>
-                        {{ planDetails.status }}
+                        {{ planDetails.status === 'DEACTIVE' ? 'In Active' : 
+   planDetails.status === 'ACTIVE' ? 'Active' : planDetails.status }}
                     </span>
                 </div>
                 <div class="field">

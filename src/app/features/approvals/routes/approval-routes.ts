@@ -30,7 +30,7 @@ export const APPROVAL_ROUTES: Routes = [
     loadComponent:()=>import("../../interview/components/interview-plain-aproval/interview-plain-aproval.component").then(m=>m.InterviewPlainAprovalComponent)
   },
   {
-        path:"interview-approval-plans/review-and-approve/:id",
+        path:"interview-plan-approval/review-and-approve/:id",
         loadComponent:()=>import("../../interview/components/approve-interview-plan/approve-interview-plan.component").then(m=>m.ApproveInterviewPlanComponent)
   },
   {

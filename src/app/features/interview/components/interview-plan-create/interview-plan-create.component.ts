@@ -227,7 +227,7 @@ export class InterviewPlanCreateComponent implements OnInit {
     if (!this.isEditMode) return;
     const ctrl = this.planForm.get('active')!;
     const newVal = !ctrl.value;
-    // Optimistically flip the value; revert in closeCommentModal() if cancelled
+  
     ctrl.setValue(newVal);
     this.openCommentModal(newVal ? 'activate' : 'deactivate');
   }
@@ -257,7 +257,7 @@ export class InterviewPlanCreateComponent implements OnInit {
       // Build status-change payload for edit mode
       const payload = {
         id: this.planId,
-        status: result.action === 'activate' ? 'ACTIVE' : 'DEACTIVE',
+        status: result.action === 'activate' ? 'ACTIVE' : 'INACTIVE',
         description: result.comment,
       };
 
@@ -311,7 +311,7 @@ export class InterviewPlanCreateComponent implements OnInit {
     const basePayload: CreateInterviewPlanPayload = {
       planName: this.planForm.getRawValue().planName.trim(),
       description: this.planForm.getRawValue().description?.trim() ?? '',
-      status: "DEACTIVE",
+      status: "INACTIVE",
       rounds: this.rounds.map(r => ({
         roundOrder: r.order,
         stageName: r.stageName,

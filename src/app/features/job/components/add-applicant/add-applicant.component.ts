@@ -60,8 +60,7 @@ export class AddApplicantComponent implements OnInit {
     if (!file) return;
      const allowedTypes = [
         'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+       
     ];
     const maxSize= 5 * 1024 * 1024;
 
@@ -74,7 +73,7 @@ export class AddApplicantComponent implements OnInit {
           this.applicationForm.get('additionalFile')?.setErrors({ invalidType: true });
           this.applicationForm.get('additionalFile')?.markAsTouched();
         }
-        this.notificationService.error('Invalid file type. Please upload a PDF or Word document.');
+        this.notificationService.error('Invalid file type. Please upload a PDF.');
         return;
     }
     if (file.size > maxSize) {

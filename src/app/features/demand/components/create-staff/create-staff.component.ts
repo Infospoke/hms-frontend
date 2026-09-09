@@ -331,7 +331,7 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       replacesEmp: [''],
       replaceSearch: [''],
       bizCase: ['', [Validators.required, Validators.minLength(100), Validators.maxLength(2000)]],
-      impactNote: ['', [Validators.required, Validators.minLength(100), Validators.maxLength(2000)]]
+      impactNote: ['', [ Validators.minLength(100), Validators.maxLength(2000)]]
     });
 
     this.step2Form = this.fb.group({

@@ -23,6 +23,9 @@ import { UserService } from '../../../settings/users/servics/user-service';
 import { AgencyAssignmentComponent } from './steps/agency-assignment/agency-assignment.component';
 
 const SR_ID_KEY = 'create_job_sr_id';
+const JD_VERSIONS_KEY = 'ai_jd_versions';
+const JD_MANUAL_KEY = 'ai_jd_manual_content';
+const JD_MODE_KEY = 'ai_jd_mode';
 
 @Component({
   selector: 'app-create-job',
@@ -129,9 +132,9 @@ export class CreateJobComponent implements OnInit {
     if (signalData?.srId) {
       const previousSrId = localStorage.getItem(SR_ID_KEY);
 
-      
+
       if (previousSrId !== signalData.srId) {
-        localStorage.removeItem('ai_jd_versions');
+        this.clearJdStorage();
       }
       localStorage.setItem(SR_ID_KEY, signalData.srId);
     }
@@ -189,18 +192,26 @@ export class CreateJobComponent implements OnInit {
       });
   }
 
+  /** Clears everything the JD step keeps in localStorage (AI versions + manual draft + last tab). */
+  private clearJdStorage(): void {
+    localStorage.removeItem(JD_VERSIONS_KEY);
+    localStorage.removeItem(JD_MANUAL_KEY);
+    localStorage.removeItem(JD_MODE_KEY);
+  }
+
   private clearSrIdStorage(): void {
     localStorage.removeItem(SR_ID_KEY);
-    localStorage.removeItem('ai_jd_versions');
+    this.clearJdStorage();
   }
 
   onNext(): void {
     if (this.isLastStep) { this.confirmSubmit(); return; }
 
-    // Step 2: JD must be generated
+    // Step 2: JD must exist — AI-generated (object) or manually written (HTML string)
     if (this.currentStep === 1) {
       const jd = this.step2Form.get('jobDescription')?.value;
-      if (!jd) { this.jdError = true; return; }
+      const hasJd = typeof jd === 'string' ? !!this.htmlToText(jd) : !!jd;
+      if (!hasJd) { this.jdError = true; return; }
       this.jdError = false;
     }
 
@@ -222,7 +233,7 @@ export class CreateJobComponent implements OnInit {
         return;
       }
     }
-  
+
     if (this.currentStep === 3) {
       const selectedAgencies = this.step5Form.get('selectedAgencyDetails')?.value ?? [];
       // if (!selectedAgencies.length) {
@@ -301,26 +312,50 @@ export class CreateJobComponent implements OnInit {
     const agencyIds: number[] = (step5.selectedAgencyDetails || []).map((a: any) => a.agencyId);
 
     // ✅ Map description to expected camelCase format
+    // step2.jobDescription is an OBJECT for an AI-generated JD, and an HTML
+    // STRING when the recruiter wrote/pasted the JD manually.
     const desc = step2.jobDescription;
+    const isManualJd = typeof desc === 'string';
+
     const jobDescriptionRequest = {
       description: [
-        {
-          jobTitle: desc?.job_title || desc?.jobTitle || '',
-          jobSummary: desc?.job_summary || desc?.jobSummary || '',
-          keyResponsibilities: desc?.key_responsibilities || desc?.keyResponsibilities || [],
-          basicQaulifications: desc?.basic_qualifications || desc?.basicQaulifications || [], // ✅ typo
-          preferredQualifications: desc?.preferred_qualifications || desc?.preferredQualifications || [],
-          skillsMustHave: desc?.skills_must_have || desc?.skillsMustHave || [],
-          niceToHaveSkills: desc?.skills_nice_to_have || desc?.niceToHaveSkills || [],
-          educationRequirements: desc?.education_requirements || desc?.educationRequirements || '',
-          experienceRequirements: desc?.experience_requirements || desc?.experienceRequirements || '',
-          certificationsRequired: desc?.certifications_required || desc?.certificationsRequired || [],
-          languagesRequired: this.toArray(desc?.languages_required || desc?.languagesRequired), // ✅ always array
-          workMode: desc?.work_mode || desc?.workMode || '',
-          employmentType: desc?.employment_type || desc?.employmentType || '',
-          location: desc?.location || '',
-          aboutCompany: desc?.about_company || desc?.aboutCompany || '',
-        }
+        isManualJd
+          ? {
+              // Manual JD: free text has no sections, so the whole body goes
+              // into jobSummary and the rest is filled from Step 1.
+              jobTitle: step1.jobTitle || '',
+              jobSummary: this.htmlToText(desc),
+              keyResponsibilities: [],
+              basicQaulifications: [], // ✅ typo kept — backend field name
+              preferredQualifications: [],
+              skillsMustHave: step1.mustHaveSkills || [],
+              niceToHaveSkills: step1.niceToHaveSkills || [],
+              educationRequirements: step1.educationRequirement || '',
+              experienceRequirements: this.experienceDisplay,
+              certificationsRequired: this.toArray(step1.certificate),
+              languagesRequired: this.toArray(step1.languages),
+              workMode: step1.workMode || '',
+              employmentType: step1.employmentType || '',
+              location: step1.location || '',
+              aboutCompany: '',
+            }
+          : {
+              jobTitle: desc?.job_title || desc?.jobTitle || '',
+              jobSummary: desc?.job_summary || desc?.jobSummary || '',
+              keyResponsibilities: desc?.key_responsibilities || desc?.keyResponsibilities || [],
+              basicQaulifications: desc?.basic_qualifications || desc?.basicQaulifications || [], // ✅ typo
+              preferredQualifications: desc?.preferred_qualifications || desc?.preferredQualifications || [],
+              skillsMustHave: desc?.skills_must_have || desc?.skillsMustHave || [],
+              niceToHaveSkills: desc?.skills_nice_to_have || desc?.niceToHaveSkills || [],
+              educationRequirements: desc?.education_requirements || desc?.educationRequirements || '',
+              experienceRequirements: desc?.experience_requirements || desc?.experienceRequirements || '',
+              certificationsRequired: desc?.certifications_required || desc?.certificationsRequired || [],
+              languagesRequired: this.toArray(desc?.languages_required || desc?.languagesRequired), // ✅ always array
+              workMode: desc?.work_mode || desc?.workMode || '',
+              employmentType: desc?.employment_type || desc?.employmentType || '',
+              location: desc?.location || '',
+              aboutCompany: desc?.about_company || desc?.aboutCompany || '',
+            }
       ]
     };
 
@@ -379,6 +414,20 @@ export class CreateJobComponent implements OnInit {
         this.notificationService.error(error?.message || 'Failed to create job');
       });
   }
+
+  /** Converts the manual editor's HTML into readable plain text (block tags → newlines). */
+  private htmlToText(html: string): string {
+    const withBreaks = (html || '')
+      .replace(/<\/(p|div|h[1-6]|li|ul|ol|tr)>/gi, '\n')
+      .replace(/<br\s*\/?>/gi, '\n');
+    const tmp = document.createElement('div');
+    tmp.innerHTML = withBreaks;
+    return (tmp.textContent || tmp.innerText || '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
   private toArray(value: string | string[] | null | undefined): string[] {
     if (!value) return [];
     if (Array.isArray(value)) return value;

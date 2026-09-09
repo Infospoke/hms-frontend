@@ -3,7 +3,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { TokenService } from '../../../core/auth/token.service';
 import { CardComponent } from "../card/card.component";
 import { ProfilePipe } from '../../pipes/profile.pipe';
-import { SearchBarComponent } from "../search-bar/search-bar.component";
+// import { SearchBarComponent } from "../search-bar/search-bar.component";
 import { CommonModule } from '@angular/common';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
@@ -16,7 +16,7 @@ import { NotificationWebsocketService } from '../../../features/notification-pan
 @Component({
   selector: 'app-header',
   imports: [
-    CardComponent, ProfilePipe, SearchBarComponent,
+    CardComponent, ProfilePipe,
     CommonModule, NzDropDownModule, NzMenuModule,
     NotificationPanelComponent
   ],

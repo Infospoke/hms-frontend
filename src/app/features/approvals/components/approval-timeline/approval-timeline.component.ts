@@ -11,22 +11,19 @@ import { ApprovalStage, STAGE_STATUS_CONFIG, StageStatus, StageStatusDef } from 
   styleUrl: './approval-timeline.component.scss',
 })
 export class ApprovalTimelineComponent {
-  /** Ordered list of stages to render top→bottom (usually excludes the "creator" stage — pass what you want shown). */
+
   @Input({ required: true }) stages: ApprovalStage[] = [];
 
-  /** Card title, e.g. "Approval Timeline" / "Comments Timeline". */
+
   @Input() title = 'Approval Timeline';
 
-  /** Font Awesome icon class shown next to the title. */
+
   @Input() titleIcon = 'fa-regular fa-clock';
 
-  /**
-   * When true, shows the "use Approve/Reject buttons below" hint on the
-   * IN_PROGRESS card. Set false for read-only / view-only pages.
-   */
+  
   @Input() isActionMode = true;
 
-  /** Empty-state copy shown when there is no approver chain configured yet. */
+
   @Input() emptyStateTitle = 'No approval chain configured yet';
   @Input() emptyStateSub =
     'No approvers have been assigned yet. Click Approve or Reject below to add your comment and take action.';

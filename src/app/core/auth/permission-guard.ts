@@ -2,32 +2,6 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { PermissionService } from '../services/permission.service';
 
-/**
- * permissionGuard — protects routes based on the flat JWT permission array.
- *
- * ── How to attach to a route ─────────────────────────────────────────────────
- *
- *   {
- *     path: 'kanban',
- *     canActivate: [permissionGuard],
- *     data: {
- *       permission: { module: 'SUPPLY', subModule: 'KANBAN', action: 'VIEW' }
- *     },
- *     loadComponent: () => import(...).then(...)
- *   }
- *
- * ── Fields ────────────────────────────────────────────────────────────────────
- *   module     (required) — top-level key, e.g. 'DEMAND', 'SYSTEM&ADMINS'
- *   subModule  (optional) — child key, e.g. 'MYJRS', 'ROLES&PERMISSIONS'
- *                           omit when the route maps to a module-level permission
- *   action     (optional) — defaults to 'VIEW' when not specified
- *
- * ── Behaviour ─────────────────────────────────────────────────────────────────
- *   • No `data.permission` on the route → always allow (opt-in guard)
- *   • Permission check passes → allow navigation
- *   • Permission check fails  → redirect to /users/user-onboard-roles
- *     (change FALLBACK_ROUTE below if you add a dedicated "not authorised" page)
- */
 
 const FALLBACK_ROUTE = '/users/user-onboard-roles';
 

@@ -76,6 +76,7 @@ export class AiJobDescriptionStepComponent
 
   readonly STORAGE_KEY = 'ai_jd_versions';
   readonly MANUAL_STORAGE_KEY = 'ai_jd_manual_content';
+  readonly MODE_STORAGE_KEY = 'ai_jd_mode';
 
   versions: JdVersion[] = [];
   selectedVersionId: number | null = null;
@@ -129,11 +130,6 @@ export class AiJobDescriptionStepComponent
           const current =
             this.versions.find(v => v.isCurrent) ?? this.versions[0];
           this.selectedVersionId = current.id;
-
-          // Sync form value to the current version's raw response so the
-          // stepper still knows about a valid JD even before the editor mounts
-          this.form.get('jobDescription')?.setValue(current.rawResponse);
-          return; // skip the form-value fallback below
         }
       } catch {
         // Corrupted storage — fall through to form-value restore
@@ -141,29 +137,38 @@ export class AiJobDescriptionStepComponent
       }
     }
 
-    // No AI versions saved — if there's manual content instead, default to
-    // the Manual tab so the user sees what they last wrote.
-    if (this.hasManualContent) {
-      this.mode = 'manual';
-      this.form.get('jobDescription')?.setValue(this.manualContent);
+    // ── Step 2: no AI versions in storage — try the form value ───────────────
+    if (!this.versions.length) {
+      const existingJd = this.form.get('jobDescription')?.value;
+      if (existingJd && typeof existingJd === 'object') {
+        const html = this.formatJdResponse(existingJd);
+        const restored: JdVersion = {
+          id: Date.now(),
+          label: 'Version 1',
+          isCurrent: true,
+          generatedAt: new Date(),
+          content: html,
+          rawResponse: existingJd,
+          showMenu: false,
+        };
+        this.versions = [restored];
+        this.selectedVersionId = restored.id;
+        this.persistVersions();
+      }
     }
 
-    // ── Step 2: nothing in localStorage — try the form value ─────────────────
-    const existingJd = this.form.get('jobDescription')?.value;
-    if (existingJd && typeof existingJd === 'object') {
-      const html = this.formatJdResponse(existingJd);
-      const restored: JdVersion = {
-        id: Date.now(),
-        label: 'Version 1',
-        isCurrent: true,
-        generatedAt: new Date(),
-        content: html,
-        rawResponse: existingJd,
-        showMenu: false,
-      };
-      this.versions = [restored];
-      this.selectedVersionId = restored.id;
-      this.persistVersions();
+    // ── Step 3: open the tab the user was last on, and sync the form control
+    // to THAT tab's content. Without this a manual JD is silently overwritten
+    // by an AI version whenever both exist.
+    const storedMode = localStorage.getItem(this.MODE_STORAGE_KEY) as 'ai' | 'manual' | null;
+    this.mode = storedMode
+      ?? (this.hasManualContent && !this.versions.length ? 'manual' : 'ai');
+
+    if (this.mode === 'manual') {
+      this.form.get('jobDescription')?.setValue(this.manualContent);
+    } else {
+      const current = this.versions.find(v => v.isCurrent) ?? this.versions[0];
+      this.form.get('jobDescription')?.setValue(current ? current.rawResponse : '');
     }
     // If neither source has data, versions stays [] — the "Generate" prompt shows
   }
@@ -242,6 +247,7 @@ export class AiJobDescriptionStepComponent
   switchMode(mode: 'ai' | 'manual'): void {
     if (this.mode === mode) return;
     this.mode = mode;
+    localStorage.setItem(this.MODE_STORAGE_KEY, mode);
     this.closeMenus();
     this.copyStatus = 'idle';
 

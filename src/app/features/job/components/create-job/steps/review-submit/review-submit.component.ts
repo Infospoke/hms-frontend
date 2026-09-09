@@ -99,8 +99,22 @@ export class ReviewSubmitStepComponent implements OnInit {
 
   readonly today = new Date();
   get s1(): any { return this.step1Form?.getRawValue() || {}; }
+  /** AI-generated JD — an object. Returns null when the JD was written manually. */
   get s2(): any {
-    return this.step2Form?.getRawValue()?.jobDescription || null;
+    const jd = this.step2Form?.getRawValue()?.jobDescription;
+    return jd && typeof jd === 'object' ? jd : null;
+  }
+
+  /** Manually written/pasted JD — an HTML string. Empty when the JD came from AI. */
+  get manualJd(): string {
+    const jd = this.step2Form?.getRawValue()?.jobDescription;
+    if (typeof jd !== 'string') return '';
+    return jd.replace(/<[^>]*>/g, '').trim() ? jd : '';
+  }
+
+  /** Label shown in the review header: 'Manual' when typed by the recruiter, else 'AI'. */
+  get jdSource(): string {
+    return this.manualJd ? 'Manual' : 'AI';
   }
 
   formatList(arr: string[]): string {

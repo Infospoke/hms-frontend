@@ -40,14 +40,10 @@ interface CandidateOverview {
   candidateId:string;
 }
 
-// ── Slot generation config ───────────────────────────────────────────────────
-// Slots are generated on the fly (rather than hardcoded) so changing the
-// duration or working-day window only requires touching these constants.
 const SLOT_DURATION_MINUTES = 30;
-const WORK_DAY_START = { hour: 9, minute: 0 };   // 09:00 AM
-const WORK_DAY_END = { hour: 18, minute: 0 };    // 06:00 PM
+const WORK_DAY_START = { hour: 8, minute: 0 };
+const WORK_DAY_END = { hour: 20, minute: 0 };
 
-/** Formats an hour/minute pair as a 12-hour clock string, e.g. "09:00 AM". */
 function formatTime(hour: number, minute: number): string {
   const period = hour >= 12 ? 'PM' : 'AM';
   const h12 = hour % 12 === 0 ? 12 : hour % 12;

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, timer, Subscription, switchMap, catchError, throwError } from 'rxjs';
+import { Observable, tap, timer, Subscription, switchMap, catchError, throwError, finalize } from 'rxjs';
 import { TokenService } from './token.service';
 import { PermissionService } from '../services/permission.service';
 import { NotificationService } from '../services/notification.service';
@@ -26,7 +26,6 @@ export class AuthService {
       tap((res: any) => {
         this.tokenService.setTokens(res.accessToken, res.refreshToken);
         this.tokenService.setUser(res.user);
-        // Token is now in sessionStorage; decode and load permissions from it
         this.permissionService.load();
         this.startTokenRefreshTimer();
       }),
@@ -51,48 +50,57 @@ export class AuthService {
 
   refreshToken(): Observable<any> {
     const refreshToken = this.tokenService.getRefreshToken();
-    return this.http.post(`${environment.apiUrl}${API.AUTH.REFRESH}`, { refreshToken }).pipe(
-      catchError((err: any) => {
-        this.logout();
-        return throwError(() => err);
-      })
-    );
+    return this.http.post(`${environment.apiUrl}${API.AUTH.REFRESH}`, { refreshToken });
   }
 
-  logout() {
+  /** Raw logout API call. No clearing, no navigation — the caller decides. */
+  logoutRequest(): Observable<any> {
+    return this.api.hrmspost(`${API.AUTH.LOGOUT}`, null);
+  }
 
-    this.api.hrmspost(`${API.AUTH.LOGOUT}`, null).pipe(
+  /** Clears everything locally. Safe to call more than once. */
+  clearSession(): void {
+    this.stopTokenRefreshTimer();
+    this.tokenService.clearTokens();
+    this.permissionService.clear();
+  }
+
+  /** User-initiated logout. The session is dropped whether or not the API succeeds. */
+  logout() {
+    this.logoutRequest().pipe(
       catchError((err) => {
         this.notification.error('Logout failed, redirecting...');
-        this.router.navigate(['/auth/login']);
         return throwError(() => err);
+      }),
+      finalize(() => {
+        this.clearSession();
+        this.router.navigate(['/auth/login'], { replaceUrl: true });
       })
-    ).subscribe((res: any) => {
-      if (res?.responsecode === '00' || res?.responseCode === '00') {
-        this.refreshTimerSub?.unsubscribe();
-        this.tokenService.clearTokens();
-        this.permissionService.clear();
-        // this.notification.success(res?.message || 'Logged out successfully');
-        this.router.navigate(['/auth/login']);
-      } else {
-        this.notification.error(res?.message || 'Logout failed');
-      }
+    ).subscribe({
+      next: () => { },
+      error: () => { }
     });
   }
 
   startTokenRefreshTimer() {
-    this.refreshTimerSub?.unsubscribe();
+    this.stopTokenRefreshTimer();
     const interval = environment.tokenRefreshInterval;
     this.refreshTimerSub = timer(interval, interval).pipe(
       switchMap(() => this.refreshToken())
     ).subscribe({
       next: (res: any) => {
         this.tokenService.setTokens(res.accessToken, res.refreshToken);
-        // Reload permissions from the refreshed token
         this.permissionService.load();
       },
-      error: () => this.logout()
+      error: (err: any) => {
+        if (err?.status === 401 || err?.status === 403) this.logout();
+      }
     });
+  }
+
+  stopTokenRefreshTimer() {
+    this.refreshTimerSub?.unsubscribe();
+    this.refreshTimerSub = null;
   }
 
   tryRestoreSession(): Observable<any> | null {
@@ -102,13 +110,11 @@ export class AuthService {
       tap((res: any) => {
         this.tokenService.setTokens(res.accessToken, res.refreshToken);
         this.tokenService.setUser(res.user);
-        // Token is refreshed; reload permissions from the new token
         this.permissionService.load();
         this.startTokenRefreshTimer();
       }),
       catchError((err: any) => {
-        this.tokenService.clearTokens();
-        this.permissionService.clear();
+        if (err?.status === 401 || err?.status === 403) this.clearSession();
         return throwError(() => err);
       })
     );
@@ -127,8 +133,8 @@ export class AuthService {
 
     return modules || [];
   }
-  getRoleId(){
-      const t = this.tokenService.getAccessToken();
+  getRoleId() {
+    const t = this.tokenService.getAccessToken();
     if (!t) return null;
     return JSON.parse(atob(t.split('.')[1]))?.roleId;
   }
@@ -187,8 +193,7 @@ export class AuthService {
       tap((res: any) => {
         if (res?.responsecode == '00') {
           this.notification.success(res?.responsemessage);
-          // this.logout();
-          this.router.navigate(['/auth/login']);
+          this.router.navigate(['/auth/login'], { replaceUrl: true });
         }
         else {
           this.notification.error(res?.responsemessage || res?.message);

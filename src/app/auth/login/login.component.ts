@@ -71,7 +71,7 @@ export class LoginComponent {
         // sessionStorage.setItem('refreshToken', data.refreshToken);
         // localStorage.setItem('lastLoginTime', data.lastLogin);
         if(this.authService.getIsFirstTimeUser()){
-          this.router.navigateByUrl("/auth/change-password");
+          this.router.navigateByUrl("/auth/change-password", { replaceUrl: true });
           return;
         }
         this.userId = data.userId;
@@ -80,7 +80,7 @@ export class LoginComponent {
         this.permissionService.load();
         const firstRoute = this.navigationService.getFirstRoute();
        await  this.notificationWebsocket.connect();
-        this.router.navigateByUrl(firstRoute);
+        this.router.navigateByUrl(firstRoute, { replaceUrl: true });
         // this.loadUserAndNavigate();
       }
       else if (data?.responsecode == '01' && data?.message=="Please reset your password") {

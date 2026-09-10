@@ -29,6 +29,7 @@ export class AddApplicantComponent implements OnInit {
   selectedJob:any;
   constructor(private fb: FormBuilder) {
     this.applicationForm = this.fb.group({
+      salutation: ['', [Validators.required]],
       firstName: ['', [Validators.required, Validators.maxLength(100)]],
       lastName: ['', [Validators.required, Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
@@ -109,6 +110,7 @@ export class AddApplicantComponent implements OnInit {
     if (this.applicationForm.valid) {
       const formData = new FormData();
       let obj={
+        title:this.applicationForm.value.salutation,
         firstName:this.applicationForm.value.firstName,
         lastName:this.applicationForm.value.lastName,
         email:this.applicationForm.value.email,

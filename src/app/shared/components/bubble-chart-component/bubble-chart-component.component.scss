@@ -42,17 +42,21 @@
 /* ---------------- Bubble Area ---------------- */
 
 .bubble-area {
-  position: relative;
-  width: 270px;
-  height: 190px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 270px;
   margin: auto;
-  max-width: 100%;
+  padding: 8px 0;
 }
 
 /* ---------------- Common Bubble ---------------- */
 
 .bubble {
-  position: absolute;
+  flex-shrink: 0;
   border-radius: 50%;
   color: #fff;
   display: flex;
@@ -72,43 +76,6 @@
 .bubble-label {
   font-size: 8px;
   margin-top: 3px;
-}
-
-/* ---------------- Bubble Positions ---------------- */
-
-.bubble:nth-child(1) {
-  width: 105px;
-  height: 105px;
-  top: 10px;
-  left: 5px;
-}
-
-.bubble:nth-child(2) {
-  width: 92px;
-  height: 92px;
-  top: 0;
-  right: 5px;
-}
-
-.bubble:nth-child(3) {
-  width: 82px;
-  height: 82px;
-  bottom: 5px;
-  left: 40px;
-}
-
-.bubble:nth-child(4) {
-  width: 70px;
-  height: 70px;
-  bottom: 0;
-  right: 55px;
-}
-
-.bubble:nth-child(5) {
-  width: 62px;
-  height: 62px;
-  bottom: 8px;
-  right: 0;
 }
 
 /* ---------------- Table ---------------- */

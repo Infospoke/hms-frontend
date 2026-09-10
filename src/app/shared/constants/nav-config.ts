@@ -67,7 +67,7 @@ export const NAV_ITEMS: NavItem[] = [
         permissionName: 'JOBREQUISITIONS',
       },
       {
-        label: "Recruiter Management",
+        label: "Recruiter Assignment Management",
         icon: "fa-solid fa-users-gear",
         path: "/demand/recruiter-assignment-management",
         permissionName: "RECRUITERASSIGNMENTMANAGEMENT",

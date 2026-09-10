@@ -60,11 +60,11 @@ export class AddApplicantComponent implements OnInit {
     if (!file) return;
      const allowedTypes = [
         'application/pdf',
-        'application/msword', // .doc
+        // 'application/msword', // .doc
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     ];
     
-    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    const allowedExtensions = ['.pdf', '.docx'];
     const hasAllowedExtension = allowedExtensions.some(ext =>
       file.name?.toLowerCase().endsWith(ext)
     );

@@ -610,6 +610,28 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Gate for the Step 2 → Step 3 "Next" button.
+   * Previously the template called `goTo(3)` directly, which skipped all
+   * form validation — invalid/empty required fields didn't block
+   * navigation. Now we re-validate here before allowing the user forward.
+   */
+  goToStep3(): void {
+    this.step2Form.markAllAsTouched();
+
+    if (this.step2Form.invalid) {
+      this.showBanner('Please fix the highlighted fields', 'err');
+      return;
+    }
+
+    if (this.hideNext) {
+      this.showBanner('Please run the budget check before proceeding', 'err');
+      return;
+    }
+
+    this.goTo(3);
+  }
+
   validateStep3(type: any): void {
     this.step3Form.markAllAsTouched();
 

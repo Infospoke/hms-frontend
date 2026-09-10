@@ -60,11 +60,17 @@ export class AddApplicantComponent implements OnInit {
     if (!file) return;
      const allowedTypes = [
         'application/pdf',
-       
+        'application/msword', // .doc
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     ];
+    
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    const hasAllowedExtension = allowedExtensions.some(ext =>
+      file.name?.toLowerCase().endsWith(ext)
+    );
     const maxSize= 5 * 1024 * 1024;
 
-    if (!allowedTypes.includes(file.type)) {
+    if (!allowedTypes.includes(file.type) && !hasAllowedExtension) {
         if (type === 'resume') {
           this.applicationForm.get('resume')?.setErrors({ invalidType: true });
           this.applicationForm.get('resume')?.markAsTouched();
@@ -73,7 +79,7 @@ export class AddApplicantComponent implements OnInit {
           this.applicationForm.get('additionalFile')?.setErrors({ invalidType: true });
           this.applicationForm.get('additionalFile')?.markAsTouched();
         }
-        this.notificationService.error('Invalid file type. Please upload a PDF.');
+        this.notificationService.error('Invalid file type. Please upload a PDF or Word document.');
         return;
     }
     if (file.size > maxSize) {

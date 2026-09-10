@@ -9,6 +9,13 @@ import { ApprovalStage, STAGE_STATUS_CONFIG, StageStatus, StageStatusDef } from 
   imports: [CommonModule],
   templateUrl: './approval-timeline.component.html',
   styleUrl: './approval-timeline.component.scss',
+  host: {
+    // Defensively strip any native `title` attribute off the host element.
+    // If a parent template still passes `title="..."` (instead of the
+    // renamed `panelTitle` input), the browser would otherwise render it
+    // as a native tooltip anywhere the user hovers over this component.
+    '[attr.title]': 'null',
+  },
 })
 export class ApprovalTimelineComponent {
 

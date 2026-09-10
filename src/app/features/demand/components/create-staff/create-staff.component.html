@@ -581,7 +581,7 @@
                     <button type="button" class="btn btn-success btn-button-success" *ngIf="isDraftSuccess">
                         <i class="fas fa-check"></i> {{srId }} Saved as draft
                     </button>
-                    <button type="button" class="btn btn-primary" (click)="goTo(3)" [disabled]="hideNext">
+                    <button type="button" class="btn btn-primary" (click)="goToStep3()" [disabled]="hideNext">
                         {{ isSaving ? 'Saving...' : 'Next: Role Requirements →' }}
                     </button>
                 </div>

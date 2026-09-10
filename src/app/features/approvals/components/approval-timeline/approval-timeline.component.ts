@@ -14,8 +14,12 @@ export class ApprovalTimelineComponent {
 
   @Input({ required: true }) stages: ApprovalStage[] = [];
 
-
-  @Input() title = 'Approval Timeline';
+  /**
+   * Renamed from `title` to `panelTitle`: `title` is a global HTML attribute,
+   * so binding it on the host element caused the browser to render a native
+   * tooltip when hovering over the component.
+   */
+  @Input() panelTitle = 'Approval Timeline';
 
 
   @Input() titleIcon = 'fa-regular fa-clock';

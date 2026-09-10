@@ -34,7 +34,7 @@ const CONFIGS: Record<ConfirmMode, ConfirmConfig> = {
     iconClass: 'icon-deactivate',
     title: 'Deactivate',
     desc: 'Are you sure you want to deactivate this user?',
-    okLabel: 'De Activate',
+    okLabel: 'Deactivate',
     okClass: 'btn-deactivate',
   },
   'replace-jd': {

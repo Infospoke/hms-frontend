@@ -1345,15 +1345,15 @@ export class CreateStaffComponent implements OnInit, OnDestroy {
   getError(form: FormGroup, field: string, name: any): string {
     const ctrl = form.get(field);
     if (!ctrl || !ctrl.errors) return '';
-    if (ctrl.errors['required']) return `${name.replace(/([A-Z])/g, ' $1')} is required`;
+    if (ctrl.errors['required']) return `${name} is required`;
     if (ctrl.errors['minlength']) return `Min ${ctrl.errors['minlength'].requiredLength} characters`;
     if (ctrl.errors['maxlength']) return `Max ${ctrl.errors['maxlength'].requiredLength} characters`;
     if (ctrl.errors['min']) return `Minimum value is ${ctrl.errors['min'].min}`;
     if (ctrl.errors['max']) return `Maximum value is ${ctrl.errors['max'].max}`;
     if (ctrl.errors['pastDate']) return 'Date must be today or in the future';
     if (ctrl.errors['numericOnly']) return `${name} must contain numbers only`;
-    if (ctrl.errors['whitespace']) return `${name.replace(/([A-Z])/g, ' $1')} cannot be blank spaces`;
-    if (ctrl.errors['lettersOnly']) return `${name.replace(/([A-Z])/g, ' $1')} can only contain letters`;
+    if (ctrl.errors['whitespace']) return `${name} cannot be blank spaces`;
+    if (ctrl.errors['lettersOnly']) return `${name} can only contain letters`;
     return 'Invalid value';
   }
 

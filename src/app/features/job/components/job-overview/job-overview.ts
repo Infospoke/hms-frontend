@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { renderAsync } from 'docx-preview';
 import { JobComponent } from '../../job.component';
 import { PipeLineCardsComponent } from '../../../../shared/components/pipe-line-cards/pipe-line-cards.component';
 import { CommonModule } from '@angular/common';
@@ -55,6 +56,12 @@ export class JobOverview {
   isVisible = false;
   pdfUrl: any;
   isPdfVisible = false;
+  previewKind: 'pdf' | 'docx' | 'doc' | 'unsupported' | null = null;
+  previewFileName = '';
+  previewError = '';
+  private previewBlob: Blob | null = null;
+  private previewObjectUrl: string | null = null;
+  private docxRendered = false;
   activeFilterSection: string = '';
   tempActiveChips: { key: string; label: string }[] = [];
   constructor(private sanitizer: DomSanitizer) { }
@@ -181,14 +188,7 @@ export class JobOverview {
       }
 
       if (event.type === 'viewResume') {
-        const blob = new Blob([res], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-
-        const safeUrl = url + '#toolbar=0&navpanes=0&scrollbar=0';
-
-        // sanitize AFTER building full url
-        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(safeUrl);
-        this.isPdfVisible = true;
+        this.openDocumentPreview(res, event.candidate.resumeUrl);
         return;
       }
       if(event?.type==='reupload'){
@@ -344,5 +344,118 @@ export class JobOverview {
         });
       }
     }
+  }
+
+  private resolveFileKind(filePath: string, blob: Blob): 'pdf' | 'docx' | 'doc' | 'unsupported' {
+    const ext = (filePath || '').split('?')[0].split('.').pop()?.toLowerCase() || '';
+    if (ext === 'pdf') return 'pdf';
+    if (ext === 'docx') return 'docx';
+    if (ext === 'doc') return 'doc';
+
+    const type = (blob?.type || '').toLowerCase();
+    if (type.includes('pdf')) return 'pdf';
+    if (type.includes('wordprocessingml')) return 'docx';
+    if (type.includes('msword')) return 'doc';
+    return 'unsupported';
+  }
+
+  private mimeFor(kind: string): string {
+    if (kind === 'pdf') return 'application/pdf';
+    if (kind === 'docx') return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    if (kind === 'doc') return 'application/msword';
+    return 'application/octet-stream';
+  }
+
+  openDocumentPreview(res: any, filePath: string) {
+    this.releasePreview();
+
+    const kind = this.resolveFileKind(filePath, res);
+    const blob = new Blob([res], { type: this.mimeFor(kind) });
+
+    this.previewKind = kind;
+    this.previewBlob = blob;
+    this.previewFileName = (filePath || 'document').split('?')[0].split('/').pop() || 'document';
+    this.previewError = '';
+    this.docxRendered = false;
+
+    if (kind === 'pdf') {
+      this.previewObjectUrl = window.URL.createObjectURL(blob);
+      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        this.previewObjectUrl + '#toolbar=0&navpanes=0&scrollbar=0'
+      );
+    }
+
+    this.isPdfVisible = true;
+
+    // nz-modal renders its content in an overlay; if the ViewChild setter has
+    // not fired by the time the overlay is in the DOM, resolve the container
+    // directly so the docx still renders.
+    if (kind === 'docx' || kind === 'doc') {
+      setTimeout(() => {
+        if (this.docxRendered) return;
+        const el = document.querySelector('.pdf-preview-modal .docx-preview-container') as HTMLElement;
+        if (el) {
+          this.docxRendered = true;
+          this.renderDocx(el);
+        }
+      }, 0);
+    }
+  }
+
+  @ViewChild('docxContainer') set docxContainer(el: ElementRef | undefined) {
+    if (el?.nativeElement && this.previewBlob && !this.docxRendered) {
+      this.docxRendered = true;
+      this.renderDocx(el.nativeElement);
+    }
+  }
+
+  private async renderDocx(container: HTMLElement) {
+    try {
+      container.innerHTML = '';
+      await renderAsync(this.previewBlob as Blob, container, undefined, {
+        className: 'docx',
+        inWrapper: true,
+        ignoreWidth: false,
+        ignoreHeight: true,
+        breakPages: true,
+        renderHeaders: true,
+        renderFooters: true,
+        useBase64URL: true,
+      });
+    } catch (error) {
+      console.error('Failed to render document preview:', error);
+      this.previewKind = 'unsupported';
+      this.previewError =
+        'This file could not be rendered in the browser. Older .doc files are not supported \u2014 download it to open in Word.';
+    }
+  }
+
+  downloadPreview() {
+    if (!this.previewBlob) return;
+    const url = window.URL.createObjectURL(this.previewBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = this.previewFileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  closeDocumentPreview() {
+    this.isPdfVisible = false;
+    this.releasePreview();
+  }
+
+  private releasePreview() {
+    if (this.previewObjectUrl) window.URL.revokeObjectURL(this.previewObjectUrl);
+    this.previewObjectUrl = null;
+    this.previewBlob = null;
+    this.pdfUrl = null;
+    this.previewKind = null;
+    this.previewError = '';
+    this.docxRendered = false;
+  }
+
+  ngOnDestroy(): void {
+    this.releasePreview();
   }
 }

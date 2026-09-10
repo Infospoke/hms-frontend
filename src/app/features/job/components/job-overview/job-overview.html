@@ -141,15 +141,23 @@
 
 </div>
 <nz-modal [(nzVisible)]="isPdfVisible" nzTitle="Preview" [nzFooter]="null" nzWidth="80%" [nzCentered]="true"
-  nzClassName="pdf-preview-modal" (nzOnCancel)="isPdfVisible = false">
+  nzClassName="pdf-preview-modal" (nzOnCancel)="closeDocumentPreview()">
 
   <ng-container *nzModalContent>
-    <div *ngIf="!pdfUrl" style="text-align:center; padding:20px;">
-      Loading PDF...
+    <div *ngIf="!previewKind" class="doc-preview-message">
+      Loading document...
     </div>
 
-    <iframe *ngIf="pdfUrl" [attr.src]="pdfUrl" width="100%" style="height: 75vh; border: none; display: block;">
+    <iframe *ngIf="previewKind === 'pdf' && pdfUrl" [attr.src]="pdfUrl" width="100%"
+      style="height: 75vh; border: none; display: block;">
     </iframe>
+
+    <div *ngIf="previewKind === 'docx' || previewKind === 'doc'" #docxContainer class="docx-preview-container"></div>
+
+    <div *ngIf="previewKind === 'unsupported'" class="doc-preview-message">
+      <p>{{ previewError || 'This file type cannot be previewed in the browser.' }}</p>
+      <button nz-button nzType="primary" (click)="downloadPreview()">Download {{ previewFileName }}</button>
+    </div>
   </ng-container>
 
 </nz-modal>

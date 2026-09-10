@@ -35,6 +35,7 @@
     "apexcharts": "^5.10.4",
     "apexsankey": "^1.10.0",
     "bootstrap": "^5.3.8",
+    "docx-preview": "^0.4.0",
     "ng-apexcharts": "^2.3.0",
     "ng-zorro-antd": "^21.2.1",
     "ng2-pdf-viewer": "^10.4.0",

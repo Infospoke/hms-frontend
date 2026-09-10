@@ -284,9 +284,16 @@ export class JobOverview {
 
     return jobs.filter((job) => {
       return Object.entries(activeFilters).every(([key, values]) => {
-        if (key === 'skills') {
-          const jobSkills = (job.skills || []).map((s: any) => s.skillName);
+        if (key === 'skillsMustHave') {
+          const jobSkills = job.skillsMustHave || [];
           return values.some((v) => jobSkills.includes(v));
+        }
+        if (key === 'Location') {
+          // Location is a comma-separated string, e.g. "Pan India, Lucknow, Gujrat"
+          const jobLocations = (job.Location || '')
+            .split(',')
+            .map((l: string) => l.trim());
+          return values.some((v) => jobLocations.includes(v));
         }
         return values.includes(job[key]?.toString());
       });
@@ -294,13 +301,15 @@ export class JobOverview {
   }
 
   getFilters(data: any[]): any {
-    const allowedKeys = ['jobCountry', 'jobMode', 'jobType'];
+    // These must match the real keys on the job objects returned by the API
+    // (modeType, Location) — not made-up names like jobCountry/jobMode/jobType,
+    // which never existed on a job and silently made every filter match nothing.
+    const allowedKeys = ['modeType', 'Location'];
 
     // Default seed values — always present even when jobs list is empty
     const defaultValues: Record<string, string[]> = {
-      jobCountry: ['India', 'USA'],
-      jobType:    ['Full-time', 'Part-time', 'Contract', 'Internship'],
-      jobMode:    ['Hybrid', 'Remote', 'Onsite'],
+      modeType: ['Hybrid', 'Remote', 'On-site'],
+      Location: [],
     };
 
     // Initialise filters with defaults using Sets for dedup
@@ -313,6 +322,15 @@ export class JobOverview {
     data.forEach((item) => {
       Object.keys(item).forEach((key) => {
         if (!allowedKeys.includes(key)) return;
+        if (key === 'Location' && typeof item[key] === 'string') {
+          // "Pan India, Lucknow, Gujrat" -> three separate filter options
+          item[key]
+            .split(',')
+            .map((l: string) => l.trim())
+            .filter(Boolean)
+            .forEach((loc: string) => filterSets['Location'].add(loc));
+          return;
+        }
         if (typeof item[key] === 'string' || typeof item[key] === 'number') {
           filterSets[key].add(item[key].toString());
         }
